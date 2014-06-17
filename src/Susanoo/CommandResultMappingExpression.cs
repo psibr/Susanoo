@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
@@ -24,16 +21,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Maps the declarative properties.
+        /// Gets the command expression.
         /// </summary>
-        protected virtual void MapDeclarativeProperties()
-        {
-            foreach(var item in CommandManager.Instance.Container.Resolve<IPropertyMetadataExtractor>()
-                .FindPropertiesFromFilter(typeof(TResult), Susanoo.DescriptorActions.Read))
-            {
-                mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.DatabaseName));
-            }
-        }
+        /// <value>The command expression.</value>
+        public ICommandExpression<TFilter, TResult> CommandExpression { get; private set; }
 
         /// <summary>
         /// Clears the result mappings.
@@ -85,12 +76,6 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public ICommandExpression<TFilter, TResult> CommandExpression { get; private set; }
-
-        /// <summary>
         /// Exports this instance.
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
@@ -108,6 +93,18 @@ namespace Susanoo
             }
 
             return exportDictionary;
+        }
+
+        /// <summary>
+        /// Maps the declarative properties.
+        /// </summary>
+        protected virtual void MapDeclarativeProperties()
+        {
+            foreach (var item in CommandManager.Instance.Container.Resolve<IPropertyMetadataExtractor>()
+                .FindPropertiesFromFilter(typeof(TResult), Susanoo.DescriptorActions.Read))
+            {
+                mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.DatabaseName));
+            }
         }
     }
 }

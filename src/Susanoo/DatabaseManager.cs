@@ -13,8 +13,8 @@ namespace Susanoo
     public class DatabaseManager : IDatabaseManager, IDisposable
     {
         private readonly string _ConnectionString;
-        private IDbConnection _Connection;
         private readonly Action<IDbCommand> providerSpecificCommandSettings;
+        private IDbConnection _Connection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
@@ -80,6 +80,52 @@ namespace Susanoo
         protected DbProviderFactory Provider { get; private set; }
 
         /// <summary>
+        /// Detects if a value is DBNull, null, or has value.
+        /// </summary>
+        /// <param name="newType">The new type.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
+        /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
+        public static object CastValue(Type newType, object value, object defaultValue, string typeName)
+        {
+            object returnValue;
+
+            if (value is DBNull || value == null)
+                returnValue = defaultValue;
+            else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
+                returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
+            else if (newType == typeof(int) && value.GetType() == typeof(long))
+                returnValue = ((object)((int)((long)value)));
+            else if (newType == typeof(int) && value.GetType() == typeof(decimal))
+                returnValue = ((object)((int)((decimal)value)));
+            else if (newType == typeof(string))
+            {
+                returnValue = value.ToString();
+
+                if (!string.IsNullOrEmpty(typeName))
+                    if (typeName == "date")
+                        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
+            }
+            else
+                returnValue = value;
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Casts the value.
+        /// </summary>
+        /// <param name="newType">The new type.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns>System.Object.</returns>
+        public static object CastValue(Type newType, object value, object defaultValue)
+        {
+            return CastValue(newType, value, defaultValue, null);
+        }
+
+        /// <summary>
         /// Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
@@ -129,16 +175,6 @@ namespace Susanoo
                 results = this.ExecuteDataReader(commandText, commandType, parameters);
 
             return results;
-        }
-
-        /// <summary>
-        /// Adjusts the command by provider.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        protected virtual void CallProviderSpecificCommandSettings(IDbCommand command)
-        {
-            if (this.providerSpecificCommandSettings != null)
-                this.providerSpecificCommandSettings(command);
         }
 
         /// <summary>
@@ -226,52 +262,6 @@ namespace Susanoo
                 if (transaction == null)
                     this.CloseConnection();
             }
-        }
-
-        /// <summary>
-        /// Detects if a value is DBNull, null, or has value.
-        /// </summary>
-        /// <param name="newType">The new type.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
-        /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
-        public static object CastValue(Type newType, object value, object defaultValue, string typeName)
-        {
-            object returnValue;
-
-            if (value is DBNull || value == null)
-                returnValue = defaultValue;
-            else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
-                returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
-            else if (newType == typeof(int) && value.GetType() == typeof(long))
-                returnValue = ((object)((int)((long)value)));
-            else if (newType == typeof(int) && value.GetType() == typeof(decimal))
-                returnValue = ((object)((int)((decimal)value)));
-            else if (newType == typeof(string))
-            {
-                returnValue = value.ToString();
-
-                if (!string.IsNullOrEmpty(typeName))
-                    if (typeName == "date")
-                        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
-            }
-            else
-                returnValue = value;
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Casts the value.
-        /// </summary>
-        /// <param name="newType">The new type.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <returns>System.Object.</returns>
-        public static object CastValue(Type newType, object value, object defaultValue)
-        {
-            return CastValue(newType, value, defaultValue, null);
         }
 
         /// <summary>
@@ -389,6 +379,16 @@ namespace Susanoo
         {
             this.OpenConnection();
             return this.Connection.BeginTransaction();
+        }
+
+        /// <summary>
+        /// Adjusts the command by provider.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        protected virtual void CallProviderSpecificCommandSettings(IDbCommand command)
+        {
+            if (this.providerSpecificCommandSettings != null)
+                this.providerSpecificCommandSettings(command);
         }
 
         /// <summary>

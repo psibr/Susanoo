@@ -78,7 +78,6 @@
     <Compile Include="IPropertyMetadataExtractor.cs" />
     <Compile Include="ComponentModelMetadataExtractor.cs" />
     <Compile Include="DescriptorActions.cs" />
-    <Compile Include="IDataRecordValueProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyMap.cs" />
     <Compile Include="PropertyMappingConfiguration.cs" />

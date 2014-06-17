@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
@@ -13,6 +9,10 @@ namespace Susanoo
         : IPropertyMappingConfiguration<TRecord>
         where TRecord : IDataRecord
     {
+        private Expression<Func<TRecord, string, bool>> MapOnCondition = (record, name) => HasColumn(record, name);
+
+        private Expression<Func<Type, object, object, object>> conversionProcess = (type, value, defaultValue) => DatabaseManager.CastValue(type, value, defaultValue);
+
         public PropertyMappingConfiguration(PropertyInfo propertyInfo)
         {
             this.PropertyMetadata = propertyInfo;
@@ -21,7 +21,7 @@ namespace Susanoo
 
         public PropertyInfo PropertyMetadata { get; private set; }
 
-        private Expression<Func<TRecord, string, bool>> MapOnCondition = (record, name) => HasColumn(record, name);
+        public string ReturnName { get; private set; }
 
         public static bool HasColumn(TRecord record, string name)
         {
@@ -38,9 +38,6 @@ namespace Susanoo
 
             return map;
         }
-
-        private Expression<Func<Type, object, object, object>> conversionProcess = (type, value, defaultValue) => DatabaseManager.CastValue(type, value, defaultValue);
-        public string ReturnName { get; private set; }
 
         /// <summary>
         /// Maps the property conditionally.
@@ -87,7 +84,7 @@ namespace Susanoo
         public Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property)
         {
             ParameterExpression recordParam = Expression.Parameter(typeof(TRecord), "record");
-            
+
             var assignmentExpression =
                 Expression.Lambda<Action<IDataRecord>>(
                     Expression.Block(

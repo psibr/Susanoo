@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Data;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+
 namespace Susanoo
 {
     public sealed class CommandManager
     {
+        /// <summary>
+        /// The expression assembly
+        /// </summary>
+        public AssemblyBuilder expressionAssembly = AppDomain.CurrentDomain
+            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
+
         /// <summary>
         /// The synchronization root.
         /// </summary>
@@ -16,6 +22,8 @@ namespace Susanoo
         /// The instance
         /// </summary>
         private static CommandManager _Instance;
+
+        private ModuleBuilder _moduleBuilder;
 
         /// <summary>
         /// Prevents a default instance of the <see cref="CommandManager" /> class from being created.
@@ -32,13 +40,44 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Registers the database manager.
+        /// Gets the instance.
         /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        public static void RegisterDatabaseManager(IDatabaseManager databaseManager)
+        /// <value>The instance.</value>
+        public static CommandManager Instance
         {
-            CommandManager.Instance.Container.Register<IDatabaseManager>(databaseManager);
+            get
+            {
+                //Perform double-checked singleton instantiation for thread synchronization.
+                if (_Instance == null)
+                {
+                    lock (syncRoot)
+                    {
+                        if (_Instance == null)
+                            _Instance = new CommandManager();
+                    }
+                }
+
+                return _Instance;
+            }
         }
+
+        /// <summary>
+        /// Gets the dynamic namespace.
+        /// </summary>
+        /// <value>The dynamic namespace.</value>
+        public ModuleBuilder DynamicNamespace
+        {
+            get
+            {
+                return this._moduleBuilder;
+            }
+        }
+
+        /// <summary>
+        /// Gets the IoC container.
+        /// </summary>
+        /// <value>The container.</value>
+        public TinyIoC.TinyIoCContainer Container { get; private set; }
 
         /// <summary>
         /// Gets the database manager.
@@ -64,53 +103,14 @@ namespace Susanoo
             }
         }
 
-        private ModuleBuilder _moduleBuilder;
-
         /// <summary>
-        /// Gets the dynamic namespace.
+        /// Registers the database manager.
         /// </summary>
-        /// <value>The dynamic namespace.</value>
-        public ModuleBuilder DynamicNamespace
+        /// <param name="databaseManager">The database manager.</param>
+        public static void RegisterDatabaseManager(IDatabaseManager databaseManager)
         {
-            get
-            {
-                return this._moduleBuilder;
-            }
+            CommandManager.Instance.Container.Register<IDatabaseManager>(databaseManager);
         }
-
-        /// <summary>
-        /// The expression assembly
-        /// </summary>
-        public AssemblyBuilder expressionAssembly = AppDomain.CurrentDomain
-            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
-
-        /// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>The instance.</value>
-        public static CommandManager Instance
-        {
-            get
-            {
-                //Perform double-checked singleton instantiation for thread synchronization.
-                if (_Instance == null)
-                {
-                    lock (syncRoot)
-                    {
-                        if (_Instance == null)
-                            _Instance = new CommandManager();
-                    }
-                }
-
-                return _Instance;
-            }
-        }
-
-        /// <summary>
-        /// Gets the IoC container.
-        /// </summary>
-        /// <value>The container.</value>
-        public TinyIoC.TinyIoCContainer Container { get; private set; }
 
         /// <summary>
         /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
@@ -120,7 +120,7 @@ namespace Susanoo
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public static ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, CommandType commandType) 
+        public static ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, CommandType commandType)
             where TResult : new()
         {
             return CommandManager.Commander.DefineCommand<TFilter, TResult>(commandText, commandType);

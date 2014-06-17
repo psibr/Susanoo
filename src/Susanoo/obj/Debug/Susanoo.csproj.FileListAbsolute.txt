@@ -7,3 +7,7 @@ C:\Development\M2\OneEightyMedical\Orochi\Susanoo\bin\Debug\Susanoo.pdb
 C:\Development\M2\OneEightyMedical\Orochi\Susanoo\obj\Debug\Susanoo.dll
 C:\Development\M2\OneEightyMedical\Orochi\Susanoo\obj\Debug\Susanoo.pdb
 C:\Users\DonovanCrone\Desktop\Susanoo\Susanoo\obj\Debug\Susanoo.csprojResolveAssemblyReference.cache
+C:\GitHub\Susanoo\src\Susanoo\obj\Debug\Susanoo.dll
+C:\GitHub\Susanoo\src\Susanoo\obj\Debug\Susanoo.pdb
+C:\GitHub\Susanoo\src\Susanoo\bin\Debug\Susanoo.dll
+C:\GitHub\Susanoo\src\Susanoo\bin\Debug\Susanoo.pdb

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
@@ -27,6 +25,24 @@ namespace Susanoo
             this.CommandText = commandText;
             this.DbCommandType = commandType;
         }
+
+        /// <summary>
+        /// Gets the command text.
+        /// </summary>
+        /// <value>The command text.</value>
+        public string CommandText { get; private set; }
+
+        /// <summary>
+        /// Gets the type of the database command.
+        /// </summary>
+        /// <value>The type of the database command.</value>
+        public CommandType DbCommandType { get; private set; }
+
+        /// <summary>
+        /// Gets the database manager.
+        /// </summary>
+        /// <value>The database manager.</value>
+        public IDatabaseManager DatabaseManager { get; private set; }
 
         /// <summary>
         /// Includes the property.
@@ -154,7 +170,7 @@ namespace Susanoo
                 param.ParameterName = item.Key;
                 param.Direction = ParameterDirection.Input;
 
-                if(item.Value != null)
+                if (item.Value != null)
                     item.Value.Invoke(param);
 
                 param.Value = propInfo.GetValue(filter);
@@ -162,23 +178,5 @@ namespace Susanoo
                 yield return param;
             }
         }
-
-        /// <summary>
-        /// Gets the command text.
-        /// </summary>
-        /// <value>The command text.</value>
-        public string CommandText { get; private set; }
-
-        /// <summary>
-        /// Gets the type of the database command.
-        /// </summary>
-        /// <value>The type of the database command.</value>
-        public CommandType DbCommandType { get; private set; }
-
-        /// <summary>
-        /// Gets the database manager.
-        /// </summary>
-        /// <value>The database manager.</value>
-        public IDatabaseManager DatabaseManager { get; private set; }
     }
 }

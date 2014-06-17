@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Susanoo
+﻿namespace Susanoo
 {
     public class CommandBuilder : ICommandExpressionBuilder
     {
-
         /// <summary>
         /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
         /// </summary>

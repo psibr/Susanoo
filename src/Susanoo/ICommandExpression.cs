@@ -9,16 +9,28 @@ namespace Susanoo
         where TResult : new()
     {
         /// <summary>
-        /// Builds the parameters.
-        /// </summary>
-        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters);
-
-        /// <summary>
         /// Gets the database manager.
         /// </summary>
         /// <value>The database manager.</value>
         IDatabaseManager DatabaseManager { get; }
+
+        /// <summary>
+        /// Gets the command text.
+        /// </summary>
+        /// <value>The command text.</value>
+        string CommandText { get; }
+
+        /// <summary>
+        /// Gets the type of the database command.
+        /// </summary>
+        /// <value>The type of the database command.</value>
+        CommandType DbCommandType { get; }
+
+        /// <summary>
+        /// Builds the parameters.
+        /// </summary>
+        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters);
 
         /// <summary>
         /// Includes the property.
@@ -67,7 +79,6 @@ namespace Susanoo
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         ICommandExpression<TFilter, TResult> ExcludeProperty(Expression<Func<TFilter, object>> propertyExpression);
 
-
         /// <summary>
         /// Excludes the property.
         /// </summary>
@@ -80,18 +91,6 @@ namespace Susanoo
         /// </summary>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         ICommandResultMappingExpression<TFilter, TResult> DefineResultMappings();
-
-        /// <summary>
-        /// Gets the command text.
-        /// </summary>
-        /// <value>The command text.</value>
-        string CommandText { get; }
-
-        /// <summary>
-        /// Gets the type of the database command.
-        /// </summary>
-        /// <value>The type of the database command.</value>
-        CommandType DbCommandType { get; }
     }
 
     public interface ICommandExpression<TResult>
@@ -103,6 +102,12 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns>ICommandExpression.</returns>
         ICommandExpression<TResult> AddParameters(params IDbDataParameter[] parameters);
+
+        /// <summary>
+        /// Builds the parameters.
+        /// </summary>
+        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        IEnumerable<IDbDataParameter> BuildParameters(params IDbDataParameter[] explicitParameters);
 
         /// <summary>
         /// Defines the result mappings.

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Helpful Expression extension methods
+    /// </summary>
     internal static class ExpressionExtensions
     {
         /// <summary>
@@ -21,6 +20,5 @@ namespace Susanoo
         {
             return ((MemberExpression)propertySelector.Body).Member.Name;
         }
-
     }
 }

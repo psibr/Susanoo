@@ -22,7 +22,13 @@ namespace Susanoo
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">filterType</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-        public Dictionary<PropertyInfo, PropertyMap> FindPropertiesFromFilter(Type filterType, Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read | Susanoo.DescriptorActions.Update | Susanoo.DescriptorActions.Insert, string[] whitelist = null, string[] blacklist = null)
+        public Dictionary<PropertyInfo, PropertyMap> FindPropertiesFromFilter(
+            Type filterType,
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read 
+                | Susanoo.DescriptorActions.Update 
+                | Susanoo.DescriptorActions.Insert,
+            string[] whitelist = null,
+            string[] blacklist = null)
         {
             if (filterType == null)
                 throw new ArgumentNullException("filterType");
@@ -105,7 +111,14 @@ namespace Susanoo
         /// or
         /// customAttributes
         /// </exception>
-        public virtual bool IsActionableProperty(PropertyInfo propertyInfo, object[] customAttributes, Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read | Susanoo.DescriptorActions.Update | Susanoo.DescriptorActions.Insert, string[] whitelist = null, string[] blacklist = null)
+        public virtual bool IsActionableProperty(
+            PropertyInfo propertyInfo,
+            object[] customAttributes,
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read 
+                | Susanoo.DescriptorActions.Update 
+                | Susanoo.DescriptorActions.Insert,
+            string[] whitelist = null,
+            string[] blacklist = null)
         {
             if (propertyInfo == null)
                 throw new ArgumentNullException("propertyInfo");
@@ -132,7 +145,12 @@ namespace Susanoo
         /// <param name="attribute">The attribute.</param>
         /// <param name="actions">The actions.</param>
         /// <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
-        public virtual bool IsAllowedByAttribute(PropertyInfo propertyInfo, AllowedActionsAttribute attribute, Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read | Susanoo.DescriptorActions.Update | Susanoo.DescriptorActions.Insert)
+        public virtual bool IsAllowedByAttribute(
+            PropertyInfo propertyInfo,
+            AllowedActionsAttribute attribute,
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read 
+                | Susanoo.DescriptorActions.Update 
+                | Susanoo.DescriptorActions.Insert)
         {
             return attribute == null || attribute.Actions == actions;
         }

@@ -9,6 +9,12 @@ namespace Susanoo
         where TResult : new()
     {
         /// <summary>
+        /// Gets the command expression.
+        /// </summary>
+        /// <value>The command expression.</value>
+        ICommandExpression<TFilter, TResult> CommandExpression { get; }
+
+        /// <summary>
         /// Clears the result mappings.
         /// </summary>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
@@ -38,12 +44,6 @@ namespace Susanoo
         ICommandProcessor<TFilter, TResult> PrepareCommand();
 
         /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        ICommandExpression<TFilter, TResult> CommandExpression { get; }
-
-        /// <summary>
         /// Exports this instance.
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
@@ -53,6 +53,12 @@ namespace Susanoo
     public interface ICommandResultMappingExpression<TResult>
         where TResult : new()
     {
+        /// <summary>
+        /// Gets the command expression.
+        /// </summary>
+        /// <value>The command expression.</value>
+        ICommandExpression<TResult> CommandExpression { get; }
+
         /// <summary>
         /// Clears the result mappings.
         /// </summary>
@@ -73,12 +79,6 @@ namespace Susanoo
         /// </summary>
         /// <returns>ICommandProcessor&lt;TResult&gt;.</returns>
         ICommandProcessor<TResult> PrepareCommand();
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        ICommandExpression<TResult> CommandExpression { get; }
 
         /// <summary>
         /// Exports this instance.

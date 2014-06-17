@@ -4,8 +4,6 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
@@ -15,13 +13,36 @@ namespace Susanoo
     {
         public CommandResultMappingExpression<TFilter, TResult> mappingExpressions;
 
-        public Func<IDataRecord, object> CompiledMapping { get; private set; }
-
         public CommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
         {
             this.mappingExpressions = mappings;
 
             this.CompiledMapping = CompileMappings();
+        }
+
+        public Func<IDataRecord, object> CompiledMapping { get; private set; }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public virtual IEnumerable<TResult> Execute(TFilter filter, params IDbDataParameter[] explicitParameters)
+        {
+            var results = new List<TResult>();
+
+            ICommandExpression<TFilter, TResult> commandExpression = this.mappingExpressions.CommandExpression;
+
+            using (IDataReader record = commandExpression.DatabaseManager
+                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DbCommandType, null, commandExpression.BuildParameters(filter, explicitParameters).ToArray()))
+            {
+                while (record.Read())
+                {
+                    results.Add((TResult)CompiledMapping.Invoke(record));
+                }
+            }
+
+            return results;
         }
 
         protected virtual Func<IDataRecord, object> CompileMappings()
@@ -72,29 +93,6 @@ namespace Susanoo
             Type dynamicType = type.CreateType();
 
             return (Func<IDataRecord, object>)Delegate.CreateDelegate(typeof(Func<IDataRecord, object>), dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
-        }
-
-        /// <summary>
-        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public virtual IEnumerable<TResult> Execute(TFilter filter, params IDbDataParameter[] explicitParameters)
-        {
-            var results = new List<TResult>();
-
-            ICommandExpression<TFilter, TResult> commandExpression = this.mappingExpressions.CommandExpression;
-
-            using(IDataReader record = commandExpression.DatabaseManager
-                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DbCommandType, null, commandExpression.BuildParameters(filter, explicitParameters).ToArray()))
-            {
-                while(record.Read())
-                {
-                    results.Add((TResult)CompiledMapping.Invoke(record));
-                }
-            }
-
-            return results;
         }
     }
 }

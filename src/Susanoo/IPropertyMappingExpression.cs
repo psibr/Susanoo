@@ -9,6 +9,18 @@ namespace Susanoo
         where TRecord : IDataRecord
     {
         /// <summary>
+        /// Gets the property metadata.
+        /// </summary>
+        /// <value>The property metadata.</value>
+        PropertyInfo PropertyMetadata { get; }
+
+        /// <summary>
+        /// Gets or sets the name of the return column.
+        /// </summary>
+        /// <value>The name of the return.</value>
+        string ReturnName { get; }
+
+        /// <summary>
         /// Maps the property conditionally.
         /// </summary>
         /// <param name="condition">The condition.</param>
@@ -36,17 +48,5 @@ namespace Susanoo
         /// </summary>
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
         Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property);
-
-        /// <summary>
-        /// Gets the property metadata.
-        /// </summary>
-        /// <value>The property metadata.</value>
-        PropertyInfo PropertyMetadata { get; }
-
-        /// <summary>
-        /// Gets or sets the name of the return column.
-        /// </summary>
-        /// <value>The name of the return.</value>
-        string ReturnName { get; }
     }
 }

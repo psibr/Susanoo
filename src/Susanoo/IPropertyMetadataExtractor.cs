@@ -14,7 +14,13 @@ namespace Susanoo
         /// <param name="actions">The actions which qualify the search for properties. Default: Read, Update, and Insert</param>
         /// <param name="whitelist">The white list. Default: null</param>
         /// <param name="blacklist">The black list. Default: null</param>
-        Dictionary<PropertyInfo, PropertyMap> FindPropertiesFromFilter(Type filterType, Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read | Susanoo.DescriptorActions.Update | Susanoo.DescriptorActions.Insert, string[] whitelist = null, string[] blacklist = null);
+        Dictionary<PropertyInfo, PropertyMap> FindPropertiesFromFilter(
+            Type filterType,
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
+                | Susanoo.DescriptorActions.Update
+                | Susanoo.DescriptorActions.Insert,
+            string[] whitelist = null,
+            string[] blacklist = null);
 
         /// <summary>
         /// Determines whether the specified property is actionable.
@@ -22,7 +28,14 @@ namespace Susanoo
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
         /// <param name="actions">The actions.</param>
-        bool IsActionableProperty(PropertyInfo propertyInfo, object[] customAttributes, Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read | Susanoo.DescriptorActions.Update | Susanoo.DescriptorActions.Insert, string[] whitelist = null, string[] blacklist = null);
+        bool IsActionableProperty(
+            PropertyInfo propertyInfo,
+            object[] customAttributes,
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
+                | Susanoo.DescriptorActions.Update
+                | Susanoo.DescriptorActions.Insert,
+            string[] whitelist = null,
+            string[] blacklist = null);
 
         /// <summary>
         /// Determines whether the specified property is restricted declaratively.
@@ -31,7 +44,12 @@ namespace Susanoo
         /// <param name="attribute">The attribute.</param>
         /// <param name="actions">The actions.</param>
         /// <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
-        bool IsAllowedByAttribute(PropertyInfo propertyInfo, AllowedActionsAttribute attribute, Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read | Susanoo.DescriptorActions.Update | Susanoo.DescriptorActions.Insert);
+        bool IsAllowedByAttribute(
+            PropertyInfo propertyInfo,
+            AllowedActionsAttribute attribute,
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
+                | Susanoo.DescriptorActions.Update
+                | Susanoo.DescriptorActions.Insert);
 
         /// <summary>
         /// Determines whether the specified property is blacklisted.
