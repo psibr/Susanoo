@@ -11,7 +11,10 @@ namespace Susanoo
         : ICommandProcessor<TFilter, TResult>
         where TResult : new()
     {
-        public CommandResultMappingExpression<TFilter, TResult> mappingExpressions;
+        /// <summary>
+        /// The mapping expressions before compilation.
+        /// </summary>
+        protected CommandResultMappingExpression<TFilter, TResult> mappingExpressions;
 
         public CommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
         {
@@ -20,7 +23,7 @@ namespace Susanoo
             this.CompiledMapping = CompileMappings();
         }
 
-        public Func<IDataRecord, object> CompiledMapping { get; private set; }
+        protected Func<IDataRecord, object> CompiledMapping { get; private set; }
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -45,6 +48,10 @@ namespace Susanoo
             return results;
         }
 
+        /// <summary>
+        /// Compiles the mappings.
+        /// </summary>
+        /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         protected virtual Func<IDataRecord, object> CompileMappings()
         {
             var mappings = this.mappingExpressions.Export();
