@@ -1,0 +1,9 @@
+C:\Users\DonovanCrone\Desktop\Susanoo\Susanoo\bin\Debug\Susanoo.dll
+C:\Users\DonovanCrone\Desktop\Susanoo\Susanoo\bin\Debug\Susanoo.pdb
+C:\Users\DonovanCrone\Desktop\Susanoo\Susanoo\obj\Debug\Susanoo.dll
+C:\Users\DonovanCrone\Desktop\Susanoo\Susanoo\obj\Debug\Susanoo.pdb
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\bin\Debug\Susanoo.dll
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\bin\Debug\Susanoo.pdb
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\obj\Debug\Susanoo.dll
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\obj\Debug\Susanoo.pdb
+C:\Users\DonovanCrone\Desktop\Susanoo\Susanoo\obj\Debug\Susanoo.csprojResolveAssemblyReference.cache

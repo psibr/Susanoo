@@ -1,0 +1,6 @@
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\bin\DebugDeploy\Susanoo.dll
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\bin\DebugDeploy\Susanoo.pdb
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\obj\DebugDeploy\Susanoo.dll
+C:\Development\M2\OneEightyMedical\Orochi\Susanoo\obj\DebugDeploy\Susanoo.pdb
+C:\Development\M2\OneEightyMedical\libs\Susanoo.dll
+C:\Development\M2\OneEightyMedical\libs\Susanoo.pdb
