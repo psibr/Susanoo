@@ -84,6 +84,7 @@ namespace Susanoo
         public ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions)
         {
             this.threadSync.EnterWriteLock();
+            //TODO: Check for existing parameter inclusion and modify instead.
             this.parameterInclusions.Add(propertyName, parameterOptions);
             this.threadSync.ExitWriteLock();
 
@@ -95,7 +96,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> AddParameters(params IDbDataParameter[] parameters)
+        public ICommandExpression<TFilter, TResult> AddConstantParameters(params IDbDataParameter[] parameters)
         {
             this.threadSync.EnterWriteLock();
             this.explicitParameters.AddRange(parameters);
@@ -105,17 +106,17 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Excludes the property.
+        /// Excludes a property.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
-        /// <returns>Susanoo.ICommandExpression&lt;TFilter,TResult&gt;.</returns>
+        /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         public ICommandExpression<TFilter, TResult> ExcludeProperty(Expression<Func<TFilter, object>> propertyExpression)
         {
             return ExcludeProperty(propertyExpression.GetPropertyName());
         }
 
         /// <summary>
-        /// Excludes the property.
+        /// Excludes a property.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -143,6 +144,8 @@ namespace Susanoo
         /// <summary>
         /// Builds the parameters.
         /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
         /// <exception cref="NotImplementedException"></exception>
         public IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters)
