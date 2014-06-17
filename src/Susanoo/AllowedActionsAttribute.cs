@@ -34,6 +34,6 @@ namespace Susanoo
         /// <value>
         /// The actions allowed.
         /// </value>
-        public Susanoo.DescriptorActions Actions { get; private set; }
+        public DescriptorActions Actions { get; private set; }
     }
 }
