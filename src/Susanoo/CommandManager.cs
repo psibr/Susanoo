@@ -23,10 +23,6 @@ namespace Susanoo
             {
                 return _expressionAssembly;
             }
-            private set
-            {
-                _expressionAssembly = value;
-            }
         }
 
         /// <summary>

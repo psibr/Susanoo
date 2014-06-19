@@ -1,18 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Susanoo.Core
-// Author           : Donovan Crone
-// Created          : 05-15-2014
-//
-// Last Modified By : Donovan Crone
-// Last Modified On : 05-15-2014
-// ***********************************************************************
-// <copyright file="IDatabaseManager.cs" company="Psibernetic Solutions, LLC">
-//     Copyright (c) Psibernetic Solutions, LLC. All rights reserved.
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-using System;
-using System.Data;
+﻿using System.Data;
 
 namespace Susanoo
 {

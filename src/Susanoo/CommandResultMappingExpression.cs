@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
-using System.Threading;
 
 namespace Susanoo
 {
@@ -48,7 +47,7 @@ namespace Susanoo
         /// <summary>
         /// Mapping options for a property in the result model.
         /// </summary>
-        /// <param name="property">The property.</param>
+        /// <param name="propertyExpression">The property expression.</param>
         /// <param name="options">The options.</param>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]

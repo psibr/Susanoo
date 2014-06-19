@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading;
 
 namespace Susanoo
 {
@@ -17,12 +16,14 @@ namespace Susanoo
         where TResult : new()
     {
         private readonly IDictionary<string, Action<IDbDataParameter>> parameterInclusions = new Dictionary<string, Action<IDbDataParameter>>();
-        private readonly List<IDbDataParameter> explicitParameters = new List<IDbDataParameter>();
+        private readonly List<IDbDataParameter> constantParameters = new List<IDbDataParameter>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}"/> class.
+        /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
         public CommandExpression(IDatabaseManager databaseManager, string commandText, CommandType commandType)
         {
             this.DatabaseManager = databaseManager;
@@ -57,7 +58,6 @@ namespace Susanoo
         {
             return IncludeProperty(propertyExpression, null);
         }
-
 
         /// <summary>
         /// Includes a property of the filter or modifies its inclusion.
@@ -101,7 +101,7 @@ namespace Susanoo
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
         public virtual ICommandExpression<TFilter, TResult> AddConstantParameters(params IDbDataParameter[] parameters)
         {
-            this.explicitParameters.AddRange(parameters);
+            this.constantParameters.AddRange(parameters);
 
             return this;
         }
@@ -148,7 +148,7 @@ namespace Susanoo
         {
             List<IDbDataParameter> parameters = BuildPropertyParameters(filter).ToList();
 
-            parameters.AddRange(this.explicitParameters);
+            parameters.AddRange(this.constantParameters);
             parameters.AddRange(explicitParameters);
 
             return parameters;

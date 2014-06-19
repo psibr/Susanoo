@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Globalization;
 
 namespace Susanoo
 {
@@ -60,6 +60,7 @@ namespace Susanoo
         /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         public virtual IEnumerable<TResult> Execute(TFilter filter, params IDbDataParameter[] explicitParameters)
         {

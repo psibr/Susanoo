@@ -50,8 +50,8 @@ namespace Susanoo
         /// <summary>
         /// Assembles the mapping expression.
         /// </summary>
-        /// <param name="property">The property.</param>
+        /// <param name="propertyExpression">The property.</param>
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
-        Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property);
+        Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression propertyExpression);
     }
 }

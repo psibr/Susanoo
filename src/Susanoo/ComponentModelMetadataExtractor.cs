@@ -24,14 +24,14 @@ namespace Susanoo
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public Dictionary<PropertyInfo, PropertyMap> FindAllowedProperties(
             Type objectType,
-            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read 
-                | Susanoo.DescriptorActions.Update 
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
+                | Susanoo.DescriptorActions.Update
                 | Susanoo.DescriptorActions.Insert,
             string[] whitelist = null,
             string[] blacklist = null)
         {
             if (objectType == null)
-                throw new ArgumentNullException("filterType");
+                throw new ArgumentNullException("objectType");
 
             Contract.EndContractBlock();
 
@@ -56,9 +56,14 @@ namespace Susanoo
         /// <returns>System.String.</returns>
         public virtual string ResolveAlias(PropertyInfo propertyInfo, object[] customAttributes)
         {
-            ColumnAttribute column = customAttributes
+            if (propertyInfo == null)
+                throw new ArgumentNullException("propertyInfo");
+
+            Contract.EndContractBlock();
+
+            ColumnAttribute column = customAttributes != null ? customAttributes
                 .OfType<ColumnAttribute>()
-                .FirstOrDefault();
+                .FirstOrDefault() : null;
 
             return column != null && !string.IsNullOrWhiteSpace(column.Name) ? column.Name : propertyInfo.Name;
         }
@@ -114,8 +119,8 @@ namespace Susanoo
         public virtual bool IsActionableProperty(
             PropertyInfo propertyInfo,
             object[] customAttributes,
-            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read 
-                | Susanoo.DescriptorActions.Update 
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
+                | Susanoo.DescriptorActions.Update
                 | Susanoo.DescriptorActions.Insert,
             string[] whitelist = null,
             string[] blacklist = null)
@@ -148,8 +153,8 @@ namespace Susanoo
         public virtual bool IsAllowedByAttribute(
             PropertyInfo propertyInfo,
             AllowedActionsAttribute attribute,
-            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read 
-                | Susanoo.DescriptorActions.Update 
+            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
+                | Susanoo.DescriptorActions.Update
                 | Susanoo.DescriptorActions.Insert)
         {
             return attribute == null || attribute.Actions == actions;
