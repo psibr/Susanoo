@@ -1,5 +1,8 @@
 ﻿namespace Susanoo
 {
+    /// <summary>
+    /// Provides an entry point to defining commands and therein entering the Susanoo command Fluent API.
+    /// </summary>
     public interface ICommandExpressionBuilder
     {
         /// <summary>

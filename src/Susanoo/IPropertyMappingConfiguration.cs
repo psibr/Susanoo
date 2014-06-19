@@ -5,6 +5,10 @@ using System.Reflection;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Allows configuration of the Susanoo mapper at the property level during command definition.
+    /// </summary>
+    /// <typeparam name="TRecord">The type of the record.</typeparam>
     public interface IPropertyMappingConfiguration<TRecord>
         where TRecord : IDataRecord
     {
@@ -18,7 +22,7 @@ namespace Susanoo
         /// Gets or sets the name of the return column.
         /// </summary>
         /// <value>The name of the return.</value>
-        string ReturnName { get; }
+        string ActiveAlias { get; }
 
         /// <summary>
         /// Maps the property conditionally.
@@ -33,12 +37,12 @@ namespace Susanoo
         /// </summary>
         /// <param name="alias">The alias.</param>
         /// <returns>Susanoo.ICommandResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
-        IPropertyMappingConfiguration<TRecord> AliasProperty(string propertyAlias);
+        IPropertyMappingConfiguration<TRecord> AliasProperty(string alias);
 
         /// <summary>
         /// Processes the value in some form before assignment.
         /// </summary>
-        /// <param name="process"></param>
+        /// <param name="process">The process.</param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         IPropertyMappingConfiguration<TRecord> ProcessValue(Expression<Func<Type, object, object, object>> process);
@@ -46,6 +50,7 @@ namespace Susanoo
         /// <summary>
         /// Assembles the mapping expression.
         /// </summary>
+        /// <param name="property">The property.</param>
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
         Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property);
     }

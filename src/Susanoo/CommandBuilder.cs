@@ -1,5 +1,8 @@
 ﻿namespace Susanoo
 {
+    /// <summary>
+    /// Provides an entry point to defining commands and therein entering the Susanoo command Fluent API.
+    /// </summary>
     public class CommandBuilder : ICommandExpressionBuilder
     {
         /// <summary>
@@ -10,7 +13,7 @@
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, System.Data.CommandType commandType)
+        public virtual ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, System.Data.CommandType commandType)
             where TResult : new()
         {
             return new CommandExpression<TFilter, TResult>(CommandManager.Instance.Container.Resolve<IDatabaseManager>(), commandText, commandType);
@@ -24,7 +27,7 @@
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public ICommandExpression<TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType) where TResult : new()
+        public virtual ICommandExpression<TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType) where TResult : new()
         {
             throw new System.NotImplementedException();
         }

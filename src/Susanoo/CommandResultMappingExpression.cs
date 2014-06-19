@@ -6,13 +6,21 @@ using System.Threading;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// A step in the command definition Fluent API, in which properties are mapped to potential result data.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public class CommandResultMappingExpression<TFilter, TResult>
         : ICommandResultMappingExpression<TFilter, TResult>
         where TResult : new()
     {
-        private readonly ReaderWriterLockSlim threadSync = new ReaderWriterLockSlim();
         private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions = new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultMappingExpression{TFilter, TResult}"/> class.
+        /// </summary>
+        /// <param name="commandExpression">The command expression.</param>
         public CommandResultMappingExpression(ICommandExpression<TFilter, TResult> commandExpression)
         {
             this.CommandExpression = commandExpression;
@@ -24,17 +32,15 @@ namespace Susanoo
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public ICommandExpression<TFilter, TResult> CommandExpression { get; private set; }
+        public virtual ICommandExpression<TFilter, TResult> CommandExpression { get; private set; }
 
         /// <summary>
         /// Clears the result mappings.
         /// </summary>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandResultMappingExpression<TFilter, TResult> ClearMappings()
+        public virtual ICommandResultMappingExpression<TFilter, TResult> ClearMappings()
         {
-            this.threadSync.EnterWriteLock();
             this.mappingActions.Clear();
-            this.threadSync.ExitWriteLock();
 
             return this;
         }
@@ -46,7 +52,7 @@ namespace Susanoo
         /// <param name="options">The options.</param>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public ICommandResultMappingExpression<TFilter, TResult> ForProperty(Expression<Func<TResult, object>> propertyExpression, Action<IPropertyMappingConfiguration<IDataRecord>> options)
+        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(Expression<Func<TResult, object>> propertyExpression, Action<IPropertyMappingConfiguration<IDataRecord>> options)
         {
             return ForProperty(propertyExpression.GetPropertyName(), options);
         }
@@ -57,11 +63,9 @@ namespace Susanoo
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="options">The options.</param>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandResultMappingExpression<TFilter, TResult> ForProperty(string propertyName, Action<IPropertyMappingConfiguration<IDataRecord>> options)
+        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(string propertyName, Action<IPropertyMappingConfiguration<IDataRecord>> options)
         {
-            this.threadSync.EnterWriteLock();
             this.mappingActions.Add(propertyName, options);
-            this.threadSync.ExitWriteLock();
 
             return this;
         }
@@ -70,7 +74,7 @@ namespace Susanoo
         /// Prepares the command for caching and executing.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult> PrepareCommand()
+        public virtual ICommandProcessor<TFilter, TResult> PrepareCommand()
         {
             return new CommandProcessor<TFilter, TResult>(this);
         }
@@ -80,7 +84,7 @@ namespace Susanoo
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export()
+        public virtual IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export()
         {
             var exportDictionary = new Dictionary<string, IPropertyMappingConfiguration<IDataRecord>>();
 
@@ -101,9 +105,9 @@ namespace Susanoo
         protected virtual void MapDeclarativeProperties()
         {
             foreach (var item in CommandManager.Instance.Container.Resolve<IPropertyMetadataExtractor>()
-                .FindPropertiesFromFilter(typeof(TResult), Susanoo.DescriptorActions.Read))
+                .FindAllowedProperties(typeof(TResult), Susanoo.DescriptorActions.Read))
             {
-                mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.DatabaseName));
+                mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.Alias));
             }
         }
     }

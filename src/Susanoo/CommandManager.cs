@@ -5,13 +5,29 @@ using System.Reflection.Emit;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// This class is used as the single entry point when dealing with Susanoo.
+    /// </summary>
     public sealed class CommandManager
     {
+        private AssemblyBuilder _expressionAssembly = AppDomain.CurrentDomain
+                    .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
+
         /// <summary>
-        /// The expression assembly
+        /// Gets the expression assembly that contains runtime compiled methods used for mappings.
         /// </summary>
-        public AssemblyBuilder expressionAssembly = AppDomain.CurrentDomain
-            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
+        /// <value>The expression assembly.</value>
+        public AssemblyBuilder ExpressionAssembly
+        {
+            get
+            {
+                return _expressionAssembly;
+            }
+            private set
+            {
+                _expressionAssembly = value;
+            }
+        }
 
         /// <summary>
         /// The synchronization root.
@@ -19,7 +35,7 @@ namespace Susanoo
         private static readonly object syncRoot = new object();
 
         /// <summary>
-        /// The instance
+        /// The singleton instance of CommandManager that contains the IoC container.
         /// </summary>
         private static CommandManager _Instance;
 
@@ -35,7 +51,7 @@ namespace Susanoo
             this.Container.Register<ICommandExpressionBuilder>(new CommandBuilder());
             this.Container.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
 
-            this._moduleBuilder = this.expressionAssembly
+            this._moduleBuilder = this.ExpressionAssembly
                     .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
         }
 

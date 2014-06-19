@@ -5,6 +5,11 @@ using System.Linq.Expressions;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Initial step in the command definition Fluent API, in which parameters and command information are provided.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface ICommandExpression<TFilter, TResult>
         where TResult : new()
     {
@@ -24,7 +29,7 @@ namespace Susanoo
         /// Gets the type of the database command.
         /// </summary>
         /// <value>The type of the database command.</value>
-        CommandType DbCommandType { get; }
+        CommandType DBCommandType { get; }
 
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).
@@ -33,7 +38,7 @@ namespace Susanoo
         IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters);
 
         /// <summary>
-        /// Includes a property.
+        /// Includes a property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
@@ -41,7 +46,7 @@ namespace Susanoo
         ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression);
 
         /// <summary>
-        /// Includes a property or modifies its inclusion.
+        /// Includes a property of the filter or modifies its inclusion.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="parameterOptions">The parameter options.</param>
@@ -50,14 +55,14 @@ namespace Susanoo
         ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions);
 
         /// <summary>
-        /// Includes a property.
+        /// Includes a property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
         ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName);
 
         /// <summary>
-        /// Includes a property or modifies its inclusion.
+        /// Includes a property of the filter or modifies its inclusion.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
@@ -72,7 +77,7 @@ namespace Susanoo
         ICommandExpression<TFilter, TResult> AddConstantParameters(params IDbDataParameter[] parameters);
 
         /// <summary>
-        /// Excludes a property.
+        /// Excludes a property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
@@ -80,7 +85,7 @@ namespace Susanoo
         ICommandExpression<TFilter, TResult> ExcludeProperty(Expression<Func<TFilter, object>> propertyExpression);
 
         /// <summary>
-        /// Excludes a property.
+        /// Excludes a property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -93,6 +98,10 @@ namespace Susanoo
         ICommandResultMappingExpression<TFilter, TResult> DefineResultMappings();
     }
 
+    /// <summary>
+    /// Susanoo's initial step in the command definition Fluent API, in which parameters and command information are provided.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface ICommandExpression<TResult>
         where TResult : new()
     {
@@ -112,7 +121,7 @@ namespace Susanoo
         /// Gets the type of the database command.
         /// </summary>
         /// <value>The type of the database command.</value>
-        CommandType DbCommandType { get; }
+        CommandType DBCommandType { get; }
 
         /// <summary>
         /// Adds parameters that will always use the same value.

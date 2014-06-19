@@ -3,6 +3,9 @@ using System.ComponentModel;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Allows declarative specification of when reading and writing to properties is allowed.
+    /// </summary>
     [ImmutableObject(true)]
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class AllowedActionsAttribute : Attribute

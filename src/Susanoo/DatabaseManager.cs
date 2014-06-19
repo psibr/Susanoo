@@ -20,11 +20,11 @@ namespace Susanoo
         /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
-        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <param name="connectionName">Name of the connection string.</param>
         /// <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
         /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
-        public DatabaseManager(DbProviderFactory provider, string connectionStringName, Action<IDbCommand> providerSpecificCommandSettings)
-            : this(provider, connectionStringName)
+        public DatabaseManager(DbProviderFactory provider, string connectionName, Action<IDbCommand> providerSpecificCommandSettings)
+            : this(provider, connectionName)
         {
             this.providerSpecificCommandSettings = providerSpecificCommandSettings;
         }
@@ -33,13 +33,13 @@ namespace Susanoo
         /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
-        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <param name="connectionName">Name of the connection string.</param>
         /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
-        public DatabaseManager(DbProviderFactory provider, string connectionStringName)
+        public DatabaseManager(DbProviderFactory provider, string connectionName)
         {
             this.Provider = provider;
 
-            this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+            this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionName]
             .ConnectionString;
         }
 
@@ -57,7 +57,7 @@ namespace Susanoo
         /// <value>
         /// The connection.
         /// </value>
-        protected IDbConnection Connection
+        protected virtual IDbConnection Connection
         {
             get
             {
@@ -394,7 +394,7 @@ namespace Susanoo
         /// <summary>
         /// Opens the connection.
         /// </summary>
-        protected void OpenConnection()
+        protected virtual void OpenConnection()
         {
             if (this.Connection.State != ConnectionState.Open)
                 this.Connection.Open();
@@ -403,7 +403,7 @@ namespace Susanoo
         /// <summary>
         /// Closes the connection.
         /// </summary>
-        protected void CloseConnection()
+        protected virtual void CloseConnection()
         {
             if (this.Connection.State != ConnectionState.Closed)
                 this.Connection.Close();

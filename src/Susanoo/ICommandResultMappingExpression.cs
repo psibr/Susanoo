@@ -5,6 +5,11 @@ using System.Linq.Expressions;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// A step in the command definition Fluent API, in which properties are mapped to potential result data.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface ICommandResultMappingExpression<TFilter, TResult>
         where TResult : new()
     {
@@ -23,7 +28,7 @@ namespace Susanoo
         /// <summary>
         /// Mapping options for a property in the result model.
         /// </summary>
-        /// <param name="property">The property.</param>
+        /// <param name="propertyExpression">The property expression.</param>
         /// <param name="options">The options.</param>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
@@ -50,6 +55,10 @@ namespace Susanoo
         IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export();
     }
 
+    /// <summary>
+    /// A step in the command definition Fluent API, in which properties are mapped to potential result data.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface ICommandResultMappingExpression<TResult>
         where TResult : new()
     {

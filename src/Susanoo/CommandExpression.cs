@@ -7,11 +7,15 @@ using System.Threading;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Susanoo's initial step in the command definition Fluent API, in which parameters and command information are provided.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public class CommandExpression<TFilter, TResult>
         : ICommandExpression<TFilter, TResult>
         where TResult : new()
     {
-        private readonly ReaderWriterLockSlim threadSync = new ReaderWriterLockSlim();
         private readonly IDictionary<string, Action<IDbDataParameter>> parameterInclusions = new Dictionary<string, Action<IDbDataParameter>>();
         private readonly List<IDbDataParameter> explicitParameters = new List<IDbDataParameter>();
 
@@ -23,132 +27,124 @@ namespace Susanoo
         {
             this.DatabaseManager = databaseManager;
             this.CommandText = commandText;
-            this.DbCommandType = commandType;
+            this.DBCommandType = commandType;
         }
 
         /// <summary>
         /// Gets the command text.
         /// </summary>
         /// <value>The command text.</value>
-        public string CommandText { get; private set; }
+        public virtual string CommandText { get; private set; }
 
         /// <summary>
         /// Gets the type of the database command.
         /// </summary>
         /// <value>The type of the database command.</value>
-        public CommandType DbCommandType { get; private set; }
+        public virtual CommandType DBCommandType { get; private set; }
 
         /// <summary>
         /// Gets the database manager.
         /// </summary>
         /// <value>The database manager.</value>
-        public IDatabaseManager DatabaseManager { get; private set; }
+        public virtual IDatabaseManager DatabaseManager { get; private set; }
 
         /// <summary>
-        /// Includes the property.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression)
+        public virtual ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression)
         {
             return IncludeProperty(propertyExpression, null);
         }
 
+
         /// <summary>
-        /// Includes the property.
+        /// Includes a property of the filter or modifies its inclusion.
         /// </summary>
-        /// <param name="propertyExpression">The property expression.</param>
+        /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
-        /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions)
+        /// <returns>ICommandExpression&lt;T&gt;.</returns>
+        public virtual ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions)
         {
             return IncludeProperty(propertyExpression.GetPropertyName(), parameterOptions);
         }
 
         /// <summary>
-        /// Includes the property.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName)
+        public virtual ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName)
         {
             return IncludeProperty(propertyName, null);
         }
 
         /// <summary>
-        /// Includes the property.
+        /// Includes a property of the filter or modifies its inclusion.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
-        /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions)
+        /// <returns>ICommandExpression&lt;T&gt;.</returns>
+        public virtual ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions)
         {
-            this.threadSync.EnterWriteLock();
             //TODO: Check for existing parameter inclusion and modify instead.
             this.parameterInclusions.Add(propertyName, parameterOptions);
-            this.threadSync.ExitWriteLock();
 
             return this;
         }
 
         /// <summary>
-        /// Adds the parameters explicitly.
+        /// Adds parameters that will always use the same value.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
-        /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> AddConstantParameters(params IDbDataParameter[] parameters)
+        /// <returns>ICommandExpression&lt;T&gt;.</returns>
+        public virtual ICommandExpression<TFilter, TResult> AddConstantParameters(params IDbDataParameter[] parameters)
         {
-            this.threadSync.EnterWriteLock();
             this.explicitParameters.AddRange(parameters);
-            this.threadSync.ExitWriteLock();
 
             return this;
         }
 
         /// <summary>
-        /// Excludes a property.
+        /// Excludes a property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> ExcludeProperty(Expression<Func<TFilter, object>> propertyExpression)
+        public virtual ICommandExpression<TFilter, TResult> ExcludeProperty(Expression<Func<TFilter, object>> propertyExpression)
         {
             return ExcludeProperty(propertyExpression.GetPropertyName());
         }
 
         /// <summary>
-        /// Excludes a property.
+        /// Excludes a property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> ExcludeProperty(string propertyName)
+        public virtual ICommandExpression<TFilter, TResult> ExcludeProperty(string propertyName)
         {
             if (this.parameterInclusions.ContainsKey(propertyName))
             {
-                this.threadSync.EnterWriteLock();
                 this.parameterInclusions.Remove(propertyName);
-                this.threadSync.ExitWriteLock();
             }
 
             return this;
         }
 
         /// <summary>
-        /// Defines the result mappings.
+        /// Defines the result mappings (Moves to next Step in Fluent API).
         /// </summary>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandResultMappingExpression<TFilter, TResult> DefineResultMappings()
+        public virtual ICommandResultMappingExpression<TFilter, TResult> DefineResultMappings()
         {
             return new CommandResultMappingExpression<TFilter, TResult>(this);
         }
 
         /// <summary>
-        /// Builds the parameters.
+        /// Builds the parameters (Not part of Fluent API).
         /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters)
+        public virtual IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters)
         {
             List<IDbDataParameter> parameters = BuildPropertyParameters(filter).ToList();
 
@@ -163,7 +159,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public IEnumerable<IDbDataParameter> BuildPropertyParameters(TFilter filter)
+        public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(TFilter filter)
         {
             foreach (var item in this.parameterInclusions)
             {

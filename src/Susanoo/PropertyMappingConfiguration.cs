@@ -5,6 +5,10 @@ using System.Reflection;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Allows configuration of the Susanoo mapper at the property level during command definition.
+    /// </summary>
+    /// <typeparam name="TRecord">The type of the record.</typeparam>
     public class PropertyMappingConfiguration<TRecord>
         : IPropertyMappingConfiguration<TRecord>
         where TRecord : IDataRecord
@@ -13,16 +17,34 @@ namespace Susanoo
 
         private Expression<Func<Type, object, object, object>> conversionProcess = (type, value, defaultValue) => DatabaseManager.CastValue(type, value, defaultValue);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyMappingConfiguration{TRecord}"/> class.
+        /// </summary>
+        /// <param name="propertyInfo">The property reflection meta data.</param>
         public PropertyMappingConfiguration(PropertyInfo propertyInfo)
         {
             this.PropertyMetadata = propertyInfo;
-            this.ReturnName = propertyInfo.Name;
+            this.ActiveAlias = propertyInfo.Name;
         }
 
+        /// <summary>
+        /// Gets the <c>PropertyInfo</c> that describes the property.
+        /// </summary>
+        /// <value>The property reflection meta data.</value>
         public PropertyInfo PropertyMetadata { get; private set; }
 
-        public string ReturnName { get; private set; }
+        /// <summary>
+        /// Gets the active alias of the property.
+        /// </summary>
+        /// <value>The active alias.</value>
+        public string ActiveAlias { get; private set; }
 
+        /// <summary>
+        /// Determines whether the specified record has a matching column.
+        /// </summary>
+        /// <param name="record">The record.</param>
+        /// <param name="name">The name of the column.</param>
+        /// <returns><c>true</c> if the specified record has a matching column; otherwise, <c>false</c>.</returns>
         public static bool HasColumn(TRecord record, string name)
         {
             bool map = false;
@@ -57,9 +79,9 @@ namespace Susanoo
         /// </summary>
         /// <param name="alias">The alias.</param>
         /// <returns>Susanoo.ICommandResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
-        public IPropertyMappingConfiguration<TRecord> AliasProperty(string propertyAlias)
+        public IPropertyMappingConfiguration<TRecord> AliasProperty(string alias)
         {
-            this.ReturnName = propertyAlias;
+            this.ActiveAlias = alias;
 
             return this;
         }
@@ -93,7 +115,7 @@ namespace Susanoo
                                 Expression.Invoke(
                                     this.MapOnCondition,
                                     recordParam,
-                                    Expression.Constant(this.ReturnName))),
+                                    Expression.Constant(this.ActiveAlias))),
                             Expression.Assign(
                                 property,
                                 Expression.Convert(
@@ -102,7 +124,7 @@ namespace Susanoo
                                         Expression.MakeIndex(recordParam, typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
                                                     new[]
                                                     {
-                                                        Expression.Constant(this.ReturnName)
+                                                        Expression.Constant(this.ActiveAlias)
                                                     }),
                                         Expression.Constant(null)),
                                     property.Type)))),

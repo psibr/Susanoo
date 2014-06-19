@@ -4,11 +4,11 @@ using System.Data;
 namespace Susanoo
 {
     /// <summary>
-    /// Represents a fully built and ready to be executed command expression with a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <remarks>Appropriate mapping expressions are compiled by the point this interface becomes available.</remarks>
+    /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult>
         where TResult : new()
     {
@@ -25,7 +25,7 @@ namespace Susanoo
     /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <remarks>Appropriate mapping expressions are compiled by the point this interface becomes available.</remarks>
+    /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TResult>
         where TResult : new()
     {

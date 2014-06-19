@@ -4,9 +4,16 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Globalization;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a filter parameter.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class CommandProcessor<TFilter, TResult>
         : ICommandProcessor<TFilter, TResult>
         where TResult : new()
@@ -14,15 +21,39 @@ namespace Susanoo
         /// <summary>
         /// The mapping expressions before compilation.
         /// </summary>
-        protected CommandResultMappingExpression<TFilter, TResult> mappingExpressions;
+        private CommandResultMappingExpression<TFilter, TResult> _mappingExpressions;
 
+        /// <summary>
+        /// Gets the mapping expressions.
+        /// </summary>
+        /// <value>The mapping expressions.</value>
+        protected virtual CommandResultMappingExpression<TFilter, TResult> MappingExpressions
+        {
+            get
+            {
+                return _mappingExpressions;
+            }
+            private set
+            {
+                _mappingExpressions = value;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandProcessor{TFilter, TResult}"/> class.
+        /// </summary>
+        /// <param name="mappings">The mappings.</param>
         public CommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
         {
-            this.mappingExpressions = mappings;
+            this.MappingExpressions = mappings;
 
             this.CompiledMapping = CompileMappings();
         }
 
+        /// <summary>
+        /// Gets the compiled mapping.
+        /// </summary>
+        /// <value>The compiled mapping.</value>
         protected Func<IDataRecord, object> CompiledMapping { get; private set; }
 
         /// <summary>
@@ -34,10 +65,10 @@ namespace Susanoo
         {
             var results = new List<TResult>();
 
-            ICommandExpression<TFilter, TResult> commandExpression = this.mappingExpressions.CommandExpression;
+            ICommandExpression<TFilter, TResult> commandExpression = this.MappingExpressions.CommandExpression;
 
             using (IDataReader record = commandExpression.DatabaseManager
-                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DbCommandType, null, commandExpression.BuildParameters(filter, explicitParameters).ToArray()))
+                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters).ToArray()))
             {
                 while (record.Read())
                 {
@@ -49,12 +80,12 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Compiles the mappings.
+        /// Compiles the result mappings.
         /// </summary>
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         protected virtual Func<IDataRecord, object> CompileMappings()
         {
-            var mappings = this.mappingExpressions.Export();
+            var mappings = this.MappingExpressions.Export();
 
             var statements = new List<Expression>();
 
@@ -81,7 +112,7 @@ namespace Susanoo
                                 Expression.Throw(
                                     Expression.New(typeof(ColumnBindingException).GetConstructor(new Type[] { typeof(string), typeof(Exception) }),
                                         Expression.Constant(pair.Value.PropertyMetadata.Name +
-                                            " encountered an exception on column [" + pair.Value.ReturnName + "] when binding"
+                                            " encountered an exception on column [" + pair.Value.ActiveAlias + "] when binding"
                                                 + " into property " + pair.Value.PropertyMetadata.Name + " which is CLR type of " + pair.Value.PropertyMetadata.PropertyType.Name + "."),
                                     ex
                                     ))))));
@@ -93,7 +124,7 @@ namespace Susanoo
             var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, readerExp);
 
             var type = CommandManager.Instance.DynamicNamespace
-                .DefineType(string.Format("{0}_{1}", typeof(TResult).Name, Guid.NewGuid().ToString().Replace("-", string.Empty)), TypeAttributes.Public);
+                .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}", typeof(TResult).Name, Guid.NewGuid().ToString().Replace("-", string.Empty)), TypeAttributes.Public);
 
             lambda.CompileToMethod(type.DefineMethod("Map", MethodAttributes.Public | MethodAttributes.Static));
 

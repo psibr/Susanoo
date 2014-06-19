@@ -4,18 +4,21 @@ using System.Reflection;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Describes the required methods for determining if a property can be mapped using Susanoo.
+    /// </summary>
     public interface IPropertyMetadataExtractor
     {
         /// <summary>
-        /// Finds the parameters from a filter by type and resolves if they are actionable and declarative aliases.
+        /// Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate declarative aliases.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="filter">The filter.</param>
-        /// <param name="actions">The actions which qualify the search for properties. Default: Read, Update, and Insert</param>
-        /// <param name="whitelist">The white list. Default: null</param>
-        /// <param name="blacklist">The black list. Default: null</param>
-        Dictionary<PropertyInfo, PropertyMap> FindPropertiesFromFilter(
-            Type filterType,
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="actions">The actions.</param>
+        /// <param name="whitelist">The whitelist.</param>
+        /// <param name="blacklist">The blacklist.</param>
+        /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
+        Dictionary<PropertyInfo, PropertyMap> FindAllowedProperties(
+            Type objectType,
             Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
                 | Susanoo.DescriptorActions.Update
                 | Susanoo.DescriptorActions.Insert,
@@ -28,6 +31,9 @@ namespace Susanoo
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
         /// <param name="actions">The actions.</param>
+        /// <param name="whitelist">The whitelist.</param>
+        /// <param name="blacklist">The blacklist.</param>
+        /// <returns><c>true</c> if the property is actionable; otherwise, <c>false</c>.</returns>
         bool IsActionableProperty(
             PropertyInfo propertyInfo,
             object[] customAttributes,
@@ -43,7 +49,7 @@ namespace Susanoo
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="attribute">The attribute.</param>
         /// <param name="actions">The actions.</param>
-        /// <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the property is not declaratively restricted; otherwise, <c>false</c>.</returns>
         bool IsAllowedByAttribute(
             PropertyInfo propertyInfo,
             AllowedActionsAttribute attribute,
@@ -71,6 +77,6 @@ namespace Susanoo
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
         /// <returns>System.String.</returns>
-        string ResolveReturnName(PropertyInfo propertyInfo, object[] customAttributes);
+        string ResolveAlias(PropertyInfo propertyInfo, object[] customAttributes);
     }
 }

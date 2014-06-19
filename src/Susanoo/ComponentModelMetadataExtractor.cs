@@ -13,39 +13,39 @@ namespace Susanoo
     public class ComponentModelMetadataExtractor : IPropertyMetadataExtractor
     {
         /// <summary>
-        /// Finds the parameters from a filter by type and resolves if they are actionable and declarative aliases.
+        /// Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate declarative aliases.
         /// </summary>
-        /// <param name="filterType">Type of the filter.</param>
-        /// <param name="actions">The actions which qualify the search for properties. Default: Read, Update, and Insert</param>
-        /// <param name="whitelist">The white list. Default: null</param>
-        /// <param name="blacklist">The black list. Default: null</param>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="actions">The actions.</param>
+        /// <param name="whitelist">The whitelist.</param>
+        /// <param name="blacklist">The blacklist.</param>
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">filterType</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-        public Dictionary<PropertyInfo, PropertyMap> FindPropertiesFromFilter(
-            Type filterType,
+        public Dictionary<PropertyInfo, PropertyMap> FindAllowedProperties(
+            Type objectType,
             Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read 
                 | Susanoo.DescriptorActions.Update 
                 | Susanoo.DescriptorActions.Insert,
             string[] whitelist = null,
             string[] blacklist = null)
         {
-            if (filterType == null)
+            if (objectType == null)
                 throw new ArgumentNullException("filterType");
 
             Contract.EndContractBlock();
 
-            Dictionary<PropertyInfo, PropertyMap> Actionable = new Dictionary<PropertyInfo, PropertyMap>();
+            Dictionary<PropertyInfo, PropertyMap> actionable = new Dictionary<PropertyInfo, PropertyMap>();
 
-            foreach (PropertyInfo PI in filterType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            foreach (PropertyInfo pi in objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
-                object[] Attributes = PI.GetCustomAttributes(true);
+                object[] attributes = pi.GetCustomAttributes(true);
 
-                if (PI.CanWrite && IsActionableProperty(PI, Attributes, actions))
-                    Actionable.Add(PI, new PropertyMap(PI, ResolveReturnName(PI, Attributes)));
+                if (pi.CanWrite && IsActionableProperty(pi, attributes, actions))
+                    actionable.Add(pi, new PropertyMap(pi, ResolveAlias(pi, attributes)));
             }
 
-            return Actionable;
+            return actionable;
         }
 
         /// <summary>
@@ -54,13 +54,13 @@ namespace Susanoo
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
         /// <returns>System.String.</returns>
-        public virtual string ResolveReturnName(PropertyInfo propertyInfo, object[] customAttributes)
+        public virtual string ResolveAlias(PropertyInfo propertyInfo, object[] customAttributes)
         {
-            ColumnAttribute Column = customAttributes
+            ColumnAttribute column = customAttributes
                 .OfType<ColumnAttribute>()
                 .FirstOrDefault();
 
-            return Column != null && !string.IsNullOrWhiteSpace(Column.Name) ? Column.Name : propertyInfo.Name;
+            return column != null && !string.IsNullOrWhiteSpace(column.Name) ? column.Name : propertyInfo.Name;
         }
 
         /// <summary>
@@ -131,11 +131,11 @@ namespace Susanoo
                 .OfType<AllowedActionsAttribute>()
                 .FirstOrDefault();
 
-            bool IsActionable = IsWhitelisted(propertyInfo, whitelist)
+            bool isActionable = IsWhitelisted(propertyInfo, whitelist)
                 || (!(IsBlacklisted(propertyInfo, blacklist))
                     && IsAllowedByAttribute(propertyInfo, attribute, actions));
 
-            return IsActionable;
+            return isActionable;
         }
 
         /// <summary>

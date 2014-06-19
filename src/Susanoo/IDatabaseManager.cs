@@ -1,5 +1,5 @@
 ﻿// ***********************************************************************
-// Assembly         : Orochi.CrudeData
+// Assembly         : Susanoo.Core
 // Author           : Donovan Crone
 // Created          : 05-15-2014
 //
@@ -17,9 +17,9 @@ using System.Data;
 namespace Susanoo
 {
     /// <summary>
-    /// The interface a Data later abstraction must support for use with Orochi CRUDE
+    /// The interface a Data later abstraction must support for use with Susanoo
     /// </summary>
-    public interface IDatabaseManager : IDisposable
+    public interface IDatabaseManager
     {
         /// <summary>
         /// Executes the data reader.

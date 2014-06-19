@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Susanoo</RootNamespace>
-    <AssemblyName>Susanoo</AssemblyName>
+    <AssemblyName>Susanoo.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -26,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <DocumentationFile>bin\Debug\Susanoo.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -74,7 +75,7 @@
     <Compile Include="ICommandProcessor.cs" />
     <Compile Include="ICommandExpressionBuilder.cs" />
     <Compile Include="IDatabaseManager.cs" />
-    <Compile Include="IPropertyMappingExpression.cs" />
+    <Compile Include="IPropertyMappingConfiguration.cs" />
     <Compile Include="IPropertyMetadataExtractor.cs" />
     <Compile Include="ComponentModelMetadataExtractor.cs" />
     <Compile Include="DescriptorActions.cs" />
