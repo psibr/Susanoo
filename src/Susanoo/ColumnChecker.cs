@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Tracks available fields in return results to allow for efficient column existence checks.
+    /// </summary>
     public class ColumnChecker
     {
         private List<string> fields = new List<string>();

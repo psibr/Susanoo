@@ -8,16 +8,26 @@ namespace Susanoo
     /// <summary>
     /// This class is used as the single entry point when dealing with Susanoo.
     /// </summary>
-    public sealed class CommandManager
+    public static class CommandManager
     {
-        private AssemblyBuilder _expressionAssembly = AppDomain.CurrentDomain
+        /// <summary>
+        /// The synchronization root.
+        /// </summary>
+        private static readonly object syncRoot = new object();
+
+        private static AssemblyBuilder _expressionAssembly = AppDomain.CurrentDomain
                     .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
+
+        private static ModuleBuilder _moduleBuilder = ExpressionAssembly
+                    .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
+
+        private static ICommandExpressionBuilder _CommandBuilder = new CommandBuilder();
 
         /// <summary>
         /// Gets the expression assembly that contains runtime compiled methods used for mappings.
         /// </summary>
         /// <value>The expression assembly.</value>
-        public AssemblyBuilder ExpressionAssembly
+        public static AssemblyBuilder ExpressionAssembly
         {
             get
             {
@@ -26,92 +36,32 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// The synchronization root.
-        /// </summary>
-        private static readonly object syncRoot = new object();
-
-        /// <summary>
-        /// The singleton instance of CommandManager that contains the IoC container.
-        /// </summary>
-        private static CommandManager _Instance;
-
-        private ModuleBuilder _moduleBuilder;
-
-        /// <summary>
-        /// Prevents a default instance of the <see cref="CommandManager" /> class from being created.
-        /// </summary>
-        private CommandManager()
-        {
-            this.Container = TinyIoC.TinyIoCContainer.Current;
-
-            this.Container.Register<ICommandExpressionBuilder>(new CommandBuilder());
-            this.Container.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
-
-            this._moduleBuilder = this.ExpressionAssembly
-                    .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
-        }
-
-        /// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>The instance.</value>
-        public static CommandManager Instance
-        {
-            get
-            {
-                //Perform double-checked singleton instantiation for thread synchronization.
-                if (_Instance == null)
-                {
-                    lock (syncRoot)
-                    {
-                        if (_Instance == null)
-                            _Instance = new CommandManager();
-                    }
-                }
-
-                return _Instance;
-            }
-        }
-
-        /// <summary>
         /// Gets the dynamic namespace.
         /// </summary>
         /// <value>The dynamic namespace.</value>
-        public ModuleBuilder DynamicNamespace
+        public static ModuleBuilder DynamicNamespace
         {
             get
             {
-                return this._moduleBuilder;
+                return _moduleBuilder;
             }
         }
-
-        /// <summary>
-        /// Gets the IoC container.
-        /// </summary>
-        /// <value>The container.</value>
-        public TinyIoC.TinyIoCContainer Container { get; private set; }
 
         /// <summary>
         /// Gets the database manager.
         /// </summary>
         /// <value>The database manager.</value>
-        private static IDatabaseManager DatabaseManager
-        {
-            get
-            {
-                return CommandManager.Instance.Container.Resolve<IDatabaseManager>();
-            }
-        }
+        public static IDatabaseManager DatabaseManager { get; private set; }
 
         /// <summary>
         /// Gets the commander.
         /// </summary>
         /// <value>The commander.</value>
-        private static ICommandExpressionBuilder Commander
+        public static ICommandExpressionBuilder Commander
         {
             get
             {
-                return CommandManager.Instance.Container.Resolve<ICommandExpressionBuilder>();
+                return _CommandBuilder;
             }
         }
 
@@ -121,7 +71,16 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         public static void RegisterDatabaseManager(IDatabaseManager databaseManager)
         {
-            CommandManager.Instance.Container.Register<IDatabaseManager>(databaseManager);
+            CommandManager.DatabaseManager = databaseManager;
+        }
+
+        /// <summary>
+        /// Registers a command builder.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
+        public static void RegisterCommandBuilder(ICommandExpressionBuilder builder)
+        {
+            CommandManager._CommandBuilder = builder;
         }
 
         /// <summary>
@@ -135,7 +94,8 @@ namespace Susanoo
         public static ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, CommandType commandType)
             where TResult : new()
         {
-            return CommandManager.Commander.DefineCommand<TFilter, TResult>(commandText, commandType);
+            return CommandManager.Commander
+                .DefineCommand<TFilter, TResult>(commandText, commandType);
         }
 
         /// <summary>
@@ -144,7 +104,8 @@ namespace Susanoo
         /// <returns>IDbDataParameter.</returns>
         public static IDbDataParameter CreateParameter()
         {
-            return CommandManager.DatabaseManager.CreateParameter();
+            return CommandManager.DatabaseManager
+                .CreateParameter();
         }
 
         /// <summary>
@@ -157,7 +118,8 @@ namespace Susanoo
         /// <returns>IDbDataParameter.</returns>
         public static IDbDataParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value)
         {
-            return CommandManager.DatabaseManager.CreateParameter(parameterName, parameterDirection, parameterType, value);
+            return CommandManager.DatabaseManager
+                .CreateParameter(parameterName, parameterDirection, parameterType, value);
         }
 
         /// <summary>
@@ -169,7 +131,8 @@ namespace Susanoo
         /// <returns>IDbDataParameter.</returns>
         public static IDbDataParameter CreateInputParameter(string parameterName, DbType parameterType, object value)
         {
-            return CommandManager.DatabaseManager.CreateInputParameter(parameterName, parameterType, value);
+            return CommandManager.DatabaseManager
+                .CreateInputParameter(parameterName, parameterType, value);
         }
     }
 }

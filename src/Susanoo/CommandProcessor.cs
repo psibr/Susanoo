@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -24,6 +23,17 @@ namespace Susanoo
         private CommandResultMappingExpression<TFilter, TResult> _mappingExpressions;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CommandProcessor{TFilter, TResult}"/> class.
+        /// </summary>
+        /// <param name="mappings">The mappings.</param>
+        public CommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
+        {
+            this.MappingExpressions = mappings;
+
+            this.CompiledMapping = CompileMappings();
+        }
+
+        /// <summary>
         /// Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
@@ -37,17 +47,6 @@ namespace Susanoo
             {
                 _mappingExpressions = value;
             }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandProcessor{TFilter, TResult}"/> class.
-        /// </summary>
-        /// <param name="mappings">The mappings.</param>
-        public CommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
-        {
-            this.MappingExpressions = mappings;
-
-            this.CompiledMapping = CompileMappings();
         }
 
         /// <summary>
@@ -135,7 +134,7 @@ namespace Susanoo
             var body = Expression.Block(new ParameterExpression[] { descriptorExp, columnCheckerExp }, statements);
             var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, readerExp);
 
-            var type = CommandManager.Instance.DynamicNamespace
+            var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}", typeof(TResult).Name, Guid.NewGuid().ToString().Replace("-", string.Empty)), TypeAttributes.Public);
 
             lambda.CompileToMethod(type.DefineMethod("Map", MethodAttributes.Public | MethodAttributes.Static));

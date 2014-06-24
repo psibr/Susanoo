@@ -31,13 +31,13 @@ namespace Susanoo
         /// Gets the <c>PropertyInfo</c> that describes the property.
         /// </summary>
         /// <value>The property reflection meta data.</value>
-        public PropertyInfo PropertyMetadata { get; private set; }
+        public virtual PropertyInfo PropertyMetadata { get; private set; }
 
         /// <summary>
         /// Gets the active alias of the property.
         /// </summary>
         /// <value>The active alias.</value>
-        public string ActiveAlias { get; private set; }
+        public virtual string ActiveAlias { get; private set; }
 
         /// <summary>
         /// Maps the property conditionally.
@@ -45,7 +45,7 @@ namespace Susanoo
         /// <param name="condition">The condition.</param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public IPropertyMappingConfiguration<TRecord> MapIf(Expression<Func<TRecord, string, bool>> condition)
+        public virtual IPropertyMappingConfiguration<TRecord> MapIf(Expression<Func<TRecord, string, bool>> condition)
         {
             this.MapOnCondition = condition;
 
@@ -57,7 +57,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="alias">The alias.</param>
         /// <returns>Susanoo.ICommandResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
-        public IPropertyMappingConfiguration<TRecord> AliasProperty(string alias)
+        public virtual IPropertyMappingConfiguration<TRecord> AliasProperty(string alias)
         {
             this.ActiveAlias = alias;
 
@@ -70,7 +70,7 @@ namespace Susanoo
         /// <param name="process"></param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public IPropertyMappingConfiguration<TRecord> ProcessValue(Expression<Func<Type, object, object, object>> process)
+        public virtual IPropertyMappingConfiguration<TRecord> ProcessValue(Expression<Func<Type, object, object, object>> process)
         {
             this.conversionProcess = process;
 
@@ -81,7 +81,7 @@ namespace Susanoo
         /// Assembles the mapping expression.
         /// </summary>
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
-        public Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property)
+        public virtual Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property)
         {
             ParameterExpression recordParam = Expression.Parameter(typeof(TRecord), "record");
 
@@ -95,7 +95,12 @@ namespace Susanoo
             return assignmentExpression;
         }
 
-        public Expression HasMapCondition(MemberExpression property, ParameterExpression recordParam)
+        /// <summary>
+        /// Determines whether the specified property has a mapping condition.
+        /// </summary>
+        /// <param name="property">The property.</param>
+        /// <param name="recordParam">The record parameter.</param>
+        protected virtual Expression HasMapCondition(MemberExpression property, ParameterExpression recordParam)
         {
             return Expression.Block(
                 Expression.IfThen(
@@ -107,7 +112,13 @@ namespace Susanoo
                             AssembleAssignment(property, recordParam)));
         }
 
-        public BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression recordParam)
+        /// <summary>
+        /// Assembles the assignment expression.
+        /// </summary>
+        /// <param name="property">The property.</param>
+        /// <param name="recordParam">The record parameter.</param>
+        /// <returns>BinaryExpression.</returns>
+        protected virtual BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression recordParam)
         {
             return
                 Expression.Assign(

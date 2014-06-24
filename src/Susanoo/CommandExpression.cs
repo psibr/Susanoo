@@ -18,6 +18,10 @@ namespace Susanoo
         private readonly IDictionary<string, Action<IDbDataParameter>> parameterInclusions = new Dictionary<string, Action<IDbDataParameter>>();
         private readonly List<IDbDataParameter> constantParameters = new List<IDbDataParameter>();
 
+        private object syncRoot = new object();
+
+        private IList<IDbDataParameter> _PropertyCache = null;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}" /> class.
         /// </summary>
@@ -49,6 +53,14 @@ namespace Susanoo
         /// <value>The database manager.</value>
         public virtual IDatabaseManager DatabaseManager { get; private set; }
 
+        private IEnumerable<IDbDataParameter> PropertyParameterCache
+        {
+            get
+            {
+                return _PropertyCache;
+            }
+        }
+
         /// <summary>
         /// Includes the property of the filter.
         /// </summary>
@@ -62,7 +74,7 @@ namespace Susanoo
         /// <summary>
         /// Includes a property of the filter or modifies its inclusion.
         /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="propertyExpression">The property expression.</param>
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
         public virtual ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions)
@@ -155,7 +167,6 @@ namespace Susanoo
             parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + explicitParameters.Count();
             parameters = new IDbDataParameter[parameterCount];
 
-
             int i = 0;
             foreach (var item in propertyParameters)
             {
@@ -176,16 +187,6 @@ namespace Susanoo
             }
 
             return parameters;
-        }
-
-        private object syncRoot = new object();
-        private IList<IDbDataParameter> _PropertyCache = null;
-        private IEnumerable<IDbDataParameter> PropertyParameterCache
-        {
-            get
-            {
-                return _PropertyCache;
-            }
         }
 
         /// <summary>

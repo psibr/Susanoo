@@ -103,7 +103,7 @@ namespace Susanoo
         /// </summary>
         protected virtual void MapDeclarativeProperties()
         {
-            foreach (var item in CommandManager.Instance.Container.Resolve<IPropertyMetadataExtractor>()
+            foreach (var item in new ComponentModelMetadataExtractor()
                 .FindAllowedProperties(typeof(TResult), Susanoo.DescriptorActions.Read))
             {
                 mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.Alias));

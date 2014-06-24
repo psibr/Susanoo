@@ -16,7 +16,7 @@
         public virtual ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, System.Data.CommandType commandType)
             where TResult : new()
         {
-            return new CommandExpression<TFilter, TResult>(CommandManager.Instance.Container.Resolve<IDatabaseManager>(), commandText, commandType);
+            return new CommandExpression<TFilter, TResult>(CommandManager.DatabaseManager, commandText, commandType);
         }
 
         /// <summary>

@@ -77,7 +77,7 @@ namespace Susanoo
         /// <summary>
         /// Mapping options for a property in the result model.
         /// </summary>
-        /// <param name="property">The property.</param>
+        /// <param name="propertyExpression">The property expression.</param>
         /// <param name="options">The options.</param>
         /// <returns>ICommandResultMappingExpression&lt;TResult&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]

@@ -208,7 +208,6 @@ namespace Susanoo
 
                     command.CommandText = commandText;
 
-
                     foreach (var item in parameters)
                     {
                         command.Parameters.Add(item);
