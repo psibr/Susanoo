@@ -39,7 +39,7 @@ namespace Susanoo
         /// Gets the dynamic namespace.
         /// </summary>
         /// <value>The dynamic namespace.</value>
-        public static ModuleBuilder DynamicNamespace
+        internal static ModuleBuilder DynamicNamespace
         {
             get
             {
@@ -57,7 +57,7 @@ namespace Susanoo
         /// Gets the commander.
         /// </summary>
         /// <value>The commander.</value>
-        public static ICommandExpressionBuilder Commander
+        internal static ICommandExpressionBuilder Commander
         {
             get
             {
