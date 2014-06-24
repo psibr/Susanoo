@@ -67,7 +67,7 @@
 
 #endregion Preprocessor Directives
 
-namespace TinyIoC
+namespace Susanoo.TinyIoC
 {
     using System;
     using System.Collections.Generic;

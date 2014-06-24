@@ -144,14 +144,48 @@ namespace Susanoo
         /// Builds the parameters (Not part of Fluent API).
         /// </summary>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public virtual IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters)
+        public virtual IDbDataParameter[] BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters)
         {
-            List<IDbDataParameter> parameters = BuildPropertyParameters(filter).ToList();
+            IDbDataParameter[] parameters = null;
 
-            parameters.AddRange(this.constantParameters);
-            parameters.AddRange(explicitParameters);
+            int parameterCount = 0;
+
+            IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(filter);
+
+            parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + explicitParameters.Count();
+            parameters = new IDbDataParameter[parameterCount];
+
+
+            int i = 0;
+            foreach (var item in propertyParameters)
+            {
+                parameters[i] = item;
+                i++;
+            }
+
+            foreach (var item in this.constantParameters)
+            {
+                parameters[i] = item;
+                i++;
+            }
+
+            foreach (var item in explicitParameters)
+            {
+                parameters[i] = item;
+                i++;
+            }
 
             return parameters;
+        }
+
+        private object syncRoot = new object();
+        private IList<IDbDataParameter> _PropertyCache = null;
+        private IEnumerable<IDbDataParameter> PropertyParameterCache
+        {
+            get
+            {
+                return _PropertyCache;
+            }
         }
 
         /// <summary>
@@ -161,21 +195,32 @@ namespace Susanoo
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
         public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(TFilter filter)
         {
-            foreach (var item in this.parameterInclusions)
-            {
-                var propInfo = typeof(TFilter).GetProperty(item.Key, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                var param = this.DatabaseManager.CreateParameter();
+            if (PropertyParameterCache == null)
+                lock (syncRoot)
+                {
+                    if (PropertyParameterCache == null)
+                    {
+                        this._PropertyCache = new List<IDbDataParameter>();
 
-                param.ParameterName = item.Key;
-                param.Direction = ParameterDirection.Input;
+                        foreach (var item in this.parameterInclusions)
+                        {
+                            var propInfo = typeof(TFilter).GetProperty(item.Key, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+                            var param = this.DatabaseManager.CreateParameter();
 
-                if (item.Value != null)
-                    item.Value.Invoke(param);
+                            param.ParameterName = item.Key;
+                            param.Direction = ParameterDirection.Input;
 
-                param.Value = propInfo.GetValue(filter);
+                            if (item.Value != null)
+                                item.Value.Invoke(param);
 
-                yield return param;
-            }
+                            param.Value = propInfo.GetValue(filter);
+
+                            this._PropertyCache.Add(param);
+                        }
+                    }
+                }
+
+            return this.PropertyParameterCache;
         }
     }
 }

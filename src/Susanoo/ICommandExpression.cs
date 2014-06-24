@@ -35,7 +35,7 @@ namespace Susanoo
         /// Builds the parameters (Not part of Fluent API).
         /// </summary>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        IEnumerable<IDbDataParameter> BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters);
+        IDbDataParameter[] BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters);
 
         /// <summary>
         /// Includes a property of the filter.

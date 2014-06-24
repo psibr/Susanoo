@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
     <Compile Include="ColumnBindingException.cs" />
+    <Compile Include="ColumnChecker.cs" />
     <Compile Include="CommandBuilder.cs" />
     <Compile Include="CommandExpression.cs" />
     <Compile Include="CommandManager.cs" />

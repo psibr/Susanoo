@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Susanoo
 {
@@ -87,18 +88,19 @@ namespace Susanoo
         /// <param name="defaultValue">The default value.</param>
         /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
         /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object CastValue(Type newType, object value, object defaultValue, string typeName)
         {
             object returnValue;
 
             if (value is DBNull || value == null)
                 returnValue = defaultValue;
-            else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
-                returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
-            else if (newType == typeof(int) && value.GetType() == typeof(long))
-                returnValue = ((object)((int)((long)value)));
-            else if (newType == typeof(int) && value.GetType() == typeof(decimal))
-                returnValue = ((object)((int)((decimal)value)));
+            //else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
+            //    returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
+            //else if (newType == typeof(int) && value.GetType() == typeof(long))
+            //    returnValue = ((object)((int)((long)value)));
+            //else if (newType == typeof(int) && value.GetType() == typeof(decimal))
+            //    returnValue = ((object)((int)((decimal)value)));
             else if (newType == typeof(string))
             {
                 returnValue = value.ToString();
@@ -120,6 +122,7 @@ namespace Susanoo
         /// <param name="value">The value.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns>System.Object.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object CastValue(Type newType, object value, object defaultValue)
         {
             return CastValue(newType, value, defaultValue, null);
@@ -205,9 +208,13 @@ namespace Susanoo
 
                     command.CommandText = commandText;
 
-                    parameters.ToList().ForEach(parameter => command.Parameters.Add(parameter));
 
-                    results = command.ExecuteReader(CommandBehavior.CloseConnection);
+                    foreach (var item in parameters)
+                    {
+                        command.Parameters.Add(item);
+                    }
+
+                    results = command.ExecuteReader();
                 }
 
                 return results;

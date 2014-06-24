@@ -13,7 +13,7 @@ namespace Susanoo
         : IPropertyMappingConfiguration<TRecord>
         where TRecord : IDataRecord
     {
-        private Expression<Func<TRecord, string, bool>> MapOnCondition = (record, name) => HasColumn(record, name);
+        private Expression<Func<TRecord, string, bool>> MapOnCondition = null;
 
         private Expression<Func<Type, object, object, object>> conversionProcess = (type, value, defaultValue) => DatabaseManager.CastValue(type, value, defaultValue);
 
@@ -38,28 +38,6 @@ namespace Susanoo
         /// </summary>
         /// <value>The active alias.</value>
         public string ActiveAlias { get; private set; }
-
-        /// <summary>
-        /// Determines whether the specified record has a matching column.
-        /// </summary>
-        /// <param name="record">The record.</param>
-        /// <param name="name">The name of the column.</param>
-        /// <returns><c>true</c> if the specified record has a matching column; otherwise, <c>false</c>.</returns>
-        public static bool HasColumn(TRecord record, string name)
-        {
-            bool map = false;
-
-            for (int i = 0; i < record.FieldCount; i++)
-            {
-                if (record.GetName(i) == name)
-                {
-                    map = true;
-                    break;
-                }
-            }
-
-            return map;
-        }
 
         /// <summary>
         /// Maps the property conditionally.
@@ -107,30 +85,43 @@ namespace Susanoo
         {
             ParameterExpression recordParam = Expression.Parameter(typeof(TRecord), "record");
 
+            Expression body = (this.MapOnCondition != null)
+                ? HasMapCondition(property, recordParam)
+                : AssembleAssignment(property, recordParam);
+
             var assignmentExpression =
-                Expression.Lambda<Action<IDataRecord>>(
-                    Expression.Block(
-                        Expression.IfThen(
-                            Expression.IsTrue(
-                                Expression.Invoke(
-                                    this.MapOnCondition,
-                                    recordParam,
-                                    Expression.Constant(this.ActiveAlias))),
-                            Expression.Assign(
-                                property,
-                                Expression.Convert(
-                                    Expression.Invoke(this.conversionProcess,
-                                        Expression.Constant(this.PropertyMetadata.PropertyType, typeof(Type)),
-                                        Expression.MakeIndex(recordParam, typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
-                                                    new[]
-                                                    {
-                                                        Expression.Constant(this.ActiveAlias)
-                                                    }),
-                                        Expression.Constant(null)),
-                                    property.Type)))),
-                recordParam);
+                Expression.Lambda<Action<IDataRecord>>(body, recordParam);
 
             return assignmentExpression;
+        }
+
+        public Expression HasMapCondition(MemberExpression property, ParameterExpression recordParam)
+        {
+            return Expression.Block(
+                Expression.IfThen(
+                    Expression.IsTrue(
+                        Expression.Invoke(
+                            this.MapOnCondition,
+                            recordParam,
+                            Expression.Constant(this.ActiveAlias))),
+                            AssembleAssignment(property, recordParam)));
+        }
+
+        public BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression recordParam)
+        {
+            return
+                Expression.Assign(
+                    property,
+                    Expression.Convert(
+                        Expression.Invoke(this.conversionProcess,
+                            Expression.Constant(this.PropertyMetadata.PropertyType, typeof(Type)),
+                            Expression.MakeIndex(recordParam, typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
+                                        new[]
+                                        {
+                                            Expression.Constant(this.ActiveAlias)
+                                        }),
+                            Expression.Constant(null)),
+                        property.Type));
         }
     }
 }

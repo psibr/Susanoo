@@ -69,7 +69,7 @@ namespace Susanoo
             ICommandExpression<TFilter, TResult> commandExpression = this.MappingExpressions.CommandExpression;
 
             using (IDataReader record = commandExpression.DatabaseManager
-                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters).ToArray()))
+                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters)))
             {
                 while (record.Read())
                 {
@@ -92,6 +92,10 @@ namespace Susanoo
 
             ParameterExpression readerExp = Expression.Parameter(typeof(IDataRecord));
             ParameterExpression descriptorExp = Expression.Variable(typeof(TResult), "descriptor");
+            ParameterExpression columnCheckerExp = Expression.Variable(typeof(ColumnChecker), "columnChecker");
+
+            statements.Add(Expression.Assign(
+                columnCheckerExp, Expression.New(typeof(ColumnChecker))));
 
             statements.Add(Expression.Assign(
                 descriptorExp, Expression.New(typeof(TResult))));
@@ -101,27 +105,34 @@ namespace Susanoo
                 var ex = Expression.Variable(typeof(Exception), "ex");
 
                 statements.Add(
-                    Expression.TryCatch(
-                        Expression.Block(typeof(void),
-                            Expression.Invoke(
-                                pair.Value.AssembleMappingExpression(
-                                    Expression.Property(descriptorExp, pair.Value.PropertyMetadata)),
-                                readerExp)),
-                        Expression.Catch(
-                            ex,
-                            Expression.Block(typeof(void),
-                                Expression.Throw(
-                                    Expression.New(typeof(ColumnBindingException).GetConstructor(new Type[] { typeof(string), typeof(Exception) }),
-                                        Expression.Constant(pair.Value.PropertyMetadata.Name +
-                                            " encountered an exception on column [" + pair.Value.ActiveAlias + "] when binding"
-                                                + " into property " + pair.Value.PropertyMetadata.Name + " which is CLR type of " + pair.Value.PropertyMetadata.PropertyType.Name + "."),
-                                    ex
-                                    ))))));
+                    Expression.IfThen(
+                        Expression.IsTrue(
+                            Expression.Call(columnCheckerExp, typeof(ColumnChecker).GetMethod("HasColumn", BindingFlags.Public | BindingFlags.Instance),
+                                readerExp,
+                                Expression.Constant(pair.Value.ActiveAlias))),
+
+                            Expression.TryCatch(
+                                Expression.Block(typeof(void),
+                                    Expression.Invoke(
+                                        pair.Value.AssembleMappingExpression(
+                                            Expression.Property(descriptorExp, pair.Value.PropertyMetadata)),
+                                        readerExp)),
+                                Expression.Catch(
+                                    ex,
+                                    Expression.Block(typeof(void),
+                                        Expression.Throw(
+                                            Expression.New(typeof(ColumnBindingException).GetConstructor(new Type[] { typeof(string), typeof(Exception) }),
+                                                Expression.Constant(pair.Value.PropertyMetadata.Name +
+                                                    " encountered an exception on column [" + pair.Value.ActiveAlias + "] when binding"
+                                                        + " into property " + pair.Value.PropertyMetadata.Name + " which is CLR type of "
+                                                            + pair.Value.PropertyMetadata.PropertyType.Name + "."),
+                                            ex
+                                            )))))));
             }
 
             statements.Add(descriptorExp);
 
-            var body = Expression.Block(new ParameterExpression[] { descriptorExp }, statements);
+            var body = Expression.Block(new ParameterExpression[] { descriptorExp, columnCheckerExp }, statements);
             var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, readerExp);
 
             var type = CommandManager.Instance.DynamicNamespace
