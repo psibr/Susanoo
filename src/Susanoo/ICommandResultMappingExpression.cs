@@ -54,45 +54,4 @@ namespace Susanoo
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export();
     }
-
-    /// <summary>
-    /// A step in the command definition Fluent API, in which properties are mapped to potential result data.
-    /// </summary>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface ICommandResultMappingExpression<TResult>
-        where TResult : new()
-    {
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        ICommandExpression<TResult> CommandExpression { get; }
-
-        /// <summary>
-        /// Clears the result mappings.
-        /// </summary>
-        /// <returns>ICommandResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultMappingExpression<TResult> ClearMappings();
-
-        /// <summary>
-        /// Mapping options for a property in the result model.
-        /// </summary>
-        /// <param name="propertyExpression">The property expression.</param>
-        /// <param name="options">The options.</param>
-        /// <returns>ICommandResultMappingExpression&lt;TResult&gt;.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        ICommandResultMappingExpression<TResult> ForProperty(Expression<Func<TResult, object>> propertyExpression, Action<IPropertyMappingConfiguration<IDataRecord>> options);
-
-        /// <summary>
-        /// Prepares the command for caching and executing.
-        /// </summary>
-        /// <returns>ICommandProcessor&lt;TResult&gt;.</returns>
-        ICommandProcessor<TResult> PrepareCommand();
-
-        /// <summary>
-        /// Exports this instance.
-        /// </summary>
-        /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
-        IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export();
-    }
 }

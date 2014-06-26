@@ -23,7 +23,7 @@
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandExpression<TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType)
+        ICommandExpression<dynamic, TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType)
             where TResult : new();
     }
 }

@@ -14,7 +14,7 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class CommandProcessor<TFilter, TResult>
-        : ICommandProcessor<TFilter, TResult>, ICommandProcessor<TResult>
+        : ICommandProcessor<TFilter, TResult>
         where TResult : new()
     {
         /// <summary>
@@ -54,30 +54,6 @@ namespace Susanoo
         /// </summary>
         /// <value>The compiled mapping.</value>
         protected Func<IDataRecord, object> CompiledMapping { get; private set; }
-
-        /// <summary>
-        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public virtual IEnumerable<TResult> Execute(TFilter filter, params IDbDataParameter[] explicitParameters)
-        {
-            var results = new List<TResult>();
-
-            ICommandExpression<TFilter, TResult> commandExpression = this.MappingExpressions.CommandExpression;
-
-            using (IDataReader record = commandExpression.DatabaseManager
-                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters)))
-            {
-                while (record.Read())
-                {
-                    results.Add((TResult)CompiledMapping.Invoke(record));
-                }
-            }
-
-            return results;
-        }
 
         /// <summary>
         /// Compiles the result mappings.
@@ -151,7 +127,7 @@ namespace Susanoo
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         public IEnumerable<TResult> Execute(params IDbDataParameter[] explicitParameters)
         {
-            return this.Execute(null as dynamic, explicitParameters);
+            return this.Execute(default(TFilter), explicitParameters);
         }
 
         /// <summary>
@@ -160,11 +136,11 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(dynamic filter, params IDbDataParameter[] explicitParameters)
+        public IEnumerable<TResult> Execute(TFilter filter, params IDbDataParameter[] explicitParameters)
         {
             var results = new List<TResult>();
 
-            ICommandExpression<TResult> commandExpression = this.MappingExpressions.DynamicCommandExpression;
+            ICommandExpression<TFilter, TResult> commandExpression = this.MappingExpressions.CommandExpression;
 
             using (IDataReader record = commandExpression.DatabaseManager
                 .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters)))

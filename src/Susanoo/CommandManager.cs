@@ -105,7 +105,7 @@ namespace Susanoo
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public static ICommandExpression<TResult> DefineCommand<TResult>(string commandText, CommandType commandType)
+        public static ICommandExpression<dynamic, TResult> DefineCommand<TResult>(string commandText, CommandType commandType)
             where TResult : new()
         {
             return CommandManager.Commander

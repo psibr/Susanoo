@@ -26,9 +26,9 @@
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandExpression<TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType) where TResult : new()
+        public virtual ICommandExpression<dynamic, TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType) where TResult : new()
         {
-            return new CommandExpression<TResult>(CommandManager.DatabaseManager, commandText, commandType);
+            return new CommandExpression<dynamic, TResult>(CommandManager.DatabaseManager, commandText, commandType);
         }
     }
 }
