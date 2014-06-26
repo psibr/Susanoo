@@ -135,7 +135,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        IEnumerable<IDbDataParameter> BuildParameters(params IDbDataParameter[] explicitParameters);
+        IDbDataParameter[] BuildParameters(dynamic filter, params IDbDataParameter[] explicitParameters);
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).

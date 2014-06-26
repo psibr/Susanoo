@@ -11,7 +11,7 @@ namespace Susanoo
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class CommandResultMappingExpression<TFilter, TResult>
-        : ICommandResultMappingExpression<TFilter, TResult>
+        : ICommandResultMappingExpression<TFilter, TResult>, ICommandResultMappingExpression<TResult>
         where TResult : new()
     {
         private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions = new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
@@ -28,10 +28,27 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultMappingExpression{TFilter, TResult}"/> class.
+        /// </summary>
+        /// <param name="commandExpression">The command expression.</param>
+        public CommandResultMappingExpression(ICommandExpression<TResult> commandExpression)
+        {
+            this.DynamicCommandExpression = commandExpression;
+
+            MapDeclarativeProperties();
+        }
+
+        /// <summary>
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public virtual ICommandExpression<TFilter, TResult> CommandExpression { get; private set; }
+
+        /// <summary>
+        /// Gets the dynamic command expression.
+        /// </summary>
+        /// <value>The dynamic command expression.</value>
+        public virtual ICommandExpression<TResult> DynamicCommandExpression { get; private set; }
 
         /// <summary>
         /// Clears the result mappings.
@@ -108,6 +125,42 @@ namespace Susanoo
             {
                 mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.Alias));
             }
+        }
+
+        /// <summary>
+        /// Gets the command expression.
+        /// </summary>
+        /// <value>The command expression.</value>
+        ICommandExpression<TResult> ICommandResultMappingExpression<TResult>.CommandExpression
+        {
+            get { return this.DynamicCommandExpression; }
+        }
+
+        /// <summary>
+        /// Clears the result mappings.
+        /// </summary>
+        /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        ICommandResultMappingExpression<TResult> ICommandResultMappingExpression<TResult>.ClearMappings()
+        {
+            return this.ClearMappings() as ICommandResultMappingExpression<TResult>;
+        }
+
+        /// <summary>
+        /// Fors the property.
+        /// </summary>
+        /// <param name="propertyExpression">The property expression.</param>
+        /// <param name="options">The options.</param>
+        /// <returns>ICommandResultMappingExpression&lt;TResult&gt;.</returns>
+        ICommandResultMappingExpression<TResult> ICommandResultMappingExpression<TResult>.ForProperty(
+            Expression<Func<TResult, object>> propertyExpression,
+            Action<IPropertyMappingConfiguration<IDataRecord>> options)
+        {
+            return this.ForProperty(propertyExpression, options) as ICommandResultMappingExpression<TResult>;
+        }
+
+        ICommandProcessor<TResult> ICommandResultMappingExpression<TResult>.PrepareCommand()
+        {
+            return this.PrepareCommand() as ICommandProcessor<TResult>;
         }
     }
 }

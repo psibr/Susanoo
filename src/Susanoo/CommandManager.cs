@@ -99,6 +99,20 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        public static ICommandExpression<TResult> DefineCommand<TResult>(string commandText, CommandType commandType)
+            where TResult : new()
+        {
+            return CommandManager.Commander
+                .DefineCommand<TResult>(commandText, commandType);
+        }
+
+        /// <summary>
         /// Creates a parameter.
         /// </summary>
         /// <returns>IDbDataParameter.</returns>

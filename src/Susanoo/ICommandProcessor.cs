@@ -35,5 +35,13 @@ namespace Susanoo
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         IEnumerable<TResult> Execute(params IDbDataParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        IEnumerable<TResult> Execute(dynamic filter, params IDbDataParameter[] explicitParameters);
     }
 }

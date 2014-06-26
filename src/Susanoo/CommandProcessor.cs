@@ -14,7 +14,7 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class CommandProcessor<TFilter, TResult>
-        : ICommandProcessor<TFilter, TResult>
+        : ICommandProcessor<TFilter, TResult>, ICommandProcessor<TResult>
         where TResult : new()
     {
         /// <summary>
@@ -142,6 +142,40 @@ namespace Susanoo
             Type dynamicType = type.CreateType();
 
             return (Func<IDataRecord, object>)Delegate.CreateDelegate(typeof(Func<IDataRecord, object>), dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(params IDbDataParameter[] explicitParameters)
+        {
+            return this.Execute(null as dynamic, explicitParameters);
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(dynamic filter, params IDbDataParameter[] explicitParameters)
+        {
+            var results = new List<TResult>();
+
+            ICommandExpression<TResult> commandExpression = this.MappingExpressions.DynamicCommandExpression;
+
+            using (IDataReader record = commandExpression.DatabaseManager
+                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters)))
+            {
+                while (record.Read())
+                {
+                    results.Add((TResult)CompiledMapping.Invoke(record));
+                }
+            }
+
+            return results;
         }
     }
 }

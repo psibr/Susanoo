@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Susanoo
 {
@@ -164,7 +165,7 @@ namespace Susanoo
 
             IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(filter);
 
-            parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + explicitParameters.Count();
+            parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + ((explicitParameters != null) ? explicitParameters.Count() : 0);
             parameters = new IDbDataParameter[parameterCount];
 
             int i = 0;
@@ -180,11 +181,12 @@ namespace Susanoo
                 i++;
             }
 
-            foreach (var item in explicitParameters)
-            {
-                parameters[i] = item;
-                i++;
-            }
+            if (explicitParameters != null)
+                foreach (var item in explicitParameters)
+                {
+                    parameters[i] = item;
+                    i++;
+                }
 
             return parameters;
         }
@@ -196,32 +198,177 @@ namespace Susanoo
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
         public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(TFilter filter)
         {
-            if (PropertyParameterCache == null)
-                lock (syncRoot)
+            var properties = new List<IDbDataParameter>();
+
+            foreach (var item in this.parameterInclusions)
+            {
+                var propInfo = typeof(TFilter).GetProperty(item.Key, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+                var param = this.DatabaseManager.CreateParameter();
+
+                param.ParameterName = item.Key;
+                param.Direction = ParameterDirection.Input;
+
+                if (item.Value != null)
+                    item.Value.Invoke(param);
+
+                param.Value = propInfo.GetValue(filter);
+
+                properties.Add(param);
+            }
+
+            return properties;
+        }
+    }
+
+    public class CommandExpression<TResult>
+        : ICommandExpression<TResult>
+        where TResult : new()
+    {
+        private readonly IDictionary<string, Action<IDbDataParameter>> parameterInclusions = new Dictionary<string, Action<IDbDataParameter>>();
+        private readonly List<IDbDataParameter> constantParameters = new List<IDbDataParameter>();
+
+        private object syncRoot = new object();
+
+        private IList<IDbDataParameter> _PropertyCache = null;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}" /> class.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        public CommandExpression(IDatabaseManager databaseManager, string commandText, CommandType commandType)
+        {
+            this.DatabaseManager = databaseManager;
+            this.CommandText = commandText;
+            this.DBCommandType = commandType;
+        }
+
+        /// <summary>
+        /// Gets the command text.
+        /// </summary>
+        /// <value>The command text.</value>
+        public virtual string CommandText { get; private set; }
+
+        /// <summary>
+        /// Gets the type of the database command.
+        /// </summary>
+        /// <value>The type of the database command.</value>
+        public virtual CommandType DBCommandType { get; private set; }
+
+        /// <summary>
+        /// Gets the database manager.
+        /// </summary>
+        /// <value>The database manager.</value>
+        public virtual IDatabaseManager DatabaseManager { get; private set; }
+
+        private IEnumerable<IDbDataParameter> PropertyParameterCache
+        {
+            get
+            {
+                return _PropertyCache;
+            }
+        }
+
+        /// <summary>
+        /// Adds parameters that will always use the same value.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>ICommandExpression&lt;T&gt;.</returns>
+        public virtual ICommandExpression<TResult> AddConstantParameters(params IDbDataParameter[] parameters)
+        {
+            this.constantParameters.AddRange(parameters);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the result mappings (Moves to next Step in Fluent API).
+        /// </summary>
+        /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        public virtual ICommandResultMappingExpression<TResult> DefineResultMappings()
+        {
+            return new CommandResultMappingExpression<dynamic, TResult>(this);
+        }
+
+        /// <summary>
+        /// Builds the parameters (Not part of Fluent API).
+        /// </summary>
+        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        public virtual IDbDataParameter[] BuildParameters(dynamic filter, params IDbDataParameter[] explicitParameters)
+        {
+            IDbDataParameter[] parameters = null;
+
+            int parameterCount = 0;
+
+            IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(filter);
+
+            parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + ((explicitParameters != null) ? explicitParameters.Count() : 0);
+            parameters = new IDbDataParameter[parameterCount];
+
+            int i = 0;
+            foreach (var item in propertyParameters)
+            {
+                parameters[i] = item;
+                i++;
+            }
+
+            foreach (var item in this.constantParameters)
+            {
+                parameters[i] = item;
+                i++;
+            }
+
+            if (explicitParameters != null)
+                foreach (var item in explicitParameters)
                 {
-                    if (PropertyParameterCache == null)
-                    {
-                        this._PropertyCache = new List<IDbDataParameter>();
-
-                        foreach (var item in this.parameterInclusions)
-                        {
-                            var propInfo = typeof(TFilter).GetProperty(item.Key, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                            var param = this.DatabaseManager.CreateParameter();
-
-                            param.ParameterName = item.Key;
-                            param.Direction = ParameterDirection.Input;
-
-                            if (item.Value != null)
-                                item.Value.Invoke(param);
-
-                            param.Value = propInfo.GetValue(filter);
-
-                            this._PropertyCache.Add(param);
-                        }
-                    }
+                    parameters[i] = item;
+                    i++;
                 }
 
-            return this.PropertyParameterCache;
+            return parameters;
+        }
+
+        /// <summary>
+        /// Builds the property inclusion parameters.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(dynamic filter)
+        {
+            var properties = new List<IDbDataParameter>();
+
+            if (filter != null)
+            {
+
+                foreach (PropertyInfo propInfo in filter.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public))
+                {
+                    var param = this.DatabaseManager.CreateParameter();
+
+                    param.ParameterName = propInfo.Name;
+                    param.Direction = ParameterDirection.Input;
+
+                    //if (item.Value != null)
+                    //    item.Value.Invoke(param);
+
+                    param.Value = propInfo.GetValue(filter);
+
+                    properties.Add(param);
+                }
+            }
+
+            return properties;
+        }
+
+
+        /// <summary>
+        /// Builds the parameters.
+        /// </summary>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        public IEnumerable<IDbDataParameter> BuildParameters(params IDbDataParameter[] explicitParameters)
+        {
+            return this.BuildParameters(null, explicitParameters);
         }
     }
 }

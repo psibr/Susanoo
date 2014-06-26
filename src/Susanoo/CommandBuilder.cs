@@ -26,10 +26,9 @@
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public virtual ICommandExpression<TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType) where TResult : new()
         {
-            throw new System.NotImplementedException();
+            return new CommandExpression<TResult>(CommandManager.DatabaseManager, commandText, commandType);
         }
     }
 }
