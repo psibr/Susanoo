@@ -14,7 +14,8 @@ namespace Susanoo
         : ICommandResultMappingExpression<TFilter, TResult>
         where TResult : new()
     {
-        private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions = new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
+        private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions = 
+            new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultMappingExpression{TFilter, TResult}"/> class.
@@ -51,7 +52,9 @@ namespace Susanoo
         /// <param name="options">The options.</param>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(Expression<Func<TResult, object>> propertyExpression, Action<IPropertyMappingConfiguration<IDataRecord>> options)
+        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(
+            Expression<Func<TResult, object>> propertyExpression, 
+            Action<IPropertyMappingConfiguration<IDataRecord>> options)
         {
             return ForProperty(propertyExpression.GetPropertyName(), options);
         }
@@ -62,7 +65,9 @@ namespace Susanoo
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="options">The options.</param>
         /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(string propertyName, Action<IPropertyMappingConfiguration<IDataRecord>> options)
+        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(
+            string propertyName,
+            Action<IPropertyMappingConfiguration<IDataRecord>> options)
         {
             this.mappingActions.Add(propertyName, options);
 

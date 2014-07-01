@@ -8,6 +8,7 @@ namespace Susanoo
     /// <summary>
     /// Susanoo's initial step in the command definition Fluent API, in which parameters and command information are provided.
     /// </summary>
+    /// <typeparam name="TFilter">The type of the t filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface ICommandExpression<TFilter, TResult>
         where TResult : new()
@@ -93,6 +94,7 @@ namespace Susanoo
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).
         /// </summary>
+        /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
         IDbDataParameter[] BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters);
