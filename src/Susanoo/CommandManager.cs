@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -148,5 +149,8 @@ namespace Susanoo
             return CommandManager.DatabaseManager
                 .CreateInputParameter(parameterName, parameterType, value);
         }
+
+        private static IDictionary<string, IDatabaseManager> databaseManagers = new Dictionary<string, IDatabaseManager>();
+
     }
 }

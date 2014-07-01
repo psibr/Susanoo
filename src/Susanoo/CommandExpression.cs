@@ -25,6 +25,15 @@ namespace Susanoo
         /// <param name="commandType">Type of the command.</param>
         public CommandExpression(IDatabaseManager databaseManager, string commandText, CommandType commandType)
         {
+            if (databaseManager == null)
+                throw new ArgumentNullException("databaseManager");
+            if (commandText == null)
+                throw new ArgumentNullException("commandText");
+            if (string.IsNullOrWhiteSpace(commandText))
+                throw new ArgumentException("No command text provided.", "commandText");
+            if (commandType == CommandType.TableDirect)
+                throw new ArgumentException("TableDirect is not supported.", "commandType");
+
             this.DatabaseManager = databaseManager;
             this.CommandText = commandText;
             this.DBCommandType = commandType;
