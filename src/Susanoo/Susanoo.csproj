@@ -68,7 +68,6 @@
     <Compile Include="CommandBuilder.cs" />
     <Compile Include="CommandExpression.cs" />
     <Compile Include="CommandManager.cs" />
-    <Compile Include="CommandProcessor.cs" />
     <Compile Include="SingleResultSetCommandProcessor.cs" />
     <Compile Include="CommandResultMappingExpression.cs" />
     <Compile Include="DatabaseManager.cs" />

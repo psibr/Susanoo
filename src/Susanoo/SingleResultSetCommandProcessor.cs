@@ -13,20 +13,20 @@ namespace Susanoo
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public class CommandProcessor<TFilter, TResult>
+    public class SingleResultSetCommandProcessor<TFilter, TResult>
         : ICommandProcessor<TFilter, TResult>
         where TResult : new()
     {
         /// <summary>
         /// The mapping expressions before compilation.
         /// </summary>
-        private CommandResultMappingExpression<TFilter, TResult> _mappingExpressions;
+        private ICommandResultMappingExpression<TFilter, TResult> _mappingExpressions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandProcessor{TFilter, TResult}"/> class.
+        /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}"/> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
-        public CommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
+        public SingleResultSetCommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
         {
             this.MappingExpressions = mappings;
 
@@ -37,7 +37,7 @@ namespace Susanoo
         /// Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
-        protected virtual CommandResultMappingExpression<TFilter, TResult> MappingExpressions
+        protected ICommandResultMappingExpression<TFilter, TResult> MappingExpressions
         {
             get
             {
