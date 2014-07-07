@@ -18,7 +18,13 @@ namespace Susanoo
         /// <returns>indicated property name</returns>
         public static string GetPropertyName<TModel, TValue>(this Expression<Func<TModel, TValue>> propertySelector)
         {
-            return ((MemberExpression)propertySelector.Body).Member.Name;
+            string name = null;
+            if (propertySelector.Body is UnaryExpression)
+                name = ((MemberExpression)(propertySelector.Body as UnaryExpression).Operand).Member.Name;
+            else
+                name = ((MemberExpression)propertySelector.Body).Member.Name;
+
+            return name;
         }
     }
 }

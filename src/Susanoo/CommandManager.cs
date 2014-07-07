@@ -92,11 +92,10 @@ namespace Susanoo
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public static ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, CommandType commandType)
-            where TResult : new()
+        public static ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
             return CommandManager.Commander
-                .DefineCommand<TFilter, TResult>(commandText, commandType);
+                .DefineCommand<TFilter>(commandText, commandType);
         }
 
         /// <summary>
@@ -106,11 +105,10 @@ namespace Susanoo
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public static ICommandExpression<dynamic, TResult> DefineCommand<TResult>(string commandText, CommandType commandType)
-            where TResult : new()
+        public static ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
             return CommandManager.Commander
-                .DefineCommand<TResult>(commandText, commandType);
+                .DefineCommand(commandText, commandType);
         }
 
         /// <summary>

@@ -15,8 +15,7 @@ namespace Susanoo
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string commandText, System.Data.CommandType commandType)
-            where TResult : new()
+        public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, System.Data.CommandType commandType)
         {
             if (commandText == null)
                 throw new ArgumentNullException("commandText");
@@ -25,7 +24,7 @@ namespace Susanoo
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
 
-            return new CommandExpression<TFilter, TResult>(CommandManager.DatabaseManager, commandText, commandType);
+            return new CommandExpression<TFilter>(CommandManager.DatabaseManager, commandText, commandType);
         }
 
         /// <summary>
@@ -33,11 +32,17 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="databaseManagerName">Name of the database manager.</param>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandExpression<TFilter, TResult> DefineCommand<TFilter, TResult>(string databaseManagerName, string commandText, System.Data.CommandType commandType)
-            where TResult : new()
+        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        /// <exception cref="System.ArgumentException">
+        /// No command text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType
+        /// </exception>
+        public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string databaseManagerName, string commandText, System.Data.CommandType commandType)
         {
             if (commandText == null)
                 throw new ArgumentNullException("commandText");
@@ -46,7 +51,7 @@ namespace Susanoo
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
 
-            return new CommandExpression<TFilter, TResult>(CommandManager.DatabaseManager, commandText, commandType);
+            return new CommandExpression<TFilter>(CommandManager.DatabaseManager, commandText, commandType);
         }
 
         /// <summary>
@@ -56,7 +61,7 @@ namespace Susanoo
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandExpression<dynamic, TResult> DefineCommand<TResult>(string commandText, System.Data.CommandType commandType) where TResult : new()
+        public virtual ICommandExpression<dynamic> DefineCommand(string commandText, System.Data.CommandType commandType)
         {
             if (commandText == null)
                 throw new ArgumentNullException("commandText");
@@ -65,7 +70,7 @@ namespace Susanoo
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
 
-            return new CommandExpression<dynamic, TResult>(CommandManager.DatabaseManager, commandText, commandType);
+            return new CommandExpression<dynamic>(CommandManager.DatabaseManager, commandText, commandType);
         }
     }
 }

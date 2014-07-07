@@ -56,7 +56,7 @@ namespace Susanoo
         /// Uses the specified alias when mapping from the data call.
         /// </summary>
         /// <param name="alias">The alias.</param>
-        /// <returns>Susanoo.ICommandResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
+        /// <returns>Susanoo.IResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
         public virtual IPropertyMappingConfiguration<TRecord> AliasProperty(string alias)
         {
             this.ActiveAlias = alias;

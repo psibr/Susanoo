@@ -20,13 +20,13 @@ namespace Susanoo
         /// <summary>
         /// The mapping expressions before compilation.
         /// </summary>
-        private ICommandResultMappingExpression<TFilter, TResult> _mappingExpressions;
+        private ICommandResultExpression<TFilter, TResult> _mappingExpressions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}"/> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
-        public SingleResultSetCommandProcessor(CommandResultMappingExpression<TFilter, TResult> mappings)
+        public SingleResultSetCommandProcessor(CommandResultExpression<TFilter, TResult> mappings)
         {
             this.MappingExpressions = mappings;
 
@@ -37,7 +37,7 @@ namespace Susanoo
         /// Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
-        protected ICommandResultMappingExpression<TFilter, TResult> MappingExpressions
+        protected ICommandResultExpression<TFilter, TResult> MappingExpressions
         {
             get
             {
@@ -61,7 +61,7 @@ namespace Susanoo
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         protected virtual Func<IDataRecord, object> CompileMappings()
         {
-            var mappings = this.MappingExpressions.Export();
+            var mappings = this.MappingExpressions.Export<TResult>();
 
             var statements = new List<Expression>();
 
@@ -140,7 +140,7 @@ namespace Susanoo
         {
             var results = new List<TResult>();
 
-            ICommandExpression<TFilter, TResult> commandExpression = this.MappingExpressions.CommandExpression;
+            ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
 
             using (IDataReader record = commandExpression.DatabaseManager
                 .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters)))
