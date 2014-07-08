@@ -1,11 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo", "Susanoo\Susanoo.csproj", "{3F241CBD-FFF8-45AB-AD2A-F4780BB5FA59}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.UnitTests", "Susanoo.UnitTests\Susanoo.UnitTests.csproj", "{5906681C-E529-4CD5-9A55-40D5FEEFCDC8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentTester", "FluentTester\FluentTester.csproj", "{E18F101B-6DD5-4E24-A108-8B6D5E27B970}"
 EndProject
@@ -19,10 +15,6 @@ Global
 		{3F241CBD-FFF8-45AB-AD2A-F4780BB5FA59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F241CBD-FFF8-45AB-AD2A-F4780BB5FA59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F241CBD-FFF8-45AB-AD2A-F4780BB5FA59}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5906681C-E529-4CD5-9A55-40D5FEEFCDC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5906681C-E529-4CD5-9A55-40D5FEEFCDC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5906681C-E529-4CD5-9A55-40D5FEEFCDC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5906681C-E529-4CD5-9A55-40D5FEEFCDC8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E18F101B-6DD5-4E24-A108-8B6D5E27B970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E18F101B-6DD5-4E24-A108-8B6D5E27B970}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E18F101B-6DD5-4E24-A108-8B6D5E27B970}.Release|Any CPU.ActiveCfg = Release|Any CPU

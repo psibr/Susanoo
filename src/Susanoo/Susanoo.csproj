@@ -72,6 +72,7 @@
     <Compile Include="CommandResultImplementor.cs" />
     <Compile Include="ICommandResultExpression.cs" />
     <Compile Include="ICommandResultImplementor.cs" />
+    <Compile Include="PetaPoco.cs" />
     <Compile Include="ResultMappingImplementor.cs" />
     <Compile Include="SingleResultSetCommandProcessor.cs" />
     <Compile Include="ResultMappingExpression.cs" />

@@ -17,7 +17,7 @@ namespace Susanoo
             if (_MappingContainer.ContainsKey(typeof(TResult)))
                 result = _MappingContainer[typeof(TResult)] as IResultMappingExpression<TFilter, TResult>;
 
-            return result;
+            return result ?? new ResultMappingExpression<TFilter, TResult>();
         }
 
         public virtual void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping) where TResult : new()

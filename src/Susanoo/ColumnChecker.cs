@@ -8,7 +8,8 @@ namespace Susanoo
     /// </summary>
     public class ColumnChecker
     {
-        private List<string> fields = new List<string>();
+        private bool isInit = false;
+        private Dictionary<string, int> fields = new Dictionary<string, int>();
         private int lastIndex = 0;
 
         /// <summary>
@@ -17,31 +18,17 @@ namespace Susanoo
         /// <param name="record">The record.</param>
         /// <param name="name">The name.</param>
         /// <returns><c>true</c> if the specified record has column; otherwise, <c>false</c>.</returns>
-        public bool HasColumn(IDataRecord record, string name)
+        public int HasColumn(IDataRecord record, string name)
         {
-            bool map = false;
+            if (!isInit)
+            {
+                for (int i = 0; i < record.FieldCount; i++)
+                    fields.Add(record.GetName(i), i);
 
-            if (fields.Contains(name))
-            {
-                map = true;
-            }
-            else
-            {
-                for (int i = lastIndex; i < record.FieldCount; i++)
-                {
-                    lastIndex = i;
-                    var fieldName = record.GetName(i);
-                    fields.Add(fieldName);
-                    if (fieldName == name)
-                    {
-                        map = true;
-                        lastIndex++;
-                        break;
-                    }
-                }
+                isInit = true;
             }
 
-            return map;
+            return fields.ContainsKey(name) ? fields[name] : -1;
         }
     }
 }

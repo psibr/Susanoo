@@ -93,21 +93,19 @@ namespace Susanoo
         {
             object returnValue;
 
-            if (value is DBNull || value == null)
-                returnValue = defaultValue;
             //else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
             //    returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
             //else if (newType == typeof(int) && value.GetType() == typeof(long))
             //    returnValue = ((object)((int)((long)value)));
             //else if (newType == typeof(int) && value.GetType() == typeof(decimal))
             //    returnValue = ((object)((int)((decimal)value)));
-            else if (newType == typeof(string))
+            if (newType == typeof(string))
             {
                 returnValue = value.ToString();
 
-                if (!string.IsNullOrEmpty(typeName))
-                    if (typeName == "date")
-                        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
+                //if (!string.IsNullOrEmpty(typeName))
+                //    if (typeName == "date")
+                //        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
             }
             else
                 returnValue = value;

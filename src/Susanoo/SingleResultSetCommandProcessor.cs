@@ -79,30 +79,37 @@ namespace Susanoo
             {
                 var ex = Expression.Variable(typeof(Exception), "ex");
 
+                var localOrdinal = Expression.Variable(typeof(int), "ordinal");
+
                 statements.Add(
-                    Expression.IfThen(
-                        Expression.IsTrue(
+                    Expression.Block(new ParameterExpression[] { localOrdinal }, 
+                        Expression.Assign(localOrdinal, 
                             Expression.Call(columnCheckerExp, typeof(ColumnChecker).GetMethod("HasColumn", BindingFlags.Public | BindingFlags.Instance),
                                 readerExp,
                                 Expression.Constant(pair.Value.ActiveAlias))),
-
-                            Expression.TryCatch(
-                                Expression.Block(typeof(void),
-                                    Expression.Invoke(
-                                        pair.Value.AssembleMappingExpression(
-                                            Expression.Property(descriptorExp, pair.Value.PropertyMetadata)),
-                                        readerExp)),
-                                Expression.Catch(
-                                    ex,
+                        Expression.IfThen(
+                            Expression.AndAlso(
+                                Expression.IsTrue(
+                                    Expression.GreaterThanOrEqual(localOrdinal, Expression.Constant(0))),
+                                Expression.IsFalse(
+                                    Expression.Call(readerExp, typeof(IDataRecord).GetMethod("IsDBNull"), localOrdinal))),
+                                Expression.TryCatch(
                                     Expression.Block(typeof(void),
-                                        Expression.Throw(
-                                            Expression.New(typeof(ColumnBindingException).GetConstructor(new Type[] { typeof(string), typeof(Exception) }),
-                                                Expression.Constant(pair.Value.PropertyMetadata.Name +
-                                                    " encountered an exception on column [" + pair.Value.ActiveAlias + "] when binding"
-                                                        + " into property " + pair.Value.PropertyMetadata.Name + " which is CLR type of "
-                                                            + pair.Value.PropertyMetadata.PropertyType.Name + "."),
-                                            ex
-                                            )))))));
+                                        Expression.Invoke(
+                                            pair.Value.AssembleMappingExpression(
+                                                Expression.Property(descriptorExp, pair.Value.PropertyMetadata)),
+                                            readerExp)),
+                                    Expression.Catch(
+                                        ex,
+                                        Expression.Block(typeof(void),
+                                            Expression.Throw(
+                                                Expression.New(typeof(ColumnBindingException).GetConstructor(new Type[] { typeof(string), typeof(Exception) }),
+                                                    Expression.Constant(pair.Value.PropertyMetadata.Name +
+                                                        " encountered an exception on column [" + pair.Value.ActiveAlias + "] when binding"
+                                                            + " into property " + pair.Value.PropertyMetadata.Name + " which is CLR type of "
+                                                                + pair.Value.PropertyMetadata.PropertyType.Name + "."),
+                                                ex
+                                                ))))))));
             }
 
             statements.Add(descriptorExp);
@@ -121,7 +128,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
@@ -131,7 +139,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -143,7 +152,11 @@ namespace Susanoo
             ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
 
             using (IDataReader record = commandExpression.DatabaseManager
-                .ExecuteDataReader(commandExpression.CommandText, commandExpression.DBCommandType, null, commandExpression.BuildParameters(filter, explicitParameters)))
+                .ExecuteDataReader(
+                    commandExpression.CommandText,
+                    commandExpression.DBCommandType,
+                    null,
+                    commandExpression.BuildParameters(filter, explicitParameters)))
             {
                 while (record.Read())
                 {

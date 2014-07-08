@@ -150,5 +150,16 @@ namespace Susanoo
 
         private static IDictionary<string, IDatabaseManager> databaseManagers = new Dictionary<string, IDatabaseManager>();
 
+
+    }
+
+    public sealed class MappingContainer
+    {
+        private IDictionary<Type, IDictionary<string, Func<IDataRecord, object>>> compiledMappings =
+            new Dictionary<Type, IDictionary<string, Func<IDataRecord, object>>>();
+
+        public void Store(Type type, string id, Func<IDataRecord, object> mappingDelegate)
+        {
+        }
     }
 }
