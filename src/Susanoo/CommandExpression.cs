@@ -3,38 +3,58 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
+using System.Text;
 
 namespace Susanoo
 {
-    public class CommandExpression<TFilter, TResult>
-        : ICommandExpression<TFilter, TResult>
-        where TResult : new()
+    public class CommandExpression<TFilter>
+        : ICommandExpression<TFilter>, IFluentPipelineFragment
     {
+        /// <summary>
+        /// The parameter inclusions
+        /// </summary>
         private readonly IDictionary<string, Action<IDbDataParameter>> parameterInclusions = new Dictionary<string, Action<IDbDataParameter>>();
+
+        /// <summary>
+        /// The parameter exclusions
+        /// </summary>
         private readonly IList<string> parameterExclusions = new List<string>();
+
+        /// <summary>
+        /// The constant parameters
+        /// </summary>
         private readonly List<IDbDataParameter> constantParameters = new List<IDbDataParameter>();
 
+        /// <summary>
+        /// The explicit inclusion mode
+        /// </summary>
         private bool explicitInclusionMode = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}" /> class.
         /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
-        public CommandExpression(IDatabaseManager databaseManager, string commandText, CommandType commandType)
+        /// <exception cref="System.ArgumentNullException">
+        /// databaseManager
+        /// or
+        /// commandText
+        /// </exception>
+        /// <exception cref="System.ArgumentException">
+        /// No command text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType
+        /// </exception>
+        public CommandExpression(string commandText, CommandType commandType)
         {
-            if (databaseManager == null)
-                throw new ArgumentNullException("databaseManager");
             if (commandText == null)
                 throw new ArgumentNullException("commandText");
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentException("No command text provided.", "commandText");
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
-
-            this.DatabaseManager = databaseManager;
             this.CommandText = commandText;
             this.DBCommandType = commandType;
         }
@@ -51,17 +71,36 @@ namespace Susanoo
         /// <value>The type of the database command.</value>
         public virtual CommandType DBCommandType { get; private set; }
 
-        /// <summary>
-        /// Gets the database manager.
-        /// </summary>
-        /// <value>The database manager.</value>
-        public virtual IDatabaseManager DatabaseManager { get; private set; }
+        public virtual BigInteger CacheHash
+        {
+            get
+            {
+                StringBuilder hashText = new StringBuilder(CommandText);
+
+                hashText.Append(DBCommandType.ToString());
+                hashText.Append(this.explicitInclusionMode.ToString());
+                hashText.Append(this.constantParameters.Aggregate(string.Empty, (p, c) => p + c.ParameterName));
+                hashText.Append(this.parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
+                hashText.Append(this.parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
+
+                string resultBeforeHash = hashText.ToString();
+                BigInteger hashCode = FnvHash.GetHash(resultBeforeHash, 128);
+
+                return hashCode;
+            }
+        }
+
+        public ICommandProcessor<TFilter> Finalize()
+        {
+            return new NoResultSetCommandProcessor<TFilter>(this);
+        }
+
         /// <summary>
         /// Adds parameters that will always use the same value.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
-        public virtual ICommandExpression<TFilter, TResult> AddConstantParameters(params IDbDataParameter[] parameters)
+        public virtual ICommandExpression<TFilter> AddConstantParameters(params IDbDataParameter[] parameters)
         {
             this.constantParameters.AddRange(parameters);
 
@@ -69,25 +108,18 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Defines the result mappings (Moves to next Step in Fluent API).
-        /// </summary>
-        /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandResultMappingExpression<TFilter, TResult> DefineResultMappings()
-        {
-            return new CommandResultMappingExpression<TFilter, TResult>(this);
-        }
-
-        /// <summary>
         /// Builds the parameters (Not part of Fluent API).
         /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public virtual IDbDataParameter[] BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters)
+        public virtual IDbDataParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
         {
             IDbDataParameter[] parameters = null;
 
             int parameterCount = 0;
 
-            IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(filter);
+            IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(databaseManager, filter);
 
             parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + ((explicitParameters != null) ? explicitParameters.Count() : 0);
             parameters = new IDbDataParameter[parameterCount];
@@ -120,7 +152,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(TFilter filter)
+        public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(IDatabaseManager databaseManager, TFilter filter)
         {
             var properties = new List<IDbDataParameter>();
 
@@ -131,7 +163,7 @@ namespace Susanoo
                     foreach (var item in parameterInclusions)
                     {
                         var propInfo = filter.GetType().GetProperty(item.Key, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                        var param = this.DatabaseManager.CreateParameter();
+                        var param = databaseManager.CreateParameter();
 
                         param.ParameterName = item.Key;
                         param.Direction = ParameterDirection.Input;
@@ -150,7 +182,7 @@ namespace Susanoo
                     {
                         if (!this.parameterExclusions.Contains(propInfo.Name))
                         {
-                            var param = this.DatabaseManager.CreateParameter();
+                            var param = databaseManager.CreateParameter();
 
                             param.ParameterName = propInfo.Name;
                             param.Direction = ParameterDirection.Input;
@@ -170,23 +202,21 @@ namespace Susanoo
             return properties;
         }
 
-
         /// <summary>
         /// Builds the parameters.
         /// </summary>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public IEnumerable<IDbDataParameter> BuildParameters(params IDbDataParameter[] explicitParameters)
+        public IEnumerable<IDbDataParameter> BuildParameters(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
         {
-            return this.BuildParameters(default(TFilter), explicitParameters);
+            return this.BuildParameters(databaseManager, default(TFilter), explicitParameters);
         }
-
 
         /// <summary>
         /// Uses the explicit property inclusion mode for a potential filter.
         /// </summary>
         /// <returns>ICommandExpression&lt;TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> UseExplicitPropertyInclusionMode()
+        public ICommandExpression<TFilter> UseExplicitPropertyInclusionMode()
         {
             this.explicitInclusionMode = true;
 
@@ -198,7 +228,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> ExcludeProperty(Expression<Func<TFilter, object>> propertyExpression)
+        public ICommandExpression<TFilter> ExcludeProperty(Expression<Func<TFilter, object>> propertyExpression)
         {
             return this.ExcludeProperty(propertyExpression.GetPropertyName());
         }
@@ -208,7 +238,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> ExcludeProperty(string propertyName)
+        public ICommandExpression<TFilter> ExcludeProperty(string propertyName)
         {
             if (!this.parameterExclusions.Contains(propertyName))
             {
@@ -224,7 +254,7 @@ namespace Susanoo
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression)
+        public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression)
         {
             return this.IncludeProperty(propertyExpression.GetPropertyName(), null);
         }
@@ -236,7 +266,7 @@ namespace Susanoo
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions)
+        public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions)
         {
             return this.IncludeProperty(propertyExpression.GetPropertyName(), parameterOptions);
         }
@@ -247,7 +277,7 @@ namespace Susanoo
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName)
+        public ICommandExpression<TFilter> IncludeProperty(string propertyName)
         {
             return this.IncludeProperty(propertyName, null);
         }
@@ -258,7 +288,7 @@ namespace Susanoo
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter, TResult> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions)
+        public ICommandExpression<TFilter> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions)
         {
             if (this.parameterInclusions.Keys.Contains(propertyName))
             {
@@ -270,6 +300,125 @@ namespace Susanoo
             }
 
             return this;
+        }
+
+        /// <summary>
+        /// Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
+        public ICommandResultExpression<TFilter, TResult> DefineResultMappings<TResult>() where TResult : new()
+        {
+            return new CommandResultExpression<TFilter, TResult>(this);
+        }
+
+        /// <summary>
+        /// Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult1">The type of the result1.</typeparam>
+        /// <typeparam name="TResult2">The type of the result2.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
+        public ICommandResultExpression<TFilter, TResult1, TResult2> DefineResultMappings<TResult1, TResult2>()
+            where TResult1 : new()
+            where TResult2 : new()
+        {
+            return new CommandResultExpression<TFilter, TResult1, TResult2>(this);
+        }
+
+        /// <summary>
+        /// Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult1">The type of the result1.</typeparam>
+        /// <typeparam name="TResult2">The type of the result2.</typeparam>
+        /// <typeparam name="TResult3">The type of the result3.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResultMappings<TResult1, TResult2, TResult3>()
+            where TResult1 : new()
+            where TResult2 : new()
+            where TResult3 : new()
+        {
+            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3>(this);
+        }
+
+        /// <summary>
+        /// Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult1">The type of the result1.</typeparam>
+        /// <typeparam name="TResult2">The type of the result2.</typeparam>
+        /// <typeparam name="TResult3">The type of the result3.</typeparam>
+        /// <typeparam name="TResult4">The type of the result4.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResultMappings<TResult1, TResult2, TResult3, TResult4>()
+            where TResult1 : new()
+            where TResult2 : new()
+            where TResult3 : new()
+            where TResult4 : new()
+        {
+            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
+        }
+
+        /// <summary>
+        /// Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult1">The type of the result1.</typeparam>
+        /// <typeparam name="TResult2">The type of the result2.</typeparam>
+        /// <typeparam name="TResult3">The type of the result3.</typeparam>
+        /// <typeparam name="TResult4">The type of the result4.</typeparam>
+        /// <typeparam name="TResult5">The type of the result5.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5>()
+            where TResult1 : new()
+            where TResult2 : new()
+            where TResult3 : new()
+            where TResult4 : new()
+            where TResult5 : new()
+        {
+            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+        }
+
+        /// <summary>
+        /// Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult1">The type of the result1.</typeparam>
+        /// <typeparam name="TResult2">The type of the result2.</typeparam>
+        /// <typeparam name="TResult3">The type of the result3.</typeparam>
+        /// <typeparam name="TResult4">The type of the result4.</typeparam>
+        /// <typeparam name="TResult5">The type of the result5.</typeparam>
+        /// <typeparam name="TResult6">The type of the result6.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
+            where TResult1 : new()
+            where TResult2 : new()
+            where TResult3 : new()
+            where TResult4 : new()
+            where TResult5 : new()
+            where TResult6 : new()
+        {
+            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+        }
+
+        /// <summary>
+        /// Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult1">The type of the result1.</typeparam>
+        /// <typeparam name="TResult2">The type of the result2.</typeparam>
+        /// <typeparam name="TResult3">The type of the result3.</typeparam>
+        /// <typeparam name="TResult4">The type of the result4.</typeparam>
+        /// <typeparam name="TResult5">The type of the result5.</typeparam>
+        /// <typeparam name="TResult6">The type of the result6.</typeparam>
+        /// <typeparam name="TResult7">The type of the result7.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> DefineResultMappings
+            <TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
+            where TResult1 : new()
+            where TResult2 : new()
+            where TResult3 : new()
+            where TResult4 : new()
+            where TResult5 : new()
+            where TResult6 : new()
+            where TResult7 : new()
+        {
+            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
         }
     }
 }

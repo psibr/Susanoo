@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -15,17 +14,17 @@ namespace Susanoo
     {
         private readonly string _ConnectionString;
         private readonly Action<IDbCommand> providerSpecificCommandSettings;
-        private IDbConnection _Connection;
+        private DbConnection _Connection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
-        /// <param name="connectionName">Name of the connection string.</param>
+        /// <param name="connectionStringName">Name of the connection string.</param>
         /// <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
         /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
-        public DatabaseManager(DbProviderFactory provider, string connectionName, Action<IDbCommand> providerSpecificCommandSettings)
-            : this(provider, connectionName)
+        public DatabaseManager(DbProviderFactory provider, string connectionStringName, Action<IDbCommand> providerSpecificCommandSettings)
+            : this(provider, connectionStringName)
         {
             this.providerSpecificCommandSettings = providerSpecificCommandSettings;
         }
@@ -34,14 +33,26 @@ namespace Susanoo
         /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
-        /// <param name="connectionName">Name of the connection string.</param>
+        /// <param name="connectionStringName">Name of the connection string.</param>
         /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
-        public DatabaseManager(DbProviderFactory provider, string connectionName)
+        public DatabaseManager(DbProviderFactory provider, string connectionStringName)
         {
             this.Provider = provider;
 
-            this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionName]
-            .ConnectionString;
+            this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+                .ConnectionString;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        /// </summary>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        public DatabaseManager(string connectionStringName)
+        {
+            this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+                .ConnectionString;
+
+            this.Provider = DbProviderFactories.GetFactory(this.Connection);
         }
 
         /// <summary>
@@ -58,7 +69,7 @@ namespace Susanoo
         /// <value>
         /// The connection.
         /// </value>
-        protected virtual IDbConnection Connection
+        protected DbConnection Connection
         {
             get
             {
@@ -93,21 +104,19 @@ namespace Susanoo
         {
             object returnValue;
 
-            if (value is DBNull || value == null)
-                returnValue = defaultValue;
             //else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
             //    returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
             //else if (newType == typeof(int) && value.GetType() == typeof(long))
             //    returnValue = ((object)((int)((long)value)));
             //else if (newType == typeof(int) && value.GetType() == typeof(decimal))
             //    returnValue = ((object)((int)((decimal)value)));
-            else if (newType == typeof(string))
+            if (newType == typeof(string))
             {
                 returnValue = value.ToString();
 
-                if (!string.IsNullOrEmpty(typeName))
-                    if (typeName == "date")
-                        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
+                //if (!string.IsNullOrEmpty(typeName))
+                //    if (typeName == "date")
+                //        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
             }
             else
                 returnValue = value;
@@ -137,6 +146,7 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, IDbTransaction transaction, params IDbDataParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
@@ -188,6 +198,7 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, params IDbDataParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
@@ -237,6 +248,7 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, IDbTransaction transaction, params IDataParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
@@ -292,6 +304,7 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, IDbTransaction transaction, params IDbDataParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))

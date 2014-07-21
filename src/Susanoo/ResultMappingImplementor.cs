@@ -10,39 +10,39 @@ namespace Susanoo
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public class CommandResultMappingExpression<TFilter, TResult>
-        : ICommandResultMappingExpression<TFilter, TResult>
+    public class ResultMappingImplementor<TFilter, TResult>
+        : IResultMappingImplementor<TFilter, TResult>
         where TResult : new()
     {
-        private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions = 
+        private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions =
             new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandResultMappingExpression{TFilter, TResult}"/> class.
-        /// </summary>
-        /// <param name="commandExpression">The command expression.</param>
-        public CommandResultMappingExpression(ICommandExpression<TFilter, TResult> commandExpression)
-        {
-            this.CommandExpression = commandExpression;
+        private IPropertyMetadataExtractor _PropertyMetadataExtractor = new ComponentModelMetadataExtractor();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ResultMappingImplementor{TFilter, TResult}" /> class.
+        /// </summary>
+        public ResultMappingImplementor()
+        {
             MapDeclarativeProperties();
         }
 
         /// <summary>
-        /// Gets the command expression.
+        /// Gets or sets the property metadata extractor.
         /// </summary>
-        /// <value>The command expression.</value>
-        public virtual ICommandExpression<TFilter, TResult> CommandExpression { get; private set; }
+        /// <value>The property metadata extractor.</value>
+        protected IPropertyMetadataExtractor PropertyMetadataExtractor
+        {
+            get { return this._PropertyMetadataExtractor; }
+            set { if (value != null) this._PropertyMetadataExtractor = value; }
+        }
 
         /// <summary>
         /// Clears the result mappings.
         /// </summary>
-        /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandResultMappingExpression<TFilter, TResult> ClearMappings()
+        public virtual void ClearMappings()
         {
             this.mappingActions.Clear();
-
-            return this;
         }
 
         /// <summary>
@@ -50,13 +50,12 @@ namespace Susanoo
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="options">The options.</param>
-        /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(
-            Expression<Func<TResult, object>> propertyExpression, 
+        public virtual void ForProperty(
+            Expression<Func<TResult, object>> propertyExpression,
             Action<IPropertyMappingConfiguration<IDataRecord>> options)
         {
-            return ForProperty(propertyExpression.GetPropertyName(), options);
+            this.ForProperty(propertyExpression.GetPropertyName(), options);
         }
 
         /// <summary>
@@ -64,23 +63,14 @@ namespace Susanoo
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="options">The options.</param>
-        /// <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandResultMappingExpression<TFilter, TResult> ForProperty(
+        public virtual void ForProperty(
             string propertyName,
             Action<IPropertyMappingConfiguration<IDataRecord>> options)
         {
-            this.mappingActions.Add(propertyName, options);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Prepares the command for caching and executing.
-        /// </summary>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandProcessor<TFilter, TResult> PrepareCommand()
-        {
-            return new SingleResultSetCommandProcessor<TFilter, TResult>(this);
+            if (!this.mappingActions.ContainsKey(propertyName))
+                this.mappingActions.Add(propertyName, options);
+            else
+                this.mappingActions[propertyName] = options;
         }
 
         /// <summary>
@@ -106,25 +96,13 @@ namespace Susanoo
         /// <summary>
         /// Maps the declarative properties.
         /// </summary>
-        protected void MapDeclarativeProperties()
+        public void MapDeclarativeProperties()
         {
             foreach (var item in this.PropertyMetadataExtractor
                 .FindAllowedProperties(typeof(TResult), Susanoo.DescriptorActions.Read))
             {
                 mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.Alias));
             }
-        }
-
-        private IPropertyMetadataExtractor _PropertyMetadataExtractor = new ComponentModelMetadataExtractor();
-
-        /// <summary>
-        /// Gets or sets the property metadata extractor.
-        /// </summary>
-        /// <value>The property metadata extractor.</value>
-        protected virtual IPropertyMetadataExtractor PropertyMetadataExtractor
-        {
-            get { return this._PropertyMetadataExtractor; }
-            set { if (value != null) this._PropertyMetadataExtractor = value; }
         }
     }
 }

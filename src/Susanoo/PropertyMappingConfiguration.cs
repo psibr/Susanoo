@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 
 namespace Susanoo
@@ -10,7 +12,7 @@ namespace Susanoo
     /// </summary>
     /// <typeparam name="TRecord">The type of the record.</typeparam>
     public class PropertyMappingConfiguration<TRecord>
-        : IPropertyMappingConfiguration<TRecord>
+        : IPropertyMappingConfiguration<TRecord>, IFluentPipelineFragment
         where TRecord : IDataRecord
     {
         private Expression<Func<TRecord, string, bool>> MapOnCondition = null;
@@ -39,16 +41,30 @@ namespace Susanoo
         /// <value>The active alias.</value>
         public virtual string ActiveAlias { get; private set; }
 
-        /// <summary>
-        /// Maps the property conditionally.
-        /// </summary>
-        /// <param name="condition">The condition.</param>
-        /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual IPropertyMappingConfiguration<TRecord> MapIf(Expression<Func<TRecord, string, bool>> condition)
+        public virtual BigInteger CacheHash
         {
-            this.MapOnCondition = condition;
+            get
+            {
+                return FnvHash.GetHash(this.PropertyMetadata.Name + this.ActiveAlias + conversionProcess.ToString(), 64);
+            }
+        }
 
+        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+            params Func<TFilter, TParent, KeyValuePair<string, object>>[] parameterBuilder)
+        {
+            return this;
+        }
+
+        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+            params Func<TFilter, IEnumerable<TParent>, KeyValuePair<string, object>>[] parameterBuilder)
+        {
+            return this;
+        }
+
+        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+            string KeyName,
+            Action<TParent> foreignKeySelector)
+        {
             return this;
         }
 
@@ -56,7 +72,7 @@ namespace Susanoo
         /// Uses the specified alias when mapping from the data call.
         /// </summary>
         /// <param name="alias">The alias.</param>
-        /// <returns>Susanoo.ICommandResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
+        /// <returns>Susanoo.IResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
         public virtual IPropertyMappingConfiguration<TRecord> AliasProperty(string alias)
         {
             this.ActiveAlias = alias;
