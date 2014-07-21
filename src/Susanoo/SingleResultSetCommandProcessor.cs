@@ -15,7 +15,7 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class SingleResultSetCommandProcessor<TFilter, TResult>
-        : ICommandProcessor<TFilter, TResult>, IFluentPipelineFragment
+        : ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>, IFluentPipelineFragment
         where TResult : new()
     {
         /// <summary>
@@ -24,11 +24,6 @@ namespace Susanoo
         private ICommandResultExpression<TFilter, TResult> _MappingExpressions;
 
         private ICommandExpression<TFilter> _CommandExpression;
-
-        public ICommandExpression<TFilter> CommandExpression
-        {
-            get { return this._CommandExpression; }
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}"/> class.
@@ -40,6 +35,19 @@ namespace Susanoo
             this._CommandExpression = mappings.CommandExpression;
 
             this.CompiledMapping = CompileMappings();
+        }
+
+        public ICommandExpression<TFilter> CommandExpression
+        {
+            get { return this._CommandExpression; }
+        }
+
+        public BigInteger CacheHash
+        {
+            get
+            {
+                return (this.MappingExpressions.CacheHash * 31) ^ this.CommandExpression.CacheHash;
+            }
         }
 
         /// <summary>
@@ -63,6 +71,60 @@ namespace Susanoo
         /// </summary>
         /// <value>The compiled mapping.</value>
         protected Func<IDataRecord, object> CompiledMapping { get; private set; }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
+        {
+            return this.Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
+        {
+            IEnumerable<TResult> results = new List<TResult>();
+
+            ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
+
+            using (IDataReader record = databaseManager
+                .ExecuteDataReader(
+                    commandExpression.CommandText,
+                    commandExpression.DBCommandType,
+                    null,
+                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+            {
+                results = (((IResultMapper<TResult>)this).MapResult(record, CompiledMapping));
+            }
+
+            return results;
+        }
+
+        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record, Func<IDataRecord, object> mapping)
+        {
+            IList<TResult> list = new List<TResult>();
+
+            while (record.Read())
+            {
+                list.Add((TResult)mapping.Invoke(record));
+            }
+
+            return list;
+        }
+
+        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
+        {
+            return (this as IResultMapper<TResult>).MapResult(record, CompiledMapping);
+        }
 
         /// <summary>
         /// Compiles the result mappings.
@@ -134,54 +196,6 @@ namespace Susanoo
             Type dynamicType = type.CreateType();
 
             return (Func<IDataRecord, object>)Delegate.CreateDelegate(typeof(Func<IDataRecord, object>), dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
-        }
-
-        /// <summary>
-        /// Assembles a data command for an ADO.NET provider,
-        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
-        {
-            return this.Execute(databaseManager, default(TFilter), explicitParameters);
-        }
-
-        /// <summary>
-        /// Assembles a data command for an ADO.NET provider,
-        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="filter">The filter.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
-        {
-            var results = new List<TResult>();
-
-            ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
-
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DBCommandType,
-                    null,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
-            {
-                while (record.Read())
-                {
-                    results.Add((TResult)CompiledMapping.Invoke(record));
-                }
-            }
-
-            return results;
-        }
-
-        public BigInteger CacheHash
-        {
-            get 
-            {
-                return (this.MappingExpressions.CacheHash * 31) ^ this.CommandExpression.CacheHash;
-            }
         }
     }
 }

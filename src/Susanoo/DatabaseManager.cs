@@ -2,8 +2,6 @@
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -51,7 +49,6 @@ namespace Susanoo
         /// <param name="connectionStringName">Name of the connection string.</param>
         public DatabaseManager(string connectionStringName)
         {
-
             this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
                 .ConnectionString;
 

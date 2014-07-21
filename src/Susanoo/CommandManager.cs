@@ -24,6 +24,9 @@ namespace Susanoo
 
         private static ICommandExpressionBuilder _CommandBuilder = new CommandBuilder();
 
+        private static Func<string, IDatabaseManager> _DatabaseManagerFactoryMethod = (connectionStringName) =>
+                    new DatabaseManager(connectionStringName);
+
         /// <summary>
         /// Gets the expression assembly that contains runtime compiled methods used for mappings.
         /// </summary>
@@ -49,17 +52,6 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Gets the database manager.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        /// <returns>IDatabaseManager.</returns>
-        /// <value>The database manager.</value>
-        public static IDatabaseManager BuildDatabaseManager(string connectionString)
-        {
-            return _DatabaseManagerFactoryMethod(connectionString);
-        }
-
-        /// <summary>
         /// Gets the commander.
         /// </summary>
         /// <value>The commander.</value>
@@ -71,8 +63,16 @@ namespace Susanoo
             }
         }
 
-        private static Func<string, IDatabaseManager> _DatabaseManagerFactoryMethod = (connectionStringName) =>
-            new DatabaseManager(connectionStringName);
+        /// <summary>
+        /// Gets the database manager.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <returns>IDatabaseManager.</returns>
+        /// <value>The database manager.</value>
+        public static IDatabaseManager BuildDatabaseManager(string connectionString)
+        {
+            return _DatabaseManagerFactoryMethod(connectionString);
+        }
 
         /// <summary>
         /// Registers the database manager.
@@ -80,7 +80,7 @@ namespace Susanoo
         /// <param name="databaseManagerFactoryMethod">The database manager factory method.</param>
         public static void RegisterDatabaseManagerFactory(Func<string, IDatabaseManager> databaseManagerFactoryMethod)
         {
-            if(databaseManagerFactoryMethod != null)
+            if (databaseManagerFactoryMethod != null)
                 _DatabaseManagerFactoryMethod = databaseManagerFactoryMethod;
         }
 
@@ -117,7 +117,6 @@ namespace Susanoo
             return CommandManager.Commander
                 .DefineCommand(commandText, commandType);
         }
-
     }
 
     public sealed class MappingContainer

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 
@@ -9,12 +8,9 @@ namespace Susanoo
     /// Susanoo's initial step in the command definition Fluent API, in which parameters and command information are provided.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandExpression<TFilter> 
+    public interface ICommandExpression<TFilter>
         : IFluentPipelineFragment
     {
-
-        ICommandProcessor<TFilter, object> Finalize();
-
         /// <summary>
         /// Gets the command text.
         /// </summary>
@@ -26,6 +22,8 @@ namespace Susanoo
         /// </summary>
         /// <value>The type of the database command.</value>
         CommandType DBCommandType { get; }
+
+        ICommandProcessor<TFilter> Finalize();
 
         /// <summary>
         /// Adds parameters that will always use the same value.

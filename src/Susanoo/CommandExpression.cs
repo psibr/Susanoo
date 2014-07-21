@@ -16,10 +16,12 @@ namespace Susanoo
         /// The parameter inclusions
         /// </summary>
         private readonly IDictionary<string, Action<IDbDataParameter>> parameterInclusions = new Dictionary<string, Action<IDbDataParameter>>();
+
         /// <summary>
         /// The parameter exclusions
         /// </summary>
         private readonly IList<string> parameterExclusions = new List<string>();
+
         /// <summary>
         /// The constant parameters
         /// </summary>
@@ -29,11 +31,6 @@ namespace Susanoo
         /// The explicit inclusion mode
         /// </summary>
         private bool explicitInclusionMode = false;
-
-        public ICommandProcessor<TFilter, object> Finalize()
-        {
-            return new SingleResultSetCommandProcessor<TFilter, object>(this.DefineResultMappings<object>());
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}" /> class.
@@ -73,6 +70,30 @@ namespace Susanoo
         /// </summary>
         /// <value>The type of the database command.</value>
         public virtual CommandType DBCommandType { get; private set; }
+
+        public virtual BigInteger CacheHash
+        {
+            get
+            {
+                StringBuilder hashText = new StringBuilder(CommandText);
+
+                hashText.Append(DBCommandType.ToString());
+                hashText.Append(this.explicitInclusionMode.ToString());
+                hashText.Append(this.constantParameters.Aggregate(string.Empty, (p, c) => p + c.ParameterName));
+                hashText.Append(this.parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
+                hashText.Append(this.parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
+
+                string resultBeforeHash = hashText.ToString();
+                BigInteger hashCode = FnvHash.GetHash(resultBeforeHash, 128);
+
+                return hashCode;
+            }
+        }
+
+        public ICommandProcessor<TFilter> Finalize()
+        {
+            return new NoResultSetCommandProcessor<TFilter>(this);
+        }
 
         /// <summary>
         /// Adds parameters that will always use the same value.
@@ -180,7 +201,6 @@ namespace Susanoo
 
             return properties;
         }
-
 
         /// <summary>
         /// Builds the parameters.
@@ -399,25 +419,6 @@ namespace Susanoo
             where TResult7 : new()
         {
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
-        }
-
-        public virtual BigInteger CacheHash
-        {
-            get
-            {
-                StringBuilder hashText = new StringBuilder(CommandText);
-
-                hashText.Append(DBCommandType.ToString());
-                hashText.Append(this.explicitInclusionMode.ToString());
-                hashText.Append(this.constantParameters.Aggregate(string.Empty, (p, c) => p + c.ParameterName));
-                hashText.Append(this.parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
-                hashText.Append(this.parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
-
-                string resultBeforeHash = hashText.ToString();
-                BigInteger hashCode = FnvHash.GetHash(resultBeforeHash, 128);
-
-                return hashCode;
-            }
         }
     }
 }

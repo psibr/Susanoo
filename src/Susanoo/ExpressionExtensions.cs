@@ -28,7 +28,7 @@ namespace Susanoo
             return name;
         }
 
-        public static IEnumerable<TResult> Execute<TFilter, TResult>(this IDatabaseManager databaseManager, 
+        public static IEnumerable<TResult> Execute<TFilter, TResult>(this IDatabaseManager databaseManager,
             ICommandProcessor<TFilter, TResult> command, TFilter filter = default(TFilter), params IDbDataParameter[] explicitParameters)
             where TResult : new()
         {

@@ -41,6 +41,14 @@ namespace Susanoo
         /// <value>The active alias.</value>
         public virtual string ActiveAlias { get; private set; }
 
+        public virtual BigInteger CacheHash
+        {
+            get
+            {
+                return FnvHash.GetHash(this.PropertyMetadata.Name + this.ActiveAlias + conversionProcess.ToString(), 64);
+            }
+        }
+
         public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
             params Func<TFilter, TParent, KeyValuePair<string, object>>[] parameterBuilder)
         {
@@ -141,14 +149,6 @@ namespace Susanoo
                                         }),
                             Expression.Constant(null)),
                         property.Type));
-        }
-
-        public virtual BigInteger CacheHash
-        {
-            get
-            {
-                return FnvHash.GetHash(this.PropertyMetadata.Name + this.ActiveAlias + conversionProcess.ToString(), 64);
-            }
         }
     }
 }

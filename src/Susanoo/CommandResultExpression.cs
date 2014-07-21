@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
     public abstract class CommandResultBridge<TFilter> : IFluentPipelineFragment
     {
         private readonly ICommandResultImplementor<TFilter> _Implementor;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultBridge{TFilter}"/> class.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        public CommandResultBridge(ICommandExpression<TFilter> command)
+            : this(command, new CommandResultImplementor<TFilter>()) { }
+
+        internal CommandResultBridge(ICommandExpression<TFilter> command, ICommandResultImplementor<TFilter> implementor)
+        {
+            _Implementor = implementor;
+
+            this.CommandExpression = command;
+        }
 
         public virtual BigInteger CacheHash
         {
@@ -20,29 +31,18 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Gets the implementor of the Commandresult functionality.
-        /// </summary>
-        /// <value>The implementor.</value>
-        protected virtual ICommandResultImplementor<TFilter> Implementor
-        {
-            get { return _Implementor; }
-        }
-
-        /// <summary>
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public virtual ICommandExpression<TFilter> CommandExpression { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandResultBridge{TFilter}"/> class.
+        /// Gets the implementor of the Commandresult functionality.
         /// </summary>
-        /// <param name="command">The command.</param>
-        public CommandResultBridge(ICommandExpression<TFilter> command)
+        /// <value>The implementor.</value>
+        protected virtual ICommandResultImplementor<TFilter> Implementor
         {
-            _Implementor = new CommandResultImplementor<TFilter>();
-
-            this.CommandExpression = command;
+            get { return _Implementor; }
         }
 
         /// <summary>
@@ -55,6 +55,12 @@ namespace Susanoo
         {
             return this.Implementor.Export<TResultType>();
         }
+
+        public virtual ICommandResultExpression<TFilter, TResult> ToSingleResult<TResult>()
+            where TResult : new()
+        {
+            return new CommandResultExpression<TFilter, TResult>(this.CommandExpression, this.Implementor);
+        }
     }
 
     public class CommandResultExpression<TFilter, TResult> : CommandResultBridge<TFilter>,
@@ -63,6 +69,9 @@ namespace Susanoo
     {
         public CommandResultExpression(ICommandExpression<TFilter> command)
             : base(command) { }
+
+        internal CommandResultExpression(ICommandExpression<TFilter> command, ICommandResultImplementor<TFilter> implementor)
+            : base(command, implementor) { }
 
         /// <summary>
         /// Provide mapping actions and options for a result set
@@ -80,6 +89,11 @@ namespace Susanoo
         public ICommandProcessor<TFilter, TResult> Finalize()
         {
             return new SingleResultSetCommandProcessor<TFilter, TResult>(this);
+        }
+
+        public override ICommandResultExpression<TFilter, TResult> ToSingleResult<TResult>()
+        {
+            return this as ICommandResultExpression<TFilter, TResult>;
         }
     }
 
@@ -103,6 +117,11 @@ namespace Susanoo
             Implementor.StoreMapping<TResultType>(mappings);
 
             return this;
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2> Finalize()
+        {
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>(this);
         }
     }
 
@@ -128,6 +147,11 @@ namespace Susanoo
             Implementor.StoreMapping<TResultType>(mappings);
 
             return this;
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Finalize()
+        {
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>(this);
         }
     }
 
@@ -155,6 +179,11 @@ namespace Susanoo
 
             return this;
         }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Finalize()
+        {
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
+        }
     }
 
     public class CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> : CommandResultBridge<TFilter>,
@@ -181,6 +210,11 @@ namespace Susanoo
             Implementor.StoreMapping<TResultType>(mappings);
 
             return this;
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Finalize()
+        {
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
         }
     }
 
@@ -210,6 +244,11 @@ namespace Susanoo
 
             return this;
         }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Finalize()
+        {
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+        }
     }
 
     public class CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> : CommandResultBridge<TFilter>,
@@ -238,6 +277,11 @@ namespace Susanoo
             Implementor.StoreMapping<TResultType>(mappings);
 
             return this;
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Finalize()
+        {
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
         }
     }
 }

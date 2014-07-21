@@ -2,14 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
     public class CommandResultImplementor<TFilter> : ICommandResultImplementor<TFilter>, IFluentPipelineFragment
     {
-        private readonly IDictionary<Type, IFluentPipelineFragment> _MappingContainer = new Dictionary<Type, IFluentPipelineFragment>();
+        private readonly IDictionary<Type, IFluentPipelineFragment> _MappingContainer;
+
+        public CommandResultImplementor()
+        {
+            _MappingContainer = new Dictionary<Type, IFluentPipelineFragment>();
+        }
+
+        public System.Numerics.BigInteger CacheHash
+        {
+            get
+            {
+                return _MappingContainer.Aggregate(default(BigInteger), (p, c) => (p * 31) ^ c.Value.CacheHash);
+            }
+        }
 
         /// <summary>
         /// Retrieves the mapping.
@@ -56,14 +67,6 @@ namespace Susanoo
         {
             return this.RetrieveMapping<TResultType>()
                 .Export();
-        }
-
-        public System.Numerics.BigInteger CacheHash
-        {
-            get 
-            {
-                return _MappingContainer.Aggregate(default(BigInteger), (p, c) => (p * 31) ^ c.Value.CacheHash);
-            }
         }
     }
 }

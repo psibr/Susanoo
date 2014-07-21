@@ -17,12 +17,24 @@ namespace Susanoo
         private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions =
             new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
 
+        private IPropertyMetadataExtractor _PropertyMetadataExtractor = new ComponentModelMetadataExtractor();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ResultMappingImplementor{TFilter, TResult}" /> class.
         /// </summary>
         public ResultMappingImplementor()
         {
             MapDeclarativeProperties();
+        }
+
+        /// <summary>
+        /// Gets or sets the property metadata extractor.
+        /// </summary>
+        /// <value>The property metadata extractor.</value>
+        protected IPropertyMetadataExtractor PropertyMetadataExtractor
+        {
+            get { return this._PropertyMetadataExtractor; }
+            set { if (value != null) this._PropertyMetadataExtractor = value; }
         }
 
         /// <summary>
@@ -91,18 +103,6 @@ namespace Susanoo
             {
                 mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.Alias));
             }
-        }
-
-        private IPropertyMetadataExtractor _PropertyMetadataExtractor = new ComponentModelMetadataExtractor();
-
-        /// <summary>
-        /// Gets or sets the property metadata extractor.
-        /// </summary>
-        /// <value>The property metadata extractor.</value>
-        protected IPropertyMetadataExtractor PropertyMetadataExtractor
-        {
-            get { return this._PropertyMetadataExtractor; }
-            set { if (value != null) this._PropertyMetadataExtractor = value; }
         }
     }
 }
