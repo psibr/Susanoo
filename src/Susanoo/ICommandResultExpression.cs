@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Susanoo
 {
-    public interface ICommandResultExpression<TFilter>
+    public interface ICommandResultExpressionCore<TFilter>
+        : IFluentPipelineFragment
     {
         ICommandExpression<TFilter> CommandExpression { get; }
 
@@ -15,18 +16,16 @@ namespace Susanoo
             where TResultType : new();
     }
 
-    public interface ICommandResultExpression<TFilter, TResult> : ICommandResultExpression<TFilter>
-        where TResult : new ()
+    public interface ICommandResultExpression<TFilter, TResult> : ICommandResultExpressionCore<TFilter>
+        where TResult : new()
     {
         ICommandResultExpression<TFilter, TResult> ForResultSet(
             Action<IResultMappingExpression<TFilter, TResult>> mappings);
 
         ICommandProcessor<TFilter, TResult> Finalize();
-
-
     }
 
-    public interface ICommandResultExpression<TFilter, TResult1, TResult2> : ICommandResultExpression<TFilter>
+    public interface ICommandResultExpression<TFilter, TResult1, TResult2> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
     {
@@ -35,7 +34,7 @@ namespace Susanoo
                 where TResultType : new();
     }
 
-    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> : ICommandResultExpression<TFilter>
+    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -45,7 +44,7 @@ namespace Susanoo
                 where TResultType : new();
     }
 
-    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> : ICommandResultExpression<TFilter>
+    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -56,7 +55,7 @@ namespace Susanoo
                 where TResultType : new();
     }
 
-    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> : ICommandResultExpression<TFilter>
+    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -68,7 +67,7 @@ namespace Susanoo
                 where TResultType : new();
     }
 
-    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> : ICommandResultExpression<TFilter>
+    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -81,7 +80,7 @@ namespace Susanoo
                 where TResultType : new();
     }
 
-    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> : ICommandResultExpression<TFilter>
+    public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()

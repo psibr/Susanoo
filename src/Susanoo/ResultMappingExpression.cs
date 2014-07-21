@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
+using System.Numerics;
+using System.Text;
 
 namespace Susanoo
 {
@@ -81,6 +83,30 @@ namespace Susanoo
         public virtual IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export()
         {
             return this.Implementor.Export();
+        }
+
+        public virtual BigInteger CacheHash
+        {
+            get 
+            {
+                List<BigInteger> hashCombinations = new List<BigInteger>();
+
+                StringBuilder hashText = new StringBuilder(typeof(TResult).FullName);
+                foreach (KeyValuePair<string, IPropertyMappingConfiguration<IDataRecord>> item in this.Export())
+                {
+                    hashText.Append(item.Key);
+                    hashCombinations.Add(item.Value.CacheHash);
+                }
+
+                BigInteger initialHash = FnvHash.GetHash(hashText.ToString(), 64);
+
+                foreach (BigInteger hash in hashCombinations)
+                {
+                    initialHash = (initialHash * 31) ^ hash;
+                }
+
+                return initialHash;
+            }
         }
     }
 }

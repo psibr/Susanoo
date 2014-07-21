@@ -9,13 +9,11 @@ namespace Susanoo
     /// Susanoo's initial step in the command definition Fluent API, in which parameters and command information are provided.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandExpression<TFilter>
+    public interface ICommandExpression<TFilter> 
+        : IFluentPipelineFragment
     {
-        /// <summary>
-        /// Gets the database manager the command will use.
-        /// </summary>
-        /// <value>The database manager.</value>
-        IDatabaseManager DatabaseManager { get; }
+
+        ICommandProcessor<TFilter, object> Finalize();
 
         /// <summary>
         /// Gets the command text.
@@ -95,7 +93,7 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        IDbDataParameter[] BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters);
+        IDbDataParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).

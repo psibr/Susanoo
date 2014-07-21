@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 
 namespace Susanoo
@@ -14,21 +15,29 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class SingleResultSetCommandProcessor<TFilter, TResult>
-        : ICommandProcessor<TFilter, TResult>
+        : ICommandProcessor<TFilter, TResult>, IFluentPipelineFragment
         where TResult : new()
     {
         /// <summary>
         /// The mapping expressions before compilation.
         /// </summary>
-        private ICommandResultExpression<TFilter, TResult> _mappingExpressions;
+        private ICommandResultExpression<TFilter, TResult> _MappingExpressions;
+
+        private ICommandExpression<TFilter> _CommandExpression;
+
+        public ICommandExpression<TFilter> CommandExpression
+        {
+            get { return this._CommandExpression; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}"/> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
-        public SingleResultSetCommandProcessor(CommandResultExpression<TFilter, TResult> mappings)
+        public SingleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult> mappings)
         {
             this.MappingExpressions = mappings;
+            this._CommandExpression = mappings.CommandExpression;
 
             this.CompiledMapping = CompileMappings();
         }
@@ -41,11 +50,11 @@ namespace Susanoo
         {
             get
             {
-                return _mappingExpressions;
+                return _MappingExpressions;
             }
             private set
             {
-                _mappingExpressions = value;
+                _MappingExpressions = value;
             }
         }
 
@@ -59,7 +68,7 @@ namespace Susanoo
         /// Compiles the result mappings.
         /// </summary>
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
-        protected virtual Func<IDataRecord, object> CompileMappings()
+        protected Func<IDataRecord, object> CompileMappings()
         {
             var mappings = this.MappingExpressions.Export<TResult>();
 
@@ -82,8 +91,8 @@ namespace Susanoo
                 var localOrdinal = Expression.Variable(typeof(int), "ordinal");
 
                 statements.Add(
-                    Expression.Block(new ParameterExpression[] { localOrdinal }, 
-                        Expression.Assign(localOrdinal, 
+                    Expression.Block(new ParameterExpression[] { localOrdinal },
+                        Expression.Assign(localOrdinal,
                             Expression.Call(columnCheckerExp, typeof(ColumnChecker).GetMethod("HasColumn", BindingFlags.Public | BindingFlags.Instance),
                                 readerExp,
                                 Expression.Constant(pair.Value.ActiveAlias))),
@@ -133,9 +142,9 @@ namespace Susanoo
         /// </summary>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(params IDbDataParameter[] explicitParameters)
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
         {
-            return this.Execute(default(TFilter), explicitParameters);
+            return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
         /// <summary>
@@ -145,18 +154,18 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(TFilter filter, params IDbDataParameter[] explicitParameters)
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
         {
             var results = new List<TResult>();
 
             ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
 
-            using (IDataReader record = commandExpression.DatabaseManager
+            using (IDataReader record = databaseManager
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
                     null,
-                    commandExpression.BuildParameters(filter, explicitParameters)))
+                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 while (record.Read())
                 {
@@ -165,6 +174,14 @@ namespace Susanoo
             }
 
             return results;
+        }
+
+        public BigInteger CacheHash
+        {
+            get 
+            {
+                return (this.MappingExpressions.CacheHash * 31) ^ this.CommandExpression.CacheHash;
+            }
         }
     }
 }

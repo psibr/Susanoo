@@ -11,20 +11,20 @@ namespace FluentTester
     {
         static void Main(string[] args)
         {
-            CommandManager.RegisterDatabaseManager(new DatabaseManager(System.Data.SqlClient.SqlClientFactory.Instance, "test"));
+            CommandManager.RegisterDatabaseManagerFactory((connectionStringName) =>
+                new DatabaseManager(System.Data.SqlClient.SqlClientFactory.Instance, connectionStringName));
 
             var command = CommandManager.DefineCommand("SELECT TOP 1 * FROM SimpleTable", System.Data.CommandType.Text)
                 .DefineResultMappings<SimpleTable>()
-                .ForResultSet((mapping) => {
+                .ForResultSet((mapping) =>
+                {
                     mapping.ForProperty(result => result.Id, prop => prop.AliasProperty("id"));
                     mapping.ForProperty(result => result.Data, prop => prop.AliasProperty("data"));
                     mapping.ForProperty(result => result.Date, prop => prop.AliasProperty("date"));
-                })                    
-                .Finalize();
+                }).Finalize();
 
-            var x = command.Execute().First();
+            CommandManager.BuildDatabaseManager("test").Execute(command);
 
-            Console.WriteLine(x.Data);
             Console.ReadLine();
         }
     }

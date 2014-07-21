@@ -10,7 +10,7 @@ namespace Susanoo
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface IResultMappingExpression<TFilter, TResult>
+    public interface IResultMappingExpression<TFilter, TResult> : IFluentPipelineFragment
         where TResult : new()
     {
         /// <summary>

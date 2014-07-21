@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
+using System.Text;
 
 namespace Susanoo
 {
-
     public class CommandExpression<TFilter>
-        : ICommandExpression<TFilter>
+        : ICommandExpression<TFilter>, IFluentPipelineFragment
     {
         /// <summary>
         /// The parameter inclusions
@@ -29,10 +30,14 @@ namespace Susanoo
         /// </summary>
         private bool explicitInclusionMode = false;
 
+        public ICommandProcessor<TFilter, object> Finalize()
+        {
+            return new SingleResultSetCommandProcessor<TFilter, object>(this.DefineResultMappings<object>());
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}" /> class.
         /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <exception cref="System.ArgumentNullException">
@@ -45,18 +50,14 @@ namespace Susanoo
         /// or
         /// TableDirect is not supported.;commandType
         /// </exception>
-        public CommandExpression(IDatabaseManager databaseManager, string commandText, CommandType commandType)
+        public CommandExpression(string commandText, CommandType commandType)
         {
-            if (databaseManager == null)
-                throw new ArgumentNullException("databaseManager");
             if (commandText == null)
                 throw new ArgumentNullException("commandText");
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentException("No command text provided.", "commandText");
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
-
-            this.DatabaseManager = databaseManager;
             this.CommandText = commandText;
             this.DBCommandType = commandType;
         }
@@ -73,11 +74,6 @@ namespace Susanoo
         /// <value>The type of the database command.</value>
         public virtual CommandType DBCommandType { get; private set; }
 
-        /// <summary>
-        /// Gets the database manager.
-        /// </summary>
-        /// <value>The database manager.</value>
-        public virtual IDatabaseManager DatabaseManager { get; private set; }
         /// <summary>
         /// Adds parameters that will always use the same value.
         /// </summary>
@@ -96,13 +92,13 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public virtual IDbDataParameter[] BuildParameters(TFilter filter, params IDbDataParameter[] explicitParameters)
+        public virtual IDbDataParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
         {
             IDbDataParameter[] parameters = null;
 
             int parameterCount = 0;
 
-            IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(filter);
+            IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(databaseManager, filter);
 
             parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + ((explicitParameters != null) ? explicitParameters.Count() : 0);
             parameters = new IDbDataParameter[parameterCount];
@@ -135,7 +131,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="filter">The filter.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(TFilter filter)
+        public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(IDatabaseManager databaseManager, TFilter filter)
         {
             var properties = new List<IDbDataParameter>();
 
@@ -146,7 +142,7 @@ namespace Susanoo
                     foreach (var item in parameterInclusions)
                     {
                         var propInfo = filter.GetType().GetProperty(item.Key, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                        var param = this.DatabaseManager.CreateParameter();
+                        var param = databaseManager.CreateParameter();
 
                         param.ParameterName = item.Key;
                         param.Direction = ParameterDirection.Input;
@@ -165,7 +161,7 @@ namespace Susanoo
                     {
                         if (!this.parameterExclusions.Contains(propInfo.Name))
                         {
-                            var param = this.DatabaseManager.CreateParameter();
+                            var param = databaseManager.CreateParameter();
 
                             param.ParameterName = propInfo.Name;
                             param.Direction = ParameterDirection.Input;
@@ -191,11 +187,10 @@ namespace Susanoo
         /// </summary>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public IEnumerable<IDbDataParameter> BuildParameters(params IDbDataParameter[] explicitParameters)
+        public IEnumerable<IDbDataParameter> BuildParameters(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
         {
-            return this.BuildParameters(default(TFilter), explicitParameters);
+            return this.BuildParameters(databaseManager, default(TFilter), explicitParameters);
         }
-
 
         /// <summary>
         /// Uses the explicit property inclusion mode for a potential filter.
@@ -393,7 +388,8 @@ namespace Susanoo
         /// <typeparam name="TResult6">The type of the result6.</typeparam>
         /// <typeparam name="TResult7">The type of the result7.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> DefineResultMappings
+            <TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -403,6 +399,25 @@ namespace Susanoo
             where TResult7 : new()
         {
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+        }
+
+        public virtual BigInteger CacheHash
+        {
+            get
+            {
+                StringBuilder hashText = new StringBuilder(CommandText);
+
+                hashText.Append(DBCommandType.ToString());
+                hashText.Append(this.explicitInclusionMode.ToString());
+                hashText.Append(this.constantParameters.Aggregate(string.Empty, (p, c) => p + c.ParameterName));
+                hashText.Append(this.parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
+                hashText.Append(this.parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
+
+                string resultBeforeHash = hashText.ToString();
+                BigInteger hashCode = FnvHash.GetHash(resultBeforeHash, 128);
+
+                return hashCode;
+            }
         }
     }
 }

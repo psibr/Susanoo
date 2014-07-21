@@ -51,8 +51,13 @@ namespace Susanoo
         /// <summary>
         /// Gets the database manager.
         /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <returns>IDatabaseManager.</returns>
         /// <value>The database manager.</value>
-        public static IDatabaseManager DatabaseManager { get; private set; }
+        public static IDatabaseManager BuildDatabaseManager(string connectionString)
+        {
+            return _DatabaseManagerFactoryMethod(connectionString);
+        }
 
         /// <summary>
         /// Gets the commander.
@@ -66,13 +71,17 @@ namespace Susanoo
             }
         }
 
+        private static Func<string, IDatabaseManager> _DatabaseManagerFactoryMethod = (connectionStringName) =>
+            new DatabaseManager(connectionStringName);
+
         /// <summary>
         /// Registers the database manager.
         /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        public static void RegisterDatabaseManager(IDatabaseManager databaseManager)
+        /// <param name="databaseManagerFactoryMethod">The database manager factory method.</param>
+        public static void RegisterDatabaseManagerFactory(Func<string, IDatabaseManager> databaseManagerFactoryMethod)
         {
-            CommandManager.DatabaseManager = databaseManager;
+            if(databaseManagerFactoryMethod != null)
+                _DatabaseManagerFactoryMethod = databaseManagerFactoryMethod;
         }
 
         /// <summary>
@@ -88,7 +97,6 @@ namespace Susanoo
         /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -101,7 +109,6 @@ namespace Susanoo
         /// <summary>
         /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
         /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -110,46 +117,6 @@ namespace Susanoo
             return CommandManager.Commander
                 .DefineCommand(commandText, commandType);
         }
-
-        /// <summary>
-        /// Creates a parameter.
-        /// </summary>
-        /// <returns>IDbDataParameter.</returns>
-        public static IDbDataParameter CreateParameter()
-        {
-            return CommandManager.DatabaseManager
-                .CreateParameter();
-        }
-
-        /// <summary>
-        /// Creates a parameter.
-        /// </summary>
-        /// <param name="parameterName">Name of the parameter.</param>
-        /// <param name="parameterDirection">The parameter direction.</param>
-        /// <param name="parameterType">Type of the parameter.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>IDbDataParameter.</returns>
-        public static IDbDataParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value)
-        {
-            return CommandManager.DatabaseManager
-                .CreateParameter(parameterName, parameterDirection, parameterType, value);
-        }
-
-        /// <summary>
-        /// Creates an input parameter.
-        /// </summary>
-        /// <param name="parameterName">Name of the parameter.</param>
-        /// <param name="parameterType">Type of the parameter.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>IDbDataParameter.</returns>
-        public static IDbDataParameter CreateInputParameter(string parameterName, DbType parameterType, object value)
-        {
-            return CommandManager.DatabaseManager
-                .CreateInputParameter(parameterName, parameterType, value);
-        }
-
-        private static IDictionary<string, IDatabaseManager> databaseManagers = new Dictionary<string, IDatabaseManager>();
-
 
     }
 

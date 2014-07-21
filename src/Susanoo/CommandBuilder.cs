@@ -24,7 +24,7 @@ namespace Susanoo
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
 
-            return new CommandExpression<TFilter>(CommandManager.DatabaseManager, commandText, commandType);
+            return new CommandExpression<TFilter>(commandText, commandType);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Susanoo
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
 
-            return new CommandExpression<TFilter>(CommandManager.DatabaseManager, commandText, commandType);
+            return new CommandExpression<TFilter>(commandText, commandType);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Susanoo
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", "commandType");
 
-            return new CommandExpression<dynamic>(CommandManager.DatabaseManager, commandText, commandType);
+            return new CommandExpression<dynamic>(commandText, commandType);
         }
     }
 }

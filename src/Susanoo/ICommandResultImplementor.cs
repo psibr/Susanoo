@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Susanoo
 {
-    public interface ICommandResultImplementor<TFilter>
+    public interface ICommandResultImplementor<TFilter> : IFluentPipelineFragment
     {
         IResultMappingExpression<TFilter, TResult> RetrieveMapping<TResult>()
             where TResult : new();

@@ -10,8 +10,11 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult>
+        : IFluentPipelineFragment
         where TResult : new()
     {
+        ICommandExpression<TFilter> CommandExpression { get; }
+
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
         /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -19,7 +22,7 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(TFilter filter, params IDbDataParameter[] explicitParameters);
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -27,6 +30,6 @@ namespace Susanoo
         /// </summary>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(params IDbDataParameter[] explicitParameters);
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
     }
 }

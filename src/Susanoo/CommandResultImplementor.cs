@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Susanoo
 {
-    public class CommandResultImplementor<TFilter> : ICommandResultImplementor<TFilter>
+    public class CommandResultImplementor<TFilter> : ICommandResultImplementor<TFilter>, IFluentPipelineFragment
     {
-        private readonly IDictionary<Type, object> _MappingContainer = new Dictionary<Type, object>();
+        private readonly IDictionary<Type, IFluentPipelineFragment> _MappingContainer = new Dictionary<Type, IFluentPipelineFragment>();
 
+        /// <summary>
+        /// Retrieves the mapping.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         public virtual IResultMappingExpression<TFilter, TResult> RetrieveMapping<TResult>() where TResult : new()
         {
             IResultMappingExpression<TFilter, TResult> result = null;
@@ -20,6 +26,11 @@ namespace Susanoo
             return result ?? new ResultMappingExpression<TFilter, TResult>();
         }
 
+        /// <summary>
+        /// Stores the mapping.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <param name="mapping">The mapping.</param>
         public virtual void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping) where TResult : new()
         {
             if (_MappingContainer.ContainsKey(typeof(TResult)))
@@ -36,10 +47,23 @@ namespace Susanoo
             }
         }
 
+        /// <summary>
+        /// Exports this instance.
+        /// </summary>
+        /// <typeparam name="TResultType">The type of the t result type.</typeparam>
+        /// <returns>IDictionary&lt;System.String, IPropertyMappingConfiguration&lt;System.Data.IDataRecord&gt;&gt;.</returns>
         public IDictionary<string, IPropertyMappingConfiguration<System.Data.IDataRecord>> Export<TResultType>() where TResultType : new()
         {
             return this.RetrieveMapping<TResultType>()
                 .Export();
+        }
+
+        public System.Numerics.BigInteger CacheHash
+        {
+            get 
+            {
+                return _MappingContainer.Aggregate(default(BigInteger), (p, c) => (p * 31) ^ c.Value.CacheHash);
+            }
         }
     }
 }

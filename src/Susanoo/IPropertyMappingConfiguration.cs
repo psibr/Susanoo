@@ -9,7 +9,7 @@ namespace Susanoo
     /// Allows configuration of the Susanoo mapper at the property level during command definition.
     /// </summary>
     /// <typeparam name="TRecord">The type of the record.</typeparam>
-    public interface IPropertyMappingConfiguration<TRecord>
+    public interface IPropertyMappingConfiguration<TRecord> : IFluentPipelineFragment
         where TRecord : IDataRecord
     {
         /// <summary>
@@ -23,14 +23,6 @@ namespace Susanoo
         /// </summary>
         /// <value>The name of the return.</value>
         string ActiveAlias { get; }
-
-        /// <summary>
-        /// Maps the property conditionally.
-        /// </summary>
-        /// <param name="condition">The condition.</param>
-        /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        IPropertyMappingConfiguration<TRecord> MapIf(Expression<Func<TRecord, string, bool>> condition);
 
         /// <summary>
         /// Uses the specified alias when mapping from the data call.

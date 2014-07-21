@@ -60,6 +60,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
@@ -70,16 +71,16 @@
     <Compile Include="CommandManager.cs" />
     <Compile Include="CommandResultExpression.cs" />
     <Compile Include="CommandResultImplementor.cs" />
+    <Compile Include="FnvHash.cs" />
     <Compile Include="ICommandResultExpression.cs" />
     <Compile Include="ICommandResultImplementor.cs" />
-    <Compile Include="PetaPoco.cs" />
+    <Compile Include="IFluentPipelineFragment.cs" />
     <Compile Include="ResultMappingImplementor.cs" />
     <Compile Include="SingleResultSetCommandProcessor.cs" />
     <Compile Include="ResultMappingExpression.cs" />
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="ExpressionExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="IResultMappingExpression.cs" />
     <Compile Include="ICommandExpression.cs" />
     <Compile Include="ICommandProcessor.cs" />

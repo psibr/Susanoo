@@ -18,9 +18,8 @@ namespace Susanoo
             new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResultMappingImplementor{TFilter, TResult}"/> class.
+        /// Initializes a new instance of the <see cref="ResultMappingImplementor{TFilter, TResult}" /> class.
         /// </summary>
-        /// <param name="commandExpression">The command expression.</param>
         public ResultMappingImplementor()
         {
             MapDeclarativeProperties();
@@ -100,7 +99,7 @@ namespace Susanoo
         /// Gets or sets the property metadata extractor.
         /// </summary>
         /// <value>The property metadata extractor.</value>
-        protected virtual IPropertyMetadataExtractor PropertyMetadataExtractor
+        protected IPropertyMetadataExtractor PropertyMetadataExtractor
         {
             get { return this._PropertyMetadataExtractor; }
             set { if (value != null) this._PropertyMetadataExtractor = value; }

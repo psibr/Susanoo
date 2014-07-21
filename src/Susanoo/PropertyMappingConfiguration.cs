@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 
 namespace Susanoo
@@ -10,7 +12,7 @@ namespace Susanoo
     /// </summary>
     /// <typeparam name="TRecord">The type of the record.</typeparam>
     public class PropertyMappingConfiguration<TRecord>
-        : IPropertyMappingConfiguration<TRecord>
+        : IPropertyMappingConfiguration<TRecord>, IFluentPipelineFragment
         where TRecord : IDataRecord
     {
         private Expression<Func<TRecord, string, bool>> MapOnCondition = null;
@@ -39,16 +41,22 @@ namespace Susanoo
         /// <value>The active alias.</value>
         public virtual string ActiveAlias { get; private set; }
 
-        /// <summary>
-        /// Maps the property conditionally.
-        /// </summary>
-        /// <param name="condition">The condition.</param>
-        /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual IPropertyMappingConfiguration<TRecord> MapIf(Expression<Func<TRecord, string, bool>> condition)
+        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+            params Func<TFilter, TParent, KeyValuePair<string, object>>[] parameterBuilder)
         {
-            this.MapOnCondition = condition;
+            return this;
+        }
 
+        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+            params Func<TFilter, IEnumerable<TParent>, KeyValuePair<string, object>>[] parameterBuilder)
+        {
+            return this;
+        }
+
+        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+            string KeyName,
+            Action<TParent> foreignKeySelector)
+        {
             return this;
         }
 
@@ -133,6 +141,14 @@ namespace Susanoo
                                         }),
                             Expression.Constant(null)),
                         property.Type));
+        }
+
+        public virtual BigInteger CacheHash
+        {
+            get
+            {
+                return FnvHash.GetHash(this.PropertyMetadata.Name + this.ActiveAlias + conversionProcess.ToString(), 64);
+            }
         }
     }
 }
