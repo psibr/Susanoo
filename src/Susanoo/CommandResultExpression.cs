@@ -50,7 +50,7 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="TResultType">The type of the t result type.</typeparam>
         /// <returns>IDictionary&lt;System.String, IPropertyMappingConfiguration&lt;System.Data.IDataRecord&gt;&gt;.</returns>
-        public virtual IDictionary<string, IPropertyMappingConfiguration<System.Data.IDataRecord>> Export<TResultType>()
+        public virtual IDictionary<string, IPropertyMapping> Export<TResultType>()
             where TResultType : new()
         {
             return this.Implementor.Export<TResultType>();
@@ -79,7 +79,7 @@ namespace Susanoo
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult> ForResultSet(Action<IResultMappingExpression<TFilter, TResult>> mappings)
+        public ICommandResultExpression<TFilter, TResult> ForResults(Action<IResultMappingExpression<TFilter, TResult>> mappings)
         {
             Implementor.StoreMapping<TResult>(mappings);
 
@@ -111,7 +111,7 @@ namespace Susanoo
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2> ForResultSet<TResultType>(Action<IResultMappingExpression<TFilter, TResultType>> mappings)
+        public ICommandResultExpression<TFilter, TResult1, TResult2> ForResultsOfType<TResultType>(Action<IResultMappingExpression<TFilter, TResultType>> mappings)
             where TResultType : new()
         {
             Implementor.StoreMapping<TResultType>(mappings);
@@ -140,7 +140,7 @@ namespace Susanoo
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> ForResultSet<TResultType>(
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new()
         {
@@ -171,7 +171,7 @@ namespace Susanoo
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> ForResultSet<TResultType>(
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new()
         {
@@ -203,7 +203,7 @@ namespace Susanoo
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> ForResultSet<TResultType>(
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new()
         {
@@ -236,7 +236,7 @@ namespace Susanoo
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> ForResultSet<TResultType>(
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new()
         {
@@ -270,7 +270,7 @@ namespace Susanoo
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> ForResultSet<TResultType>(
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new()
         {

@@ -14,13 +14,13 @@ namespace FluentTester
             CommandManager.RegisterDatabaseManagerFactory((connectionStringName) =>
                 new DatabaseManager(System.Data.SqlClient.SqlClientFactory.Instance, connectionStringName));
 
-            var command = CommandManager.DefineCommand("SELECT TOP 1 * FROM SimpleTable", System.Data.CommandType.Text)
-                .DefineResultMappings<SimpleTable>()
-                .ForResultSet((mapping) =>
+            var command = CommandManager.DefineCommand("SELECT TOP 1 * FROM SimpleTable;", System.Data.CommandType.Text)
+                .DefineResults<SimpleTable>()
+                .ForResults((mapping) =>
                 {
-                    mapping.ForProperty(result => result.Id, prop => prop.AliasProperty("id"));
-                    mapping.ForProperty(result => result.Data, prop => prop.AliasProperty("data"));
-                    mapping.ForProperty(result => result.Date, prop => prop.AliasProperty("date"));
+                    mapping.ForProperty(result => result.Id, prop => prop.UseAlias("id"));
+                    mapping.ForProperty(result => result.Data, prop => prop.UseAlias("data"));
+                    mapping.ForProperty(result => result.Date, prop => prop.UseAlias("date"));
                 }).Finalize();
 
             CommandManager.BuildDatabaseManager("test").Execute(command);

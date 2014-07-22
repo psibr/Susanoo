@@ -9,7 +9,7 @@ namespace Susanoo
     {
         ICommandExpression<TFilter> CommandExpression { get; }
 
-        IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export<TResultType>()
+        IDictionary<string, IPropertyMapping> Export<TResultType>()
             where TResultType : new();
 
         ICommandResultExpression<TFilter, TResult> ToSingleResult<TResult>()
@@ -19,7 +19,7 @@ namespace Susanoo
     public interface ICommandResultExpression<TFilter, TResult> : ICommandResultExpressionCore<TFilter>
         where TResult : new()
     {
-        ICommandResultExpression<TFilter, TResult> ForResultSet(
+        ICommandResultExpression<TFilter, TResult> ForResults(
             Action<IResultMappingExpression<TFilter, TResult>> mappings);
 
         ICommandProcessor<TFilter, TResult> Finalize();
@@ -29,7 +29,7 @@ namespace Susanoo
         where TResult1 : new()
         where TResult2 : new()
     {
-        ICommandResultExpression<TFilter, TResult1, TResult2> ForResultSet<TResultType>(
+        ICommandResultExpression<TFilter, TResult1, TResult2> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
@@ -41,7 +41,7 @@ namespace Susanoo
         where TResult2 : new()
         where TResult3 : new()
     {
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> ForResultSet<TResultType>(
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
@@ -54,7 +54,7 @@ namespace Susanoo
         where TResult3 : new()
         where TResult4 : new()
     {
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> ForResultSet<TResultType>(
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
@@ -68,7 +68,7 @@ namespace Susanoo
         where TResult4 : new()
         where TResult5 : new()
     {
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> ForResultSet<TResultType>(
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
@@ -83,7 +83,7 @@ namespace Susanoo
         where TResult5 : new()
         where TResult6 : new()
     {
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> ForResultSet<TResultType>(
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
@@ -99,7 +99,7 @@ namespace Susanoo
         where TResult6 : new()
         where TResult7 : new()
     {
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> ForResultSet<TResultType>(
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 

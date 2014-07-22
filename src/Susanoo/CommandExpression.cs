@@ -307,7 +307,7 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult> DefineResultMappings<TResult>() where TResult : new()
+        public ICommandResultExpression<TFilter, TResult> DefineResults<TResult>() where TResult : new()
         {
             return new CommandResultExpression<TFilter, TResult>(this);
         }
@@ -318,7 +318,7 @@ namespace Susanoo
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2> DefineResultMappings<TResult1, TResult2>()
+        public ICommandResultExpression<TFilter, TResult1, TResult2> DefineResults<TResult1, TResult2>()
             where TResult1 : new()
             where TResult2 : new()
         {
@@ -332,7 +332,7 @@ namespace Susanoo
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
         /// <typeparam name="TResult3">The type of the result3.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResultMappings<TResult1, TResult2, TResult3>()
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResults<TResult1, TResult2, TResult3>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -348,7 +348,7 @@ namespace Susanoo
         /// <typeparam name="TResult3">The type of the result3.</typeparam>
         /// <typeparam name="TResult4">The type of the result4.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResultMappings<TResult1, TResult2, TResult3, TResult4>()
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResults<TResult1, TResult2, TResult3, TResult4>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -366,7 +366,7 @@ namespace Susanoo
         /// <typeparam name="TResult4">The type of the result4.</typeparam>
         /// <typeparam name="TResult5">The type of the result5.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5>()
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -386,7 +386,7 @@ namespace Susanoo
         /// <typeparam name="TResult5">The type of the result5.</typeparam>
         /// <typeparam name="TResult6">The type of the result6.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -408,7 +408,7 @@ namespace Susanoo
         /// <typeparam name="TResult6">The type of the result6.</typeparam>
         /// <typeparam name="TResult7">The type of the result7.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> DefineResultMappings
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> DefineResults
             <TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
             where TResult1 : new()
             where TResult2 : new()

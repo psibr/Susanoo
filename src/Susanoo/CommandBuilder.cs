@@ -29,7 +29,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <typeparam name="TResult">The type of the result.</typeparam>
@@ -56,7 +56,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResultMappings on the result of this call.
+        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on the result of this call.
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="commandText">The command text.</param>

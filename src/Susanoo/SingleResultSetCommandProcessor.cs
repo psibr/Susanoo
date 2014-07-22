@@ -14,7 +14,7 @@ namespace Susanoo
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public class SingleResultSetCommandProcessor<TFilter, TResult>
+    public sealed class SingleResultSetCommandProcessor<TFilter, TResult>
         : ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>, IFluentPipelineFragment
         where TResult : new()
     {
@@ -54,7 +54,7 @@ namespace Susanoo
         /// Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
-        protected ICommandResultExpression<TFilter, TResult> MappingExpressions
+        public ICommandResultExpression<TFilter, TResult> MappingExpressions
         {
             get
             {
@@ -70,7 +70,7 @@ namespace Susanoo
         /// Gets the compiled mapping.
         /// </summary>
         /// <value>The compiled mapping.</value>
-        protected Func<IDataRecord, object> CompiledMapping { get; private set; }
+        public Func<IDataRecord, object> CompiledMapping { get; private set; }
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -130,7 +130,7 @@ namespace Susanoo
         /// Compiles the result mappings.
         /// </summary>
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
-        protected Func<IDataRecord, object> CompileMappings()
+        private Func<IDataRecord, object> CompileMappings()
         {
             var mappings = this.MappingExpressions.Export<TResult>();
 

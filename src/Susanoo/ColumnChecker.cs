@@ -10,7 +10,6 @@ namespace Susanoo
     {
         private bool isInit = false;
         private Dictionary<string, int> fields = new Dictionary<string, int>();
-        private int lastIndex = 0;
 
         /// <summary>
         /// Determines whether the specified record has a column.

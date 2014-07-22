@@ -33,7 +33,7 @@ namespace Susanoo
                 List<BigInteger> hashCombinations = new List<BigInteger>();
 
                 StringBuilder hashText = new StringBuilder(typeof(TResult).FullName);
-                foreach (KeyValuePair<string, IPropertyMappingConfiguration<IDataRecord>> item in this.Export())
+                foreach (KeyValuePair<string, IPropertyMapping> item in this.Export())
                 {
                     hashText.Append(item.Key);
                     hashCombinations.Add(item.Value.CacheHash);
@@ -79,7 +79,7 @@ namespace Susanoo
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public virtual IResultMappingExpression<TFilter, TResult> ForProperty(
             Expression<Func<TResult, object>> propertyExpression,
-            Action<IPropertyMappingConfiguration<IDataRecord>> options)
+            Action<IPropertyMappingConfiguration> options)
         {
             return ForProperty(propertyExpression.GetPropertyName(), options);
         }
@@ -92,7 +92,7 @@ namespace Susanoo
         /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         public virtual IResultMappingExpression<TFilter, TResult> ForProperty(
             string propertyName,
-            Action<IPropertyMappingConfiguration<IDataRecord>> options)
+            Action<IPropertyMappingConfiguration> options)
         {
             this.Implementor.ForProperty(propertyName, options);
 
@@ -104,7 +104,7 @@ namespace Susanoo
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public virtual IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export()
+        public virtual IDictionary<string, IPropertyMapping> Export()
         {
             return this.Implementor.Export();
         }

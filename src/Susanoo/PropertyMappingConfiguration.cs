@@ -11,13 +11,12 @@ namespace Susanoo
     /// Allows configuration of the Susanoo mapper at the property level during command definition.
     /// </summary>
     /// <typeparam name="TRecord">The type of the record.</typeparam>
-    public class PropertyMappingConfiguration<TRecord>
-        : IPropertyMappingConfiguration<TRecord>, IFluentPipelineFragment
-        where TRecord : IDataRecord
+    public class PropertyMappingConfiguration
+        : IPropertyMappingConfiguration, IPropertyMapping, IFluentPipelineFragment
     {
-        private Expression<Func<TRecord, string, bool>> MapOnCondition = null;
+        private Expression<Func<IDataRecord, string, bool>> MapOnCondition = null;
 
-        private Expression<Func<Type, object, object, object>> conversionProcess = (type, value, defaultValue) => DatabaseManager.CastValue(type, value, defaultValue);
+        private Expression<Func<PropertyInfo, object, object>> conversionProcess = (property, value) => DatabaseManager.CastValue(property.PropertyType, value, property.PropertyType);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyMappingConfiguration{TRecord}"/> class.
@@ -49,19 +48,19 @@ namespace Susanoo
             }
         }
 
-        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+        public virtual IPropertyMappingConfiguration MakeNavigationalProperty<TFilter, TParent>(
             params Func<TFilter, TParent, KeyValuePair<string, object>>[] parameterBuilder)
         {
             return this;
         }
 
-        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+        public virtual IPropertyMappingConfiguration MakeNavigationalProperty<TFilter, TParent>(
             params Func<TFilter, IEnumerable<TParent>, KeyValuePair<string, object>>[] parameterBuilder)
         {
             return this;
         }
 
-        public virtual IPropertyMappingConfiguration<TRecord> MakeNavigationalProperty<TFilter, TParent>(
+        public virtual IPropertyMappingConfiguration MakeNavigationalProperty<TFilter, TParent>(
             string KeyName,
             Action<TParent> foreignKeySelector)
         {
@@ -73,7 +72,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="alias">The alias.</param>
         /// <returns>Susanoo.IResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
-        public virtual IPropertyMappingConfiguration<TRecord> AliasProperty(string alias)
+        public virtual IPropertyMappingConfiguration UseAlias(string alias)
         {
             this.ActiveAlias = alias;
 
@@ -86,7 +85,7 @@ namespace Susanoo
         /// <param name="process"></param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual IPropertyMappingConfiguration<TRecord> ProcessValue(Expression<Func<Type, object, object, object>> process)
+        public virtual IPropertyMappingConfiguration ProcessValueUsing(Expression<Func<PropertyInfo, object, object>> process)
         {
             this.conversionProcess = process;
 
@@ -99,7 +98,7 @@ namespace Susanoo
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
         public virtual Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property)
         {
-            ParameterExpression recordParam = Expression.Parameter(typeof(TRecord), "record");
+            ParameterExpression recordParam = Expression.Parameter(typeof(IDataRecord), "record");
 
             Expression body = (this.MapOnCondition != null)
                 ? HasMapCondition(property, recordParam)
@@ -141,7 +140,7 @@ namespace Susanoo
                     property,
                     Expression.Convert(
                         Expression.Invoke(this.conversionProcess,
-                            Expression.Constant(this.PropertyMetadata.PropertyType, typeof(Type)),
+                            Expression.Constant(this.PropertyMetadata, typeof(PropertyInfo)),
                             Expression.MakeIndex(recordParam, typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
                                         new[]
                                         {

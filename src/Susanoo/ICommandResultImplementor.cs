@@ -12,7 +12,7 @@ namespace Susanoo
         void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping)
             where TResult : new();
 
-        IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export<TResultType>()
+        IDictionary<string, IPropertyMapping> Export<TResultType>()
             where TResultType : new();
     }
 }

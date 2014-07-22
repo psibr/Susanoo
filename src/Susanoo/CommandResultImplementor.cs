@@ -63,7 +63,7 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="TResultType">The type of the t result type.</typeparam>
         /// <returns>IDictionary&lt;System.String, IPropertyMappingConfiguration&lt;System.Data.IDataRecord&gt;&gt;.</returns>
-        public IDictionary<string, IPropertyMappingConfiguration<System.Data.IDataRecord>> Export<TResultType>() where TResultType : new()
+        public IDictionary<string, IPropertyMapping> Export<TResultType>() where TResultType : new()
         {
             return this.RetrieveMapping<TResultType>()
                 .Export();
