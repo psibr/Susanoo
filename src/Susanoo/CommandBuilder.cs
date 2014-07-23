@@ -12,10 +12,13 @@ namespace Susanoo
         /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        /// <exception cref="System.ArgumentException">No command text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType</exception>
         public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, System.Data.CommandType commandType)
         {
             if (commandText == null)
@@ -32,17 +35,14 @@ namespace Susanoo
         /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="databaseManagerName">Name of the database manager.</param>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        /// <exception cref="System.ArgumentException">
-        /// No command text provided.;commandText
+        /// <exception cref="System.ArgumentException">No command text provided.;commandText
         /// or
-        /// TableDirect is not supported.;commandType
-        /// </exception>
+        /// TableDirect is not supported.;commandType</exception>
         public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string databaseManagerName, string commandText, System.Data.CommandType commandType)
         {
             if (commandText == null)
@@ -58,10 +58,15 @@ namespace Susanoo
         /// <summary>
         /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on the result of this call.
         /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        /// <exception cref="System.ArgumentException">
+        /// No command text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType
+        /// </exception>
         public virtual ICommandExpression<dynamic> DefineCommand(string commandText, System.Data.CommandType commandType)
         {
             if (commandText == null)

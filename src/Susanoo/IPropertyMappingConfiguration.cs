@@ -8,7 +8,6 @@ namespace Susanoo
     /// <summary>
     /// Allows configuration of the Susanoo mapper at the property level during command definition.
     /// </summary>
-    /// <typeparam name="TRecord">The type of the record.</typeparam>
     public interface IPropertyMappingConfiguration : IFluentPipelineFragment
     {
         /// <summary>

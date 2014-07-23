@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Lightweight Semi-Automatic ORM")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Psibernetic Solutions, LLC")]
-[assembly: AssemblyProduct("Susano'o")]
+[assembly: AssemblyProduct("Susanoo")]
 [assembly: AssemblyCopyright("Copyright © Psibernetic Solutions, LLC 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

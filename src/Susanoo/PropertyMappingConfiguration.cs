@@ -10,7 +10,6 @@ namespace Susanoo
     /// <summary>
     /// Allows configuration of the Susanoo mapper at the property level during command definition.
     /// </summary>
-    /// <typeparam name="TRecord">The type of the record.</typeparam>
     public class PropertyMappingConfiguration
         : IPropertyMappingConfiguration, IPropertyMapping, IFluentPipelineFragment
     {
@@ -18,10 +17,11 @@ namespace Susanoo
 
         private Expression<Func<PropertyInfo, object, object>> conversionProcess = (property, value) => DatabaseManager.CastValue(property.PropertyType, value, property.PropertyType);
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyMappingConfiguration{TRecord}"/> class.
+        /// Initializes a new instance of the <see cref="PropertyMappingConfiguration"/> class.
         /// </summary>
-        /// <param name="propertyInfo">The property reflection meta data.</param>
+        /// <param name="propertyInfo">The property information.</param>
         public PropertyMappingConfiguration(PropertyInfo propertyInfo)
         {
             this.PropertyMetadata = propertyInfo;

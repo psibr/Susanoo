@@ -76,7 +76,6 @@ namespace Susanoo
         /// <summary>
         /// Provide mapping actions and options for a result set
         /// </summary>
-        /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult> ForResults(Action<IResultMappingExpression<TFilter, TResult>> mappings)
@@ -91,6 +90,11 @@ namespace Susanoo
             return new SingleResultSetCommandProcessor<TFilter, TResult>(this);
         }
 
+        /// <summary>
+        /// To the single result.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public override ICommandResultExpression<TFilter, TResult> ToSingleResult<TResult>()
         {
             return this as ICommandResultExpression<TFilter, TResult>;

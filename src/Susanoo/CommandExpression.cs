@@ -33,20 +33,16 @@ namespace Susanoo
         private bool explicitInclusionMode = false;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExpression{TFilter, TResult}" /> class.
+        /// Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
         /// </summary>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// databaseManager
+        /// <exception cref="System.ArgumentNullException">databaseManager
         /// or
-        /// commandText
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// No command text provided.;commandText
+        /// commandText</exception>
+        /// <exception cref="System.ArgumentException">No command text provided.;commandText
         /// or
-        /// TableDirect is not supported.;commandType
-        /// </exception>
+        /// TableDirect is not supported.;commandType</exception>
         public CommandExpression(string commandText, CommandType commandType)
         {
             if (commandText == null)
@@ -110,6 +106,7 @@ namespace Susanoo
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
@@ -150,6 +147,7 @@ namespace Susanoo
         /// <summary>
         /// Builds the property inclusion parameters.
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
         public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(IDatabaseManager databaseManager, TFilter filter)
@@ -205,6 +203,7 @@ namespace Susanoo
         /// <summary>
         /// Builds the parameters.
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
         public IEnumerable<IDbDataParameter> BuildParameters(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)

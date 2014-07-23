@@ -76,6 +76,7 @@ namespace Susanoo
         /// Assembles a data command for an ADO.NET provider,
         /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
@@ -87,6 +88,7 @@ namespace Susanoo
         /// Assembles a data command for an ADO.NET provider,
         /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
