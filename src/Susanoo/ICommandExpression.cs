@@ -23,6 +23,10 @@ namespace Susanoo
         /// <value>The type of the database command.</value>
         CommandType DBCommandType { get; }
 
+        /// <summary>
+        /// Prepares the command for execution.
+        /// </summary>
+        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         ICommandProcessor<TFilter> Finalize();
 
         /// <summary>

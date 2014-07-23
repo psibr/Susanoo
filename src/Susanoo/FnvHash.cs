@@ -15,7 +15,7 @@ using System.Numerics;
 /// <summary>
 /// Implementation of the FNV variable bit hash alogrithm.
 /// </summary>
-public static class FnvHash
+internal static class FnvHash
 {
     #region Constants
 

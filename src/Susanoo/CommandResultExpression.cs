@@ -4,17 +4,26 @@ using System.Numerics;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Common component for CommandResults to share including a uniform location for the Implementor.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public abstract class CommandResultBridge<TFilter> : IFluentPipelineFragment
     {
         private readonly ICommandResultImplementor<TFilter> _Implementor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandResultBridge{TFilter}"/> class.
+        /// Initializes a new instance of the <see cref="CommandResultBridge{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultBridge(ICommandExpression<TFilter> command)
             : this(command, new CommandResultImplementor<TFilter>()) { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultBridge{TFilter}"/> class.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="implementor">The implementor.</param>
         internal CommandResultBridge(ICommandExpression<TFilter> command, ICommandResultImplementor<TFilter> implementor)
         {
             _Implementor = implementor;
@@ -22,6 +31,10 @@ namespace Susanoo
             this.CommandExpression = command;
         }
 
+        /// <summary>
+        /// Gets the hash code used for caching.
+        /// </summary>
+        /// <value>hashcode</value>
         public virtual BigInteger CacheHash
         {
             get
@@ -37,7 +50,7 @@ namespace Susanoo
         public virtual ICommandExpression<TFilter> CommandExpression { get; private set; }
 
         /// <summary>
-        /// Gets the implementor of the Commandresult functionality.
+        /// Gets the implementor of the CommandResult functionality.
         /// </summary>
         /// <value>The implementor.</value>
         protected virtual ICommandResultImplementor<TFilter> Implementor
@@ -56,6 +69,11 @@ namespace Susanoo
             return this.Implementor.Export<TResultType>();
         }
 
+        /// <summary>
+        /// Converts the command result expression to a single result expression.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public virtual ICommandResultExpression<TFilter, TResult> ToSingleResult<TResult>()
             where TResult : new()
         {
@@ -67,16 +85,24 @@ namespace Susanoo
         ICommandResultExpression<TFilter, TResult>, IFluentPipelineFragment
             where TResult : new()
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}"/> class.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
             : base(command) { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}"/> class.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="implementor">The implementor.</param>
         internal CommandResultExpression(ICommandExpression<TFilter> command, ICommandResultImplementor<TFilter> implementor)
             : base(command, implementor) { }
 
         /// <summary>
         /// Provide mapping actions and options for a result set
         /// </summary>
-        /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult> ForResultSet(Action<IResultMappingExpression<TFilter, TResult>> mappings)
@@ -86,11 +112,17 @@ namespace Susanoo
             return this;
         }
 
+
         public ICommandProcessor<TFilter, TResult> Finalize()
         {
             return new SingleResultSetCommandProcessor<TFilter, TResult>(this);
         }
 
+        /// <summary>
+        /// Changes the interface to match a single result.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public override ICommandResultExpression<TFilter, TResult> ToSingleResult<TResult>()
         {
             return this as ICommandResultExpression<TFilter, TResult>;
@@ -102,6 +134,10 @@ namespace Susanoo
         where TResult1 : new()
         where TResult2 : new()
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2}"/> class.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
             : base(command) { }
 
@@ -227,6 +263,10 @@ namespace Susanoo
         where TResult5 : new()
         where TResult6 : new()
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}"/> class.
+        /// </summary>
+        /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
             : base(command) { }
 
