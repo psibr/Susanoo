@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Linq.Expressions;
 
 namespace Susanoo
@@ -30,7 +31,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>ICommandExpression&lt;TResult&gt;.</returns>
-        ICommandExpression<TFilter> AddConstantParameters(params IDbDataParameter[] parameters);
+        ICommandExpression<TFilter> AddConstantParameters(params DbParameter[] parameters);
 
         /// <summary>
         /// Uses the explicit property inclusion mode for including parameters from a potential filter.
@@ -68,7 +69,7 @@ namespace Susanoo
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions);
+        ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<DbParameter> parameterOptions);
 
         /// <summary>
         /// Includes a property of the filter.
@@ -83,7 +84,7 @@ namespace Susanoo
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
-        ICommandExpression<TFilter> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions);
+        ICommandExpression<TFilter> IncludeProperty(string propertyName, Action<DbParameter> parameterOptions);
 
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).
@@ -91,8 +92,8 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        IDbDataParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+        /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
+        DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 
 namespace Susanoo
 {
@@ -40,7 +41,7 @@ namespace Susanoo
             get { return (_Item1Mapper.CacheHash * 31) ^ _Item2Mapper.CacheHash; }
         }
 
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
@@ -65,7 +66,7 @@ namespace Susanoo
             return new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>(results1, results2);
         }
 
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -111,7 +112,7 @@ namespace Susanoo
         }
 
         public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
@@ -142,7 +143,7 @@ namespace Susanoo
             return new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>(results1, results2, results3);
         }
 
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> Execute(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -195,7 +196,7 @@ namespace Susanoo
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
                 IEnumerable<TResult4>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
@@ -238,7 +239,7 @@ namespace Susanoo
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
-                IEnumerable<TResult4>> Execute(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+                IEnumerable<TResult4>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -295,7 +296,7 @@ namespace Susanoo
                 IEnumerable<TResult3>,
                 IEnumerable<TResult4>,
                 IEnumerable<TResult5>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
@@ -346,7 +347,7 @@ namespace Susanoo
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
                 IEnumerable<TResult4>,
-                IEnumerable<TResult5>> Execute(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+                IEnumerable<TResult5>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -407,7 +408,7 @@ namespace Susanoo
                 IEnumerable<TResult4>,
                 IEnumerable<TResult5>,
                 IEnumerable<TResult6>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
@@ -466,7 +467,7 @@ namespace Susanoo
                 IEnumerable<TResult3>,
                 IEnumerable<TResult4>,
                 IEnumerable<TResult5>,
-                IEnumerable<TResult6>> Execute(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+                IEnumerable<TResult6>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -531,7 +532,7 @@ namespace Susanoo
                 IEnumerable<TResult5>,
                 IEnumerable<TResult6>,
                 IEnumerable<TResult7>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
@@ -598,7 +599,7 @@ namespace Susanoo
                 IEnumerable<TResult4>,
                 IEnumerable<TResult5>,
                 IEnumerable<TResult6>,
-                IEnumerable<TResult7>> Execute(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+                IEnumerable<TResult7>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
