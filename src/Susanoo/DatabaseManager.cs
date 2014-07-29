@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Susanoo
 {
@@ -13,7 +14,7 @@ namespace Susanoo
     public class DatabaseManager : IDatabaseManager, IDisposable
     {
         private readonly string _ConnectionString;
-        private readonly Action<IDbCommand> providerSpecificCommandSettings;
+        private readonly Action<DbCommand> providerSpecificCommandSettings;
         private DbConnection _Connection;
 
         /// <summary>
@@ -23,7 +24,7 @@ namespace Susanoo
         /// <param name="connectionStringName">Name of the connection string.</param>
         /// <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
         /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
-        public DatabaseManager(DbProviderFactory provider, string connectionStringName, Action<IDbCommand> providerSpecificCommandSettings)
+        public DatabaseManager(DbProviderFactory provider, string connectionStringName, Action<DbCommand> providerSpecificCommandSettings)
             : this(provider, connectionStringName)
         {
             this.providerSpecificCommandSettings = providerSpecificCommandSettings;
@@ -147,7 +148,7 @@ namespace Susanoo
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, IDbTransaction transaction, params IDbDataParameter[] parameters)
+        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
@@ -160,9 +161,9 @@ namespace Susanoo
                 {
                     this.OpenConnection();
 
-                    using (IDbCommand command = this.Provider.CreateCommand())
+                    using (DbCommand command = this.Provider.CreateCommand())
                     {
-                        this.CallProviderSpecificCommandSettings(command);
+
 
                         command.CommandType = commandType;
                         command.Connection = this.Connection;
@@ -172,6 +173,8 @@ namespace Susanoo
                         command.CommandText = commandText;
 
                         parameters.ToList().ForEach(parameter => command.Parameters.Add(parameter));
+
+                        this.CallProviderSpecificCommandSettings(command);
 
                         results = command.ExecuteReader();
                     }
@@ -199,7 +202,7 @@ namespace Susanoo
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, params IDbDataParameter[] parameters)
+        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
@@ -210,10 +213,8 @@ namespace Susanoo
             {
                 this.OpenConnection();
 
-                using (IDbCommand command = this.Provider.CreateCommand())
+                using (DbCommand command = this.Provider.CreateCommand())
                 {
-                    this.CallProviderSpecificCommandSettings(command);
-
                     command.CommandType = commandType;
                     command.Connection = this.Connection;
 
@@ -223,6 +224,8 @@ namespace Susanoo
                     {
                         command.Parameters.Add(item);
                     }
+
+                    this.CallProviderSpecificCommandSettings(command);
 
                     results = command.ExecuteReader();
                 }
@@ -249,7 +252,7 @@ namespace Susanoo
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, IDbTransaction transaction, params IDataParameter[] parameters)
+        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
@@ -258,7 +261,7 @@ namespace Susanoo
             {
                 this.OpenConnection();
 
-                using (IDbCommand command = this.Provider.CreateCommand())
+                using (DbCommand command = this.Provider.CreateCommand())
                 {
                     this.CallProviderSpecificCommandSettings(command);
 
@@ -290,7 +293,7 @@ namespace Susanoo
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, params IDataParameter[] parameters)
+        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
             return this.ExecuteScalar<T>(commandText, commandType, null, parameters);
         }
@@ -305,7 +308,7 @@ namespace Susanoo
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, IDbTransaction transaction, params IDbDataParameter[] parameters)
+        public virtual int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
@@ -314,9 +317,9 @@ namespace Susanoo
             {
                 this.OpenConnection();
 
-                using (IDbCommand command = this.Provider.CreateCommand())
+                using (DbCommand command = this.Provider.CreateCommand())
                 {
-                    this.CallProviderSpecificCommandSettings(command);
+
 
                     command.CommandType = commandType;
                     command.Connection = this.Connection;
@@ -328,6 +331,8 @@ namespace Susanoo
 
                     parameters.ToList()
                               .ForEach(parameter => command.Parameters.Add(parameter));
+
+                    this.CallProviderSpecificCommandSettings(command);
 
                     return command.ExecuteNonQuery();
                 }
@@ -346,7 +351,7 @@ namespace Susanoo
         /// <param name="commandType"></param>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        public virtual int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, params IDbDataParameter[] parameters)
+        public virtual int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
             return this.ExecuteStoredProcedureNonQuery(commandText, commandType, null, parameters);
         }
@@ -355,7 +360,7 @@ namespace Susanoo
         /// Creates a parameter.
         /// </summary>
         /// <returns></returns>
-        public virtual IDbDataParameter CreateParameter()
+        public virtual DbParameter CreateParameter()
         {
             return this.Provider.CreateParameter();
         }
@@ -368,9 +373,9 @@ namespace Susanoo
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual IDbDataParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value)
+        public virtual DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value)
         {
-            IDbDataParameter newParam = this.Provider.CreateParameter();
+            DbParameter newParam = this.Provider.CreateParameter();
             newParam.ParameterName = parameterName;
             newParam.Direction = parameterDirection;
             newParam.DbType = parameterType;
@@ -385,7 +390,7 @@ namespace Susanoo
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual IDbDataParameter CreateInputParameter(string parameterName, DbType parameterType, object value)
+        public virtual DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value)
         {
             return this.CreateParameter(parameterName, ParameterDirection.Input, parameterType, value);
         }
@@ -394,7 +399,7 @@ namespace Susanoo
         /// Begins a transaction.
         /// </summary>
         /// <returns></returns>
-        public virtual IDbTransaction BeginTransaction()
+        public virtual DbTransaction BeginTransaction()
         {
             this.OpenConnection();
             return this.Connection.BeginTransaction();
@@ -404,7 +409,7 @@ namespace Susanoo
         /// Adjusts the command by provider.
         /// </summary>
         /// <param name="command">The command.</param>
-        protected virtual void CallProviderSpecificCommandSettings(IDbCommand command)
+        protected virtual void CallProviderSpecificCommandSettings(DbCommand command)
         {
             if (this.providerSpecificCommandSettings != null)
                 this.providerSpecificCommandSettings(command);
@@ -453,5 +458,64 @@ namespace Susanoo
         }
 
         #endregion IDisposable Members
+
+
+        /// <summary>
+        /// execute scalar as an asynchronous operation.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T&gt;.</returns>
+        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        public async System.Threading.Tasks.Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, DbTransaction transaction, CancellationToken cancellationToken = default(CancellationToken), params DbParameter[] parameters)
+        {
+            if (string.IsNullOrWhiteSpace(commandText))
+                throw new ArgumentNullException("commandText");
+
+            try
+            {
+                this.OpenConnection();
+
+                using (DbCommand command = this.Provider.CreateCommand())
+                {
+                    this.CallProviderSpecificCommandSettings(command);
+
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.Connection = this.Connection;
+
+                    if (transaction != null)
+                        command.Transaction = transaction;
+
+                    command.CommandText = commandText;
+
+                    parameters.ToList().ForEach(parameter => command.Parameters.Add(parameter));
+
+                    return (T)DatabaseManager.CastValue(typeof(T), await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T));
+                }
+            }
+            finally
+            {
+                if (transaction == null)
+                    this.CloseConnection();
+            }
+        }
+
+        /// <summary>
+        /// execute scalar as an asynchronous operation.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T&gt;.</returns>
+        public async System.Threading.Tasks.Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken = default(CancellationToken), params DbParameter[] parameters)
+        {
+            return await ExecuteScalarAsync<T>(commandText, commandType, null, cancellationToken, parameters);
+        }
     }
 }

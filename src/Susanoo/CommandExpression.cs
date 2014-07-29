@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -19,7 +20,7 @@ namespace Susanoo
         /// <summary>
         /// The parameter inclusions
         /// </summary>
-        private readonly IDictionary<string, Action<IDbDataParameter>> parameterInclusions = new Dictionary<string, Action<IDbDataParameter>>();
+        private readonly IDictionary<string, Action<DbParameter>> parameterInclusions = new Dictionary<string, Action<DbParameter>>();
 
         /// <summary>
         /// The parameter exclusions
@@ -29,7 +30,7 @@ namespace Susanoo
         /// <summary>
         /// The constant parameters
         /// </summary>
-        private readonly List<IDbDataParameter> constantParameters = new List<IDbDataParameter>();
+        private readonly List<DbParameter> constantParameters = new List<DbParameter>();
 
         /// <summary>
         /// The explicit inclusion mode
@@ -109,7 +110,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
-        public virtual ICommandExpression<TFilter> AddConstantParameters(params IDbDataParameter[] parameters)
+        public virtual ICommandExpression<TFilter> AddConstantParameters(params DbParameter[] parameters)
         {
             this.constantParameters.AddRange(parameters);
 
@@ -122,17 +123,17 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public virtual IDbDataParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
+        /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
+        public virtual DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            IDbDataParameter[] parameters = null;
+            DbParameter[] parameters = null;
 
             int parameterCount = 0;
 
-            IEnumerable<IDbDataParameter> propertyParameters = BuildPropertyParameters(databaseManager, filter);
+            IEnumerable<DbParameter> propertyParameters = BuildPropertyParameters(databaseManager, filter);
 
             parameterCount = (propertyParameters.Count() + this.constantParameters.Count) + ((explicitParameters != null) ? explicitParameters.Count() : 0);
-            parameters = new IDbDataParameter[parameterCount];
+            parameters = new DbParameter[parameterCount];
 
             int i = 0;
             foreach (var item in propertyParameters)
@@ -162,10 +163,10 @@ namespace Susanoo
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
-        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public virtual IEnumerable<IDbDataParameter> BuildPropertyParameters(IDatabaseManager databaseManager, TFilter filter)
+        /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
+        public virtual IEnumerable<DbParameter> BuildPropertyParameters(IDatabaseManager databaseManager, TFilter filter)
         {
-            var properties = new List<IDbDataParameter>();
+            var properties = new List<DbParameter>();
 
             if (filter != null)
             {
@@ -179,10 +180,10 @@ namespace Susanoo
                         param.ParameterName = item.Key;
                         param.Direction = ParameterDirection.Input;
 
+                        param.Value = propInfo.GetValue(filter);
+
                         if (item.Value != null)
                             item.Value.Invoke(param);
-
-                        param.Value = propInfo.GetValue(filter);
 
                         properties.Add(param);
                     }
@@ -198,11 +199,11 @@ namespace Susanoo
                             param.ParameterName = propInfo.Name;
                             param.Direction = ParameterDirection.Input;
 
+                            param.Value = propInfo.GetValue(filter);
+
                             if (this.parameterInclusions.ContainsKey(propInfo.Name)
                                     && this.parameterInclusions[propInfo.Name] != null)
                                 this.parameterInclusions[propInfo.Name].Invoke(param);
-
-                            param.Value = propInfo.GetValue(filter);
 
                             properties.Add(param);
                         }
@@ -218,8 +219,8 @@ namespace Susanoo
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        public IEnumerable<IDbDataParameter> BuildParameters(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
+        /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
+        public IEnumerable<DbParameter> BuildParameters(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.BuildParameters(databaseManager, default(TFilter), explicitParameters);
         }
@@ -278,7 +279,7 @@ namespace Susanoo
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions)
+        public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<DbParameter> parameterOptions)
         {
             return this.IncludeProperty(propertyExpression.GetPropertyName(), parameterOptions);
         }
@@ -300,7 +301,7 @@ namespace Susanoo
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandExpression<TFilter> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions)
+        public ICommandExpression<TFilter> IncludeProperty(string propertyName, Action<DbParameter> parameterOptions)
         {
             if (this.parameterInclusions.Keys.Contains(propertyName))
             {

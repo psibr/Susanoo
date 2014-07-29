@@ -1,4 +1,6 @@
-﻿namespace Susanoo
+﻿using System.Data.Common;
+using System.Threading.Tasks;
+namespace Susanoo
 {
     /// <summary>
     /// A fully built and ready to be executed command expression with a filter parameter.
@@ -35,7 +37,7 @@
             get { return _CommandExpression.CacheHash; }
         }
 
-        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             return databaseManager.ExecuteScalar<TReturn>(
                 CommandExpression.CommandText,
@@ -43,12 +45,12 @@
                 CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
         }
 
-        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return ExecuteScalar<TReturn>(databaseManager, default(TFilter), explicitParameters);
         }
 
-        public int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, params System.Data.IDbDataParameter[] explicitParameters)
+        public int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             return databaseManager.ExecuteStoredProcedureNonQuery(
                 CommandExpression.CommandText,
@@ -56,9 +58,14 @@
                 CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
         }
 
-        public int ExecuteNonQuery(IDatabaseManager databaseManager, params System.Data.IDbDataParameter[] explicitParameters)
+        public int ExecuteNonQuery(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return ExecuteNonQuery(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

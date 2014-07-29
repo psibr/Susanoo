@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq.Expressions;
 
 namespace Susanoo
@@ -37,19 +38,19 @@ namespace Susanoo
         }
 
         public static TScalarResult ExecuteScalar<TFilter, TScalarResult>(this IDatabaseManager databaseManager,
-            ICommandProcessor<TFilter> command, TFilter filter = default(TFilter), params IDbDataParameter[] explicitParameters)
+            ICommandProcessor<TFilter> command, TFilter filter = default(TFilter), params DbParameter[] explicitParameters)
         {
             return command.ExecuteScalar<TScalarResult>(databaseManager, filter, explicitParameters);
         }
 
         public static int ExecuteNonQuery<TFilter>(this IDatabaseManager databaseManager,
-            ICommandProcessor<TFilter> command, TFilter filter = default(TFilter), params IDbDataParameter[] explicitParameters)
+            ICommandProcessor<TFilter> command, TFilter filter = default(TFilter), params DbParameter[] explicitParameters)
         {
             return command.ExecuteNonQuery(databaseManager, filter, explicitParameters);
         }
 
         public static IEnumerable<TResult> Execute<TFilter, TResult>(this IDatabaseManager databaseManager,
-            ICommandProcessor<TFilter, TResult> command, TFilter filter = default(TFilter), params IDbDataParameter[] explicitParameters)
+            ICommandProcessor<TFilter, TResult> command, TFilter filter = default(TFilter), params DbParameter[] explicitParameters)
             where TResult : new()
         {
             return command.Execute(databaseManager, filter, explicitParameters);
@@ -59,7 +60,7 @@ namespace Susanoo
             IEnumerable<TResult1>,
             IEnumerable<TResult2>> Execute<TFilter, TResult1, TResult2>(
                 this IDatabaseManager databaseManager,
-                ICommandProcessor<TFilter, TResult1, TResult2> command, TFilter filter = default(TFilter), params IDbDataParameter[] explicitParameters)
+                ICommandProcessor<TFilter, TResult1, TResult2> command, TFilter filter = default(TFilter), params DbParameter[] explicitParameters)
             where TResult1 : new()
             where TResult2 : new()
         {
@@ -71,7 +72,7 @@ namespace Susanoo
             IEnumerable<TResult3>> Execute<TFilter, TResult1, TResult2, TResult3>(this IDatabaseManager databaseManager,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3> command,
             TFilter filter = default(TFilter),
-            params IDbDataParameter[] explicitParameters)
+            params DbParameter[] explicitParameters)
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -85,7 +86,7 @@ namespace Susanoo
             IEnumerable<TResult4>> Execute<TFilter, TResult1, TResult2, TResult3, TResult4>(this IDatabaseManager databaseManager,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> command,
             TFilter filter = default(TFilter),
-            params IDbDataParameter[] explicitParameters)
+            params DbParameter[] explicitParameters)
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -101,7 +102,7 @@ namespace Susanoo
             IEnumerable<TResult5>> Execute<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this IDatabaseManager databaseManager,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> command,
             TFilter filter = default(TFilter),
-            params IDbDataParameter[] explicitParameters)
+            params DbParameter[] explicitParameters)
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -119,7 +120,7 @@ namespace Susanoo
             IEnumerable<TResult6>> Execute<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this IDatabaseManager databaseManager,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> command,
             TFilter filter = default(TFilter),
-            params IDbDataParameter[] explicitParameters)
+            params DbParameter[] explicitParameters)
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -134,7 +135,7 @@ namespace Susanoo
             Execute<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this IDatabaseManager databaseManager,
                 ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> command,
                 TFilter filter = default(TFilter),
-                params IDbDataParameter[] explicitParameters)
+                params DbParameter[] explicitParameters)
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()

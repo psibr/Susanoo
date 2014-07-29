@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -87,7 +88,7 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -100,7 +101,7 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult> results = new List<TResult>();
 

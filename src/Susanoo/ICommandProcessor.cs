@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace Susanoo
 {
@@ -23,6 +25,7 @@ namespace Susanoo
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandProcessor<TFilter> : ICommandProcessorInterop<TFilter>
     {
+        
         /// <summary>
         /// Executes the command and retrieves a single value.
         /// </summary>
@@ -31,7 +34,7 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>TReturn.</returns>
-        TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+        TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Executes the command and retrieves a single value.
@@ -40,7 +43,7 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>TReturn.</returns>
-        TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+        TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Executes the command and returns a return code.
@@ -49,7 +52,9 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>System.Int32.</returns>
-        int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+        int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
+
+        Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Executes the command and returns a return code.
@@ -57,7 +62,7 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>System.Int32.</returns>
-        int ExecuteNonQuery(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+        int ExecuteNonQuery(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -78,7 +83,7 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -87,7 +92,7 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -116,7 +121,7 @@ namespace Susanoo
         /// &gt;.
         /// </returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -130,7 +135,7 @@ namespace Susanoo
         /// IEnumerable&lt;TResult2&gt;
         /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>
-            Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -162,7 +167,7 @@ namespace Susanoo
         /// &gt;.
         /// </returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -177,7 +182,7 @@ namespace Susanoo
         /// IEnumerable&lt;TResult3&gt;
         /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>
-            Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -212,7 +217,7 @@ namespace Susanoo
         /// &gt;.
         /// </returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -228,7 +233,7 @@ namespace Susanoo
         /// IEnumerable&lt;TResult4&gt;
         /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>>
-            Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -266,7 +271,7 @@ namespace Susanoo
         /// &gt;.
         /// </returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>, IEnumerable<TResult5>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -283,7 +288,7 @@ namespace Susanoo
         /// IEnumerable&lt;TResult5&gt;
         /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>, IEnumerable<TResult5>>
-            Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -324,7 +329,7 @@ namespace Susanoo
         /// &gt;.
         /// </returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>, IEnumerable<TResult5>, IEnumerable<TResult6>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -342,7 +347,7 @@ namespace Susanoo
         /// IEnumerable&lt;TResult6&gt;
         /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>, IEnumerable<TResult5>, IEnumerable<TResult6>>
-            Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -386,7 +391,7 @@ namespace Susanoo
         /// &gt;.
         /// </returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>, IEnumerable<TResult5>, IEnumerable<TResult6>, IEnumerable<TResult7>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -405,6 +410,6 @@ namespace Susanoo
         /// IEnumerable&lt;TResult7&gt;
         /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>, IEnumerable<TResult5>, IEnumerable<TResult6>, IEnumerable<TResult7>>
-            Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters);
+            Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 }
