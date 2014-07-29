@@ -40,6 +40,10 @@ namespace Susanoo
         /// <value>The active alias.</value>
         public virtual string ActiveAlias { get; private set; }
 
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
         {
             get

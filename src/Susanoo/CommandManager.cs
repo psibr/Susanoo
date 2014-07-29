@@ -119,13 +119,13 @@ namespace Susanoo
         }
     }
 
-    public sealed class MappingContainer
-    {
-        private IDictionary<Type, IDictionary<string, Func<IDataRecord, object>>> compiledMappings =
-            new Dictionary<Type, IDictionary<string, Func<IDataRecord, object>>>();
+    //public sealed class MappingContainer
+    //{
+    //    private IDictionary<Type, IDictionary<string, Func<IDataRecord, object>>> compiledMappings =
+    //        new Dictionary<Type, IDictionary<string, Func<IDataRecord, object>>>();
 
-        public void Store(Type type, string id, Func<IDataRecord, object> mappingDelegate)
-        {
-        }
-    }
+    //    public void Store(Type type, string id, Func<IDataRecord, object> mappingDelegate)
+    //    {
+    //    }
+    //}
 }

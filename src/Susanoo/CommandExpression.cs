@@ -9,6 +9,10 @@ using System.Text;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Contains information needed to build a command and provides FluentPipeline methods for defining results and modifiers.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public class CommandExpression<TFilter>
         : ICommandExpression<TFilter>, IFluentPipelineFragment
     {
@@ -67,6 +71,10 @@ namespace Susanoo
         /// <value>The type of the database command.</value>
         public virtual CommandType DBCommandType { get; private set; }
 
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
         {
             get
@@ -86,6 +94,11 @@ namespace Susanoo
             }
         }
 
+
+        /// <summary>
+        /// Finalizes the pipeline and compiles result mappings.
+        /// </summary>
+        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         public ICommandProcessor<TFilter> Finalize()
         {
             return new NoResultSetCommandProcessor<TFilter>(this);

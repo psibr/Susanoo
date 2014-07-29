@@ -26,6 +26,10 @@ namespace Susanoo
             this._Implementor = new ResultMappingImplementor<TFilter, TResult>();
         }
 
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
         {
             get

@@ -32,6 +32,9 @@ namespace Susanoo
         PropertyInfo PropertyMetadata { get; }
     }
 
+    /// <summary>
+    /// Allows retrieval of configurations at the property level.
+    /// </summary>
     public interface IPropertyMapping : IFluentPipelineFragment
     {
         /// <summary>

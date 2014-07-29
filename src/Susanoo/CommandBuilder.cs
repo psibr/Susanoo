@@ -62,11 +62,9 @@ namespace Susanoo
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        /// <exception cref="System.ArgumentException">
-        /// No command text provided.;commandText
+        /// <exception cref="System.ArgumentException">No command text provided.;commandText
         /// or
-        /// TableDirect is not supported.;commandType
-        /// </exception>
+        /// TableDirect is not supported.;commandType</exception>
         public virtual ICommandExpression<dynamic> DefineCommand(string commandText, System.Data.CommandType commandType)
         {
             if (commandText == null)

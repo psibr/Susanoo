@@ -37,11 +37,19 @@ namespace Susanoo
             this.CompiledMapping = CompileMappings();
         }
 
+        /// <summary>
+        /// Gets the command expression.
+        /// </summary>
+        /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
         {
             get { return this._CommandExpression; }
         }
 
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
             get

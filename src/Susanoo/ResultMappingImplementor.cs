@@ -81,7 +81,7 @@ namespace Susanoo
         public virtual IDictionary<string, IPropertyMapping> Export()
         {
             var exportDictionary = new Dictionary<string, IPropertyMapping>();
-
+            
             foreach (var item in this.mappingActions)
             {
                 var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(item.Key));
