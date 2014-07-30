@@ -136,6 +136,7 @@ namespace Susanoo
             return this as ICommandResultExpression<TFilter, TSingle>;
         }
     }
+
     /// <summary>
     /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>

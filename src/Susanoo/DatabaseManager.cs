@@ -163,8 +163,6 @@ namespace Susanoo
 
                     using (DbCommand command = this.Provider.CreateCommand())
                     {
-
-
                         command.CommandType = commandType;
                         command.Connection = this.Connection;
 
@@ -319,8 +317,6 @@ namespace Susanoo
 
                 using (DbCommand command = this.Provider.CreateCommand())
                 {
-
-
                     command.CommandType = commandType;
                     command.Connection = this.Connection;
 
@@ -458,7 +454,6 @@ namespace Susanoo
         }
 
         #endregion IDisposable Members
-
 
         /// <summary>
         /// execute scalar as an asynchronous operation.

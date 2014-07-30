@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -25,7 +24,6 @@ namespace Susanoo
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandProcessor<TFilter> : ICommandProcessorInterop<TFilter>
     {
-        
         /// <summary>
         /// Executes the command and retrieves a single value.
         /// </summary>

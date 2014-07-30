@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -16,7 +15,6 @@ namespace Susanoo
         private Expression<Func<IDataRecord, string, bool>> MapOnCondition = null;
 
         private Expression<Func<PropertyInfo, object, object>> conversionProcess = (property, value) => DatabaseManager.CastValue(property.PropertyType, value, property.PropertyType);
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyMappingConfiguration"/> class.

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace Susanoo
 {
@@ -33,7 +32,6 @@ namespace Susanoo
         ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>()
             where TSingle : new();
     }
-
 
     /// <summary>
     /// Provides methods for customizing how results are handled and compiling result mappings.

@@ -95,7 +95,6 @@ namespace Susanoo
             }
         }
 
-
         /// <summary>
         /// Finalizes the pipeline with no result mappings.
         /// </summary>

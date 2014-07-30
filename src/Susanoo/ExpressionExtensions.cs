@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Linq.Expressions;
 
@@ -261,7 +260,5 @@ namespace Susanoo
         {
             return command.Execute(databaseManager, filter, explicitParameters);
         }
-
-
     }
 }
