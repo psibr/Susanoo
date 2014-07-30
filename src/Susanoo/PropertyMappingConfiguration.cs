@@ -52,25 +52,6 @@ namespace Susanoo
             }
         }
 
-        public virtual IPropertyMappingConfiguration MakeNavigationalProperty<TFilter, TParent>(
-            params Func<TFilter, TParent, KeyValuePair<string, object>>[] parameterBuilder)
-        {
-            return this;
-        }
-
-        public virtual IPropertyMappingConfiguration MakeNavigationalProperty<TFilter, TParent>(
-            params Func<TFilter, IEnumerable<TParent>, KeyValuePair<string, object>>[] parameterBuilder)
-        {
-            return this;
-        }
-
-        public virtual IPropertyMappingConfiguration MakeNavigationalProperty<TFilter, TParent>(
-            string KeyName,
-            Action<TParent> foreignKeySelector)
-        {
-            return this;
-        }
-
         /// <summary>
         /// Uses the specified alias when mapping from the data call.
         /// </summary>
@@ -146,10 +127,10 @@ namespace Susanoo
                         Expression.Invoke(this.conversionProcess,
                             Expression.Constant(this.PropertyMetadata, typeof(PropertyInfo)),
                             Expression.MakeIndex(recordParam, typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
-                                        new[]
-                                        {
-                                            Expression.Constant(this.ActiveAlias)
-                                        }),
+                                new[]
+                                {
+                                    Expression.Constant(this.ActiveAlias)
+                                }),
                             Expression.Constant(null)),
                         property.Type));
         }

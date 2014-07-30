@@ -69,6 +69,11 @@ namespace Susanoo
             return this.Implementor.Export<TResultType>();
         }
 
+        /// <summary>
+        /// Converts to a single result expression.
+        /// </summary>
+        /// <typeparam name="TSingle">The type of the single.</typeparam>
+        /// <returns>ICommandResultExpression&lt;TFilter, TSingle&gt;.</returns>
         public virtual ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>()
             where TSingle : new()
         {

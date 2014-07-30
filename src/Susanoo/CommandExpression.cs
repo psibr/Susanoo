@@ -97,7 +97,7 @@ namespace Susanoo
 
 
         /// <summary>
-        /// Finalizes the pipeline and compiles result mappings.
+        /// Finalizes the pipeline with no result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         public ICommandProcessor<TFilter> Finalize()

@@ -64,6 +64,13 @@ namespace Susanoo
             get { return (_Item1Mapper.CacheHash * 31) ^ _Item2Mapper.CacheHash; }
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
@@ -89,6 +96,12 @@ namespace Susanoo
             return new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>(results1, results2);
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
@@ -158,6 +171,13 @@ namespace Susanoo
             get { return (_Item1Mapper.CacheHash * 31) ^ _Item2Mapper.CacheHash; }
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
@@ -190,6 +210,12 @@ namespace Susanoo
             return new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>(results1, results2, results3);
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
@@ -264,6 +290,13 @@ namespace Susanoo
             get { return (_Item1Mapper.CacheHash * 31) ^ _Item2Mapper.CacheHash; }
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -308,6 +341,12 @@ namespace Susanoo
                 IEnumerable<TResult4>>(results1, results2, results3, results4);
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -389,6 +428,13 @@ namespace Susanoo
             get { return (_Item1Mapper.CacheHash * 31) ^ _Item2Mapper.CacheHash; }
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -441,6 +487,12 @@ namespace Susanoo
                 IEnumerable<TResult5>>(results1, results2, results3, results4, results5);
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -500,6 +552,10 @@ namespace Susanoo
             _Item6Mapper = new SingleResultSetCommandProcessor<TFilter, TResult6>(CommandResultExpression.ToSingleResult<TResult6>());
         }
 
+        /// <summary>
+        /// Gets the command result expression.
+        /// </summary>
+        /// <value>The command result expression.</value>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> CommandResultExpression
         {
             get { return this._CommandResultExpression; }
@@ -523,6 +579,13 @@ namespace Susanoo
             get { return (_Item1Mapper.CacheHash * 31) ^ _Item2Mapper.CacheHash; }
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -583,6 +646,12 @@ namespace Susanoo
                 IEnumerable<TResult6>>(results1, results2, results3, results4, results5, results6);
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -674,6 +743,13 @@ namespace Susanoo
             get { return (_Item1Mapper.CacheHash * 31) ^ _Item2Mapper.CacheHash; }
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;, IEnumerable&lt;TResult7&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -742,6 +818,12 @@ namespace Susanoo
                 IEnumerable<TResult7>>(results1, results2, results3, results4, results5, results6, results7);
         }
 
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;, IEnumerable&lt;TResult7&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,

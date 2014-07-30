@@ -47,6 +47,7 @@ namespace Susanoo
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="transaction">The transaction.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
         Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, DbTransaction transaction, CancellationToken cancellationToken, params DbParameter[] parameters);
@@ -57,6 +58,7 @@ namespace Susanoo
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
         Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken, params DbParameter[] parameters);

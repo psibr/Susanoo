@@ -24,6 +24,9 @@ namespace Susanoo
         /// <value>The type of the database command.</value>
         CommandType DBCommandType { get; }
 
+        /// <summary>
+        /// Finalizes the pipeline with no result mappings.
+        /// </summary>
         ICommandProcessor<TFilter> Finalize();
 
         /// <summary>
