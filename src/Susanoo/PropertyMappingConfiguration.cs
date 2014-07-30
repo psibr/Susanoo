@@ -128,8 +128,7 @@ namespace Susanoo
                                 new[]
                                 {
                                     Expression.Constant(this.ActiveAlias)
-                                }),
-                            Expression.Constant(null)),
+                                })),
                         property.Type));
         }
     }
