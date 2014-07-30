@@ -118,6 +118,8 @@ namespace Susanoo
         }
     }
 
+    //Testing CI.
+
     //public sealed class MappingContainer
     //{
     //    private IDictionary<Type, IDictionary<string, Func<IDataRecord, object>>> compiledMappings =
