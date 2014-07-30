@@ -170,6 +170,7 @@ namespace Susanoo
 
                         command.CommandText = commandText;
 
+                        if (parameters != null)
                         parameters.ToList().ForEach(parameter => command.Parameters.Add(parameter));
 
                         this.CallProviderSpecificCommandSettings(command);
@@ -218,10 +219,11 @@ namespace Susanoo
 
                     command.CommandText = commandText;
 
-                    foreach (var item in parameters)
-                    {
-                        command.Parameters.Add(item);
-                    }
+                    if (parameters != null)
+                        foreach (var item in parameters)
+                        {
+                            command.Parameters.Add(item);
+                        }
 
                     this.CallProviderSpecificCommandSettings(command);
 
@@ -263,7 +265,7 @@ namespace Susanoo
                 {
                     this.CallProviderSpecificCommandSettings(command);
 
-                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandType = commandType;
                     command.Connection = this.Connection;
 
                     if (transaction != null)
@@ -271,7 +273,8 @@ namespace Susanoo
 
                     command.CommandText = commandText;
 
-                    parameters.ToList().ForEach(parameter => command.Parameters.Add(parameter));
+                    if (parameters != null)
+                        parameters.ToList().ForEach(parameter => command.Parameters.Add(parameter));
 
                     return (T)DatabaseManager.CastValue(typeof(T), command.ExecuteScalar(), default(T));
                 }
@@ -306,7 +309,7 @@ namespace Susanoo
         /// <returns></returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters)
+        public virtual int ExecuteNonQuery(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
@@ -325,6 +328,7 @@ namespace Susanoo
 
                     command.CommandText = commandText;
 
+                    if (parameters != null)
                     parameters.ToList()
                               .ForEach(parameter => command.Parameters.Add(parameter));
 
@@ -347,9 +351,9 @@ namespace Susanoo
         /// <param name="commandType"></param>
         /// <param name="parameters">The parameters.</param>
         /// <returns></returns>
-        public virtual int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters)
+        public virtual int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
-            return this.ExecuteStoredProcedureNonQuery(commandText, commandType, null, parameters);
+            return this.ExecuteNonQuery(commandText, commandType, null, parameters);
         }
 
         /// <summary>
@@ -487,6 +491,7 @@ namespace Susanoo
 
                     command.CommandText = commandText;
 
+                    if (parameters != null)
                     parameters.ToList().ForEach(parameter => command.Parameters.Add(parameter));
 
                     return (T)DatabaseManager.CastValue(typeof(T), await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T));

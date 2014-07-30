@@ -76,7 +76,7 @@ namespace Susanoo
         /// <returns>System.Int32.</returns>
         public int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            return databaseManager.ExecuteStoredProcedureNonQuery(
+            return databaseManager.ExecuteNonQuery(
                 CommandExpression.CommandText,
                 CommandExpression.DBCommandType,
                 CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));

@@ -81,7 +81,7 @@ namespace Susanoo
         /// <param name="transaction">The transaction.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters);
+        int ExecuteNonQuery(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the stored procedure non query.
@@ -90,7 +90,7 @@ namespace Susanoo
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
+        int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
         /// Creates a parameter.
