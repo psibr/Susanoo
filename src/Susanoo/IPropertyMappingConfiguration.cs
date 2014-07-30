@@ -23,7 +23,7 @@ namespace Susanoo
         /// <param name="process">The process.</param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        IPropertyMappingConfiguration ProcessValueUsing(Expression<Func<PropertyInfo, object, object>> process);
+        IPropertyMappingConfiguration ProcessValueUsing(Expression<Func<Type, object, object>> process);
 
         /// <summary>
         /// Gets the property metadata.

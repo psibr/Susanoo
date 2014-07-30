@@ -14,7 +14,7 @@ namespace Susanoo
     {
         private Expression<Func<IDataRecord, string, bool>> MapOnCondition = null;
 
-        private Expression<Func<PropertyInfo, object, object>> conversionProcess = (property, value) => DatabaseManager.CastValue(property.PropertyType, value, property.PropertyType);
+        private Expression<Func<Type, object, object>> conversionProcess = (type, value) => DatabaseManager.CastValue(type, value, type);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyMappingConfiguration"/> class.
@@ -68,7 +68,7 @@ namespace Susanoo
         /// <param name="process"></param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual IPropertyMappingConfiguration ProcessValueUsing(Expression<Func<PropertyInfo, object, object>> process)
+        public virtual IPropertyMappingConfiguration ProcessValueUsing(Expression<Func<Type, object, object>> process)
         {
             this.conversionProcess = process;
 
@@ -123,7 +123,7 @@ namespace Susanoo
                     property,
                     Expression.Convert(
                         Expression.Invoke(this.conversionProcess,
-                            Expression.Constant(this.PropertyMetadata, typeof(PropertyInfo)),
+                            Expression.Constant(this.PropertyMetadata.PropertyType, typeof(Type)),
                             Expression.MakeIndex(recordParam, typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
                                 new[]
                                 {
