@@ -5,15 +5,26 @@ using System.Numerics;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Provides a common class for ICommandResultExpressions to store and retrieve mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public class CommandResultImplementor<TFilter> : ICommandResultImplementor<TFilter>, IFluentPipelineFragment
     {
         private readonly IDictionary<Type, IFluentPipelineFragment> _MappingContainer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandResultImplementor{TFilter}"/> class.
+        /// </summary>
         public CommandResultImplementor()
         {
             _MappingContainer = new Dictionary<Type, IFluentPipelineFragment>();
         }
 
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
         public System.Numerics.BigInteger CacheHash
         {
             get
@@ -63,7 +74,7 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="TResultType">The type of the t result type.</typeparam>
         /// <returns>IDictionary&lt;System.String, IPropertyMappingConfiguration&lt;System.Data.IDataRecord&gt;&gt;.</returns>
-        public IDictionary<string, IPropertyMappingConfiguration<System.Data.IDataRecord>> Export<TResultType>() where TResultType : new()
+        public IDictionary<string, IPropertyMapping> Export<TResultType>() where TResultType : new()
         {
             return this.RetrieveMapping<TResultType>()
                 .Export();

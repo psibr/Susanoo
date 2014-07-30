@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq.Expressions;
 
 namespace Susanoo
@@ -14,8 +13,8 @@ namespace Susanoo
         : IResultMappingImplementor<TFilter, TResult>
         where TResult : new()
     {
-        private readonly IDictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>> mappingActions =
-            new Dictionary<string, Action<IPropertyMappingConfiguration<IDataRecord>>>();
+        private readonly IDictionary<string, Action<IPropertyMappingConfiguration>> mappingActions =
+            new Dictionary<string, Action<IPropertyMappingConfiguration>>();
 
         private IPropertyMetadataExtractor _PropertyMetadataExtractor = new ComponentModelMetadataExtractor();
 
@@ -53,7 +52,7 @@ namespace Susanoo
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public virtual void ForProperty(
             Expression<Func<TResult, object>> propertyExpression,
-            Action<IPropertyMappingConfiguration<IDataRecord>> options)
+            Action<IPropertyMappingConfiguration> options)
         {
             this.ForProperty(propertyExpression.GetPropertyName(), options);
         }
@@ -65,7 +64,7 @@ namespace Susanoo
         /// <param name="options">The options.</param>
         public virtual void ForProperty(
             string propertyName,
-            Action<IPropertyMappingConfiguration<IDataRecord>> options)
+            Action<IPropertyMappingConfiguration> options)
         {
             if (!this.mappingActions.ContainsKey(propertyName))
                 this.mappingActions.Add(propertyName, options);
@@ -78,13 +77,13 @@ namespace Susanoo
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public virtual IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export()
+        public virtual IDictionary<string, IPropertyMapping> Export()
         {
-            var exportDictionary = new Dictionary<string, IPropertyMappingConfiguration<IDataRecord>>();
+            var exportDictionary = new Dictionary<string, IPropertyMapping>();
 
             foreach (var item in this.mappingActions)
             {
-                var config = new PropertyMappingConfiguration<IDataRecord>(typeof(TResult).GetProperty(item.Key));
+                var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(item.Key));
                 item.Value.Invoke(config);
 
                 exportDictionary.Add(item.Key, config);
@@ -101,7 +100,7 @@ namespace Susanoo
             foreach (var item in this.PropertyMetadataExtractor
                 .FindAllowedProperties(typeof(TResult), Susanoo.DescriptorActions.Read))
             {
-                mappingActions.Add(item.Key.Name, o => o.AliasProperty(item.Value.Alias));
+                mappingActions.Add(item.Key.Name, o => o.UseAlias(item.Value.ActiveAlias));
             }
         }
     }

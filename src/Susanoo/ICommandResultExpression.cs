@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Shared components for Command Result Expressions.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandResultExpressionCore<TFilter>
         : IFluentPipelineFragment
     {
@@ -14,81 +17,109 @@ namespace Susanoo
         ICommandExpression<TFilter> CommandExpression { get; }
 
         /// <summary>
-        /// Exports all Property mapping configurations for a result type.
+        /// Exports a results mappings for processing.
         /// </summary>
-        /// <typeparam name="TResultType">The type of the result.</typeparam>
-        /// <returns>IDictionary&lt;System.String, IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;.</returns>
-        IDictionary<string, IPropertyMappingConfiguration<IDataRecord>> Export<TResultType>()
+        /// <typeparam name="TResultType">The type of the result type.</typeparam>
+        /// <returns>IDictionary&lt;System.String, IPropertyMapping&gt;.</returns>
+        IDictionary<string, IPropertyMapping> Export<TResultType>()
             where TResultType : new();
 
         /// <summary>
-        /// Converts the command result expression to a single result expression.
+        /// Converts to a single result expression.
         /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <typeparam name="TSingle">The type of the single.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult> ToSingleResult<TResult>()
-            where TResult : new();
+        ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>()
+            where TSingle : new();
     }
 
+    /// <summary>
+    /// Provides methods for customizing how results are handled and compiling result mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface ICommandResultExpression<TFilter, TResult> : ICommandResultExpressionCore<TFilter>
         where TResult : new()
     {
         /// <summary>
-        /// Moves fluent API into mapping options for a result type, most commonly aliasing properties.
+        /// Allows customization of result set.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult> ForResultSet(
+        ICommandResultExpression<TFilter, TResult> ForResults(
             Action<IResultMappingExpression<TFilter, TResult>> mappings);
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         ICommandProcessor<TFilter, TResult> Finalize();
     }
 
+    /// <summary>
+    /// Provides methods for customizing how results are handled and compiling result mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
+    /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
     public interface ICommandResultExpression<TFilter, TResult1, TResult2> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
     {
         /// <summary>
-        /// Moves fluent API into mapping options for a result type, most commonly aliasing properties.
+        /// Allows customization of a type of result set.
         /// </summary>
+        /// <typeparam name="TResultType">The type of the result type.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2> ForResultSet<TResultType>(
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult1, TResult2> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
         ICommandProcessor<TFilter, TResult1, TResult2> Finalize();
     }
 
+    /// <summary>
+    /// Provides methods for customizing how results are handled and compiling result mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
+    /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
+    /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
     public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
     {
         /// <summary>
-        /// Moves fluent API into mapping options for a result type, most commonly aliasing properties.
+        /// Allows customization of a type of result set.
         /// </summary>
+        /// <typeparam name="TResultType">The type of the result type.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> ForResultSet<TResultType>(
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Finalize();
     }
 
+    /// <summary>
+    /// Provides methods for customizing how results are handled and compiling result mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
+    /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
+    /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
+    /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
     public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
@@ -96,21 +127,31 @@ namespace Susanoo
         where TResult4 : new()
     {
         /// <summary>
-        /// Moves fluent API into mapping options for a result type, most commonly aliasing properties.
+        /// Allows customization of a type of result set.
         /// </summary>
+        /// <typeparam name="TResultType">The type of the result type.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> ForResultSet<TResultType>(
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Finalize();
     }
 
+    /// <summary>
+    /// Provides methods for customizing how results are handled and compiling result mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
+    /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
+    /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
+    /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
+    /// <typeparam name="TResult5">The type of the 5th result.</typeparam>
     public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
@@ -119,21 +160,32 @@ namespace Susanoo
         where TResult5 : new()
     {
         /// <summary>
-        /// Moves fluent API into mapping options for a result type, most commonly aliasing properties.
+        /// Allows customization of a type of result set.
         /// </summary>
+        /// <typeparam name="TResultType">The type of the result type.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> ForResultSet<TResultType>(
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Finalize();
     }
 
+    /// <summary>
+    /// Provides methods for customizing how results are handled and compiling result mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
+    /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
+    /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
+    /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
+    /// <typeparam name="TResult5">The type of the 5th result.</typeparam>
+    /// <typeparam name="TResult6">The type of the 6th result.</typeparam>
     public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
@@ -143,21 +195,33 @@ namespace Susanoo
         where TResult6 : new()
     {
         /// <summary>
-        /// Moves fluent API into mapping options for a result type, most commonly aliasing properties.
+        /// Allows customization of a type of result set.
         /// </summary>
+        /// <typeparam name="TResultType">The type of the result type.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> ForResultSet<TResultType>(
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Finalize();
     }
 
+    /// <summary>
+    /// Provides methods for customizing how results are handled and compiling result mappings.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
+    /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
+    /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
+    /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
+    /// <typeparam name="TResult5">The type of the 5th result.</typeparam>
+    /// <typeparam name="TResult6">The type of the 6th result.</typeparam>
+    /// <typeparam name="TResult7">The type of the 7th result.</typeparam>
     public interface ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> : ICommandResultExpressionCore<TFilter>
         where TResult1 : new()
         where TResult2 : new()
@@ -168,16 +232,17 @@ namespace Susanoo
         where TResult7 : new()
     {
         /// <summary>
-        /// Moves fluent API into mapping options for a result type, most commonly aliasing properties.
+        /// Allows customization of a type of result set.
         /// </summary>
+        /// <typeparam name="TResultType">The type of the result type.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> ForResultSet<TResultType>(
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
                 where TResultType : new();
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Finalize();

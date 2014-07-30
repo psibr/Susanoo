@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using System.Linq.Expressions;
 
 namespace Susanoo
@@ -24,9 +25,8 @@ namespace Susanoo
         CommandType DBCommandType { get; }
 
         /// <summary>
-        /// Prepares the command for execution.
+        /// Finalizes the pipeline with no result mappings.
         /// </summary>
-        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         ICommandProcessor<TFilter> Finalize();
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>ICommandExpression&lt;TResult&gt;.</returns>
-        ICommandExpression<TFilter> AddConstantParameters(params IDbDataParameter[] parameters);
+        ICommandExpression<TFilter> AddConstantParameters(params DbParameter[] parameters);
 
         /// <summary>
         /// Uses the explicit property inclusion mode for including parameters from a potential filter.
@@ -72,7 +72,7 @@ namespace Susanoo
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<IDbDataParameter> parameterOptions);
+        ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression, Action<DbParameter> parameterOptions);
 
         /// <summary>
         /// Includes a property of the filter.
@@ -87,22 +87,23 @@ namespace Susanoo
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
-        ICommandExpression<TFilter> IncludeProperty(string propertyName, Action<IDbDataParameter> parameterOptions);
+        ICommandExpression<TFilter> IncludeProperty(string propertyName, Action<DbParameter> parameterOptions);
 
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
-        IDbDataParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters);
+        /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
+        DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult> DefineResultMappings<TResult>()
+        ICommandResultExpression<TFilter, TResult> DefineResults<TResult>()
             where TResult : new();
 
         /// <summary>
@@ -111,7 +112,7 @@ namespace Susanoo
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2> DefineResultMappings<TResult1, TResult2>()
+        ICommandResultExpression<TFilter, TResult1, TResult2> DefineResults<TResult1, TResult2>()
             where TResult1 : new()
             where TResult2 : new();
 
@@ -122,7 +123,7 @@ namespace Susanoo
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
         /// <typeparam name="TResult3">The type of the result3.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResultMappings<TResult1, TResult2, TResult3>()
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResults<TResult1, TResult2, TResult3>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new();
@@ -135,7 +136,7 @@ namespace Susanoo
         /// <typeparam name="TResult3">The type of the result3.</typeparam>
         /// <typeparam name="TResult4">The type of the result4.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResultMappings<TResult1, TResult2, TResult3, TResult4>()
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResults<TResult1, TResult2, TResult3, TResult4>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -150,7 +151,7 @@ namespace Susanoo
         /// <typeparam name="TResult4">The type of the result4.</typeparam>
         /// <typeparam name="TResult5">The type of the result5.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5>()
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -167,7 +168,7 @@ namespace Susanoo
         /// <typeparam name="TResult5">The type of the result5.</typeparam>
         /// <typeparam name="TResult6">The type of the result6.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()
@@ -186,7 +187,7 @@ namespace Susanoo
         /// <typeparam name="TResult6">The type of the result6.</typeparam>
         /// <typeparam name="TResult7">The type of the result7.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> DefineResultMappings<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
             where TResult1 : new()
             where TResult2 : new()
             where TResult3 : new()

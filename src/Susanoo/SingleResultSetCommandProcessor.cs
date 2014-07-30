@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -14,7 +15,7 @@ namespace Susanoo
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public class SingleResultSetCommandProcessor<TFilter, TResult>
+    public sealed class SingleResultSetCommandProcessor<TFilter, TResult>
         : ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>, IFluentPipelineFragment
         where TResult : new()
     {
@@ -37,11 +38,19 @@ namespace Susanoo
             this.CompiledMapping = CompileMappings();
         }
 
+        /// <summary>
+        /// Gets the command expression.
+        /// </summary>
+        /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
         {
             get { return this._CommandExpression; }
         }
 
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
             get
@@ -54,7 +63,7 @@ namespace Susanoo
         /// Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
-        protected ICommandResultExpression<TFilter, TResult> MappingExpressions
+        public ICommandResultExpression<TFilter, TResult> MappingExpressions
         {
             get
             {
@@ -70,15 +79,16 @@ namespace Susanoo
         /// Gets the compiled mapping.
         /// </summary>
         /// <value>The compiled mapping.</value>
-        protected Func<IDataRecord, object> CompiledMapping { get; private set; }
+        public Func<IDataRecord, object> CompiledMapping { get; private set; }
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
         /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params IDbDataParameter[] explicitParameters)
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -87,10 +97,11 @@ namespace Susanoo
         /// Assembles a data command for an ADO.NET provider,
         /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params IDbDataParameter[] explicitParameters)
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult> results = new List<TResult>();
 
@@ -130,7 +141,7 @@ namespace Susanoo
         /// Compiles the result mappings.
         /// </summary>
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
-        protected Func<IDataRecord, object> CompileMappings()
+        private Func<IDataRecord, object> CompileMappings()
         {
             var mappings = this.MappingExpressions.Export<TResult>();
 

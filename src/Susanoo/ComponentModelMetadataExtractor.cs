@@ -157,7 +157,7 @@ namespace Susanoo
                 | Susanoo.DescriptorActions.Update
                 | Susanoo.DescriptorActions.Insert)
         {
-            return attribute == null || attribute.Actions == actions;
+            return attribute == null || (attribute.Actions & actions) != 0;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Data;
 namespace Susanoo
 {
     /// <summary>
-    /// Represents an object that can map a resultset.
+    /// Performs the actual map operation between an IDataRecord and a result type.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface IResultMapper<TResult> : IFluentPipelineFragment

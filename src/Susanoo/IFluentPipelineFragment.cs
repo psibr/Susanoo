@@ -3,14 +3,14 @@
 namespace Susanoo
 {
     /// <summary>
-    /// Indicates that a class is relevant to the fluent API.
+    /// A fragment or step in the Fluent Pipeline API.
     /// </summary>
     public interface IFluentPipelineFragment
     {
         /// <summary>
-        /// Gets the hash code used for caching.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
-        /// <value>hashcode</value>
+        /// <value>The cache hash.</value>
         BigInteger CacheHash { get; }
     }
 }

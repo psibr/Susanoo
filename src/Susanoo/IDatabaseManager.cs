@@ -1,4 +1,7 @@
 ﻿using System.Data;
+using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Susanoo
 {
@@ -15,7 +18,7 @@ namespace Susanoo
         /// <param name="transaction">The transaction.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
-        IDataReader ExecuteDataReader(string commandText, CommandType commandType, IDbTransaction transaction, params IDbDataParameter[] parameters);
+        IDataReader ExecuteDataReader(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the data reader.
@@ -24,7 +27,7 @@ namespace Susanoo
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
-        IDataReader ExecuteDataReader(string commandText, CommandType commandType, params IDbDataParameter[] parameters);
+        IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the scalar.
@@ -35,7 +38,30 @@ namespace Susanoo
         /// <param name="transaction">The transaction.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>T.</returns>
-        T ExecuteScalar<T>(string commandText, CommandType commandType, IDbTransaction transaction, params IDataParameter[] parameters);
+        T ExecuteScalar<T>(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters);
+
+        /// <summary>
+        /// Executes the scalar action asynchronously.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="transaction">The transaction.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T&gt;.</returns>
+        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, DbTransaction transaction, CancellationToken cancellationToken, params DbParameter[] parameters);
+
+        /// <summary>
+        /// Executes the scalar action asynchronously.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T&gt;.</returns>
+        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the scalar.
@@ -45,7 +71,7 @@ namespace Susanoo
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>T.</returns>
-        T ExecuteScalar<T>(string commandText, CommandType commandType, params IDataParameter[] parameters);
+        T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the stored procedure non query.
@@ -55,7 +81,7 @@ namespace Susanoo
         /// <param name="transaction">The transaction.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, IDbTransaction transaction, params IDbDataParameter[] parameters);
+        int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, DbTransaction transaction, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the stored procedure non query.
@@ -64,19 +90,19 @@ namespace Susanoo
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, params IDbDataParameter[] parameters);
+        int ExecuteStoredProcedureNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
         /// Creates a parameter.
         /// </summary>
-        /// <returns>IDbDataParameter.</returns>
-        IDbDataParameter CreateParameter();
+        /// <returns>DbParameter.</returns>
+        DbParameter CreateParameter();
 
         /// <summary>
         /// Begins a transaction.
         /// </summary>
-        /// <returns>IDbTransaction.</returns>
-        IDbTransaction BeginTransaction();
+        /// <returns>DbTransaction.</returns>
+        DbTransaction BeginTransaction();
 
         /// <summary>
         /// Creates the parameter.
@@ -85,8 +111,8 @@ namespace Susanoo
         /// <param name="parameterDirection">The parameter direction.</param>
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
-        /// <returns>IDbDataParameter.</returns>
-        IDbDataParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value);
+        /// <returns>DbParameter.</returns>
+        DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value);
 
         /// <summary>
         /// Creates the input parameter.
@@ -94,7 +120,7 @@ namespace Susanoo
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
-        /// <returns>IDbDataParameter.</returns>
-        IDbDataParameter CreateInputParameter(string parameterName, DbType parameterType, object value);
+        /// <returns>DbParameter.</returns>
+        DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value);
     }
 }

@@ -7,7 +7,6 @@ namespace Susanoo
     /// <summary>
     /// Represents basic information about a property including its reflection information and alias.
     /// </summary>
-    /// <remarks>Similar to IPropertyMappingConfiguration, but much lighter and represents a property before the mapping compilation tasks.</remarks>
     public class PropertyMap
     {
         /// <summary>
@@ -23,8 +22,8 @@ namespace Susanoo
 
             Contract.EndContractBlock();
 
-            this.Property = property;
-            this.Alias = (!string.IsNullOrWhiteSpace(alias)) ? alias : property.Name;
+            this.PropertyMetadata = property;
+            this.ActiveAlias = (!string.IsNullOrWhiteSpace(alias)) ? alias : property.Name;
         }
 
         /// <summary>
@@ -41,12 +40,12 @@ namespace Susanoo
         /// Gets the property information.
         /// </summary>
         /// <value>The property information.</value>
-        public PropertyInfo Property { get; private set; }
+        public PropertyInfo PropertyMetadata { get; private set; }
 
         /// <summary>
         /// Gets the alias.
         /// </summary>
         /// <value>The alias.</value>
-        public string Alias { get; private set; }
+        public string ActiveAlias { get; private set; }
     }
 }
