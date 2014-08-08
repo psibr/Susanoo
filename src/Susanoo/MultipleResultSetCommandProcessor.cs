@@ -33,8 +33,10 @@ namespace Susanoo
             this._CommandExpression = commandResultExpression.CommandExpression;
             this._CommandResultExpression = commandResultExpression;
 
-            _Item1Mapper = new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
-            _Item2Mapper = new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
+            _Item1Mapper = 
+                new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
+            _Item2Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
         }
 
         /// <summary>
@@ -71,7 +73,8 @@ namespace Susanoo
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;&gt;.</returns>
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager,
+            TFilter filter, params DbParameter[] explicitParameters)
         {
             IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
@@ -82,7 +85,6 @@ namespace Susanoo
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
-                    null,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 results1 = _Item1Mapper.MapResult(record);
@@ -139,9 +141,12 @@ namespace Susanoo
             this._CommandExpression = commandResultExpression.CommandExpression;
             this._CommandResultExpression = commandResultExpression;
 
-            _Item1Mapper = new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
-            _Item2Mapper = new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
-            _Item3Mapper = new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
+            _Item1Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
+            _Item2Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
+            _Item3Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
         }
 
         /// <summary>
@@ -151,6 +156,7 @@ namespace Susanoo
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> CommandResultExpression
         {
             get { return this._CommandResultExpression; }
+
         }
 
         /// <summary>
@@ -191,7 +197,6 @@ namespace Susanoo
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
-                    null,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 results1 = _Item1Mapper.MapResult(record);
@@ -216,7 +221,8 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;&gt;.</returns>
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
+        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> Execute(IDatabaseManager databaseManager,
+            params DbParameter[] explicitParameters)
         {
             return this.Execute(databaseManager, default(TFilter), explicitParameters);
         }
@@ -248,7 +254,8 @@ namespace Susanoo
         private readonly IResultMapper<TResult4> _Item4Mapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4}"/> class.
+        /// Initializes a new instance of the 
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4}"/> class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         public MultipleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
@@ -257,10 +264,14 @@ namespace Susanoo
             this._CommandExpression = commandResultExpression.CommandExpression;
             this._CommandResultExpression = commandResultExpression;
 
-            _Item1Mapper = new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
-            _Item2Mapper = new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
-            _Item3Mapper = new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
-            _Item4Mapper = new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
+            _Item1Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
+            _Item2Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
+            _Item3Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
+            _Item4Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
         }
 
         /// <summary>
@@ -314,7 +325,6 @@ namespace Susanoo
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
-                    null,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 results1 = _Item1Mapper.MapResult(record);
@@ -394,11 +404,16 @@ namespace Susanoo
             this._CommandExpression = commandResultExpression.CommandExpression;
             this._CommandResultExpression = commandResultExpression;
 
-            _Item1Mapper = new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
-            _Item2Mapper = new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
-            _Item3Mapper = new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
-            _Item4Mapper = new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
-            _Item5Mapper = new SingleResultSetCommandProcessor<TFilter, TResult5>(CommandResultExpression.ToSingleResult<TResult5>());
+            _Item1Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
+            _Item2Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
+            _Item3Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
+            _Item4Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
+            _Item5Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult5>(CommandResultExpression.ToSingleResult<TResult5>());
         }
 
         /// <summary>
@@ -434,7 +449,14 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;&gt;.</returns>
+        /// <returns>
+        /// Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;&gt;.
+        /// </returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -454,7 +476,6 @@ namespace Susanoo
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
-                    null,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 results1 = _Item1Mapper.MapResult(record);
@@ -492,7 +513,14 @@ namespace Susanoo
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;&gt;.</returns>
+        /// <returns>
+        /// Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;&gt;.
+        /// </returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -535,7 +563,8 @@ namespace Susanoo
         private readonly IResultMapper<TResult6> _Item6Mapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}"/> class.
+        /// Initializes a new instance of the 
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}"/> class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         public MultipleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
@@ -544,12 +573,18 @@ namespace Susanoo
             this._CommandExpression = commandResultExpression.CommandExpression;
             this._CommandResultExpression = commandResultExpression;
 
-            _Item1Mapper = new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
-            _Item2Mapper = new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
-            _Item3Mapper = new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
-            _Item4Mapper = new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
-            _Item5Mapper = new SingleResultSetCommandProcessor<TFilter, TResult5>(CommandResultExpression.ToSingleResult<TResult5>());
-            _Item6Mapper = new SingleResultSetCommandProcessor<TFilter, TResult6>(CommandResultExpression.ToSingleResult<TResult6>());
+            _Item1Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
+            _Item2Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
+            _Item3Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
+            _Item4Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
+            _Item5Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult5>(CommandResultExpression.ToSingleResult<TResult5>());
+            _Item6Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult6>(CommandResultExpression.ToSingleResult<TResult6>());
         }
 
         /// <summary>
@@ -580,12 +615,21 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit parameters.
+        /// Executes the command using a provided database manager
+        ///  and optionally a filter to read parameters from and explicit parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;&gt;.</returns>
+        /// <returns>
+        /// Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;&gt;.
+        /// </returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -607,7 +651,6 @@ namespace Susanoo
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
-                    null,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 results1 = _Item1Mapper.MapResult(record);
@@ -651,7 +694,15 @@ namespace Susanoo
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;&gt;.</returns>
+        /// <returns>
+        /// Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;&gt;.
+        /// </returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -698,7 +749,8 @@ namespace Susanoo
         private readonly IResultMapper<TResult7> _Item7Mapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}"/> class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}"/> class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         public MultipleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
@@ -707,13 +759,20 @@ namespace Susanoo
             this._CommandExpression = commandResultExpression.CommandExpression;
             this._CommandResultExpression = commandResultExpression;
 
-            _Item1Mapper = new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
-            _Item2Mapper = new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
-            _Item3Mapper = new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
-            _Item4Mapper = new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
-            _Item5Mapper = new SingleResultSetCommandProcessor<TFilter, TResult5>(CommandResultExpression.ToSingleResult<TResult5>());
-            _Item6Mapper = new SingleResultSetCommandProcessor<TFilter, TResult6>(CommandResultExpression.ToSingleResult<TResult6>());
-            _Item7Mapper = new SingleResultSetCommandProcessor<TFilter, TResult7>(CommandResultExpression.ToSingleResult<TResult7>());
+            _Item1Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult1>(CommandResultExpression.ToSingleResult<TResult1>());
+            _Item2Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult2>(CommandResultExpression.ToSingleResult<TResult2>());
+            _Item3Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult3>(CommandResultExpression.ToSingleResult<TResult3>());
+            _Item4Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult4>(CommandResultExpression.ToSingleResult<TResult4>());
+            _Item5Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult5>(CommandResultExpression.ToSingleResult<TResult5>());
+            _Item6Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult6>(CommandResultExpression.ToSingleResult<TResult6>());
+            _Item7Mapper =
+                new SingleResultSetCommandProcessor<TFilter, TResult7>(CommandResultExpression.ToSingleResult<TResult7>());
         }
 
         /// <summary>
@@ -749,7 +808,16 @@ namespace Susanoo
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;, IEnumerable&lt;TResult7&gt;&gt;.</returns>
+        /// <returns>
+        /// Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;,
+        /// IEnumerable&lt;TResult7&gt;&gt;.
+        /// </returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,
@@ -773,7 +841,6 @@ namespace Susanoo
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
-                    null,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 results1 = _Item1Mapper.MapResult(record);
@@ -823,7 +890,16 @@ namespace Susanoo
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable&lt;TResult4&gt;, IEnumerable&lt;TResult5&gt;, IEnumerable&lt;TResult6&gt;, IEnumerable&lt;TResult7&gt;&gt;.</returns>
+        /// <returns>
+        /// Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;,
+        /// IEnumerable&lt;TResult7&gt;&gt;.
+        /// </returns>
         public Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
                 IEnumerable<TResult3>,

@@ -93,17 +93,23 @@ namespace Susanoo
             return ExecuteNonQuery(databaseManager, default(TFilter), explicitParameters);
         }
 
+
         /// <summary>
         /// execute scalar as an asynchronous operation.
         /// </summary>
-        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <typeparam name="TReturn">The type of the t return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;TReturn&gt;.</returns>
-        public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
+            TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText, CommandExpression.DBCommandType, default(CancellationToken), explicitParameters);
+            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
+                    CommandExpression.DBCommandType,
+                    cancellationToken,
+                    explicitParameters).ConfigureAwait(false);
         }
     }
 }

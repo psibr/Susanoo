@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Susanoo
@@ -58,9 +59,11 @@ namespace Susanoo
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;TReturn&gt;.</returns>
-        Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
+        Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
+            TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Executes the command and returns a return code.
@@ -99,6 +102,48 @@ namespace Susanoo
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, params DbParameter[] explicitParameters);
     }
 
     /// <summary>

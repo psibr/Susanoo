@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -6,6 +7,9 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Susanoo
 {
@@ -111,7 +115,6 @@ namespace Susanoo
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DBCommandType,
-                    null,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
                 results = (((IResultMapper<TResult>)this).MapResult(record, CompiledMapping));
@@ -122,14 +125,18 @@ namespace Susanoo
 
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record, Func<IDataRecord, object> mapping)
         {
-            IList<TResult> list = new List<TResult>();
+            ConcurrentQueue<TResult> queue = new ConcurrentQueue<TResult>();
+
+            IList<Task> conversions = new List<Task>();
 
             while (record.Read())
             {
-                list.Add((TResult)mapping.Invoke(record));
+                conversions.Add(Task.Run(() => queue.Enqueue((TResult)mapping.Invoke(record))));
             }
 
-            return list;
+            Task.WaitAll(conversions.ToArray());
+
+            return queue.ToArray();
         }
 
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
@@ -200,13 +207,88 @@ namespace Susanoo
             var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, readerExp);
 
             var type = CommandManager.DynamicNamespace
-                .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}", typeof(TResult).Name, Guid.NewGuid().ToString().Replace("-", string.Empty)), TypeAttributes.Public);
+                .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
+                    typeof(TResult).Name,
+                    Guid.NewGuid().ToString().Replace("-", string.Empty)),
+                TypeAttributes.Public);
 
             lambda.CompileToMethod(type.DefineMethod("Map", MethodAttributes.Public | MethodAttributes.Static));
 
             Type dynamicType = type.CreateType();
 
-            return (Func<IDataRecord, object>)Delegate.CreateDelegate(typeof(Func<IDataRecord, object>), dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
+            return (Func<IDataRecord, object>)Delegate
+                .CreateDelegate(typeof(Func<IDataRecord, object>),
+                    dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+        {
+            return await ExecuteAsync(databaseManager, default(TFilter), cancellationToken, explicitParameters).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            params DbParameter[] explicitParameters)
+        {
+            return await ExecuteAsync(databaseManager, default(TFilter), default(CancellationToken), explicitParameters).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+        {
+            IEnumerable<TResult> results = new List<TResult>();
+
+            ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
+
+            using (IDataReader record = await databaseManager
+                .ExecuteDataReaderAsync(
+                    commandExpression.CommandText,
+                    commandExpression.DBCommandType,
+                    cancellationToken,
+                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)).ConfigureAwait(false))
+            {
+                results = (((IResultMapper<TResult>)this).MapResult(record, CompiledMapping));
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return await ExecuteAsync(databaseManager, filter, default(CancellationToken), explicitParameters).ConfigureAwait(false);
         }
     }
 }
