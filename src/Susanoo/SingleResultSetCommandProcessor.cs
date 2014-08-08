@@ -123,20 +123,22 @@ namespace Susanoo
             return results;
         }
 
+        /// <summary>
+        /// Maps the result.
+        /// </summary>
+        /// <param name="record">The record.</param>
+        /// <param name="mapping">The mapping.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record, Func<IDataRecord, object> mapping)
         {
-            ConcurrentQueue<TResult> queue = new ConcurrentQueue<TResult>();
-
-            IList<Task> conversions = new List<Task>();
+            Queue<TResult> queue = new Queue<TResult>();
 
             while (record.Read())
             {
-                conversions.Add(Task.Run(() => queue.Enqueue((TResult)mapping.Invoke(record))));
+                queue.Enqueue((TResult)mapping.Invoke(record));
             }
 
-            Task.WaitAll(conversions.ToArray());
-
-            return queue.ToArray();
+            return queue;
         }
 
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
