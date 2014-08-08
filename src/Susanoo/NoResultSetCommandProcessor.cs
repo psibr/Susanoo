@@ -83,6 +83,70 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Executes the non query async.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;System.Int32&gt;.</returns>
+        public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+        {
+            return await databaseManager.ExecuteNonQueryAsync(
+                CommandExpression.CommandText,
+                CommandExpression.DBCommandType,
+                cancellationToken,
+                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
+        }
+
+        /// <summary>
+        /// Executes the non query async.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;System.Int32&gt;.</returns>
+        public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return await databaseManager.ExecuteNonQueryAsync(
+                CommandExpression.CommandText,
+                CommandExpression.DBCommandType,
+                default(CancellationToken),
+                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
+        }
+
+        /// <summary>
+        /// Executes the non query async.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;System.Int32&gt;.</returns>
+        public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+        {
+            return await databaseManager.ExecuteNonQueryAsync(
+                CommandExpression.CommandText,
+                CommandExpression.DBCommandType,
+                cancellationToken,
+                explicitParameters).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Executes the non query async.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;System.Int32&gt;.</returns>
+        public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
+        {
+            return await databaseManager.ExecuteNonQueryAsync(
+                CommandExpression.CommandText,
+                CommandExpression.DBCommandType,
+                default(CancellationToken),
+                explicitParameters).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Executes the non query.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
@@ -95,7 +159,7 @@ namespace Susanoo
 
 
         /// <summary>
-        /// execute scalar as an asynchronous operation.
+        /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="TReturn">The type of the t return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -109,7 +173,59 @@ namespace Susanoo
             return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
                     CommandExpression.DBCommandType,
                     cancellationToken,
-                    explicitParameters).ConfigureAwait(false);
+                    CommandExpression.BuildParameters(databaseManager, filter, explicitParameters))
+                    .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Execute scalar as an asynchronous operation.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the t return.</typeparam>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;TReturn&gt;.</returns>
+        public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+        {
+            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
+                    CommandExpression.DBCommandType,
+                    cancellationToken,
+                    explicitParameters)
+                    .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Execute scalar as an asynchronous operation.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the t return.</typeparam>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;TReturn&gt;.</returns>
+        public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
+            TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
+                    CommandExpression.DBCommandType,
+                    default(CancellationToken),
+                    CommandExpression.BuildParameters(databaseManager, filter, explicitParameters))
+                    .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Execute scalar as an asynchronous operation.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the t return.</typeparam>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;TReturn&gt;.</returns>
+        public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
+        {
+            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
+                    CommandExpression.DBCommandType,
+                    default(CancellationToken),
+                    explicitParameters)
+                    .ConfigureAwait(false);
         }
     }
 }
