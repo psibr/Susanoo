@@ -131,14 +131,14 @@ namespace Susanoo
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record, Func<IDataRecord, object> mapping)
         {
-            Queue<TResult> queue = new Queue<TResult>();
+            LinkedList<TResult> list = new LinkedList<TResult>();
 
             while (record.Read())
             {
-                queue.Enqueue((TResult)mapping.Invoke(record));
+                list.AddFirst((TResult)mapping.Invoke(record));
             }
 
-            return queue;
+            return list;
         }
 
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
