@@ -135,7 +135,7 @@ namespace Susanoo
 
             while (record.Read())
             {
-                list.AddFirst((TResult)mapping.Invoke(record));
+                list.AddLast((TResult)mapping.Invoke(record));
             }
 
             return list;
