@@ -32,9 +32,10 @@ namespace Susanoo
         /// <summary>
         /// Adds parameters that will always use the same value.
         /// </summary>
-        /// <param name="parameters">The parameters.</param>
+        /// <param name="parameterName">Name of the parameter.</param>
+        /// <param name="parameterBuilder">The parameter builder.</param>
         /// <returns>ICommandExpression&lt;TResult&gt;.</returns>
-        ICommandExpression<TFilter> AddConstantParameters(params DbParameter[] parameters);
+        ICommandExpression<TFilter> AddConstantParameter(string parameterName, Func<DbParameter, DbParameter> parameterBuilder);
 
         /// <summary>
         /// Uses the explicit property inclusion mode for including parameters from a potential filter.

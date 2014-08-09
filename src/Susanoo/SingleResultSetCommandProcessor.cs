@@ -141,6 +141,11 @@ namespace Susanoo
             return list;
         }
 
+        /// <summary>
+        /// Maps the result.
+        /// </summary>
+        /// <param name="record">The record.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
         {
             return (this as IResultMapper<TResult>).MapResult(record, CompiledMapping);

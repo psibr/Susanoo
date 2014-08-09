@@ -30,7 +30,7 @@ namespace Susanoo
         /// <summary>
         /// The constant parameters
         /// </summary>
-        private readonly List<DbParameter> constantParameters = new List<DbParameter>();
+        private readonly Dictionary<string, Func<DbParameter, DbParameter>> constantParameters = new Dictionary<string, Func<DbParameter, DbParameter>>();
 
         /// <summary>
         /// The explicit inclusion mode
@@ -84,7 +84,7 @@ namespace Susanoo
 
                 hashText.Append(DBCommandType.ToString());
                 hashText.Append(this.explicitInclusionMode.ToString());
-                hashText.Append(this.constantParameters.Aggregate(string.Empty, (p, c) => p + c.ParameterName));
+                hashText.Append(this.constantParameters.Aggregate(string.Empty, (p, c) => p + c.Key));
                 hashText.Append(this.parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
                 hashText.Append(this.parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
 
@@ -107,11 +107,12 @@ namespace Susanoo
         /// <summary>
         /// Adds parameters that will always use the same value.
         /// </summary>
-        /// <param name="parameters">The parameters.</param>
+        /// <param name="parameterName">Name of the parameter.</param>
+        /// <param name="parameterBuilder">The parameter builder.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
-        public virtual ICommandExpression<TFilter> AddConstantParameters(params DbParameter[] parameters)
+        public virtual ICommandExpression<TFilter> AddConstantParameter(string parameterName, Func<DbParameter, DbParameter> parameterBuilder)
         {
-            this.constantParameters.AddRange(parameters);
+            this.constantParameters.Add(parameterName, parameterBuilder);
 
             return this;
         }
@@ -143,7 +144,12 @@ namespace Susanoo
 
             foreach (var item in this.constantParameters)
             {
-                parameters[i] = item;
+                parameters[i] = item.Value(new Func<DbParameter>(() =>
+                {
+                    var parameter = databaseManager.CreateParameter();
+                    parameter.ParameterName = item.Key;
+                    return parameter;
+                })());
                 i++;
             }
 
