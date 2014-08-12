@@ -109,6 +109,9 @@ namespace Susanoo
         {
             object returnValue;
 
+            if (value == DBNull.Value)
+                returnValue = defaultValue;
+
             //else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
             //    returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
             //else if (newType == typeof(int) && value.GetType() == typeof(long))

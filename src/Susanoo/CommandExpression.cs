@@ -30,7 +30,7 @@ namespace Susanoo
         /// <summary>
         /// The constant parameters
         /// </summary>
-        private readonly Dictionary<string, Func<DbParameter, DbParameter>> constantParameters = new Dictionary<string, Func<DbParameter, DbParameter>>();
+        private readonly Dictionary<string, Action<DbParameter>> constantParameters = new Dictionary<string, Action<DbParameter>>();
 
         /// <summary>
         /// The explicit inclusion mode
@@ -110,9 +110,9 @@ namespace Susanoo
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterBuilder">The parameter builder.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
-        public virtual ICommandExpression<TFilter> AddConstantParameter(string parameterName, Func<DbParameter, DbParameter> parameterBuilder)
+        public virtual ICommandExpression<TFilter> AddConstantParameter(string parameterName, Action<DbParameter> parameterModifier)
         {
-            this.constantParameters.Add(parameterName, parameterBuilder);
+            this.constantParameters.Add(parameterName, parameterModifier);
 
             return this;
         }
@@ -144,12 +144,11 @@ namespace Susanoo
 
             foreach (var item in this.constantParameters)
             {
-                parameters[i] = item.Value(new Func<DbParameter>(() =>
-                {
-                    var parameter = databaseManager.CreateParameter();
-                    parameter.ParameterName = item.Key;
-                    return parameter;
-                })());
+                var parameter = databaseManager.CreateParameter();
+                parameter.ParameterName = item.Key;
+                parameter.Direction = ParameterDirection.Input;
+                item.Value(parameter);
+                parameters[i] = parameter;
                 i++;
             }
 
