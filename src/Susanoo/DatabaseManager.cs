@@ -108,6 +108,7 @@ namespace Susanoo
         public static object CastValue(Type newType, object value, object defaultValue, string typeName)
         {
             object returnValue;
+            returnValue = value;
 
             if (value == DBNull.Value)
                 returnValue = defaultValue;
@@ -126,8 +127,6 @@ namespace Susanoo
                 //    if (typeName == "date")
                 //        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
             }
-            else
-                returnValue = value;
 
             return returnValue;
         }
