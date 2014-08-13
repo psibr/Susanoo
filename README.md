@@ -8,3 +8,4 @@ Susanoo uses Linq expression trees to dynamically write and compile code to map 
 #####Debugging Susanoo
 
 Debugging symbols are hosted at [SymbolSource](http://www.symbolsource.org/MyGet/Metadata/susanoo/Project/Susanoo.Core).
+A guide on adding the symbol server to Visual Studio is available [here](http://www.symbolsource.org/Public/Wiki/Using).
