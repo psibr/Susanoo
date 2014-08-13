@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Susanoo : Lightweight Semi-Automatic ORM">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Susanoo</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/psibernetic/Susanoo">View on GitHub</a>
+
+          <h1 id="project_title">Susanoo</h1>
+          <h2 id="project_tagline">Lightweight Semi-Automatic ORM</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/psibernetic/Susanoo/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/psibernetic/Susanoo/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="susanoo" class="anchor" href="#susanoo"><span class="octicon octicon-link"></span></a>Susano'o</h1>
+
+<p>A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! </p>
+
+<h5>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h5>
+
+<div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">command</span> <span class="p">=</span> <span class="n">CommandManager</span>
+    <span class="p">.</span><span class="n">DefineCommand</span><span class="p">(</span><span class="s">@"SELECT Id, FirstName, LastName </span>
+<span class="s">                     FROM Customers</span>
+<span class="s">                     WHERE HasStoreCard = @HasStoreCard"</span><span class="p">,</span> <span class="n">CommandType</span><span class="p">.</span><span class="n">Text</span><span class="p">)</span>
+    <span class="p">.</span><span class="n">DefineResults</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;()</span>
+    <span class="p">.</span><span class="n">Finalize</span><span class="p">();</span>
+</pre></div>
+
+<div class="highlight highlight-csharp"><pre><span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">databaseManager</span> <span class="p">=</span> <span class="k">new</span> <span class="n">DatabaseManager</span><span class="p">(</span><span class="s">"DepartmentStoreConnectionString"</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span> <span class="n">customers</span> <span class="p">=</span>
+        <span class="n">command</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">databaseManager</span><span class="p">,</span> <span class="k">new</span> <span class="p">{</span> <span class="n">HasStoreCard</span> <span class="p">=</span> <span class="k">true</span> <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+
+<h5>
+<a name="how-does-it-work" class="anchor" href="#how-does-it-work"><span class="octicon octicon-link"></span></a>How does it work?</h5>
+
+<p>Susanoo uses Linq expression trees to dynamically write and compile code to map your objects before the command ever executes, leaving your SQL calls unaffected.</p>
+
+<h5>
+<a name="debugging-susanoo" class="anchor" href="#debugging-susanoo"><span class="octicon octicon-link"></span></a>Debugging Susanoo</h5>
+
+<p>Debugging symbols are hosted at <a href="http://www.symbolsource.org/MyGet/Metadata/susanoo/Project/Susanoo.Core">SymbolSource</a>.
+A guide on adding the symbol server to Visual Studio is available <a href="http://www.symbolsource.org/Public/Wiki/Using">here</a>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Susanoo maintained by <a href="https://github.com/psibernetic">psibernetic</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
