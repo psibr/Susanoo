@@ -4,16 +4,17 @@ A simple, fast, fluently structured library that takes the pain out of writing A
 
 #####Usage
 ```csharp
-    public class Customer
-    {
-        public int Id { get; set; }
+using (var databaseManager = new DatabaseManager("DepartmentStoreConnectionString"))
+{
 
-        public string FirstName { get; set; }
+    var command = CommandManager
+        .DefineCommand("SELECT Id, FirstName, LastName FROM Customers WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
+        .DefineResults<Customer>()
+        .Finalize();
 
-        public string LastName { get; set; }
-
-        public bool HasStoreCard { get; set; }
-    }
+    IEnumerable<Customer> customers =
+        command.Execute(databaseManager, new { HasStoreCard = true });
+}
 ```
 
 #####How does it work?
