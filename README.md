@@ -6,8 +6,8 @@ A simple, fast, fluently structured library that takes the pain out of writing A
 ```csharp
 var command = CommandManager
     .DefineCommand(@"SELECT Id, FirstName, LastName 
-                            FROM Customers
-                            WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
+                     FROM Customers
+                     WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
     .DefineResults<Customer>()
     .Finalize();
 
