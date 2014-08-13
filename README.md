@@ -10,7 +10,8 @@ var command = CommandManager
                      WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
     .DefineResults<Customer>()
     .Finalize();
-
+```
+```csharp
 using (var databaseManager = new DatabaseManager("DepartmentStoreConnectionString"))
 {
     IEnumerable<Customer> customers =
