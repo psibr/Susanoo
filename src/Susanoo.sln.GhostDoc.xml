@@ -1,0 +1,62 @@
+<GhostDoc>
+  <SpellChecker>
+    <IncludeExtensions>
+    </IncludeExtensions>
+    <IgnoreExtensions>
+    </IgnoreExtensions>
+    <IgnoreFiles>
+    </IgnoreFiles>
+  </SpellChecker>
+<HelpConfigurations selected="SusanooHelpFile">
+  <HelpConfiguration name="HelpFile">
+    <OutputPath>..\help\v0.1</OutputPath>
+    <HelpFileName>Susanoo</HelpFileName>
+    <ImageFolderPath />
+    <HtmlFormats>
+      <HtmlHelp>true</HtmlHelp>
+      <MSHelpViewer>false</MSHelpViewer>
+      <MSHelp2>false</MSHelp2>
+      <Website>false</Website>
+    </HtmlFormats>
+    <IncludeScopes>
+      <Public>true</Public>
+      <Internal>false</Internal>
+      <Protected>false</Protected>
+      <Private>false</Private>
+      <Inherited>true</Inherited>
+      <EnableTags>false</EnableTags>
+      <TagList />
+    </IncludeScopes>
+    <ResolveCrefLinks>true</ResolveCrefLinks>
+    <HeaderText />
+    <FooterText />
+    <SelectedProjects />
+  </HelpConfiguration>
+  <HelpConfiguration name="SusanooHelpFile">
+    <OutputPath>..\help\v0.4</OutputPath>
+    <HelpFileName />
+    <ImageFolderPath />
+    <HtmlFormats>
+      <HtmlHelp>true</HtmlHelp>
+      <MSHelpViewer>false</MSHelpViewer>
+      <MSHelp2>false</MSHelp2>
+      <Website>false</Website>
+    </HtmlFormats>
+    <IncludeScopes>
+      <Public>true</Public>
+      <Internal>false</Internal>
+      <Protected>true</Protected>
+      <Private>false</Private>
+      <Inherited>false</Inherited>
+      <EnableTags>false</EnableTags>
+      <TagList />
+    </IncludeScopes>
+    <ResolveCrefLinks>true</ResolveCrefLinks>
+    <HeaderText />
+    <FooterText />
+    <SelectedProjects>
+      <SelectedProject>Susanoo</SelectedProject>
+    </SelectedProjects>
+  </HelpConfiguration>
+</HelpConfigurations>
+</GhostDoc>

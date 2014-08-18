@@ -1,0 +1,6 @@
+H:\GitHub\Susanoo\src\Susanoo\bin\Debug\Susanoo.Core.XML
+H:\GitHub\Susanoo\src\Susanoo\bin\Debug\Susanoo.Core.dll
+H:\GitHub\Susanoo\src\Susanoo\bin\Debug\Susanoo.Core.pdb
+H:\GitHub\Susanoo\src\Susanoo\obj\Debug\Susanoo.Core.dll
+H:\GitHub\Susanoo\src\Susanoo\obj\Debug\Susanoo.Core.pdb
+H:\GitHub\Susanoo\src\Susanoo\obj\Debug\Susanoo.csprojResolveAssemblyReference.cache

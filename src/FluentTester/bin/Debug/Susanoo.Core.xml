@@ -1,0 +1,1494 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Susanoo.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Susanoo.AllowedActionsAttribute">
+            <summary>
+            Allows declarative specification of when reading and writing to properties is allowed.
+            </summary>
+        </member>
+        <member name="M:Susanoo.AllowedActionsAttribute.#ctor(Susanoo.DescriptorActions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.AllowedActionsAttribute"/> class.
+            </summary>
+            <param name="actions">The actions in which this property is allowed to participate.</param>
+        </member>
+        <member name="M:Susanoo.AllowedActionsAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.AllowedActionsAttribute"/> class.
+            </summary>
+        </member>
+        <member name="P:Susanoo.AllowedActionsAttribute.Actions">
+            <summary>
+            Gets the allowed actions for a property.
+            </summary>
+            <value>
+            The actions allowed.
+            </value>
+        </member>
+        <member name="T:Susanoo.ColumnBindingException">
+            <summary>
+            Exception that describes a condition which has caused mapping to fail at a column to property level.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ColumnBindingException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.ColumnBindingException"/> class.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ColumnBindingException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.ColumnBindingException"/> class with a specified error message.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:Susanoo.ColumnBindingException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.ColumnBindingException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter is not a null reference (Nothing in Visual Basic), the current exception is raised in a catch block that handles the inner exception.</param>
+        </member>
+        <member name="M:Susanoo.ColumnBindingException.#ctor(System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.ColumnBindingException"/> class with a specified message and error code.
+            </summary>
+            <param name="message">The message that indicates the reason the exception occurred.</param>
+            <param name="errorCode">The error code (HRESULT) value associated with the exception.</param>
+        </member>
+        <member name="M:Susanoo.ColumnBindingException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.ColumnBindingException"/> class with serialized data.
+            </summary>
+            <param name="info">The object that holds the serialized object data.</param>
+            <param name="context">The contextual information about the source or destination.</param>
+        </member>
+        <member name="T:Susanoo.ColumnChecker">
+            <summary>
+            Tracks available fields in return results to allow for efficient column existence checks.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ColumnChecker.HasColumn(System.Data.IDataRecord,System.String)">
+            <summary>
+            Determines whether the specified record has a column.
+            </summary>
+            <param name="record">The record.</param>
+            <param name="name">The name.</param>
+            <returns><c>true</c> if the specified record has column; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:Susanoo.CommandBuilder">
+            <summary>
+            Provides an entry point to defining commands and therein entering the Susanoo command Fluent API.
+            </summary>
+        </member>
+        <member name="T:Susanoo.ICommandExpressionBuilder">
+            <summary>
+            Provides an entry point to defining commands and therein entering the Susanoo command Fluent API.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ICommandExpressionBuilder.DefineCommand``1(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineResultMappings on the result of this call.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpressionBuilder.DefineCommand(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineResultMappings on the result of this call.
+            </summary>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandBuilder.DefineCommand``1(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandBuilder.DefineCommand``1(System.String,System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="databaseManagerName">Name of the database manager.</param>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+            <exception cref="T:System.ArgumentException">
+            No command text provided.;commandText
+            or
+            TableDirect is not supported.;commandType
+            </exception>
+        </member>
+        <member name="M:Susanoo.CommandBuilder.DefineCommand(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineResultMappings on the result of this call.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="T:Susanoo.ICommandExpression`1">
+            <summary>
+            Susanoo's initial step in the command definition Fluent API, in which parameters and command information are provided.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.AddConstantParameters(System.Data.IDbDataParameter[])">
+            <summary>
+            Adds parameters that will always use the same value.
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns>ICommandExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.UseExplicitPropertyInclusionMode">
+            <summary>
+            Uses the explicit property inclusion mode for including parameters from a potential filter.
+            </summary>
+            <returns>ICommandExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.ExcludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Excludes a property of the filter.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.ExcludeProperty(System.String)">
+            <summary>
+            Excludes a property of the filter.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Includes a property of the filter.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes a property of the filter or modifies its inclusion.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.IncludeProperty(System.String)">
+            <summary>
+            Includes a property of the filter.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.IncludeProperty(System.String,System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes a property of the filter or modifies its inclusion.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.BuildParameters(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Builds the parameters (Not part of Fluent API).
+            </summary>
+            <param name="filter">The filter.</param>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings``1">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings``2">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings``3">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings``4">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings``5">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <typeparam name="TResult5">The type of the result5.</typeparam>
+            <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings``6">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <typeparam name="TResult5">The type of the result5.</typeparam>
+            <typeparam name="TResult6">The type of the result6.</typeparam>
+            <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings``7">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <typeparam name="TResult5">The type of the result5.</typeparam>
+            <typeparam name="TResult6">The type of the result6.</typeparam>
+            <typeparam name="TResult7">The type of the result7.</typeparam>
+            <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`1.DatabaseManager">
+            <summary>
+            Gets the database manager the command will use.
+            </summary>
+            <value>The database manager.</value>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`1.CommandText">
+            <summary>
+            Gets the command text.
+            </summary>
+            <value>The command text.</value>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`1.DBCommandType">
+            <summary>
+            Gets the type of the database command.
+            </summary>
+            <value>The type of the database command.</value>
+        </member>
+        <member name="F:Susanoo.CommandExpression`1.parameterInclusions">
+            <summary>
+            The parameter inclusions
+            </summary>
+        </member>
+        <member name="F:Susanoo.CommandExpression`1.parameterExclusions">
+            <summary>
+            The parameter exclusions
+            </summary>
+        </member>
+        <member name="F:Susanoo.CommandExpression`1.constantParameters">
+            <summary>
+            The constant parameters
+            </summary>
+        </member>
+        <member name="F:Susanoo.CommandExpression`1.explicitInclusionMode">
+            <summary>
+            The explicit inclusion mode
+            </summary>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.#ctor(Susanoo.IDatabaseManager,System.String,System.Data.CommandType)">
+            <summary>
+            Initializes a new instance of the <see cref="!:CommandExpression&lt;TFilter, TResult&gt;"/> class.
+            </summary>
+            <param name="databaseManager">The database manager.</param>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <exception cref="T:System.ArgumentNullException">
+            databaseManager
+            or
+            commandText
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            No command text provided.;commandText
+            or
+            TableDirect is not supported.;commandType
+            </exception>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.AddConstantParameters(System.Data.IDbDataParameter[])">
+            <summary>
+            Adds parameters that will always use the same value.
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.BuildParameters(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Builds the parameters (Not part of Fluent API).
+            </summary>
+            <param name="filter">The filter.</param>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.BuildPropertyParameters(`0)">
+            <summary>
+            Builds the property inclusion parameters.
+            </summary>
+            <param name="filter">The filter.</param>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.BuildParameters(System.Data.IDbDataParameter[])">
+            <summary>
+            Builds the parameters.
+            </summary>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.UseExplicitPropertyInclusionMode">
+            <summary>
+            Uses the explicit property inclusion mode for a potential filter.
+            </summary>
+            <returns>ICommandExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.ExcludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Excludes a property of the filter.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.ExcludeProperty(System.String)">
+            <summary>
+            Excludes a property of the filter.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Includes the property of the filter.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes the property of the filter.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.IncludeProperty(System.String)">
+            <summary>
+            Includes the property of the filter.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.IncludeProperty(System.String,System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes the property of the filter.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.DefineResultMappings``1">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.DefineResultMappings``2">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.DefineResultMappings``3">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.DefineResultMappings``4">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.DefineResultMappings``5">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <typeparam name="TResult5">The type of the result5.</typeparam>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.DefineResultMappings``6">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <typeparam name="TResult5">The type of the result5.</typeparam>
+            <typeparam name="TResult6">The type of the result6.</typeparam>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`1.DefineResultMappings``7">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <typeparam name="TResult1">The type of the result1.</typeparam>
+            <typeparam name="TResult2">The type of the result2.</typeparam>
+            <typeparam name="TResult3">The type of the result3.</typeparam>
+            <typeparam name="TResult4">The type of the result4.</typeparam>
+            <typeparam name="TResult5">The type of the result5.</typeparam>
+            <typeparam name="TResult6">The type of the result6.</typeparam>
+            <typeparam name="TResult7">The type of the result7.</typeparam>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.CommandExpression`1.CommandText">
+            <summary>
+            Gets the command text.
+            </summary>
+            <value>The command text.</value>
+        </member>
+        <member name="P:Susanoo.CommandExpression`1.DBCommandType">
+            <summary>
+            Gets the type of the database command.
+            </summary>
+            <value>The type of the database command.</value>
+        </member>
+        <member name="P:Susanoo.CommandExpression`1.DatabaseManager">
+            <summary>
+            Gets the database manager.
+            </summary>
+            <value>The database manager.</value>
+        </member>
+        <member name="T:Susanoo.CommandManager">
+            <summary>
+            This class is used as the single entry point when dealing with Susanoo.
+            </summary>
+        </member>
+        <member name="F:Susanoo.CommandManager.syncRoot">
+            <summary>
+            The synchronization root.
+            </summary>
+        </member>
+        <member name="M:Susanoo.CommandManager.RegisterDatabaseManager(Susanoo.IDatabaseManager)">
+            <summary>
+            Registers the database manager.
+            </summary>
+            <param name="databaseManager">The database manager.</param>
+        </member>
+        <member name="M:Susanoo.CommandManager.RegisterCommandBuilder(Susanoo.ICommandExpressionBuilder)">
+            <summary>
+            Registers a command builder.
+            </summary>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="M:Susanoo.CommandManager.DefineCommand``1(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandManager.DefineCommand(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandManager.CreateParameter">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.CommandManager.CreateParameter(System.String,System.Data.ParameterDirection,System.Data.DbType,System.Object)">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterDirection">The parameter direction.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.CommandManager.CreateInputParameter(System.String,System.Data.DbType,System.Object)">
+            <summary>
+            Creates an input parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="P:Susanoo.CommandManager.ExpressionAssembly">
+            <summary>
+            Gets the expression assembly that contains runtime compiled methods used for mappings.
+            </summary>
+            <value>The expression assembly.</value>
+        </member>
+        <member name="P:Susanoo.CommandManager.DynamicNamespace">
+            <summary>
+            Gets the dynamic namespace.
+            </summary>
+            <value>The dynamic namespace.</value>
+        </member>
+        <member name="P:Susanoo.CommandManager.DatabaseManager">
+            <summary>
+            Gets the database manager.
+            </summary>
+            <value>The database manager.</value>
+        </member>
+        <member name="P:Susanoo.CommandManager.Commander">
+            <summary>
+            Gets the commander.
+            </summary>
+            <value>The commander.</value>
+        </member>
+        <member name="M:Susanoo.CommandResultExpression`2.ForResultSet(System.Action{Susanoo.IResultMappingExpression{`0,`1}})">
+            <summary>
+            Provide mapping actions and options for a result set
+            </summary>
+            <typeparam name="TResultType">The type of the result.</typeparam>
+            <param name="mappings">The mappings.</param>
+            <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultExpression`3.ForResultSet``1(System.Action{Susanoo.IResultMappingExpression{`0,``0}})">
+            <summary>
+            Provide mapping actions and options for a result set
+            </summary>
+            <typeparam name="TResultType">The type of the result.</typeparam>
+            <param name="mappings">The mappings.</param>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultExpression`4.ForResultSet``1(System.Action{Susanoo.IResultMappingExpression{`0,``0}})">
+            <summary>
+            Provide mapping actions and options for a result set
+            </summary>
+            <typeparam name="TResultType">The type of the result.</typeparam>
+            <param name="mappings">The mappings.</param>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultExpression`5.ForResultSet``1(System.Action{Susanoo.IResultMappingExpression{`0,``0}})">
+            <summary>
+            Provide mapping actions and options for a result set
+            </summary>
+            <typeparam name="TResultType">The type of the result.</typeparam>
+            <param name="mappings">The mappings.</param>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultExpression`6.ForResultSet``1(System.Action{Susanoo.IResultMappingExpression{`0,``0}})">
+            <summary>
+            Provide mapping actions and options for a result set
+            </summary>
+            <typeparam name="TResultType">The type of the result.</typeparam>
+            <param name="mappings">The mappings.</param>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultExpression`7.ForResultSet``1(System.Action{Susanoo.IResultMappingExpression{`0,``0}})">
+            <summary>
+            Provide mapping actions and options for a result set
+            </summary>
+            <typeparam name="TResultType">The type of the result.</typeparam>
+            <param name="mappings">The mappings.</param>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultExpression`8.ForResultSet``1(System.Action{Susanoo.IResultMappingExpression{`0,``0}})">
+            <summary>
+            Provide mapping actions and options for a result set
+            </summary>
+            <typeparam name="TResultType">The type of the result.</typeparam>
+            <param name="mappings">The mappings.</param>
+            <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
+        </member>
+        <member name="T:Susanoo.ResultMappingImplementor`2">
+            <summary>
+            A step in the command definition Fluent API, in which properties are mapped to potential result data.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+        </member>
+        <member name="T:Susanoo.IResultMappingImplementor`2">
+            <summary>
+            A step in the command definition Fluent API, in which properties are mapped to potential result data.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+        </member>
+        <member name="M:Susanoo.IResultMappingImplementor`2.ClearMappings">
+            <summary>
+            Clears the result mappings.
+            </summary>
+        </member>
+        <member name="M:Susanoo.IResultMappingImplementor`2.ForProperty(System.Linq.Expressions.Expression{System.Func{`1,System.Object}},System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="options">The options.</param>
+        </member>
+        <member name="M:Susanoo.IResultMappingImplementor`2.ForProperty(System.String,System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="options">The options.</param>
+        </member>
+        <member name="M:Susanoo.IResultMappingImplementor`2.Export">
+            <summary>
+            Exports this instance.
+            </summary>
+            <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IResultMappingImplementor`2.MapDeclarativeProperties">
+            <summary>
+            Maps the declarative properties.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ResultMappingImplementor`2.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.ResultMappingImplementor`2"/> class.
+            </summary>
+            <param name="commandExpression">The command expression.</param>
+        </member>
+        <member name="M:Susanoo.ResultMappingImplementor`2.ClearMappings">
+            <summary>
+            Clears the result mappings.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ResultMappingImplementor`2.ForProperty(System.Linq.Expressions.Expression{System.Func{`1,System.Object}},System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="options">The options.</param>
+        </member>
+        <member name="M:Susanoo.ResultMappingImplementor`2.ForProperty(System.String,System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="options">The options.</param>
+        </member>
+        <member name="M:Susanoo.ResultMappingImplementor`2.Export">
+            <summary>
+            Exports this instance.
+            </summary>
+            <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Susanoo.ResultMappingImplementor`2.MapDeclarativeProperties">
+            <summary>
+            Maps the declarative properties.
+            </summary>
+        </member>
+        <member name="P:Susanoo.ResultMappingImplementor`2.PropertyMetadataExtractor">
+            <summary>
+            Gets or sets the property metadata extractor.
+            </summary>
+            <value>The property metadata extractor.</value>
+        </member>
+        <member name="T:Susanoo.SingleResultSetCommandProcessor`2">
+            <summary>
+            A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a filter parameter.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
+        </member>
+        <member name="T:Susanoo.ICommandProcessor`2">
+            <summary>
+            Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled and a filter parameter.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
+        </member>
+        <member name="M:Susanoo.ICommandProcessor`2.Execute(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+            </summary>
+            <param name="filter">The filter.</param>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandProcessor`2.Execute(System.Data.IDbDataParameter[])">
+            <summary>
+            Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+            </summary>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;TResult&gt;.</returns>
+        </member>
+        <member name="F:Susanoo.SingleResultSetCommandProcessor`2._mappingExpressions">
+            <summary>
+            The mapping expressions before compilation.
+            </summary>
+        </member>
+        <member name="M:Susanoo.SingleResultSetCommandProcessor`2.#ctor(Susanoo.CommandResultExpression{`0,`1})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.SingleResultSetCommandProcessor`2"/> class.
+            </summary>
+            <param name="mappings">The mappings.</param>
+        </member>
+        <member name="M:Susanoo.SingleResultSetCommandProcessor`2.CompileMappings">
+            <summary>
+            Compiles the result mappings.
+            </summary>
+            <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.SingleResultSetCommandProcessor`2.Execute(System.Data.IDbDataParameter[])">
+            <summary>
+            Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+            </summary>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.SingleResultSetCommandProcessor`2.Execute(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+            </summary>
+            <param name="filter">The filter.</param>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;TResult&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.SingleResultSetCommandProcessor`2.MappingExpressions">
+            <summary>
+            Gets the mapping expressions.
+            </summary>
+            <value>The mapping expressions.</value>
+        </member>
+        <member name="P:Susanoo.SingleResultSetCommandProcessor`2.CompiledMapping">
+            <summary>
+            Gets the compiled mapping.
+            </summary>
+            <value>The compiled mapping.</value>
+        </member>
+        <member name="T:Susanoo.ResultMappingExpression`2">
+            <summary>
+            A step in the command definition Fluent API, in which properties are mapped to potential result data.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+        </member>
+        <member name="T:Susanoo.IResultMappingExpression`2">
+            <summary>
+            A step in the command definition Fluent API, in which properties are mapped to potential result data.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+        </member>
+        <member name="M:Susanoo.IResultMappingExpression`2.ClearMappings">
+            <summary>
+            Clears the result mappings.
+            </summary>
+            <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IResultMappingExpression`2.ForProperty(System.Linq.Expressions.Expression{System.Func{`1,System.Object}},System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="options">The options.</param>
+            <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IResultMappingExpression`2.ForProperty(System.String,System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="options">The options.</param>
+            <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IResultMappingExpression`2.Export">
+            <summary>
+            Exports this instance.
+            </summary>
+            <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ResultMappingExpression`2.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.ResultMappingExpression`2"/> class.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ResultMappingExpression`2.ClearMappings">
+            <summary>
+            Clears the result mappings.
+            </summary>
+            <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ResultMappingExpression`2.ForProperty(System.Linq.Expressions.Expression{System.Func{`1,System.Object}},System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="options">The options.</param>
+            <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ResultMappingExpression`2.ForProperty(System.String,System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="options">The options.</param>
+            <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ResultMappingExpression`2.Export">
+            <summary>
+            Exports this instance.
+            </summary>
+            <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="P:Susanoo.ResultMappingExpression`2.Implementor">
+            <summary>
+            Gets the implementor this is the Bridge design pattern.
+            </summary>
+            <value>The implementor.</value>
+        </member>
+        <member name="T:Susanoo.DatabaseManager">
+            <summary>
+            Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
+            </summary>
+        </member>
+        <member name="T:Susanoo.IDatabaseManager">
+            <summary>
+            The interface a Data later abstraction must support for use with Susanoo
+            </summary>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>IDataReader.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>IDataReader.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.CreateParameter">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.BeginTransaction">
+            <summary>
+            Begins a transaction.
+            </summary>
+            <returns>IDbTransaction.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.CreateParameter(System.String,System.Data.ParameterDirection,System.Data.DbType,System.Object)">
+            <summary>
+            Creates the parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterDirection">The parameter direction.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.CreateInputParameter(System.String,System.Data.DbType,System.Object)">
+            <summary>
+            Creates the input parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.#ctor(System.Data.Common.DbProviderFactory,System.String,System.Action{System.Data.IDbCommand})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.DatabaseManager"/> class.
+            </summary>
+            <param name="provider">The provider.</param>
+            <param name="connectionName">Name of the connection string.</param>
+            <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
+            <exception cref="T:System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.#ctor(System.Data.Common.DbProviderFactory,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.DatabaseManager"/> class.
+            </summary>
+            <param name="provider">The provider.</param>
+            <param name="connectionName">Name of the connection string.</param>
+            <exception cref="T:System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.Finalize">
+            <summary>
+            Finalizes an instance of the <see cref="T:Susanoo.DatabaseManager"/> class.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CastValue(System.Type,System.Object,System.Object,System.String)">
+            <summary>
+            Detects if a value is DBNull, null, or has value.
+            </summary>
+            <param name="newType">The new type.</param>
+            <param name="value">The value.</param>
+            <param name="defaultValue">The default value.</param>
+            <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
+            <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CastValue(System.Type,System.Object,System.Object)">
+            <summary>
+            Casts the value.
+            </summary>
+            <param name="newType">The new type.</param>
+            <param name="value">The value.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns>System.Object.</returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType"></param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType"></param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CreateParameter">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CreateParameter(System.String,System.Data.ParameterDirection,System.Data.DbType,System.Object)">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterDirection">The parameter direction.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CreateInputParameter(System.String,System.Data.DbType,System.Object)">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.BeginTransaction">
+            <summary>
+            Begins a transaction.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CallProviderSpecificCommandSettings(System.Data.IDbCommand)">
+            <summary>
+            Adjusts the command by provider.
+            </summary>
+            <param name="command">The command.</param>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.OpenConnection">
+            <summary>
+            Opens the connection.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CloseConnection">
+            <summary>
+            Closes the connection.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources.
+            </summary>
+            <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        </member>
+        <member name="P:Susanoo.DatabaseManager.Connection">
+            <summary>
+            Gets the connection.
+            </summary>
+            <value>
+            The connection.
+            </value>
+        </member>
+        <member name="P:Susanoo.DatabaseManager.Provider">
+            <summary>
+            Gets the provider.
+            </summary>
+            <value>
+            The provider.
+            </value>
+        </member>
+        <member name="T:Susanoo.ExpressionExtensions">
+            <summary>
+            Helpful Expression extension methods
+            </summary>
+        </member>
+        <member name="M:Susanoo.ExpressionExtensions.GetPropertyName``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            Given an expression, extract the listed property name; similar to reflection but with familiar LINQ+lambdas.
+            </summary>
+            <remarks>Cheats and uses the ToString output -- Should consult performance differences</remarks>
+            <typeparam name="TModel">the model type to extract property names</typeparam>
+            <typeparam name="TValue">the value type of the expected property</typeparam>
+            <param name="propertySelector">expression that just selects a model property to be turned into a string</param>
+            <returns>indicated property name</returns>
+        </member>
+        <member name="T:Susanoo.IPropertyMappingConfiguration`1">
+            <summary>
+            Allows configuration of the Susanoo mapper at the property level during command definition.
+            </summary>
+            <typeparam name="TRecord">The type of the record.</typeparam>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.MapIf(System.Linq.Expressions.Expression{System.Func{`0,System.String,System.Boolean}})">
+            <summary>
+            Maps the property conditionally.
+            </summary>
+            <param name="condition">The condition.</param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.AliasProperty(System.String)">
+            <summary>
+            Uses the specified alias when mapping from the data call.
+            </summary>
+            <param name="alias">The alias.</param>
+            <returns>Susanoo.IResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.ProcessValue(System.Linq.Expressions.Expression{System.Func{System.Type,System.Object,System.Object,System.Object}})">
+            <summary>
+            Processes the value in some form before assignment.
+            </summary>
+            <param name="process">The process.</param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.AssembleMappingExpression(System.Linq.Expressions.MemberExpression)">
+            <summary>
+            Assembles the mapping expression.
+            </summary>
+            <param name="propertyExpression">The property.</param>
+            <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.IPropertyMappingConfiguration`1.PropertyMetadata">
+            <summary>
+            Gets the property metadata.
+            </summary>
+            <value>The property metadata.</value>
+        </member>
+        <member name="P:Susanoo.IPropertyMappingConfiguration`1.ActiveAlias">
+            <summary>
+            Gets or sets the name of the return column.
+            </summary>
+            <value>The name of the return.</value>
+        </member>
+        <member name="T:Susanoo.IPropertyMetadataExtractor">
+            <summary>
+            Describes the required methods for determining if a property can be mapped using Susanoo.
+            </summary>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.FindAllowedProperties(System.Type,Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate declarative aliases.
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <param name="actions">The actions.</param>
+            <param name="whitelist">The whitelist.</param>
+            <param name="blacklist">The blacklist.</param>
+            <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsActionableProperty(System.Reflection.PropertyInfo,System.Object[],Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Determines whether the specified property is actionable.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <param name="actions">The actions.</param>
+            <param name="whitelist">The whitelist.</param>
+            <param name="blacklist">The blacklist.</param>
+            <returns><c>true</c> if the property is actionable; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsAllowedByAttribute(System.Reflection.PropertyInfo,Susanoo.AllowedActionsAttribute,Susanoo.DescriptorActions)">
+            <summary>
+            Determines whether the specified property is restricted declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="attribute">The attribute.</param>
+            <param name="actions">The actions.</param>
+            <returns><c>true</c> if the property is not declaratively restricted; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsBlacklisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is blacklisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="blacklist">The blacklist.</param>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsWhitelisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is whitelisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="whitelist">The whitelist.</param>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.ResolveAlias(System.Reflection.PropertyInfo,System.Object[])">
+            <summary>
+            Resolves the name of the return column as defined declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="T:Susanoo.ComponentModelMetadataExtractor">
+            <summary>
+            Default implementation of IPropertyMetadataExtractor that uses Component Model ColumnAttributes to resolve declarative aliases.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.FindAllowedProperties(System.Type,Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate declarative aliases.
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <param name="actions">The actions.</param>
+            <param name="whitelist">The whitelist.</param>
+            <param name="blacklist">The blacklist.</param>
+            <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
+            <exception cref="T:System.ArgumentNullException">filterType</exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.ResolveAlias(System.Reflection.PropertyInfo,System.Object[])">
+            <summary>
+            Resolves the name of the return column as defined declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsWhitelisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is whitelisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="whitelist">The whitelist.</param>
+            <returns><c>true</c> if the specified property information is whitelisted; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">propertyInfo</exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsBlacklisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is blacklisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="blacklist">The blacklist.</param>
+            <returns><c>true</c> if the specified property information is blacklisted; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">propertyInfo</exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsActionableProperty(System.Reflection.PropertyInfo,System.Object[],Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Determines whether the specified property is actionable.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <param name="actions">The actions.</param>
+            <param name="whitelist">The whitelist.</param>
+            <param name="blacklist">The blacklist.</param>
+            <returns><c>true</c> if [is actionable property] [the specified property information]; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            propertyInfo
+            or
+            customAttributes
+            </exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsAllowedByAttribute(System.Reflection.PropertyInfo,Susanoo.AllowedActionsAttribute,Susanoo.DescriptorActions)">
+            <summary>
+            Determines whether the specified property is restricted declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="attribute">The attribute.</param>
+            <param name="actions">The actions.</param>
+            <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:Susanoo.DescriptorActions">
+            <summary>
+            Indicates which actions are allowed for a property.
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.None">
+            <summary>
+            Indicates no actions allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Read">
+            <summary>
+            Indicates read action allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Update">
+            <summary>
+            Indicates update action allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Insert">
+            <summary>
+            Indicates insert action allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Delete">
+            <summary>
+            Indicates delete action allowed
+            </summary>
+        </member>
+        <member name="T:Susanoo.PropertyMap">
+            <summary>
+            Represents basic information about a property including its reflection information and alias.
+            </summary>
+            <remarks>Similar to IPropertyMappingConfiguration, but much lighter and represents a property before the mapping compilation tasks.</remarks>
+        </member>
+        <member name="M:Susanoo.PropertyMap.#ctor(System.Reflection.PropertyInfo,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.PropertyMap"/> class.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="alias">The alias.</param>
+            <exception cref="T:System.ArgumentNullException">property</exception>
+        </member>
+        <member name="M:Susanoo.PropertyMap.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.PropertyMap"/> class.
+            </summary>
+            <param name="property">The property.</param>
+            <exception cref="T:System.ArgumentNullException">property</exception>
+        </member>
+        <member name="P:Susanoo.PropertyMap.Property">
+            <summary>
+            Gets the property information.
+            </summary>
+            <value>The property information.</value>
+        </member>
+        <member name="P:Susanoo.PropertyMap.Alias">
+            <summary>
+            Gets the alias.
+            </summary>
+            <value>The alias.</value>
+        </member>
+        <member name="T:Susanoo.PropertyMappingConfiguration`1">
+            <summary>
+            Allows configuration of the Susanoo mapper at the property level during command definition.
+            </summary>
+            <typeparam name="TRecord">The type of the record.</typeparam>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.PropertyMappingConfiguration`1"/> class.
+            </summary>
+            <param name="propertyInfo">The property reflection meta data.</param>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.MapIf(System.Linq.Expressions.Expression{System.Func{`0,System.String,System.Boolean}})">
+            <summary>
+            Maps the property conditionally.
+            </summary>
+            <param name="condition">The condition.</param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.AliasProperty(System.String)">
+            <summary>
+            Uses the specified alias when mapping from the data call.
+            </summary>
+            <param name="alias">The alias.</param>
+            <returns>Susanoo.IResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.ProcessValue(System.Linq.Expressions.Expression{System.Func{System.Type,System.Object,System.Object,System.Object}})">
+            <summary>
+            Processes the value in some form before assignment.
+            </summary>
+            <param name="process"></param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.AssembleMappingExpression(System.Linq.Expressions.MemberExpression)">
+            <summary>
+            Assembles the mapping expression.
+            </summary>
+            <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.HasMapCondition(System.Linq.Expressions.MemberExpression,System.Linq.Expressions.ParameterExpression)">
+            <summary>
+            Determines whether the specified property has a mapping condition.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="recordParam">The record parameter.</param>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.AssembleAssignment(System.Linq.Expressions.MemberExpression,System.Linq.Expressions.ParameterExpression)">
+            <summary>
+            Assembles the assignment expression.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="recordParam">The record parameter.</param>
+            <returns>BinaryExpression.</returns>
+        </member>
+        <member name="P:Susanoo.PropertyMappingConfiguration`1.PropertyMetadata">
+            <summary>
+            Gets the <c>PropertyInfo</c> that describes the property.
+            </summary>
+            <value>The property reflection meta data.</value>
+        </member>
+        <member name="P:Susanoo.PropertyMappingConfiguration`1.ActiveAlias">
+            <summary>
+            Gets the active alias of the property.
+            </summary>
+            <value>The active alias.</value>
+        </member>
+    </members>
+</doc>

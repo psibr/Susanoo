@@ -1,0 +1,2138 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Susanoo</name>
+    </assembly>
+    <members>
+        <member name="M:Susanoo.AllowedActionsAttribute.#ctor(Susanoo.DescriptorActions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.AllowedActionsAttribute"/> class.
+            </summary>
+            <param name="actions">The actions in which this property is allowed to participate.</param>
+        </member>
+        <member name="M:Susanoo.AllowedActionsAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.AllowedActionsAttribute"/> class.
+            </summary>
+        </member>
+        <member name="P:Susanoo.AllowedActionsAttribute.Actions">
+            <summary>
+            Gets the allowed actions for a property.
+            </summary>
+            <value>
+            The actions allowed.
+            </value>
+        </member>
+        <member name="M:Susanoo.ICommandExpressionBuilder.DefineCommand``2(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineResultMappings on the result of this call.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpressionBuilder.DefineCommand``1(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineResultMappings on the result of this call.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandBuilder.DefineCommand``2(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandBuilder.DefineCommand``1(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineResultMappings on the result of this call.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.BuildParameters(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Builds the parameters (Not part of Fluent API).
+            </summary>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Includes a property.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes a property or modifies its inclusion.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.IncludeProperty(System.String)">
+            <summary>
+            Includes a property.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.IncludeProperty(System.String,System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes a property or modifies its inclusion.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.AddConstantParameters(System.Data.IDbDataParameter[])">
+            <summary>
+            Adds parameters that will always use the same value.
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.ExcludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Excludes a property.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;T&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.ExcludeProperty(System.String)">
+            <summary>
+            Excludes a property.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`2.DefineResultMappings">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`2.DatabaseManager">
+            <summary>
+            Gets the database manager the command will use.
+            </summary>
+            <value>The database manager.</value>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`2.CommandText">
+            <summary>
+            Gets the command text.
+            </summary>
+            <value>The command text.</value>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`2.DBCommandType">
+            <summary>
+            Gets the type of the database command.
+            </summary>
+            <value>The type of the database command.</value>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.#ctor(Susanoo.IDatabaseManager,System.String,System.Data.CommandType)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.CommandExpression`2"/> class.
+            </summary>
+            <param name="databaseManager">The database manager.</param>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Includes the property.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.IncludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes the property.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.IncludeProperty(System.String)">
+            <summary>
+            Includes the property.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.IncludeProperty(System.String,System.Action{System.Data.IDbDataParameter})">
+            <summary>
+            Includes the property.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="parameterOptions">The parameter options.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.AddConstantParameters(System.Data.IDbDataParameter[])">
+            <summary>
+            Adds the parameters explicitly.
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.ExcludeProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}})">
+            <summary>
+            Excludes a property.
+            </summary>
+            <param name="propertyExpression">The property expression.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.ExcludeProperty(System.String)">
+            <summary>
+            Excludes a property.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.DefineResultMappings">
+            <summary>
+            Defines the result mappings.
+            </summary>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.BuildParameters(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Builds the parameters.
+            </summary>
+            <param name="filter">The filter.</param>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Susanoo.CommandExpression`2.BuildPropertyParameters(`0)">
+            <summary>
+            Builds the property inclusion parameters.
+            </summary>
+            <param name="filter">The filter.</param>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.CommandExpression`2.CommandText">
+            <summary>
+            Gets the command text.
+            </summary>
+            <value>The command text.</value>
+        </member>
+        <member name="P:Susanoo.CommandExpression`2.DBCommandType">
+            <summary>
+            Gets the type of the database command.
+            </summary>
+            <value>The type of the database command.</value>
+        </member>
+        <member name="P:Susanoo.CommandExpression`2.DatabaseManager">
+            <summary>
+            Gets the database manager.
+            </summary>
+            <value>The database manager.</value>
+        </member>
+        <member name="F:Susanoo.CommandManager._expressionAssembly">
+            <summary>
+            The expression assembly
+            </summary>
+        </member>
+        <member name="F:Susanoo.CommandManager.syncRoot">
+            <summary>
+            The synchronization root.
+            </summary>
+        </member>
+        <member name="F:Susanoo.CommandManager._Instance">
+            <summary>
+            The instance
+            </summary>
+        </member>
+        <member name="M:Susanoo.CommandManager.#ctor">
+            <summary>
+            Prevents a default instance of the <see cref="T:Susanoo.CommandManager"/> class from being created.
+            </summary>
+        </member>
+        <member name="M:Susanoo.CommandManager.RegisterDatabaseManager(Susanoo.IDatabaseManager)">
+            <summary>
+            Registers the database manager.
+            </summary>
+            <param name="databaseManager">The database manager.</param>
+        </member>
+        <member name="M:Susanoo.CommandManager.DefineCommand``2(System.String,System.Data.CommandType)">
+            <summary>
+            Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <param name="commandText">The command text.</param>
+            <param name="commandType">Type of the command.</param>
+            <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandManager.CreateParameter">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.CommandManager.CreateParameter(System.String,System.Data.ParameterDirection,System.Data.DbType,System.Object)">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterDirection">The parameter direction.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.CommandManager.CreateInputParameter(System.String,System.Data.DbType,System.Object)">
+            <summary>
+            Creates an input parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="P:Susanoo.CommandManager.Instance">
+            <summary>
+            Gets the instance.
+            </summary>
+            <value>The instance.</value>
+        </member>
+        <member name="P:Susanoo.CommandManager.DynamicNamespace">
+            <summary>
+            Gets the dynamic namespace.
+            </summary>
+            <value>The dynamic namespace.</value>
+        </member>
+        <member name="P:Susanoo.CommandManager.Container">
+            <summary>
+            Gets the IoC container.
+            </summary>
+            <value>The container.</value>
+        </member>
+        <member name="P:Susanoo.CommandManager.DatabaseManager">
+            <summary>
+            Gets the database manager.
+            </summary>
+            <value>The database manager.</value>
+        </member>
+        <member name="P:Susanoo.CommandManager.Commander">
+            <summary>
+            Gets the commander.
+            </summary>
+            <value>The commander.</value>
+        </member>
+        <member name="T:Susanoo.ICommandProcessor`2">
+            <summary>
+            Represents a fully built and ready to be executed command expression with a filter parameter.
+            </summary>
+            <typeparam name="TFilter">The type of the filter.</typeparam>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <remarks>Appropriate mapping expressions are compiled by the point this interface becomes available.</remarks>
+        </member>
+        <member name="M:Susanoo.ICommandProcessor`2.Execute(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+            </summary>
+            <param name="filter">The filter.</param>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;TResult&gt;.</returns>
+        </member>
+        <member name="F:Susanoo.CommandProcessor`2._mappingExpressions">
+            <summary>
+            The mapping expressions before compilation.
+            </summary>
+        </member>
+        <member name="M:Susanoo.CommandProcessor`2.Execute(`0,System.Data.IDbDataParameter[])">
+            <summary>
+            Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+            </summary>
+            <param name="filter">The filter.</param>
+            <returns>IEnumerable&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandProcessor`2.CompileMappings">
+            <summary>
+            Compiles the mappings.
+            </summary>
+            <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`2.ClearMappings">
+            <summary>
+            Clears the result mappings.
+            </summary>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`2.ForProperty(System.Linq.Expressions.Expression{System.Func{`1,System.Object}},System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="options">The options.</param>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`2.ForProperty(System.String,System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="options">The options.</param>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`2.PrepareCommand">
+            <summary>
+            Prepares the command for caching and executing.
+            </summary>
+            <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`2.Export">
+            <summary>
+            Exports this instance.
+            </summary>
+            <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.ICommandResultMappingExpression`2.CommandExpression">
+            <summary>
+            Gets the command expression.
+            </summary>
+            <value>The command expression.</value>
+        </member>
+        <member name="M:Susanoo.CommandResultMappingExpression`2.ClearMappings">
+            <summary>
+            Clears the result mappings.
+            </summary>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultMappingExpression`2.ForProperty(System.Linq.Expressions.Expression{System.Func{`1,System.Object}},System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="options">The options.</param>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultMappingExpression`2.ForProperty(System.String,System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="options">The options.</param>
+            <returns>ICommandResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultMappingExpression`2.PrepareCommand">
+            <summary>
+            Prepares the command for caching and executing.
+            </summary>
+            <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.CommandResultMappingExpression`2.Export">
+            <summary>
+            Exports this instance.
+            </summary>
+            <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Susanoo.CommandResultMappingExpression`2.MapDeclarativeProperties">
+            <summary>
+            Maps the declarative properties.
+            </summary>
+        </member>
+        <member name="P:Susanoo.CommandResultMappingExpression`2.CommandExpression">
+            <summary>
+            Gets the command expression.
+            </summary>
+            <value>The command expression.</value>
+        </member>
+        <member name="T:Susanoo.DatabaseManager">
+            <summary>
+            Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
+            </summary>
+        </member>
+        <member name="T:Susanoo.IDatabaseManager">
+            <summary>
+            The interface a Data later abstraction must support for use with Orochi CRUDE
+            </summary>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>IDataReader.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>IDataReader.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>T.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.CreateParameter">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.BeginTransaction">
+            <summary>
+            Begins a transaction.
+            </summary>
+            <returns>IDbTransaction.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.CreateParameter(System.String,System.Data.ParameterDirection,System.Data.DbType,System.Object)">
+            <summary>
+            Creates the parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterDirection">The parameter direction.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.IDatabaseManager.CreateInputParameter(System.String,System.Data.DbType,System.Object)">
+            <summary>
+            Creates the input parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns>IDbDataParameter.</returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.#ctor(System.Data.Common.DbProviderFactory,System.String,System.Action{System.Data.IDbCommand})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.DatabaseManager"/> class.
+            </summary>
+            <param name="provider">The provider.</param>
+            <param name="connectionStringName">Name of the connection string.</param>
+            <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
+            <exception cref="T:System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.#ctor(System.Data.Common.DbProviderFactory,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.DatabaseManager"/> class.
+            </summary>
+            <param name="provider">The provider.</param>
+            <param name="connectionStringName">Name of the connection string.</param>
+            <exception cref="T:System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.Finalize">
+            <summary>
+            Finalizes an instance of the <see cref="T:Susanoo.DatabaseManager"/> class.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CastValue(System.Type,System.Object,System.Object,System.String)">
+            <summary>
+            Detects if a value is DBNull, null, or has value.
+            </summary>
+            <param name="newType">The new type.</param>
+            <param name="value">The value.</param>
+            <param name="defaultValue">The default value.</param>
+            <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
+            <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CastValue(System.Type,System.Object,System.Object)">
+            <summary>
+            Casts the value.
+            </summary>
+            <param name="newType">The new type.</param>
+            <param name="value">The value.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns>System.Object.</returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteDataReader(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the data reader.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType"></param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteScalar``1(System.String,System.Data.CommandType,System.Data.IDataParameter[])">
+            <summary>
+            Executes the scalar.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbTransaction,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType">Type of the command.</param>
+            <param name="transaction">The transaction.</param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">commandText</exception>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.ExecuteStoredProcedureNonQuery(System.String,System.Data.CommandType,System.Data.IDbDataParameter[])">
+            <summary>
+            Executes the stored procedure non query.
+            </summary>
+            <param name="commandText">Name of the procedure.</param>
+            <param name="commandType"></param>
+            <param name="parameters">The parameters.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CreateParameter">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CreateParameter(System.String,System.Data.ParameterDirection,System.Data.DbType,System.Object)">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterDirection">The parameter direction.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CreateInputParameter(System.String,System.Data.DbType,System.Object)">
+            <summary>
+            Creates a parameter.
+            </summary>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="parameterType">Type of the parameter.</param>
+            <param name="value">The value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.BeginTransaction">
+            <summary>
+            Begins a transaction.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CallProviderSpecificCommandSettings(System.Data.IDbCommand)">
+            <summary>
+            Adjusts the command by provider.
+            </summary>
+            <param name="command">The command.</param>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.OpenConnection">
+            <summary>
+            Opens the connection.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.CloseConnection">
+            <summary>
+            Closes the connection.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Susanoo.DatabaseManager.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources.
+            </summary>
+            <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        </member>
+        <member name="P:Susanoo.DatabaseManager.Connection">
+            <summary>
+            Gets the connection.
+            </summary>
+            <value>
+            The connection.
+            </value>
+        </member>
+        <member name="P:Susanoo.DatabaseManager.Provider">
+            <summary>
+            Gets the provider.
+            </summary>
+            <value>
+            The provider.
+            </value>
+        </member>
+        <member name="T:Susanoo.ExpressionExtensions">
+            <summary>
+            Helpful Expression extension methods
+            </summary>
+        </member>
+        <member name="M:Susanoo.ExpressionExtensions.GetPropertyName``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+            <summary>
+            Given an expression, extract the listed property name; similar to reflection but with familiar LINQ+lambdas.
+            </summary>
+            <remarks>Cheats and uses the ToString output -- Should consult performance differences</remarks>
+            <typeparam name="TModel">the model type to extract property names</typeparam>
+            <typeparam name="TValue">the value type of the expected property</typeparam>
+            <param name="propertySelector">expression that just selects a model property to be turned into a string</param>
+            <returns>indicated property name</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`1.ClearMappings">
+            <summary>
+            Clears the result mappings.
+            </summary>
+            <returns>ICommandResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`1.ForProperty(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Action{Susanoo.IPropertyMappingConfiguration{System.Data.IDataRecord}})">
+            <summary>
+            Mapping options for a property in the result model.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="options">The options.</param>
+            <returns>ICommandResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`1.PrepareCommand">
+            <summary>
+            Prepares the command for caching and executing.
+            </summary>
+            <returns>ICommandProcessor&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandResultMappingExpression`1.Export">
+            <summary>
+            Exports this instance.
+            </summary>
+            <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.ICommandResultMappingExpression`1.CommandExpression">
+            <summary>
+            Gets the command expression.
+            </summary>
+            <value>The command expression.</value>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.AddConstantParameters(System.Data.IDbDataParameter[])">
+            <summary>
+            Adds parameters that will always use the same value.
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <returns>ICommandExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.BuildParameters(System.Data.IDbDataParameter[])">
+            <summary>
+            Builds the parameters (Not part of Fluent API).
+            </summary>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;IDbDataParameter&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.ICommandExpression`1.DefineResultMappings">
+            <summary>
+            Defines the result mappings (Moves to next Step in Fluent API).
+            </summary>
+            <returns>ICommandResultMappingExpression&lt;TResult&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`1.DatabaseManager">
+            <summary>
+            Gets the database manager the command will use.
+            </summary>
+            <value>The database manager.</value>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`1.CommandText">
+            <summary>
+            Gets the command text.
+            </summary>
+            <value>The command text.</value>
+        </member>
+        <member name="P:Susanoo.ICommandExpression`1.DbCommandType">
+            <summary>
+            Gets the type of the database command.
+            </summary>
+            <value>The type of the database command.</value>
+        </member>
+        <member name="T:Susanoo.ICommandProcessor`1">
+            <summary>
+            Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled.
+            </summary>
+            <typeparam name="TResult">The type of the result.</typeparam>
+            <remarks>Appropriate mapping expressions are compiled by the point this interface becomes available.</remarks>
+        </member>
+        <member name="M:Susanoo.ICommandProcessor`1.Execute(System.Data.IDbDataParameter[])">
+            <summary>
+            Assembles a data command for an ADO.NET provider, executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+            </summary>
+            <param name="explicitParameters">The explicit parameters.</param>
+            <returns>IEnumerable&lt;TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.MapIf(System.Linq.Expressions.Expression{System.Func{`0,System.String,System.Boolean}})">
+            <summary>
+            Maps the property conditionally.
+            </summary>
+            <param name="condition">The condition.</param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.AliasProperty(System.String)">
+            <summary>
+            Uses the specified alias when mapping from the data call.
+            </summary>
+            <param name="alias">The alias.</param>
+            <returns>Susanoo.ICommandResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.ProcessValue(System.Linq.Expressions.Expression{System.Func{System.Type,System.Object,System.Object,System.Object}})">
+            <summary>
+            Processes the value in some form before assignment.
+            </summary>
+            <param name="process"></param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMappingConfiguration`1.AssembleMappingExpression(System.Linq.Expressions.MemberExpression)">
+            <summary>
+            Assembles the mapping expression.
+            </summary>
+            <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
+        </member>
+        <member name="P:Susanoo.IPropertyMappingConfiguration`1.PropertyMetadata">
+            <summary>
+            Gets the property metadata.
+            </summary>
+            <value>The property metadata.</value>
+        </member>
+        <member name="P:Susanoo.IPropertyMappingConfiguration`1.ReturnName">
+            <summary>
+            Gets or sets the name of the return column.
+            </summary>
+            <value>The name of the return.</value>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.FindPropertiesFromFilter(System.Type,Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Finds the parameters from a filter by type and resolves if they are actionable and declarative aliases.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="filter">The filter.</param>
+            <param name="actions">The actions which qualify the search for properties. Default: Read, Update, and Insert</param>
+            <param name="whitelist">The white list. Default: null</param>
+            <param name="blacklist">The black list. Default: null</param>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsActionableProperty(System.Reflection.PropertyInfo,System.Object[],Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Determines whether the specified property is actionable.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <param name="actions">The actions.</param>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsAllowedByAttribute(System.Reflection.PropertyInfo,Susanoo.AllowedActionsAttribute,Susanoo.DescriptorActions)">
+            <summary>
+            Determines whether the specified property is restricted declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="attribute">The attribute.</param>
+            <param name="actions">The actions.</param>
+            <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsBlacklisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is blacklisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="blacklist">The blacklist.</param>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.IsWhitelisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is whitelisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="whitelist">The whitelist.</param>
+        </member>
+        <member name="M:Susanoo.IPropertyMetadataExtractor.ResolveReturnName(System.Reflection.PropertyInfo,System.Object[])">
+            <summary>
+            Resolves the name of the return column as defined declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="T:Susanoo.ComponentModelMetadataExtractor">
+            <summary>
+            Default implementation of IPropertyMetadataExtractor that uses Component Model ColumnAttributes to resolve declarative aliases.
+            </summary>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.FindPropertiesFromFilter(System.Type,Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Finds the parameters from a filter by type and resolves if they are actionable and declarative aliases.
+            </summary>
+            <param name="filterType">Type of the filter.</param>
+            <param name="actions">The actions which qualify the search for properties. Default: Read, Update, and Insert</param>
+            <param name="whitelist">The white list. Default: null</param>
+            <param name="blacklist">The black list. Default: null</param>
+            <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
+            <exception cref="T:System.ArgumentNullException">filterType</exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.ResolveReturnName(System.Reflection.PropertyInfo,System.Object[])">
+            <summary>
+            Resolves the name of the return column as defined declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsWhitelisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is whitelisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="whitelist">The whitelist.</param>
+            <returns><c>true</c> if the specified property information is whitelisted; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">propertyInfo</exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsBlacklisted(System.Reflection.PropertyInfo,System.String[])">
+            <summary>
+            Determines whether the specified property is blacklisted.
+            </summary>
+            <param name="propertyInfo">The property info.</param>
+            <param name="blacklist">The blacklist.</param>
+            <returns><c>true</c> if the specified property information is blacklisted; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">propertyInfo</exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsActionableProperty(System.Reflection.PropertyInfo,System.Object[],Susanoo.DescriptorActions,System.String[],System.String[])">
+            <summary>
+            Determines whether the specified property is actionable.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="customAttributes">The custom attributes.</param>
+            <param name="actions">The actions.</param>
+            <param name="whitelist">The whitelist.</param>
+            <param name="blacklist">The blacklist.</param>
+            <returns><c>true</c> if [is actionable property] [the specified property information]; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            propertyInfo
+            or
+            customAttributes
+            </exception>
+        </member>
+        <member name="M:Susanoo.ComponentModelMetadataExtractor.IsAllowedByAttribute(System.Reflection.PropertyInfo,Susanoo.AllowedActionsAttribute,Susanoo.DescriptorActions)">
+            <summary>
+            Determines whether the specified property is restricted declaratively.
+            </summary>
+            <param name="propertyInfo">The property information.</param>
+            <param name="attribute">The attribute.</param>
+            <param name="actions">The actions.</param>
+            <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:Susanoo.DescriptorActions">
+            <summary>
+            Indicates which actions are allowed for a property.
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.None">
+            <summary>
+            Indicates no actions allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Read">
+            <summary>
+            Indicates read action allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Update">
+            <summary>
+            Indicates update action allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Insert">
+            <summary>
+            Indicates insert action allowed
+            </summary>
+        </member>
+        <member name="F:Susanoo.DescriptorActions.Delete">
+            <summary>
+            Indicates delete action allowed
+            </summary>
+        </member>
+        <member name="M:Susanoo.PropertyMap.#ctor(System.Reflection.PropertyInfo,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.PropertyMap"/> class.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="databaseName">Name of the return column.</param>
+            <exception cref="T:System.ArgumentNullException">property</exception>
+        </member>
+        <member name="M:Susanoo.PropertyMap.#ctor(System.Reflection.PropertyInfo)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Susanoo.PropertyMap"/> class.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="databaseName">Name of the return column.</param>
+            <exception cref="T:System.ArgumentNullException">property</exception>
+        </member>
+        <member name="P:Susanoo.PropertyMap.DatabaseName">
+            <summary>
+            Gets the name of the return column.
+            </summary>
+            <value>The name of the return column.</value>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.MapIf(System.Linq.Expressions.Expression{System.Func{`0,System.String,System.Boolean}})">
+            <summary>
+            Maps the property conditionally.
+            </summary>
+            <param name="condition">The condition.</param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.AliasProperty(System.String)">
+            <summary>
+            Uses the specified alias when mapping from the data call.
+            </summary>
+            <param name="alias">The alias.</param>
+            <returns>Susanoo.ICommandResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.ProcessValue(System.Linq.Expressions.Expression{System.Func{System.Type,System.Object,System.Object,System.Object}})">
+            <summary>
+            Processes the value in some form before assignment.
+            </summary>
+            <param name="process"></param>
+            <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
+        </member>
+        <member name="M:Susanoo.PropertyMappingConfiguration`1.AssembleMappingExpression(System.Linq.Expressions.MemberExpression)">
+            <summary>
+            Assembles the mapping expression.
+            </summary>
+            <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
+        </member>
+        <member name="M:TinyIoC.TypeExtensions.GetGenericMethod(System.Type,System.Reflection.BindingFlags,System.String,System.Type[],System.Type[])">
+            <summary>
+            Gets a generic method from a type given the method name, binding flags, generic types and parameter types
+            </summary>
+            <param name="sourceType">Source type</param>
+            <param name="bindingFlags">Binding flags</param>
+            <param name="methodName">Name of the method</param>
+            <param name="genericTypes">Generic types to use to make the method generic</param>
+            <param name="parameterTypes">Method parameters</param>
+            <returns>MethodInfo or null if no matches found</returns>
+            <exception cref="T:System.Reflection.AmbiguousMatchException"/>
+            <exception cref="T:System.ArgumentException"/>
+        </member>
+        <member name="F:TinyIoC.UnregisteredResolutionActions.AttemptResolve">
+             <summary>
+             Attempt to resolve type, even if the type isn't registered.
+            
+             Registered types/options will always take precedence.
+             </summary>
+        </member>
+        <member name="F:TinyIoC.UnregisteredResolutionActions.Fail">
+            <summary>
+            Fail resolution if type not explicitly registered
+            </summary>
+        </member>
+        <member name="F:TinyIoC.UnregisteredResolutionActions.GenericsOnly">
+             <summary>
+             Attempt to resolve unregistered type if requested type is generic
+             and no registration exists for the specific generic parameters used.
+            
+             Registered types/options will always take precedence.
+             </summary>
+        </member>
+        <member name="T:TinyIoC.NamedParameterOverloads">
+            <summary>
+            Name/Value pairs for specifying "user" parameters when resolving
+            </summary>
+        </member>
+        <member name="T:TinyIoC.ResolveOptions">
+            <summary>
+            Resolution settings
+            </summary>
+        </member>
+        <member name="P:TinyIoC.ResolveOptions.Default">
+            <summary>
+            Gets the default options (attempt resolution of unregistered types, fail on named resolution if name not found)
+            </summary>
+        </member>
+        <member name="P:TinyIoC.ResolveOptions.FailNameNotFoundOnly">
+            <summary>
+            Preconfigured option for attempting resolution of unregistered types and failing on named resolution if name not found
+            </summary>
+        </member>
+        <member name="P:TinyIoC.ResolveOptions.FailUnregisteredAndNameNotFound">
+            <summary>
+            Preconfigured option for failing on resolving unregistered types and on named resolution if name not found
+            </summary>
+        </member>
+        <member name="P:TinyIoC.ResolveOptions.FailUnregisteredOnly">
+            <summary>
+            Preconfigured option for failing on resolving unregistered types, but attempting unnamed resolution if name not found
+            </summary>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister">
+             <summary>
+             Attempt to automatically register all non-generic classes and interfaces in the current app domain.
+            
+             If more than one class implements an interface then only one implementation will be registered
+             although no error will be thrown.
+             </summary>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister(System.Func{System.Type,System.Boolean})">
+             <summary>
+             Attempt to automatically register all non-generic classes and interfaces in the current app domain.
+             Types will only be registered if they pass the supplied registration predicate.
+            
+             If more than one class implements an interface then only one implementation will be registered
+             although no error will be thrown.
+             </summary>
+             <param name="registrationPredicate">Predicate to determine if a particular type should be registered</param>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister(TinyIoC.DuplicateImplementationActions)">
+            <summary>
+            Attempt to automatically register all non-generic classes and interfaces in the current app domain.
+            </summary>
+            <param name="duplicateAction">What action to take when encountering duplicate implementations of an interface/base class.</param>
+            <exception cref="T:TinyIoC.TinyIoCAutoRegistrationException"/>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister(TinyIoC.DuplicateImplementationActions,System.Func{System.Type,System.Boolean})">
+            <summary>
+            Attempt to automatically register all non-generic classes and interfaces in the current app domain.
+            Types will only be registered if they pass the supplied registration predicate.
+            </summary>
+            <param name="duplicateAction">What action to take when encountering duplicate implementations of an interface/base class.</param>
+            <param name="registrationPredicate">Predicate to determine if a particular type should be registered</param>
+            <exception cref="T:TinyIoC.TinyIoCAutoRegistrationException"/>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister(System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+             <summary>
+             Attempt to automatically register all non-generic classes and interfaces in the specified assemblies
+            
+             If more than one class implements an interface then only one implementation will be registered
+             although no error will be thrown.
+             </summary>
+             <param name="assemblies">Assemblies to process</param>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister(System.Collections.Generic.IEnumerable{System.Reflection.Assembly},System.Func{System.Type,System.Boolean})">
+             <summary>
+             Attempt to automatically register all non-generic classes and interfaces in the specified assemblies
+             Types will only be registered if they pass the supplied registration predicate.
+            
+             If more than one class implements an interface then only one implementation will be registered
+             although no error will be thrown.
+             </summary>
+             <param name="assemblies">Assemblies to process</param>
+             <param name="registrationPredicate">Predicate to determine if a particular type should be registered</param>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister(System.Collections.Generic.IEnumerable{System.Reflection.Assembly},TinyIoC.DuplicateImplementationActions)">
+            <summary>
+            Attempt to automatically register all non-generic classes and interfaces in the specified assemblies
+            </summary>
+            <param name="assemblies">Assemblies to process</param>
+            <param name="duplicateAction">What action to take when encountering duplicate implementations of an interface/base class.</param>
+            <exception cref="T:TinyIoC.TinyIoCAutoRegistrationException"/>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.AutoRegister(System.Collections.Generic.IEnumerable{System.Reflection.Assembly},TinyIoC.DuplicateImplementationActions,System.Func{System.Type,System.Boolean})">
+            <summary>
+            Attempt to automatically register all non-generic classes and interfaces in the specified assemblies
+            Types will only be registered if they pass the supplied registration predicate.
+            </summary>
+            <param name="assemblies">Assemblies to process</param>
+            <param name="duplicateAction">What action to take when encountering duplicate implementations of an interface/base class.</param>
+            <param name="registrationPredicate">Predicate to determine if a particular type should be registered</param>
+            <exception cref="T:TinyIoC.TinyIoCAutoRegistrationException"/>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type)">
+            <summary>
+            Creates/replaces a container class registration with default options.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.String)">
+            <summary>
+            Creates/replaces a named container class registration with default options.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Type)">
+            <summary>
+            Creates/replaces a container class registration with a given implementation and default options.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="registerImplementation">Type to instantiate that implements RegisterType</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Type,System.String)">
+            <summary>
+            Creates/replaces a named container class registration with a given implementation and default options.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="registerImplementation">Type to instantiate that implements RegisterType</param>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Object)">
+            <summary>
+            Creates/replaces a container class registration with a specific, strong referenced, instance.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="instance">Instance of RegisterType to register</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Object,System.String)">
+            <summary>
+            Creates/replaces a named container class registration with a specific, strong referenced, instance.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="instance">Instance of RegisterType to register</param>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Type,System.Object)">
+            <summary>
+            Creates/replaces a container class registration with a specific, strong referenced, instance.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="registerImplementation">Type of instance to register that implements RegisterType</param>
+            <param name="instance">Instance of RegisterImplementation to register</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Type,System.Object,System.String)">
+            <summary>
+            Creates/replaces a named container class registration with a specific, strong referenced, instance.
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="registerImplementation">Type of instance to register that implements RegisterType</param>
+            <param name="instance">Instance of RegisterImplementation to register</param>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Func{TinyIoC.TinyIoCContainer,TinyIoC.NamedParameterOverloads,System.Object})">
+            <summary>
+            Creates/replaces a container class registration with a user specified factory
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="factory">Factory/lambda that returns an instance of RegisterType</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register(System.Type,System.Func{TinyIoC.TinyIoCContainer,TinyIoC.NamedParameterOverloads,System.Object},System.String)">
+            <summary>
+            Creates/replaces a container class registration with a user specified factory
+            </summary>
+            <param name="registerType">Type to register</param>
+            <param name="factory">Factory/lambda that returns an instance of RegisterType</param>
+            <param name="name">Name of registation</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``1">
+            <summary>
+            Creates/replaces a container class registration with default options.
+            </summary>
+            <typeparam name="RegisterImplementation">Type to register</typeparam>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``1(System.String)">
+            <summary>
+            Creates/replaces a named container class registration with default options.
+            </summary>
+            <typeparam name="RegisterImplementation">Type to register</typeparam>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``2">
+            <summary>
+            Creates/replaces a container class registration with a given implementation and default options.
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <typeparam name="RegisterImplementation">Type to instantiate that implements RegisterType</typeparam>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``2(System.String)">
+            <summary>
+            Creates/replaces a named container class registration with a given implementation and default options.
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <typeparam name="RegisterImplementation">Type to instantiate that implements RegisterType</typeparam>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``1(``0)">
+            <summary>
+            Creates/replaces a container class registration with a specific, strong referenced, instance.
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <param name="instance">Instance of RegisterType to register</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``1(``0,System.String)">
+            <summary>
+            Creates/replaces a named container class registration with a specific, strong referenced, instance.
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <param name="instance">Instance of RegisterType to register</param>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``2(``1)">
+            <summary>
+            Creates/replaces a container class registration with a specific, strong referenced, instance.
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <typeparam name="RegisterImplementation">Type of instance to register that implements RegisterType</typeparam>
+            <param name="instance">Instance of RegisterImplementation to register</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``2(``1,System.String)">
+            <summary>
+            Creates/replaces a named container class registration with a specific, strong referenced, instance.
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <typeparam name="RegisterImplementation">Type of instance to register that implements RegisterType</typeparam>
+            <param name="instance">Instance of RegisterImplementation to register</param>
+            <param name="name">Name of registration</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``1(System.Func{TinyIoC.TinyIoCContainer,TinyIoC.NamedParameterOverloads,``0})">
+            <summary>
+            Creates/replaces a container class registration with a user specified factory
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <param name="factory">Factory/lambda that returns an instance of RegisterType</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Register``1(System.Func{TinyIoC.TinyIoCContainer,TinyIoC.NamedParameterOverloads,``0},System.String)">
+            <summary>
+            Creates/replaces a named container class registration with a user specified factory
+            </summary>
+            <typeparam name="RegisterType">Type to register</typeparam>
+            <param name="factory">Factory/lambda that returns an instance of RegisterType</param>
+            <param name="name">Name of registation</param>
+            <returns>RegisterOptions for fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.RegisterMultiple``1(System.Collections.Generic.IEnumerable{System.Type})">
+             <summary>
+             Register multiple implementations of a type.
+            
+             Internally this registers each implementation using the full name of the class as its registration name.
+             </summary>
+             <typeparam name="RegisterType">Type that each implementation implements</typeparam>
+             <param name="implementationTypes">Types that implement RegisterType</param>
+             <returns>MultiRegisterOptions for the fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.RegisterMultiple(System.Type,System.Collections.Generic.IEnumerable{System.Type})">
+             <summary>
+             Register multiple implementations of a type.
+            
+             Internally this registers each implementation using the full name of the class as its registration name.
+             </summary>
+             <param name="registrationType">Type that each implementation implements</param>
+             <param name="implementationTypes">Types that implement RegisterType</param>
+             <returns>MultiRegisterOptions for the fluent API</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type)">
+            <summary>
+            Attempts to resolve a type using default options.
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <returns>Instance of type</returns>
+            <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type,TinyIoC.ResolveOptions)">
+            <summary>
+            Attempts to resolve a type using specified options.
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="options">Resolution options</param>
+            <returns>Instance of type</returns>
+            <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type,System.String)">
+             <summary>
+             Attempts to resolve a type using default options and the supplied name.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="name">Name of registration</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type,System.String,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to resolve a type using supplied options and  name.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="name">Name of registration</param>
+             <param name="options">Resolution options</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type,TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to resolve a type using default options and the supplied constructor parameters.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="parameters">User specified constructor parameters</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to resolve a type using specified options and the supplied constructor parameters.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="parameters">User specified constructor parameters</param>
+             <param name="options">Resolution options</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type,System.String,TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to resolve a type using default options and the supplied constructor parameters and name.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="parameters">User specified constructor parameters</param>
+             <param name="name">Name of registration</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve(System.Type,System.String,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to resolve a named type using specified options and the supplied constructor parameters.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="name">Name of registration</param>
+             <param name="parameters">User specified constructor parameters</param>
+             <param name="options">Resolution options</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1">
+            <summary>
+            Attempts to resolve a type using default options.
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <returns>Instance of type</returns>
+            <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1(TinyIoC.ResolveOptions)">
+            <summary>
+            Attempts to resolve a type using specified options.
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="options">Resolution options</param>
+            <returns>Instance of type</returns>
+            <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1(System.String)">
+             <summary>
+             Attempts to resolve a type using default options and the supplied name.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="name">Name of registration</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1(System.String,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to resolve a type using supplied options and  name.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="name">Name of registration</param>
+             <param name="options">Resolution options</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1(TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to resolve a type using default options and the supplied constructor parameters.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="parameters">User specified constructor parameters</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1(TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to resolve a type using specified options and the supplied constructor parameters.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="parameters">User specified constructor parameters</param>
+             <param name="options">Resolution options</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1(System.String,TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to resolve a type using default options and the supplied constructor parameters and name.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="parameters">User specified constructor parameters</param>
+             <param name="name">Name of registration</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.Resolve``1(System.String,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to resolve a named type using specified options and the supplied constructor parameters.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="name">Name of registration</param>
+             <param name="parameters">User specified constructor parameters</param>
+             <param name="options">Resolution options</param>
+             <returns>Instance of type</returns>
+             <exception cref="T:TinyIoC.TinyIoCResolutionException">Unable to resolve the type.</exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type)">
+             <summary>
+             Attempts to predict whether a given type can be resolved with default options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given type can be resolved with the specified options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type,System.String,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with the specified options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="name">Name of registration</param>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type,TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to predict whether a given type can be resolved with the supplied constructor parameters and default options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type,System.String,TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with the supplied constructor parameters and default options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="name">Name of registration</param>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given type can be resolved with the supplied constructor parameters options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type,System.String,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with the supplied constructor parameters options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="name">Name of registration</param>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1">
+             <summary>
+             Attempts to predict whether a given type can be resolved with default options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1(System.String)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with default options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1(TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given type can be resolved with the specified options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1(System.String,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with the specified options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="name">Name of registration</param>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1(TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to predict whether a given type can be resolved with the supplied constructor parameters and default options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1(System.String,TinyIoC.NamedParameterOverloads)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with the supplied constructor parameters and default options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="name">Name of registration</param>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1(TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given type can be resolved with the supplied constructor parameters options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve``1(System.String,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with the supplied constructor parameters options.
+            
+             Parameters are used in conjunction with normal container resolution to find the most suitable constructor (if one exists).
+             All user supplied parameters must exist in at least one resolvable constructor of RegisterType or resolution will fail.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <typeparam name="ResolveType">Type to resolve</typeparam>
+             <param name="name">Name of registration</param>
+             <param name="parameters">User supplied named parameter overloads</param>
+             <param name="options">Resolution options</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the default options
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,TinyIoC.ResolveOptions,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the given options
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,System.String,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the default options and given name
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="name">Name of registration</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,System.String,TinyIoC.ResolveOptions,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the given options and name
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="name">Name of registration</param>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,TinyIoC.NamedParameterOverloads,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the default options and supplied constructor parameters
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,System.String,TinyIoC.NamedParameterOverloads,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the default options and supplied name and constructor parameters
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="name">Name of registration</param>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the supplied options and constructor parameters
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve(System.Type,System.String,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions,System.Object@)">
+            <summary>
+            Attemps to resolve a type using the supplied name, options and constructor parameters
+            </summary>
+            <param name="resolveType">Type to resolve</param>
+            <param name="name">Name of registration</param>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(``0@)">
+            <summary>
+            Attemps to resolve a type using the default options
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(TinyIoC.ResolveOptions,``0@)">
+            <summary>
+            Attemps to resolve a type using the given options
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(System.String,``0@)">
+            <summary>
+            Attemps to resolve a type using the default options and given name
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="name">Name of registration</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(System.String,TinyIoC.ResolveOptions,``0@)">
+            <summary>
+            Attemps to resolve a type using the given options and name
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="name">Name of registration</param>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(TinyIoC.NamedParameterOverloads,``0@)">
+            <summary>
+            Attemps to resolve a type using the default options and supplied constructor parameters
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(System.String,TinyIoC.NamedParameterOverloads,``0@)">
+            <summary>
+            Attemps to resolve a type using the default options and supplied name and constructor parameters
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="name">Name of registration</param>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions,``0@)">
+            <summary>
+            Attemps to resolve a type using the supplied options and constructor parameters
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.TryResolve``1(System.String,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions,``0@)">
+            <summary>
+            Attemps to resolve a type using the supplied name, options and constructor parameters
+            </summary>
+            <typeparam name="ResolveType">Type to resolve</typeparam>
+            <param name="name">Name of registration</param>
+            <param name="parameters">User specified constructor parameters</param>
+            <param name="options">Resolution options</param>
+            <param name="resolvedType">Resolved type or default if resolve fails</param>
+            <returns>True if resolved sucessfully, false otherwise</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ResolveAll(System.Type,System.Boolean)">
+            <summary>
+            Returns all registrations of a type
+            </summary>
+            <param name="resolveType">Type to resolveAll</param>
+            <param name="includeUnnamed">Whether to include un-named (default) registrations</param>
+            <returns>IEnumerable</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ResolveAll(System.Type)">
+            <summary>
+            Returns all registrations of a type, both named and unnamed
+            </summary>
+            <param name="resolveType">Type to resolveAll</param>
+            <returns>IEnumerable</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ResolveAll``1(System.Boolean)">
+            <summary>
+            Returns all registrations of a type
+            </summary>
+            <typeparam name="ResolveType">Type to resolveAll</typeparam>
+            <param name="includeUnnamed">Whether to include un-named (default) registrations</param>
+            <returns>IEnumerable</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ResolveAll``1">
+            <summary>
+            Returns all registrations of a type, both named and unnamed
+            </summary>
+            <typeparam name="ResolveType">Type to resolveAll</typeparam>
+            <returns>IEnumerable</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.BuildUp(System.Object)">
+            <summary>
+            Attempts to resolve all public property dependencies on the given object.
+            </summary>
+            <param name="input">Object to "build up"</param>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.BuildUp(System.Object,TinyIoC.ResolveOptions)">
+            <summary>
+            Attempts to resolve all public property dependencies on the given object using the given resolve options.
+            </summary>
+            <param name="input">Object to "build up"</param>
+            <param name="resolveOptions">Resolve options to use</param>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.CanResolve(System.Type,System.String)">
+             <summary>
+             Attempts to predict whether a given named type can be resolved with default options.
+            
+             Note: Resolution may still fail if user defined factory registations fail to construct objects when called.
+             </summary>
+             <param name="resolveType">Type to resolve</param>
+             <param name="name">Name of registration</param>
+             <returns>Bool indicating whether the type can be resolved</returns>
+        </member>
+        <member name="P:TinyIoC.TinyIoCContainer.Current">
+            <summary>
+            Lazy created Singleton instance of the container for simple scenarios
+            </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.RegisterOptions">
+            <summary>
+            Registration options for "fluent" API
+            </summary>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.RegisterOptions.ToCustomLifetimeManager(TinyIoC.TinyIoCContainer.RegisterOptions,TinyIoC.TinyIoCContainer.ITinyIoCObjectLifetimeProvider,System.String)">
+             <summary>
+             Switches to a custom lifetime manager factory if possible.
+            
+             Usually used for RegisterOptions "To*" extension methods such as the ASP.Net per-request one.
+             </summary>
+             <param name="instance">RegisterOptions instance</param>
+             <param name="lifetimeProvider">Custom lifetime manager</param>
+             <param name="errorString">Error string to display if switch fails</param>
+             <returns>RegisterOptions</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.RegisterOptions.AsSingleton">
+            <summary>
+            Make registration a singleton (single instance) if possible
+            </summary>
+            <returns>RegisterOptions</returns>
+            <exception cref="!:TinyIoCInstantiationTypeException"></exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.RegisterOptions.AsMultiInstance">
+            <summary>
+            Make registration multi-instance if possible
+            </summary>
+            <returns>RegisterOptions</returns>
+            <exception cref="!:TinyIoCInstantiationTypeException"></exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.RegisterOptions.WithWeakReference">
+            <summary>
+            Make registration hold a weak reference if possible
+            </summary>
+            <returns>RegisterOptions</returns>
+            <exception cref="!:TinyIoCInstantiationTypeException"></exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.RegisterOptions.WithStrongReference">
+            <summary>
+            Make registration hold a strong reference if possible
+            </summary>
+            <returns>RegisterOptions</returns>
+            <exception cref="!:TinyIoCInstantiationTypeException"></exception>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.MultiRegisterOptions">
+            <summary>
+            Registration options for "fluent" API when registering multiple implementations
+            </summary>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.MultiRegisterOptions.#ctor(System.Collections.Generic.IEnumerable{TinyIoC.TinyIoCContainer.RegisterOptions})">
+            <summary>
+            Initializes a new instance of the MultiRegisterOptions class.
+            </summary>
+            <param name="registerOptions">Registration options</param>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.MultiRegisterOptions.ToCustomLifetimeManager(TinyIoC.TinyIoCContainer.MultiRegisterOptions,TinyIoC.TinyIoCContainer.ITinyIoCObjectLifetimeProvider,System.String)">
+             <summary>
+             Switches to a custom lifetime manager factory if possible.
+            
+             Usually used for RegisterOptions "To*" extension methods such as the ASP.Net per-request one.
+             </summary>
+             <param name="instance">MultiRegisterOptions instance</param>
+             <param name="lifetimeProvider">Custom lifetime manager</param>
+             <param name="errorString">Error string to display if switch fails</param>
+             <returns>MultiRegisterOptions</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.MultiRegisterOptions.AsSingleton">
+            <summary>
+            Make registration a singleton (single instance) if possible
+            </summary>
+            <returns>RegisterOptions</returns>
+            <exception cref="!:TinyIoCInstantiationTypeException"></exception>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.MultiRegisterOptions.AsMultiInstance">
+            <summary>
+            Make registration multi-instance if possible
+            </summary>
+            <returns>MultiRegisterOptions</returns>
+            <exception cref="!:TinyIoCInstantiationTypeException"></exception>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.ITinyIoCObjectLifetimeProvider">
+            <summary>
+            Provides custom lifetime management for ASP.Net per-request lifetimes etc.
+            </summary>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ITinyIoCObjectLifetimeProvider.GetObject">
+            <summary>
+            Gets the stored object if it exists, or null if not
+            </summary>
+            <returns>Object instance or null</returns>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ITinyIoCObjectLifetimeProvider.SetObject(System.Object)">
+            <summary>
+            Store the object
+            </summary>
+            <param name="value">Object to store</param>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ITinyIoCObjectLifetimeProvider.ReleaseObject">
+            <summary>
+            Release the object
+            </summary>
+        </member>
+        <member name="M:TinyIoC.TinyIoCContainer.ObjectFactoryBase.GetObject(System.Type,TinyIoC.TinyIoCContainer,TinyIoC.NamedParameterOverloads,TinyIoC.ResolveOptions)">
+            <summary>
+            Create the type
+            </summary>
+            <param name="requestedType">Type user requested to be resolved</param>
+            <param name="container">Container that requested the creation</param>
+            <param name="parameters">Any user parameters passed</param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="P:TinyIoC.TinyIoCContainer.ObjectFactoryBase.AssumeConstruction">
+             <summary>
+             Whether to assume this factory sucessfully constructs its objects
+            
+             Generally set to true for delegate style factories as CanResolve cannot delve
+             into the delegates they contain.
+             </summary>
+        </member>
+        <member name="P:TinyIoC.TinyIoCContainer.ObjectFactoryBase.CreatesType">
+            <summary>
+            The type the factory instantiates
+            </summary>
+        </member>
+        <member name="P:TinyIoC.TinyIoCContainer.ObjectFactoryBase.Constructor">
+            <summary>
+            Constructor to use, if specified
+            </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.MultiInstanceFactory">
+            <summary>
+            IObjectFactory that creates new instances of types for each resolution
+            </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.DelegateFactory">
+            <summary>
+            IObjectFactory that invokes a specified delegate to construct the object
+            </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.WeakDelegateFactory">
+            <summary>
+            IObjectFactory that invokes a specified delegate to construct the object
+            Holds the delegate using a weak reference
+            </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.InstanceFactory">
+            <summary>
+            Stores an particular instance to return for a type
+            </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.WeakInstanceFactory">
+             <summary>
+             Stores an particular instance to return for a type
+            
+             Stores the instance with a weak reference
+             </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.SingletonFactory">
+            <summary>
+            A factory that lazy instantiates a type and always returns the same instance
+            </summary>
+        </member>
+        <member name="T:TinyIoC.TinyIoCContainer.CustomObjectLifetimeFactory">
+            <summary>
+            A factory that offloads lifetime to an external lifetime provider
+            </summary>
+        </member>
+    </members>
+</doc>

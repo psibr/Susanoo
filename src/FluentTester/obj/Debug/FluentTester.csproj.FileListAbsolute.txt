@@ -1,0 +1,9 @@
+H:\GitHub\Susanoo\src\FluentTester\bin\Debug\FluentTester.exe.config
+H:\GitHub\Susanoo\src\FluentTester\bin\Debug\FluentTester.exe
+H:\GitHub\Susanoo\src\FluentTester\bin\Debug\FluentTester.pdb
+H:\GitHub\Susanoo\src\FluentTester\bin\Debug\Susanoo.Core.dll
+H:\GitHub\Susanoo\src\FluentTester\bin\Debug\Susanoo.Core.pdb
+H:\GitHub\Susanoo\src\FluentTester\bin\Debug\Susanoo.Core.xml
+H:\GitHub\Susanoo\src\FluentTester\obj\Debug\FluentTester.csprojResolveAssemblyReference.cache
+H:\GitHub\Susanoo\src\FluentTester\obj\Debug\FluentTester.exe
+H:\GitHub\Susanoo\src\FluentTester\obj\Debug\FluentTester.pdb
