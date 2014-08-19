@@ -36,7 +36,7 @@ namespace Susanoo
         /// <param name="mappings">The mappings.</param>
         public SingleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult> mappings)
         {
-            this.MappingExpressions = mappings;
+            this.CommandResultExpression = mappings;
             this._CommandExpression = mappings.CommandExpression;
 
             this.CompiledMapping = CompileMappings();
@@ -59,7 +59,7 @@ namespace Susanoo
         {
             get
             {
-                return (this.MappingExpressions.CacheHash * 31) ^ this.CommandExpression.CacheHash;
+                return (this.CommandResultExpression.CacheHash * 31) ^ this.CommandExpression.CacheHash;
             }
         }
 
@@ -67,7 +67,7 @@ namespace Susanoo
         /// Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
-        public ICommandResultExpression<TFilter, TResult> MappingExpressions
+        public ICommandResultExpression<TFilter, TResult> CommandResultExpression
         {
             get
             {
@@ -109,7 +109,7 @@ namespace Susanoo
         {
             IEnumerable<TResult> results = new List<TResult>();
 
-            ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
+            ICommandExpression<TFilter> commandExpression = this.CommandResultExpression.CommandExpression;
 
             using (IDataReader record = databaseManager
                 .ExecuteDataReader(
@@ -157,7 +157,7 @@ namespace Susanoo
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         private Func<IDataRecord, object> CompileMappings()
         {
-            var mappings = this.MappingExpressions.Export<TResult>();
+            var mappings = this.CommandResultExpression.Export<TResult>();
 
             var statements = new List<Expression>();
 
@@ -269,7 +269,7 @@ namespace Susanoo
         {
             IEnumerable<TResult> results = new List<TResult>();
 
-            ICommandExpression<TFilter> commandExpression = this.MappingExpressions.CommandExpression;
+            ICommandExpression<TFilter> commandExpression = this.CommandResultExpression.CommandExpression;
 
             using (IDataReader record = await databaseManager
                 .ExecuteDataReaderAsync(

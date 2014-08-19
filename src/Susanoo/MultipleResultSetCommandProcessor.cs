@@ -25,7 +25,7 @@ namespace Susanoo
         private readonly IResultMapper<TResult2> _Item2Mapper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2}"/> class.
+        /// Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2}" /> class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         public MultipleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult1, TResult2> commandResultExpression)
@@ -156,7 +156,6 @@ namespace Susanoo
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> CommandResultExpression
         {
             get { return this._CommandResultExpression; }
-
         }
 
         /// <summary>

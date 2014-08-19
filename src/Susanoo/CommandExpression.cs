@@ -108,7 +108,7 @@ namespace Susanoo
         /// Adds parameters that will always use the same value.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
-        /// <param name="parameterBuilder">The parameter builder.</param>
+        /// <param name="parameterModifier">The parameter modifier.</param>
         /// <returns>ICommandExpression&lt;T&gt;.</returns>
         public virtual ICommandExpression<TFilter> AddConstantParameter(string parameterName, Action<DbParameter> parameterModifier)
         {

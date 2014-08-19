@@ -84,6 +84,13 @@ namespace Susanoo
         : ICommandProcessorInterop<TFilter>, IFluentPipelineFragment
         where TResult : new()
     {
+
+        /// <summary>
+        /// Gets the command result expression.
+        /// </summary>
+        /// <value>The command result expression.</value>
+        ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; }
+
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
         /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.

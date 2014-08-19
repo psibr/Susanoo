@@ -14,7 +14,15 @@ namespace Susanoo
     {
         private Expression<Func<IDataRecord, string, bool>> MapOnCondition = null;
 
-        private Expression<Func<Type, object, object>> conversionProcess = (type, value) => DatabaseManager.CastValue(type, value, type);
+        private Func<Type, object, object> conversionProcess = (type, value) => DatabaseManager.CastValue(type, value, type);
+
+        private Expression<Func<Type, object, object>> _ConversionProcessExpression = (type, value) => DatabaseManager.CastValue(type, value, type);
+
+        /// <summary>
+        /// Gets the conversion process.
+        /// </summary>
+        /// <value>The conversion process.</value>
+        public Func<Type, object, object> ConversionProcess { get { return this.conversionProcess; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyMappingConfiguration"/> class.
@@ -68,9 +76,10 @@ namespace Susanoo
         /// <param name="process"></param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual IPropertyMappingConfiguration ProcessValueUsing(Expression<Func<Type, object, object>> process)
+        public virtual IPropertyMappingConfiguration ProcessValueUsing(Func<Type, object, object> process)
         {
             this.conversionProcess = process;
+            this._ConversionProcessExpression = (type, value ) => process(type, value);
 
             return this;
         }
@@ -122,7 +131,7 @@ namespace Susanoo
                 Expression.Assign(
                     property,
                     Expression.Convert(
-                        Expression.Invoke(this.conversionProcess,
+                        Expression.Invoke(this._ConversionProcessExpression,
                             Expression.Constant(this.PropertyMetadata.PropertyType, typeof(Type)),
                             Expression.MakeIndex(recordParam, typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
                                 new[]
