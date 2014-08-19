@@ -1,17 +1,21 @@
-﻿using System.Data;
+﻿#region
+
+using System.Data;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
+#endregion
+
 namespace Susanoo
 {
     /// <summary>
-    /// The interface a Data later abstraction must support for use with Susanoo
+    ///     The interface a Data later abstraction must support for use with Susanoo
     /// </summary>
     public interface IDatabaseManager
     {
         /// <summary>
-        /// Executes the data reader.
+        ///     Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -20,17 +24,18 @@ namespace Susanoo
         IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
-        /// Executes the data reader asynchronously.
+        ///     Executes the data reader asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;IDataReader&gt;.</returns>
-        Task<IDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType, CancellationToken cancellationToken, params DbParameter[] parameters);
+        Task<IDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType,
+            CancellationToken cancellationToken, params DbParameter[] parameters);
 
         /// <summary>
-        /// Executes the scalar action asynchronously.
+        ///     Executes the scalar action asynchronously.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">The command text.</param>
@@ -38,10 +43,11 @@ namespace Susanoo
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
-        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken, params DbParameter[] parameters);
+        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken,
+            params DbParameter[] parameters);
 
         /// <summary>
-        /// Executes the scalar.
+        ///     Executes the scalar.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
@@ -51,7 +57,7 @@ namespace Susanoo
         T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
-        /// Executes the stored procedure.
+        ///     Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -60,32 +66,35 @@ namespace Susanoo
         int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
-        /// Executes the stored procedure asynchronously.
+        ///     Executes the stored procedure asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;System.Int32&gt;.</returns>
-        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken, params DbParameter[] parameters);
+        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken,
+            params DbParameter[] parameters);
+
         /// <summary>
-        /// Creates a parameter.
+        ///     Creates a parameter.
         /// </summary>
         /// <returns>DbParameter.</returns>
         DbParameter CreateParameter();
 
         /// <summary>
-        /// Creates the parameter.
+        ///     Creates the parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterDirection">The parameter direction.</param>
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
         /// <returns>DbParameter.</returns>
-        DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value);
+        DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType,
+            object value);
 
         /// <summary>
-        /// Creates the input parameter.
+        ///     Creates the input parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterType">Type of the parameter.</param>

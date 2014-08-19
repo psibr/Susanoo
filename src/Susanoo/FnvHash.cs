@@ -8,12 +8,17 @@
 // Adjusted to C# 4.0 BigInteger by Donovan Crone
 // ***********************************************************************
 // ***********************************************************************
+
+#region
+
 using System;
 using System.Globalization;
 using System.Numerics;
 
+#endregion
+
 /// <summary>
-/// Implementation of the FNV variable bit hash alogrithm.
+///     Implementation of the FNV variable bit hash alogrithm.
 /// </summary>
 internal static class FnvHash
 {
@@ -33,13 +38,13 @@ internal static class FnvHash
 
     private static readonly BigInteger fnv_prime_512 =
         BigInteger.Parse("3583591587484486736891907648909510844994632795575439"
-        + "2558399825615420669938882575126094039892345713852759");
+                         + "2558399825615420669938882575126094039892345713852759");
 
     private static readonly BigInteger fnv_prime_1024 =
         BigInteger.Parse("5016456510113118655434598811035278955030765345404790"
-        + "74430301752383111205510814745150915769222029538271616265187852689"
-        + "52493852922918165243750837466913718040942718731604847379667202603"
-        + "89217684476157468082573");
+                         + "74430301752383111205510814745150915769222029538271616265187852689"
+                         + "52493852922918165243750837466913718040942718731604847379667202603"
+                         + "89217684476157468082573");
 
     private static readonly BigInteger fnv_offset_32 =
         new BigInteger(2166136261);
@@ -52,19 +57,19 @@ internal static class FnvHash
 
     private static readonly BigInteger fnv_offset_256 =
         BigInteger.Parse("10002925795805258090707096862062570483709279601424119"
-        + "3945225284501741471925557");
+                         + "3945225284501741471925557");
 
     private static readonly BigInteger fnv_offset_512 =
         BigInteger.Parse("96593031294966694980094354007163104660904187456726378"
-        + "961083743294344626579945829321977164384498130518922065398057844953"
-        + "28239340083876191928701583869517785");
+                         + "961083743294344626579945829321977164384498130518922065398057844953"
+                         + "28239340083876191928701583869517785");
 
     private static readonly BigInteger fnv_offset_1024 =
         BigInteger.Parse("14197795064947621068722070641403218320880622795441933"
-        + "960878474914617582723252296732303717722150864096521202355549365628"
-        + "174669108571814760471015076148029755969804077320157692458563003215"
-        + "304957150157403644460363550505412711285966361610267868082893823963"
-        + "790439336411086884584107735010676915");
+                         + "960878474914617582723252296732303717722150864096521202355549365628"
+                         + "174669108571814760471015076148029755969804077320157692458563003215"
+                         + "304957150157403644460363550505412711285966361610267868082893823963"
+                         + "790439336411086884584107735010676915");
 
     private static readonly BigInteger fnv_mod_32 =
         BigInteger.Pow(new BigInteger(2), 32);
@@ -87,7 +92,7 @@ internal static class FnvHash
     #endregion Constants
 
     /// <summary>
-    /// Gets the hash.
+    ///     Gets the hash.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <param name="hashBitSize">Size of the hash bit.</param>
@@ -141,13 +146,14 @@ internal static class FnvHash
         BigInteger hash = fnv_offset;
         for (int i = 0; i < value.Length; i++)
         {
-            hash ^= (uint)value[i];
+            hash ^= (uint) value[i];
             hash %= fnv_mod;
             hash *= fnv_prime;
         }
         if (!IsPowerOfTwo(hashBitSize))
         {
-            BigInteger mask = BigInteger.Parse(new string('f', (hashBitSize / 4) + (hashBitSize % 4 != 0 ? 1 : 0)), NumberStyles.HexNumber);
+            BigInteger mask = BigInteger.Parse(new string('f', (hashBitSize/4) + (hashBitSize%4 != 0 ? 1 : 0)),
+                NumberStyles.HexNumber);
             hash = (hash >> hashBitSize) ^ (mask & hash);
         }
 

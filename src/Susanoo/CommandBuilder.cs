@@ -1,25 +1,32 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Data;
+
+#endregion
 
 namespace Susanoo
 {
     /// <summary>
-    /// Provides an entry point to defining commands and therein entering the Susanoo command Fluent API.
+    ///     Provides an entry point to defining commands and therein entering the Susanoo command Fluent API.
     /// </summary>
     public class CommandBuilder : ICommandExpressionBuilder
     {
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on the result of this call.
+        ///     Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on
+        ///     the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        /// <exception cref="System.ArgumentException">No command text provided.;commandText
-        /// or
-        /// TableDirect is not supported.;commandType</exception>
-        public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, System.Data.CommandType commandType)
+        /// <exception cref="System.ArgumentException">
+        ///     No command text provided.;commandText
+        ///     or
+        ///     TableDirect is not supported.;commandType
+        /// </exception>
+        public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
             if (commandText == null)
                 throw new ArgumentNullException("commandText");
@@ -32,16 +39,19 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on the result of this call.
+        ///     Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on
+        ///     the result of this call.
         /// </summary>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        /// <exception cref="System.ArgumentException">No command text provided.;commandText
-        /// or
-        /// TableDirect is not supported.;commandType</exception>
-        public virtual ICommandExpression<dynamic> DefineCommand(string commandText, System.Data.CommandType commandType)
+        /// <exception cref="System.ArgumentException">
+        ///     No command text provided.;commandText
+        ///     or
+        ///     TableDirect is not supported.;commandType
+        /// </exception>
+        public virtual ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
             if (commandText == null)
                 throw new ArgumentNullException("commandText");
