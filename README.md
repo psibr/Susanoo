@@ -12,7 +12,8 @@ var command = CommandManager
     .Finalize();
 ```
 ```csharp
-using (var databaseManager = new DatabaseManager("DepartmentStoreConnectionString"))
+using (var databaseManager =
+    new DatabaseManager("DepartmentStoreConnectionString"))
 {
     IEnumerable<Customer> customers =
         command.Execute(databaseManager, new { HasStoreCard = true });
