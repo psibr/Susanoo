@@ -46,7 +46,8 @@
     <span class="p">.</span><span class="n">Finalize</span><span class="p">();</span>
 </pre></div>
 
-<div class="highlight highlight-csharp"><pre><span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">databaseManager</span> <span class="p">=</span> <span class="k">new</span> <span class="n">DatabaseManager</span><span class="p">(</span><span class="s">"DepartmentStoreConnectionString"</span><span class="p">))</span>
+<div class="highlight highlight-csharp"><pre><span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">databaseManager</span> <span class="p">=</span>
+    <span class="k">new</span> <span class="nf">DatabaseManager</span><span class="p">(</span><span class="s">"DepartmentStoreConnectionString"</span><span class="p">))</span>
 <span class="p">{</span>
     <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span> <span class="n">customers</span> <span class="p">=</span>
         <span class="n">command</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="n">databaseManager</span><span class="p">,</span> <span class="k">new</span> <span class="p">{</span> <span class="n">HasStoreCard</span> <span class="p">=</span> <span class="k">true</span> <span class="p">});</span>
