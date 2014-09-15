@@ -1,157 +1,123 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 
+#endregion
+
 namespace Susanoo
 {
     /// <summary>
-    /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
+    ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
+    // ReSharper disable ClassWithVirtualMembersNeverInherited.Global
     public class DatabaseManager : IDatabaseManager, IDisposable
+        // ReSharper restore ClassWithVirtualMembersNeverInherited.Global
     {
-        private readonly string _ConnectionString;
-        private readonly Action<DbCommand> providerSpecificCommandSettings;
-        private DbConnection _Connection;
+        private readonly string _connectionString;
+        private readonly Action<DbCommand> _providerSpecificCommandSettings;
+        private DbConnection _connection;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        ///     Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
         /// <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
-        /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
-        public DatabaseManager(DbProviderFactory provider, string connectionStringName, Action<DbCommand> providerSpecificCommandSettings)
+        /// <exception cref="System.NotSupportedException">
+        ///     The database provider type specified is not supported. Provider:  +
+        ///     provider.ToString()
+        /// </exception>
+        public DatabaseManager(DbProviderFactory provider, string connectionStringName,
+            Action<DbCommand> providerSpecificCommandSettings)
             : this(provider, connectionStringName)
         {
-            this.providerSpecificCommandSettings = providerSpecificCommandSettings;
+            _providerSpecificCommandSettings = providerSpecificCommandSettings;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        ///     Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. Provider:  + provider.ToString()</exception>
+        /// <exception cref="System.NotSupportedException">
+        ///     The database provider type specified is not supported. Provider:  +
+        ///     provider.ToString()
+        /// </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName)
         {
-            this.Provider = provider;
+            Provider = provider;
 
-            this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+            _connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
                 .ConnectionString;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        ///     Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <exception cref="System.ArgumentException">Provider is a required component of the connection string.;connectionStringName</exception>
+        /// <exception cref="System.ArgumentException">
+        ///     Provider is a required component of the connection
+        ///     string.;connectionStringName
+        /// </exception>
         public DatabaseManager(string connectionStringName)
         {
-            this._ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+            _connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
 
-            this.Provider = DbProviderFactories.GetFactory(ConfigurationManager.ConnectionStrings[connectionStringName].ProviderName);
+            Provider =
+                DbProviderFactories.GetFactory(ConfigurationManager.ConnectionStrings[connectionStringName].ProviderName);
 
-            if (this.Provider == null)
-                throw new ArgumentException("Provider is a required component of the connection string.", "connectionStringName");
+            if (Provider == null)
+                throw new ArgumentException("Provider is a required component of the connection string.",
+                    "connectionStringName");
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="DatabaseManager" /> class.
-        /// </summary>
-        ~DatabaseManager()
-        {
-            this.Dispose(false);
-        }
-
-        /// <summary>
-        /// Gets the connection.
+        ///     Gets the connection.
         /// </summary>
         /// <value>
-        /// The connection.
+        ///     The connection.
         /// </value>
         protected DbConnection Connection
         {
             get
             {
-                if (this._Connection == null)
+                if (_connection == null)
                 {
-                    this._Connection = this.Provider.CreateConnection();
-                    this._Connection.ConnectionString = this._ConnectionString;
+                    _connection = Provider.CreateConnection();
+                    if (_connection != null) _connection.ConnectionString = _connectionString;
                 }
 
-                return this._Connection;
+                return _connection;
             }
         }
 
         /// <summary>
-        /// Gets the provider.
+        ///     Gets the provider.
         /// </summary>
         /// <value>
-        /// The provider.
+        ///     The provider.
         /// </value>
         protected DbProviderFactory Provider { get; private set; }
 
         /// <summary>
-        /// Detects if a value is DBNull, null, or has value.
-        /// </summary>
-        /// <param name="newType">The new type.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
-        /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object CastValue(Type newType, object value, object defaultValue, string typeName)
-        {
-            object returnValue;
-
-            //else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
-            //    returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
-            //else if (newType == typeof(int) && value.GetType() == typeof(long))
-            //    returnValue = ((object)((int)((long)value)));
-            //else if (newType == typeof(int) && value.GetType() == typeof(decimal))
-            //    returnValue = ((object)((int)((decimal)value)));
-            if (newType == typeof(string))
-            {
-                returnValue = value.ToString();
-
-                //if (!string.IsNullOrEmpty(typeName))
-                //    if (typeName == "date")
-                //        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
-            }
-            else
-                returnValue = value;
-
-            return returnValue;
-        }
-
-        /// <summary>
-        /// Casts the value.
-        /// </summary>
-        /// <param name="newType">The new type.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <returns>System.Object.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object CastValue(Type newType, object value, object defaultValue)
-        {
-            return CastValue(newType, value, defaultValue, null);
-        }
-
-        /// <summary>
-        /// Executes the data reader.
+        ///     Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters)
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType,
+            params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
@@ -160,9 +126,9 @@ namespace Susanoo
 
             try
             {
-                this.OpenConnection();
+                OpenConnection();
 
-                using (DbCommand command = PrepCommand(this.Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     results = command.ExecuteReader();
                 }
@@ -179,7 +145,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Executes the data reader asynchronously.
+        ///     Executes the data reader asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -187,7 +153,7 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual async Task<IDataReader> ExecuteDataReaderAsync(string commandText,
             CommandType commandType,
             CancellationToken cancellationToken = default(CancellationToken),
@@ -200,9 +166,9 @@ namespace Susanoo
 
             try
             {
-                this.OpenConnection();
+                OpenConnection();
 
-                using (DbCommand command = PrepCommand(this.Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     results = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
                 }
@@ -219,7 +185,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Executes the scalar.
+        ///     Executes the scalar.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
@@ -227,7 +193,7 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns>T.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
@@ -235,29 +201,29 @@ namespace Susanoo
 
             try
             {
-                this.OpenConnection();
+                OpenConnection();
 
-                using (DbCommand command = PrepCommand(this.Connection, commandText, commandType, parameters))
+                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    return (T)DatabaseManager.CastValue(typeof(T), command.ExecuteScalar(), default(T));
+                    return (T) CastValue(typeof (T), command.ExecuteScalar(), default(T), null);
                 }
             }
             finally
             {
                 if (Transaction.Current == null)
-                    this.CloseConnection();
+                    CloseConnection();
             }
         }
 
         /// <summary>
-        /// Executes the stored procedure.
+        ///     Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
@@ -265,9 +231,9 @@ namespace Susanoo
 
             try
             {
-                this.OpenConnection();
+                OpenConnection();
 
-                using (DbCommand command = PrepCommand(this.Connection, commandText, commandType, parameters))
+                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     return command.ExecuteNonQuery();
                 }
@@ -275,12 +241,12 @@ namespace Susanoo
             finally
             {
                 if (Transaction.Current == null)
-                    this.CloseConnection();
+                    CloseConnection();
             }
         }
 
         /// <summary>
-        /// Executes the stored procedure asynchronously.
+        ///     Executes the stored procedure asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -288,7 +254,7 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual async Task<int> ExecuteNonQueryAsync(string commandText,
             CommandType commandType,
             CancellationToken cancellationToken = default(CancellationToken),
@@ -299,9 +265,9 @@ namespace Susanoo
 
             try
             {
-                this.OpenConnection();
+                OpenConnection();
 
-                using (DbCommand command = PrepCommand(this.Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }
@@ -309,39 +275,43 @@ namespace Susanoo
             finally
             {
                 if (Transaction.Current == null)
-                    this.CloseConnection();
+                    CloseConnection();
             }
         }
 
         /// <summary>
-        /// Creates a parameter.
+        ///     Creates a parameter.
         /// </summary>
         /// <returns></returns>
         public virtual DbParameter CreateParameter()
         {
-            return this.Provider.CreateParameter();
+            return Provider.CreateParameter();
         }
 
         /// <summary>
-        /// Creates a parameter.
+        ///     Creates a parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterDirection">The parameter direction.</param>
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection, DbType parameterType, object value)
+        public virtual DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection,
+            DbType parameterType, object value)
         {
-            DbParameter newParam = this.Provider.CreateParameter();
-            newParam.ParameterName = parameterName;
-            newParam.Direction = parameterDirection;
-            newParam.DbType = parameterType;
-            newParam.Value = value;
+            var newParam = Provider.CreateParameter();
+            if (newParam != null)
+            {
+                newParam.ParameterName = parameterName;
+                newParam.Direction = parameterDirection;
+                newParam.DbType = parameterType;
+                newParam.Value = value;
+            }
             return newParam;
         }
 
         /// <summary>
-        /// Creates a parameter.
+        ///     Creates a parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterType">Type of the parameter.</param>
@@ -349,22 +319,11 @@ namespace Susanoo
         /// <returns></returns>
         public virtual DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value)
         {
-            return this.CreateParameter(parameterName, ParameterDirection.Input, parameterType, value);
+            return CreateParameter(parameterName, ParameterDirection.Input, parameterType, value);
         }
 
         /// <summary>
-        /// Begins a transaction.
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("Prefer using System.Transactions.TransactionScope.", false)]
-        public virtual DbTransaction BeginTransaction()
-        {
-            this.OpenConnection();
-            return this.Connection.BeginTransaction();
-        }
-
-        /// <summary>
-        /// execute scalar as an asynchronous operation.
+        ///     execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">The command text.</param>
@@ -383,95 +342,159 @@ namespace Susanoo
 
             try
             {
-                this.OpenConnection();
+                OpenConnection();
 
-                using (DbCommand command = PrepCommand(this.Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    return (T)DatabaseManager.CastValue(typeof(T), await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T));
+                    return
+                        (T)
+                            CastValue(typeof (T),
+                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T),
+                                null);
                 }
             }
             finally
             {
                 if (Transaction.Current == null)
-                    this.CloseConnection();
+                    CloseConnection();
             }
         }
 
         /// <summary>
-        /// Preps the command.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Realizes an instance of the <see cref="DatabaseManager" /> class.
+        /// </summary>
+        ~DatabaseManager()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        ///     Detects if a value is DBNull, null, or has value.
+        /// </summary>
+        /// <param name="newType">The new type.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
+        /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static object CastValue(Type newType, object value, object defaultValue, string typeName)
+        {
+            var returnValue = value;
+
+            if (value == DBNull.Value)
+                returnValue = defaultValue;
+
+            //else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
+            //    returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
+            //else if (newType == typeof(int) && value.GetType() == typeof(long))
+            //    returnValue = ((object)((int)((long)value)));
+            //else if (newType == typeof(int) && value.GetType() == typeof(decimal))
+            //    returnValue = ((object)((int)((decimal)value)));
+            if (newType == typeof (string))
+            {
+                returnValue = value.ToString();
+
+                //if (!string.IsNullOrEmpty(typeName))
+                //    if (typeName == "date")
+                //        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        ///     Begins a transaction.
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("Prefer using System.Transactions.TransactionScope.", false)]
+        public virtual DbTransaction BeginTransaction()
+        {
+            OpenConnection();
+            return Connection.BeginTransaction();
+        }
+
+        /// <summary>
+        ///     Preps the command.
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>DbCommand.</returns>
-        protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType, params DbParameter[] parameters)
+        protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType,
+            params DbParameter[] parameters)
         {
-            DbCommand command = this.Provider.CreateCommand();
+            DbCommand command = Provider.CreateCommand();
 
-            command.CommandType = commandType;
-            command.Connection = this.Connection;
+            if (command != null)
+            {
+                command.CommandType = commandType;
+                command.Connection = Connection;
 
-            command.CommandText = commandText;
+                command.CommandText = commandText;
 
-            if (parameters != null)
-                foreach (var param in parameters)
-                    command.Parameters.Add(param);
+                if (parameters != null)
+                    foreach (var param in parameters)
+                        command.Parameters.Add(param);
 
-            this.CallProviderSpecificCommandSettings(command);
+                CallProviderSpecificCommandSettings(command);
+            }
 
             return command;
         }
 
         /// <summary>
-        /// Adjusts the command by provider.
+        ///     Adjusts the command by provider.
         /// </summary>
         /// <param name="command">The command.</param>
         protected virtual void CallProviderSpecificCommandSettings(DbCommand command)
         {
-            if (this.providerSpecificCommandSettings != null)
-                this.providerSpecificCommandSettings(command);
+            if (_providerSpecificCommandSettings != null)
+                _providerSpecificCommandSettings(command);
         }
 
         /// <summary>
-        /// Opens the connection.
+        ///     Opens the connection.
         /// </summary>
         protected virtual void OpenConnection()
         {
-            if (this.Connection.State != ConnectionState.Open)
-                this.Connection.Open();
+            if (Connection.State != ConnectionState.Open)
+                Connection.Open();
         }
 
         /// <summary>
-        /// Closes the connection.
+        ///     Closes the connection.
         /// </summary>
         protected virtual void CloseConnection()
         {
-            if (this.Connection.State != ConnectionState.Closed)
-                this.Connection.Close();
+            if (Connection.State != ConnectionState.Closed)
+                Connection.Close();
         }
 
         #region IDisposable Members
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///     Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        /// <param name="isDisposing">
+        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
+        ///     unmanaged resources.
+        /// </param>
         protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposing)
             {
-                this.Connection.Close();
-                this._Connection.Dispose();
+                Connection.Close();
+                _connection.Dispose();
             }
         }
 

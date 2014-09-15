@@ -1,99 +1,126 @@
-﻿using System;
+﻿#region
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
 
+#endregion
+
 namespace Susanoo
 {
     /// <summary>
-    /// This class is used as the single entry point when dealing with Susanoo.
+    ///     This class is used as the single entry point when dealing with Susanoo.
     /// </summary>
     public static class CommandManager
     {
         /// <summary>
-        /// The synchronization root.
-        /// </summary>
-        private static readonly object syncRoot = new object();
-
-        private static AssemblyBuilder _expressionAssembly = AppDomain.CurrentDomain
-                    .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave);
-
-        private static ModuleBuilder _moduleBuilder = ExpressionAssembly
-                    .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
-
-        private static ICommandExpressionBuilder _CommandBuilder = new CommandBuilder();
-
-        private static Func<string, IDatabaseManager> _DatabaseManagerFactoryMethod = (connectionStringName) =>
-                    new DatabaseManager(connectionStringName);
-
-        /// <summary>
-        /// Gets the expression assembly that contains runtime compiled methods used for mappings.
+        ///     Gets the expression assembly that contains runtime compiled methods used for mappings.
         /// </summary>
         /// <value>The expression assembly.</value>
-        public static AssemblyBuilder ExpressionAssembly
-        {
-            get
+        private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
+            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
+
+        private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
+            .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
+
+        private static readonly IDictionary<Type, DbType> TypeConversions =
+            new ConcurrentDictionary<Type, DbType>(new Dictionary<Type, DbType>
             {
-                return _expressionAssembly;
-            }
+                {typeof (byte), DbType.Byte},
+                {typeof (sbyte), DbType.SByte},
+                {typeof (short), DbType.Int16},
+                {typeof (ushort), DbType.UInt16},
+                {typeof (int), DbType.Int32},
+                {typeof (uint), DbType.UInt32},
+                {typeof (long), DbType.Int64},
+                {typeof (ulong), DbType.UInt64},
+                {typeof (float), DbType.Single},
+                {typeof (double), DbType.Double},
+                {typeof (decimal), DbType.Decimal},
+                {typeof (bool), DbType.Boolean},
+                {typeof (string), DbType.String},
+                {typeof (char), DbType.StringFixedLength},
+                {typeof (Guid), DbType.Guid},
+                {typeof (DateTime), DbType.DateTime},
+                {typeof (DateTimeOffset), DbType.DateTimeOffset},
+                {typeof (byte[]), DbType.Binary},
+                {typeof (byte?), DbType.Byte},
+                {typeof (sbyte?), DbType.SByte},
+                {typeof (short?), DbType.Int16},
+                {typeof (ushort?), DbType.UInt16},
+                {typeof (int?), DbType.Int32},
+                {typeof (uint?), DbType.UInt32},
+                {typeof (long?), DbType.Int64},
+                {typeof (ulong?), DbType.UInt64},
+                {typeof (float?), DbType.Single},
+                {typeof (double?), DbType.Double},
+                {typeof (decimal?), DbType.Decimal},
+                {typeof (bool?), DbType.Boolean},
+                {typeof (char?), DbType.StringFixedLength},
+                {typeof (Guid?), DbType.Guid},
+                {typeof (DateTime?), DbType.DateTime},
+                {typeof (DateTimeOffset?), DbType.DateTimeOffset}
+            });
+
+        private static ICommandExpressionBuilder _commandBuilder = new CommandBuilder();
+
+        private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
+            new DatabaseManager(connectionStringName);
+
+        /// <summary>
+        ///     Gets the commander.
+        /// </summary>
+        /// <value>The commander.</value>
+        public static ICommandExpressionBuilder Commander
+        {
+            get { return _commandBuilder; }
         }
 
         /// <summary>
-        /// Gets the dynamic namespace.
+        ///     Gets the dynamic namespace.
         /// </summary>
         /// <value>The dynamic namespace.</value>
         internal static ModuleBuilder DynamicNamespace
         {
-            get
-            {
-                return _moduleBuilder;
-            }
+            get { return ModuleBuilder; }
         }
 
         /// <summary>
-        /// Gets the commander.
-        /// </summary>
-        /// <value>The commander.</value>
-        internal static ICommandExpressionBuilder Commander
-        {
-            get
-            {
-                return _CommandBuilder;
-            }
-        }
-
-        /// <summary>
-        /// Gets the database manager.
+        ///     Gets the database manager.
         /// </summary>
         /// <param name="connectionString">The connection string.</param>
         /// <returns>IDatabaseManager.</returns>
         /// <value>The database manager.</value>
         public static IDatabaseManager BuildDatabaseManager(string connectionString)
         {
-            return _DatabaseManagerFactoryMethod(connectionString);
+            return _databaseManagerFactoryMethod(connectionString);
         }
 
         /// <summary>
-        /// Registers the database manager.
+        ///     Registers the database manager.
         /// </summary>
         /// <param name="databaseManagerFactoryMethod">The database manager factory method.</param>
         public static void RegisterDatabaseManagerFactory(Func<string, IDatabaseManager> databaseManagerFactoryMethod)
         {
             if (databaseManagerFactoryMethod != null)
-                _DatabaseManagerFactoryMethod = databaseManagerFactoryMethod;
+                _databaseManagerFactoryMethod = databaseManagerFactoryMethod;
         }
 
         /// <summary>
-        /// Registers a command builder.
+        ///     Registers a command builder.
         /// </summary>
         /// <param name="builder">The builder.</param>
         public static void RegisterCommandBuilder(ICommandExpressionBuilder builder)
         {
-            CommandManager._CommandBuilder = builder;
+            _commandBuilder = builder;
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+        ///     Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
+        ///     the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandText">The command text.</param>
@@ -101,20 +128,38 @@ namespace Susanoo
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         public static ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
-            return CommandManager.Commander
+            return Commander
                 .DefineCommand<TFilter>(commandText, commandType);
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on the result of this call.
+        ///     Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
+        ///     the result of this call.
         /// </summary>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         public static ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
-            return CommandManager.Commander
+            return Commander
                 .DefineCommand(commandText, commandType);
+        }
+
+        /// <summary>
+        ///     Gets the database type from the CLR type.
+        /// </summary>
+        /// <param name="type">The CLR type.</param>
+        /// <returns>DbType.</returns>
+        public static DbType? GetDbType(Type type)
+        {
+            DbType dataType;
+            DbType? typeToUse;
+            if (!TypeConversions.TryGetValue(type, out dataType))
+                typeToUse = null;
+            else
+                typeToUse = dataType;
+
+            return typeToUse;
         }
     }
 

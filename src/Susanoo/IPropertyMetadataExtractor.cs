@@ -1,16 +1,21 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+
+#endregion
 
 namespace Susanoo
 {
     /// <summary>
-    /// Describes the required methods for determining if a property can be mapped using Susanoo.
+    ///     Describes the required methods for determining if a property can be mapped using Susanoo.
     /// </summary>
     public interface IPropertyMetadataExtractor
     {
         /// <summary>
-        /// Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate declarative aliases.
+        ///     Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate
+        ///     declarative aliases.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="actions">The actions.</param>
@@ -19,14 +24,14 @@ namespace Susanoo
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
         Dictionary<PropertyInfo, PropertyMap> FindAllowedProperties(
             Type objectType,
-            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
-                | Susanoo.DescriptorActions.Update
-                | Susanoo.DescriptorActions.Insert,
+            DescriptorActions actions = DescriptorActions.Read
+                                        | DescriptorActions.Update
+                                        | DescriptorActions.Insert,
             string[] whitelist = null,
             string[] blacklist = null);
 
         /// <summary>
-        /// Determines whether the specified property is actionable.
+        ///     Determines whether the specified property is actionable.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
@@ -37,14 +42,14 @@ namespace Susanoo
         bool IsActionableProperty(
             PropertyInfo propertyInfo,
             object[] customAttributes,
-            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
-                | Susanoo.DescriptorActions.Update
-                | Susanoo.DescriptorActions.Insert,
+            DescriptorActions actions = DescriptorActions.Read
+                                        | DescriptorActions.Update
+                                        | DescriptorActions.Insert,
             string[] whitelist = null,
             string[] blacklist = null);
 
         /// <summary>
-        /// Determines whether the specified property is restricted declaratively.
+        ///     Determines whether the specified property is restricted declaratively.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="attribute">The attribute.</param>
@@ -53,26 +58,26 @@ namespace Susanoo
         bool IsAllowedByAttribute(
             PropertyInfo propertyInfo,
             AllowedActionsAttribute attribute,
-            Susanoo.DescriptorActions actions = Susanoo.DescriptorActions.Read
-                | Susanoo.DescriptorActions.Update
-                | Susanoo.DescriptorActions.Insert);
+            DescriptorActions actions = DescriptorActions.Read
+                                        | DescriptorActions.Update
+                                        | DescriptorActions.Insert);
 
         /// <summary>
-        /// Determines whether the specified property is blacklisted.
+        ///     Determines whether the specified property is blacklisted.
         /// </summary>
         /// <param name="propertyInfo">The property info.</param>
         /// <param name="blacklist">The blacklist.</param>
         bool IsBlacklisted(PropertyInfo propertyInfo, string[] blacklist);
 
         /// <summary>
-        /// Determines whether the specified property is whitelisted.
+        ///     Determines whether the specified property is whitelisted.
         /// </summary>
         /// <param name="propertyInfo">The property info.</param>
         /// <param name="whitelist">The whitelist.</param>
         bool IsWhitelisted(PropertyInfo propertyInfo, string[] whitelist);
 
         /// <summary>
-        /// Resolves the name of the return column as defined declaratively.
+        ///     Resolves the name of the return column as defined declaratively.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
