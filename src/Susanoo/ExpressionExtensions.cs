@@ -15,37 +15,6 @@ namespace Susanoo
     public static class ExpressionExtensions
     {
         /// <summary>
-        ///     Given an expression, extract the listed property name; similar to reflection but with familiar LINQ+lambdas.
-        /// </summary>
-        /// <typeparam name="TModel">the model type to extract property names</typeparam>
-        /// <typeparam name="TValue">the value type of the expected property</typeparam>
-        /// <param name="propertySelector">expression that just selects a model property to be turned into a string</param>
-        /// <returns>indicated property name</returns>
-        internal static string GetPropertyName<TModel, TValue>(this Expression<Func<TModel, TValue>> propertySelector)
-        {
-            string name;
-            if (propertySelector.Body is UnaryExpression)
-                name = ((MemberExpression) (propertySelector.Body as UnaryExpression).Operand).Member.Name;
-            else
-                name = ((MemberExpression) propertySelector.Body).Member.Name;
-
-            return name;
-        }
-
-        /// <summary>
-        ///     Gets the default value of a type.
-        /// </summary>
-        /// <param name="t">The t.</param>
-        /// <returns>System.Object.</returns>
-        internal static object GetDefaultValue(this Type t)
-        {
-            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
-                return Activator.CreateInstance(t);
-
-            return null;
-        }
-
-        /// <summary>
         ///     Executes the scalar.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
@@ -286,6 +255,37 @@ namespace Susanoo
             where TResult7 : new()
         {
             return command.Execute(databaseManager, filter, explicitParameters);
+        }
+
+        /// <summary>
+        ///     Given an expression, extract the listed property name; similar to reflection but with familiar LINQ+lambdas.
+        /// </summary>
+        /// <typeparam name="TModel">the model type to extract property names</typeparam>
+        /// <typeparam name="TValue">the value type of the expected property</typeparam>
+        /// <param name="propertySelector">expression that just selects a model property to be turned into a string</param>
+        /// <returns>indicated property name</returns>
+        internal static string GetPropertyName<TModel, TValue>(this Expression<Func<TModel, TValue>> propertySelector)
+        {
+            string name;
+            if (propertySelector.Body is UnaryExpression)
+                name = ((MemberExpression) (propertySelector.Body as UnaryExpression).Operand).Member.Name;
+            else
+                name = ((MemberExpression) propertySelector.Body).Member.Name;
+
+            return name;
+        }
+
+        /// <summary>
+        ///     Gets the default value of a type.
+        /// </summary>
+        /// <param name="t">The t.</param>
+        /// <returns>System.Object.</returns>
+        internal static object GetDefaultValue(this Type t)
+        {
+            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
+                return Activator.CreateInstance(t);
+
+            return null;
         }
     }
 }

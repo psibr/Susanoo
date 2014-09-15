@@ -913,6 +913,8 @@ namespace Susanoo
                     commandExpression.DbCommandType,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
+                //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
+
                 results1 = _item1Mapper.MapResult(record);
 
                 if (record.NextResult())

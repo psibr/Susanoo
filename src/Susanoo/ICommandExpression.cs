@@ -31,9 +31,9 @@ namespace Susanoo
         CommandType DbCommandType { get; }
 
         /// <summary>
-        ///     Finalizes the pipeline with no result mappings.
+        ///     Realizes the pipeline with no result mappings.
         /// </summary>
-        ICommandProcessor<TFilter> Finalize();
+        ICommandProcessor<TFilter> Realize();
 
         /// <summary>
         ///     Adds parameters that will always use the same value.

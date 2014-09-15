@@ -1,6 +1,8 @@
 ﻿#region
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -18,17 +20,64 @@ namespace Susanoo
         ///     Gets the expression assembly that contains runtime compiled methods used for mappings.
         /// </summary>
         /// <value>The expression assembly.</value>
-        public static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
+        private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
             .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
 
         private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
             .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
+
+        private static readonly IDictionary<Type, DbType> TypeConversions =
+            new ConcurrentDictionary<Type, DbType>(new Dictionary<Type, DbType>
+            {
+                {typeof (byte), DbType.Byte},
+                {typeof (sbyte), DbType.SByte},
+                {typeof (short), DbType.Int16},
+                {typeof (ushort), DbType.UInt16},
+                {typeof (int), DbType.Int32},
+                {typeof (uint), DbType.UInt32},
+                {typeof (long), DbType.Int64},
+                {typeof (ulong), DbType.UInt64},
+                {typeof (float), DbType.Single},
+                {typeof (double), DbType.Double},
+                {typeof (decimal), DbType.Decimal},
+                {typeof (bool), DbType.Boolean},
+                {typeof (string), DbType.String},
+                {typeof (char), DbType.StringFixedLength},
+                {typeof (Guid), DbType.Guid},
+                {typeof (DateTime), DbType.DateTime},
+                {typeof (DateTimeOffset), DbType.DateTimeOffset},
+                {typeof (byte[]), DbType.Binary},
+                {typeof (byte?), DbType.Byte},
+                {typeof (sbyte?), DbType.SByte},
+                {typeof (short?), DbType.Int16},
+                {typeof (ushort?), DbType.UInt16},
+                {typeof (int?), DbType.Int32},
+                {typeof (uint?), DbType.UInt32},
+                {typeof (long?), DbType.Int64},
+                {typeof (ulong?), DbType.UInt64},
+                {typeof (float?), DbType.Single},
+                {typeof (double?), DbType.Double},
+                {typeof (decimal?), DbType.Decimal},
+                {typeof (bool?), DbType.Boolean},
+                {typeof (char?), DbType.StringFixedLength},
+                {typeof (Guid?), DbType.Guid},
+                {typeof (DateTime?), DbType.DateTime},
+                {typeof (DateTimeOffset?), DbType.DateTimeOffset}
+            });
 
         private static ICommandExpressionBuilder _commandBuilder = new CommandBuilder();
 
         private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
             new DatabaseManager(connectionStringName);
 
+        /// <summary>
+        ///     Gets the commander.
+        /// </summary>
+        /// <value>The commander.</value>
+        public static ICommandExpressionBuilder Commander
+        {
+            get { return _commandBuilder; }
+        }
 
         /// <summary>
         ///     Gets the dynamic namespace.
@@ -37,15 +86,6 @@ namespace Susanoo
         internal static ModuleBuilder DynamicNamespace
         {
             get { return ModuleBuilder; }
-        }
-
-        /// <summary>
-        ///     Gets the commander.
-        /// </summary>
-        /// <value>The commander.</value>
-        internal static ICommandExpressionBuilder Commander
-        {
-            get { return _commandBuilder; }
         }
 
         /// <summary>
@@ -103,6 +143,23 @@ namespace Susanoo
         {
             return Commander
                 .DefineCommand(commandText, commandType);
+        }
+
+        /// <summary>
+        ///     Gets the database type from the CLR type.
+        /// </summary>
+        /// <param name="type">The CLR type.</param>
+        /// <returns>DbType.</returns>
+        public static DbType? GetDbType(Type type)
+        {
+            DbType dataType;
+            DbType? typeToUse;
+            if (!TypeConversions.TryGetValue(type, out dataType))
+                typeToUse = null;
+            else
+                typeToUse = dataType;
+
+            return typeToUse;
         }
     }
 

@@ -17,7 +17,9 @@ namespace Susanoo
     /// <summary>
     ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
+    // ReSharper disable ClassWithVirtualMembersNeverInherited.Global
     public class DatabaseManager : IDatabaseManager, IDisposable
+        // ReSharper restore ClassWithVirtualMembersNeverInherited.Global
     {
         private readonly string _connectionString;
         private readonly Action<DbCommand> _providerSpecificCommandSettings;
@@ -126,7 +128,7 @@ namespace Susanoo
             {
                 OpenConnection();
 
-                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     results = command.ExecuteReader();
                 }
@@ -166,7 +168,7 @@ namespace Susanoo
             {
                 OpenConnection();
 
-                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     results = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
                 }
@@ -203,7 +205,7 @@ namespace Susanoo
 
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    return (T) CastValue(typeof (T), command.ExecuteScalar(), default(T));
+                    return (T) CastValue(typeof (T), command.ExecuteScalar(), default(T), null);
                 }
             }
             finally
@@ -265,7 +267,7 @@ namespace Susanoo
             {
                 OpenConnection();
 
-                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }
@@ -297,7 +299,7 @@ namespace Susanoo
         public virtual DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection,
             DbType parameterType, object value)
         {
-            DbParameter newParam = Provider.CreateParameter();
+            var newParam = Provider.CreateParameter();
             if (newParam != null)
             {
                 newParam.ParameterName = parameterName;
@@ -342,12 +344,13 @@ namespace Susanoo
             {
                 OpenConnection();
 
-                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     return
                         (T)
                             CastValue(typeof (T),
-                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T));
+                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T),
+                                null);
                 }
             }
             finally
@@ -358,7 +361,16 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes an instance of the <see cref="DatabaseManager" /> class.
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Realizes an instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         ~DatabaseManager()
         {
@@ -376,7 +388,7 @@ namespace Susanoo
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object CastValue(Type newType, object value, object defaultValue, string typeName)
         {
-            object returnValue = value;
+            var returnValue = value;
 
             if (value == DBNull.Value)
                 returnValue = defaultValue;
@@ -397,19 +409,6 @@ namespace Susanoo
             }
 
             return returnValue;
-        }
-
-        /// <summary>
-        ///     Casts the value.
-        /// </summary>
-        /// <param name="newType">The new type.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <returns>System.Object.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object CastValue(Type newType, object value, object defaultValue)
-        {
-            return CastValue(newType, value, defaultValue, null);
         }
 
         /// <summary>
@@ -482,15 +481,6 @@ namespace Susanoo
         }
 
         #region IDisposable Members
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
 
         /// <summary>
         ///     Releases unmanaged and - optionally - managed resources.

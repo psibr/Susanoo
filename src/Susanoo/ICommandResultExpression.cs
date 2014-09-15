@@ -54,10 +54,10 @@ namespace Susanoo
             Action<IResultMappingExpression<TFilter, TResult>> mappings);
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        ICommandProcessor<TFilter, TResult> Finalize();
+        ICommandProcessor<TFilter, TResult> Realize();
     }
 
     /// <summary>
@@ -81,10 +81,10 @@ namespace Susanoo
             where TResultType : new();
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2> Finalize();
+        ICommandProcessor<TFilter, TResult1, TResult2> Realize();
     }
 
     /// <summary>
@@ -111,10 +111,10 @@ namespace Susanoo
             where TResultType : new();
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Finalize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Realize();
     }
 
     /// <summary>
@@ -143,10 +143,10 @@ namespace Susanoo
             where TResultType : new();
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Finalize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Realize();
     }
 
     /// <summary>
@@ -178,10 +178,10 @@ namespace Susanoo
             where TResultType : new();
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Finalize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Realize();
     }
 
     /// <summary>
@@ -215,10 +215,10 @@ namespace Susanoo
             where TResultType : new();
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Finalize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Realize();
     }
 
     /// <summary>
@@ -254,9 +254,9 @@ namespace Susanoo
             where TResultType : new();
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Finalize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Realize();
     }
 }

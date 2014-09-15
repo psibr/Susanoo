@@ -100,7 +100,6 @@ namespace Susanoo
             return ExecuteNonQuery(databaseManager, default(TFilter), explicitParameters);
         }
 
-
         /// <summary>
         ///     Execute scalar as an asynchronous operation.
         /// </summary>

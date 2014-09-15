@@ -107,10 +107,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline with no result mappings.
+        ///     Realizes the pipeline with no result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
-        public ICommandProcessor<TFilter> Finalize()
+        public ICommandProcessor<TFilter> Realize()
         {
             return new NoResultSetCommandProcessor<TFilter>(this);
         }
@@ -415,6 +415,11 @@ namespace Susanoo
 
                         param.Value = propInfo.GetValue(filter);
 
+                        var type = CommandManager.GetDbType(propInfo.PropertyType);
+
+                        if (type.HasValue)
+                            param.DbType = type.Value;
+
                         if (item.Value != null)
                             item.Value.Invoke(param);
 
@@ -435,10 +440,23 @@ namespace Susanoo
 
                             param.Value = propInfo.GetValue(filter);
 
+                            var type = CommandManager.GetDbType(propInfo.PropertyType);
+
+                            if (type.HasValue)
+                                param.DbType = type.Value;
+
                             Action<DbParameter> value;
-                            if (_parameterInclusions.TryGetValue(propInfo.Name, out value)
-                                && value != null)
-                                value.Invoke(param);
+                            if (_parameterInclusions.TryGetValue(propInfo.Name, out value))
+                            {
+                                if (value != null)
+                                    value.Invoke(param);
+                            }
+                            else
+                            {
+                                if (type == null)
+                                    continue; //If we don't know what to do with the Type of the property
+                                //and there isn't a explicit inclusion of the property, then ignore it.
+                            }
 
                             properties.Add(param);
                         }

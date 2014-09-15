@@ -20,21 +20,21 @@ namespace Susanoo
         ///     Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        protected CommandResultCommon(ICommandExpression<TFilter> command)
-            : this(command, new CommandResultImplementor<TFilter>())
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
-        /// </summary>
-        /// <param name="command">The command.</param>
         /// <param name="implementor">The implementor.</param>
         internal CommandResultCommon(ICommandExpression<TFilter> command, ICommandResultImplementor<TFilter> implementor)
         {
             _implementor = implementor;
 
             CommandExpression = command;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        protected CommandResultCommon(ICommandExpression<TFilter> command)
+            : this(command, new CommandResultImplementor<TFilter>())
+        {
         }
 
         /// <summary>
@@ -127,10 +127,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult> Finalize()
+        public ICommandProcessor<TFilter, TResult> Realize()
         {
             return new SingleResultSetCommandProcessor<TFilter, TResult>(this);
         }
@@ -182,10 +182,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2> Finalize()
+        public ICommandProcessor<TFilter, TResult1, TResult2> Realize()
         {
             return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>(this);
         }
@@ -230,10 +230,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Finalize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Realize()
         {
             return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>(this);
         }
@@ -280,10 +280,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Finalize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Realize()
         {
             return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
         }
@@ -334,10 +334,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Finalize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Realize()
         {
             return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
         }
@@ -390,10 +390,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Finalize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Realize()
         {
             return
                 new MultipleResultSetCommandProcessor
@@ -451,10 +451,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Finalizes the pipeline and compiles result mappings.
+        ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Finalize
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Realize
             ()
         {
             return
