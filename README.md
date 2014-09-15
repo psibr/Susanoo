@@ -12,7 +12,8 @@ var command = CommandManager
     .Finalize();
 ```
 ```csharp
-using (var databaseManager = new DatabaseManager("DepartmentStoreConnectionString"))
+using (var databaseManager =
+    new DatabaseManager("DepartmentStoreConnectionString"))
 {
     IEnumerable<Customer> customers =
         command.Execute(databaseManager, new { HasStoreCard = true });
@@ -21,6 +22,13 @@ using (var databaseManager = new DatabaseManager("DepartmentStoreConnectionStrin
 
 #####How does it work?
 Susanoo uses Linq expression trees to dynamically write and compile code to map your objects before the command ever executes, leaving your SQL calls unaffected.
+
+#####Installation
+Susanoo does not require any configuration out of the box. The easiest way to install is of course via nuget package.
+
+```
+PM> Install-Package Susanoo.Core
+```
 
 #####Debugging Susanoo
 
