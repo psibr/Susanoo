@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Dynamic;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
@@ -28,10 +30,23 @@ namespace Susanoo
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
 
+
         /// <summary>
-        ///     The mapping expressions before compilation.
+        /// Dumps all columns into an expando for simple use cases.
         /// </summary>
-        private ICommandResultExpression<TFilter, TResult> _mappingExpressions;
+        /// <param name="record">The record.</param>
+        /// <returns>dynamic.</returns>
+        private static dynamic DynamicConversion(IDataRecord record)
+        {
+            dynamic obj = new ExpandoObject();
+
+            for (var i = 0; i < record.FieldCount; i++)
+            {
+                ((IDictionary<string, Object>)obj).Add(record.GetName(i), record.GetValue(i));
+            }
+
+            return obj;
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
@@ -42,7 +57,8 @@ namespace Susanoo
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;
 
-            CompiledMapping = CompileMappings();
+
+            CompiledMapping = typeof (TResult) != typeof (object) ? CompileMappings() : DynamicConversion;
         }
 
         /// <summary>
@@ -73,11 +89,7 @@ namespace Susanoo
         ///     Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
-        public ICommandResultExpression<TFilter, TResult> CommandResultExpression
-        {
-            get { return _mappingExpressions; }
-            private set { _mappingExpressions = value; }
-        }
+        public ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; private set; }
 
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
