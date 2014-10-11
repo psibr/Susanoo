@@ -28,7 +28,7 @@ namespace Susanoo
         private readonly Dictionary<string, Action<DbParameter>> _constantParameters =
             new Dictionary<string, Action<DbParameter>>();
 
-        private bool _SendNullValues = false;
+        private NullValueMode _NullValueMode = NullValueMode.Never;
 
         /// <summary>
         ///     The parameter exclusions
@@ -168,6 +168,12 @@ namespace Susanoo
             if (explicitParameters != null)
                 foreach (var item in explicitParameters)
                 {
+                    if (_NullValueMode == NullValueMode.ExplicitParametersOnly
+                        || _NullValueMode == NullValueMode.Full)
+                    {
+                        item.Value = ReplaceNullWithDbNull(item.Value);
+                    }
+
                     parameters[i] = item;
                     i++;
                 }
@@ -181,9 +187,9 @@ namespace Susanoo
         /// Properties with modifier Actions do NOT qualify for this behavior
         /// </summary>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-        public ICommandExpression<TFilter> SendNullValues()
+        public ICommandExpression<TFilter> SendNullValues(NullValueMode mode = NullValueMode.FilterOnlyMinimum)
         {
-           this._SendNullValues = true;
+            this._NullValueMode = mode;
 
             return this;
         }
@@ -437,9 +443,20 @@ namespace Susanoo
                             param.DbType = type.Value;
 
                         if (item.Value != null)
+                        {
                             item.Value.Invoke(param);
-                        if (_SendNullValues)
+                            if (_NullValueMode == NullValueMode.FilterOnlyFull
+                                || _NullValueMode == NullValueMode.Full)
+                            {
+                                param.Value = ReplaceNullWithDbNull(param.Value);
+                            }
+                        }
+                        else if (_NullValueMode == NullValueMode.FilterOnlyMinimum
+                                 || _NullValueMode == NullValueMode.FilterOnlyFull
+                                 || _NullValueMode == NullValueMode.Full)
+                        {
                             param.Value = ReplaceNullWithDbNull(param.Value);
+                        }
 
                         properties.Add(param);
                     }
@@ -467,16 +484,33 @@ namespace Susanoo
                             if (_parameterInclusions.TryGetValue(propInfo.Name, out value))
                             {
                                 if (value != null)
+                                {
                                     value.Invoke(param);
+                                    if (_NullValueMode == NullValueMode.FilterOnlyFull
+                                        || _NullValueMode == NullValueMode.Full)
+                                    {
+                                        param.Value = ReplaceNullWithDbNull(param.Value);
+                                    }
+                                }
+                                else if (_NullValueMode == NullValueMode.FilterOnlyMinimum
+                                 || _NullValueMode == NullValueMode.FilterOnlyFull
+                                 || _NullValueMode == NullValueMode.Full)
+                                {
+                                    param.Value = ReplaceNullWithDbNull(param.Value);
+                                }
                             }
                             else
                             {
                                 if (type == null)
                                     continue; //If we don't know what to do with the Type of the property
-                                        //and there isn't a explicit inclusion of the property, then ignore it.
+                                //and there isn't a explicit inclusion of the property, then ignore it.
 
-                                if (_SendNullValues)
+                                if (_NullValueMode == NullValueMode.FilterOnlyMinimum
+                                    || _NullValueMode == NullValueMode.FilterOnlyFull
+                                    || _NullValueMode == NullValueMode.Full)
+                                {
                                     param.Value = ReplaceNullWithDbNull(param.Value);
+                                }
                             }
 
                             properties.Add(param);
@@ -493,6 +527,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>System.Object.</returns>
+        // ReSharper disable once MemberCanBePrivate.Global
         protected object ReplaceNullWithDbNull(object value)
         {
             var returnValue = value;
