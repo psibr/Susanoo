@@ -26,7 +26,7 @@ namespace Susanoo
         private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
             .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
 
-        private static readonly IDictionary<Type, DbType> TypeConversions =
+        private static readonly IDictionary<Type, DbType> BuiltinTypeConversions =
             new ConcurrentDictionary<Type, DbType>(new Dictionary<Type, DbType>
             {
                 {typeof (byte), DbType.Byte},
@@ -154,7 +154,7 @@ namespace Susanoo
         {
             DbType dataType;
             DbType? typeToUse;
-            if (!TypeConversions.TryGetValue(type, out dataType))
+            if (!BuiltinTypeConversions.TryGetValue(type, out dataType))
                 typeToUse = null;
             else
                 typeToUse = dataType;

@@ -28,6 +28,8 @@ namespace Susanoo
         private readonly Dictionary<string, Action<DbParameter>> _constantParameters =
             new Dictionary<string, Action<DbParameter>>();
 
+        private bool _SendNullValues = false;
+
         /// <summary>
         ///     The parameter exclusions
         /// </summary>
@@ -171,6 +173,19 @@ namespace Susanoo
                 }
 
             return parameters;
+        }
+
+
+        /// <summary>
+        /// ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard parameters.
+        /// Properties with modifier Actions do NOT qualify for this behavior
+        /// </summary>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        public ICommandExpression<TFilter> SendNullValues()
+        {
+           this._SendNullValues = true;
+
+            return this;
         }
 
         /// <summary>
@@ -400,6 +415,7 @@ namespace Susanoo
         {
             var properties = new List<DbParameter>();
 
+            // ReSharper disable once CompareNonConstrainedGenericWithNull
             if (filter != null)
             {
                 if (_explicitInclusionMode)
@@ -422,14 +438,16 @@ namespace Susanoo
 
                         if (item.Value != null)
                             item.Value.Invoke(param);
+                        if (_SendNullValues)
+                            param.Value = ReplaceNullWithDbNull(param.Value);
 
                         properties.Add(param);
                     }
                 }
                 else
                 {
-                    foreach (var propInfo in filter.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                        )
+                    foreach (var propInfo in filter.GetType()
+                        .GetProperties(BindingFlags.Instance | BindingFlags.Public))
                     {
                         if (!_parameterExclusions.Contains(propInfo.Name))
                         {
@@ -455,7 +473,10 @@ namespace Susanoo
                             {
                                 if (type == null)
                                     continue; //If we don't know what to do with the Type of the property
-                                //and there isn't a explicit inclusion of the property, then ignore it.
+                                        //and there isn't a explicit inclusion of the property, then ignore it.
+
+                                if (_SendNullValues)
+                                    param.Value = ReplaceNullWithDbNull(param.Value);
                             }
 
                             properties.Add(param);
@@ -465,6 +486,20 @@ namespace Susanoo
             }
 
             return properties;
+        }
+
+        /// <summary>
+        /// Replaces the null with database null.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>System.Object.</returns>
+        protected object ReplaceNullWithDbNull(object value)
+        {
+            var returnValue = value;
+            if (value == null)
+                returnValue = DBNull.Value;
+
+            return returnValue;
         }
 
         /// <summary>

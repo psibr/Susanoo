@@ -36,6 +36,13 @@ namespace Susanoo
         ICommandProcessor<TFilter> Realize();
 
         /// <summary>
+        /// ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard parameters.
+        /// Properties with modifier Actions do NOT qualify for this behavior
+        /// </summary>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        ICommandExpression<TFilter> SendNullValues();
+
+        /// <summary>
         ///     Adds parameters that will always use the same value.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
