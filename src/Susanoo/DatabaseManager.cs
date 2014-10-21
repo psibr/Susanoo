@@ -17,9 +17,7 @@ namespace Susanoo
     /// <summary>
     ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    // ReSharper disable ClassWithVirtualMembersNeverInherited.Global
-    public class DatabaseManager : IDatabaseManager, IDisposable
-        // ReSharper restore ClassWithVirtualMembersNeverInherited.Global
+    public partial class DatabaseManager : IDatabaseManager, IDisposable
     {
         private readonly string _connectionString;
         private readonly Action<DbCommand> _providerSpecificCommandSettings;
@@ -145,46 +143,6 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the data reader asynchronously.
-        /// </summary>
-        /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>IDataReader.</returns>
-        /// <exception cref="System.ArgumentNullException">commandText</exception>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual async Task<IDataReader> ExecuteDataReaderAsync(string commandText,
-            CommandType commandType,
-            CancellationToken cancellationToken = default(CancellationToken),
-            params DbParameter[] parameters)
-        {
-            if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
-
-            IDataReader results = null;
-
-            try
-            {
-                OpenConnection();
-
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
-                {
-                    results = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-                }
-            }
-            catch
-            {
-                if (results != null && !results.IsClosed)
-                    results.Close();
-
-                throw;
-            }
-
-            return results;
-        }
-
-        /// <summary>
         ///     Executes the scalar.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -205,7 +163,7 @@ namespace Susanoo
 
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    return (T) CastValue(typeof (T), command.ExecuteScalar(), default(T), null);
+                    return (T)CastValue(typeof(T), command.ExecuteScalar(), default(T), null);
                 }
             }
             finally
@@ -236,40 +194,6 @@ namespace Susanoo
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     return command.ExecuteNonQuery();
-                }
-            }
-            finally
-            {
-                if (Transaction.Current == null)
-                    CloseConnection();
-            }
-        }
-
-        /// <summary>
-        ///     Executes the stored procedure asynchronously.
-        /// </summary>
-        /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>System.Int32.</returns>
-        /// <exception cref="System.ArgumentNullException">commandText</exception>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual async Task<int> ExecuteNonQueryAsync(string commandText,
-            CommandType commandType,
-            CancellationToken cancellationToken = default(CancellationToken),
-            params DbParameter[] parameters)
-        {
-            if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
-
-            try
-            {
-                OpenConnection();
-
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
-                {
-                    return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }
             }
             finally
@@ -323,44 +247,6 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     execute scalar as an asynchronous operation.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>Task&lt;T&gt;.</returns>
-        /// <exception cref="System.ArgumentNullException">commandText</exception>
-        public async Task<T> ExecuteScalarAsync<T>(string commandText,
-            CommandType commandType,
-            CancellationToken cancellationToken = default(CancellationToken),
-            params DbParameter[] parameters)
-        {
-            if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
-
-            try
-            {
-                OpenConnection();
-
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
-                {
-                    return
-                        (T)
-                            CastValue(typeof (T),
-                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T),
-                                null);
-                }
-            }
-            finally
-            {
-                if (Transaction.Current == null)
-                    CloseConnection();
-            }
-        }
-
-        /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
@@ -385,7 +271,9 @@ namespace Susanoo
         /// <param name="defaultValue">The default value.</param>
         /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
         /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
+#if NETFX45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static object CastValue(Type newType, object value, object defaultValue, string typeName)
         {
             var returnValue = value;
@@ -399,7 +287,7 @@ namespace Susanoo
             //    returnValue = ((object)((int)((long)value)));
             //else if (newType == typeof(int) && value.GetType() == typeof(decimal))
             //    returnValue = ((object)((int)((decimal)value)));
-            if (newType == typeof (string))
+            if (newType == typeof(string))
             {
                 returnValue = value.ToString();
 
@@ -500,4 +388,125 @@ namespace Susanoo
 
         #endregion IDisposable Members
     }
+
+#if NETFX45
+    /// <summary>
+    ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
+    /// </summary>
+    public partial class DatabaseManager : IDatabaseManager, IDisposable
+    {
+
+        /// <summary>
+        ///     Executes the data reader asynchronously.
+        /// </summary>
+        /// <param name="commandText">Name of the procedure.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>IDataReader.</returns>
+        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        public virtual async Task<IDataReader> ExecuteDataReaderAsync(string commandText,
+            CommandType commandType,
+            CancellationToken cancellationToken = default(CancellationToken),
+            params DbParameter[] parameters)
+        {
+            if (string.IsNullOrWhiteSpace(commandText))
+                throw new ArgumentNullException("commandText");
+
+            IDataReader results = null;
+
+            try
+            {
+                OpenConnection();
+
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                {
+                    results = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                }
+            }
+            catch
+            {
+                if (results != null && !results.IsClosed)
+                    results.Close();
+
+                throw;
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        ///     Executes the stored procedure asynchronously.
+        /// </summary>
+        /// <param name="commandText">Name of the procedure.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>System.Int32.</returns>
+        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        public virtual async Task<int> ExecuteNonQueryAsync(string commandText,
+            CommandType commandType,
+            CancellationToken cancellationToken = default(CancellationToken),
+            params DbParameter[] parameters)
+        {
+            if (string.IsNullOrWhiteSpace(commandText))
+                throw new ArgumentNullException("commandText");
+
+            try
+            {
+                OpenConnection();
+
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                {
+                    return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                if (Transaction.Current == null)
+                    CloseConnection();
+            }
+        }
+
+        /// <summary>
+        ///     execute scalar as an asynchronous operation.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T&gt;.</returns>
+        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        public async Task<T> ExecuteScalarAsync<T>(string commandText,
+            CommandType commandType,
+            CancellationToken cancellationToken = default(CancellationToken),
+            params DbParameter[] parameters)
+        {
+            if (string.IsNullOrWhiteSpace(commandText))
+                throw new ArgumentNullException("commandText");
+
+            try
+            {
+                OpenConnection();
+
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                {
+                    return
+                        (T)
+                            CastValue(typeof (T),
+                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T),
+                                null);
+                }
+            }
+            finally
+            {
+                if (Transaction.Current == null)
+                    CloseConnection();
+            }
+        }
+    }
+#endif
 }

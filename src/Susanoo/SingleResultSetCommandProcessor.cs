@@ -130,6 +130,7 @@ namespace Susanoo
             return results;
         }
 
+#if NETFX45
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -209,6 +210,7 @@ namespace Susanoo
                     ExecuteAsync(databaseManager, filter, default(CancellationToken), explicitParameters)
                         .ConfigureAwait(false);
         }
+#endif
 
         /// <summary>
         ///     Maps the result.

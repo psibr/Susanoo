@@ -23,6 +23,7 @@ namespace Susanoo
         /// <returns>IDataReader.</returns>
         IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
 
+#if NETFX45
         /// <summary>
         ///     Executes the data reader asynchronously.
         /// </summary>
@@ -47,6 +48,18 @@ namespace Susanoo
             params DbParameter[] parameters);
 
         /// <summary>
+        ///     Executes the stored procedure asynchronously.
+        /// </summary>
+        /// <param name="commandText">Name of the procedure.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;System.Int32&gt;.</returns>
+        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken,
+            params DbParameter[] parameters);
+#endif
+
+        /// <summary>
         ///     Executes the scalar.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -64,17 +77,6 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
         int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
-
-        /// <summary>
-        ///     Executes the stored procedure asynchronously.
-        /// </summary>
-        /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>Task&lt;System.Int32&gt;.</returns>
-        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken,
-            params DbParameter[] parameters);
 
         /// <summary>
         ///     Creates a parameter.

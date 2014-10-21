@@ -29,6 +29,9 @@ namespace Susanoo
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandProcessor<TFilter> : ICommandProcessorInterop<TFilter>
+#if NETFX45
+        , ICommandProcessorAsync<TFilter>
+#endif
     {
         /// <summary>
         ///     Executes the command and retrieves a single value.
@@ -60,6 +63,18 @@ namespace Susanoo
         int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
+        ///     Executes the command and returns a return code.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>System.Int32.</returns>
+        int ExecuteNonQuery(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
+    }
+
+#if NETFX45
+    public interface ICommandProcessorAsync<TFilter>
+    {
+        /// <summary>
         ///     Executes the scalar action asynchronously.
         /// </summary>
         /// <typeparam name="TReturn">The type of the return.</typeparam>
@@ -70,53 +85,10 @@ namespace Susanoo
         /// <returns>Task&lt;TReturn&gt;.</returns>
         Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
-
-        /// <summary>
-        ///     Executes the command and returns a return code.
-        /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>System.Int32.</returns>
-        int ExecuteNonQuery(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
-    /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
-    /// </summary>
-    /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<TFilter, TResult>
-        : ICommandProcessorInterop<TFilter>
-        where TResult : new()
+    public interface ICommandProcessorAsync<TFilter, TResult> where TResult : new()
     {
-        /// <summary>
-        ///     Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; }
-
-        /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        /// <param name="filter">The filter.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter,
-            params DbParameter[] explicitParameters);
-
-        /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
-
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -160,6 +132,47 @@ namespace Susanoo
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
         Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters);
+    }
+#endif
+    /// <summary>
+    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    ///     and a filter parameter.
+    /// </summary>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
+    public interface ICommandProcessor<TFilter, TResult>
+        : ICommandProcessorInterop<TFilter>
+#if NETFX45
+        , ICommandProcessorAsync<TFilter, TResult>
+#endif
+        where TResult : new()
+    {
+        /// <summary>
+        ///     Gets the command result expression.
+        /// </summary>
+        /// <value>The command result expression.</value>
+        ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; }
+
+        /// <summary>
+        ///     Assembles a data command for an ADO.NET provider,
+        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter,
+            params DbParameter[] explicitParameters);
+
+        /// <summary>
+        ///     Assembles a data command for an ADO.NET provider,
+        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>

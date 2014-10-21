@@ -28,7 +28,7 @@ namespace Susanoo
         private readonly Dictionary<string, Action<DbParameter>> _constantParameters =
             new Dictionary<string, Action<DbParameter>>();
 
-        private NullValueMode _NullValueMode = NullValueMode.Never;
+        private NullValueMode _nullValueMode = NullValueMode.Never;
 
         /// <summary>
         ///     The parameter exclusions
@@ -168,8 +168,8 @@ namespace Susanoo
             if (explicitParameters != null)
                 foreach (var item in explicitParameters)
                 {
-                    if (_NullValueMode == NullValueMode.ExplicitParametersOnly
-                        || _NullValueMode == NullValueMode.Full)
+                    if (_nullValueMode == NullValueMode.ExplicitParametersOnly
+                        || _nullValueMode == NullValueMode.Full)
                     {
                         item.Value = ReplaceNullWithDbNull(item.Value);
                     }
@@ -189,7 +189,7 @@ namespace Susanoo
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         public ICommandExpression<TFilter> SendNullValues(NullValueMode mode = NullValueMode.FilterOnlyMinimum)
         {
-            this._NullValueMode = mode;
+            this._nullValueMode = mode;
 
             return this;
         }
@@ -435,7 +435,11 @@ namespace Susanoo
                         param.ParameterName = item.Key;
                         param.Direction = ParameterDirection.Input;
 
+#if NETFX45
                         param.Value = propInfo.GetValue(filter);
+#else
+                        param.Value = propInfo.GetValue(filter, null);
+#endif
 
                         var type = CommandManager.GetDbType(propInfo.PropertyType);
 
@@ -445,15 +449,15 @@ namespace Susanoo
                         if (item.Value != null)
                         {
                             item.Value.Invoke(param);
-                            if (_NullValueMode == NullValueMode.FilterOnlyFull
-                                || _NullValueMode == NullValueMode.Full)
+                            if (_nullValueMode == NullValueMode.FilterOnlyFull
+                                || _nullValueMode == NullValueMode.Full)
                             {
                                 param.Value = ReplaceNullWithDbNull(param.Value);
                             }
                         }
-                        else if (_NullValueMode == NullValueMode.FilterOnlyMinimum
-                                 || _NullValueMode == NullValueMode.FilterOnlyFull
-                                 || _NullValueMode == NullValueMode.Full)
+                        else if (_nullValueMode == NullValueMode.FilterOnlyMinimum
+                                 || _nullValueMode == NullValueMode.FilterOnlyFull
+                                 || _nullValueMode == NullValueMode.Full)
                         {
                             param.Value = ReplaceNullWithDbNull(param.Value);
                         }
@@ -473,7 +477,12 @@ namespace Susanoo
                             param.ParameterName = propInfo.Name;
                             param.Direction = ParameterDirection.Input;
 
+
+#if NETFX45
                             param.Value = propInfo.GetValue(filter);
+#else
+                            param.Value = propInfo.GetValue(filter, null);
+#endif
 
                             var type = CommandManager.GetDbType(propInfo.PropertyType);
 
@@ -486,15 +495,15 @@ namespace Susanoo
                                 if (value != null)
                                 {
                                     value.Invoke(param);
-                                    if (_NullValueMode == NullValueMode.FilterOnlyFull
-                                        || _NullValueMode == NullValueMode.Full)
+                                    if (_nullValueMode == NullValueMode.FilterOnlyFull
+                                        || _nullValueMode == NullValueMode.Full)
                                     {
                                         param.Value = ReplaceNullWithDbNull(param.Value);
                                     }
                                 }
-                                else if (_NullValueMode == NullValueMode.FilterOnlyMinimum
-                                 || _NullValueMode == NullValueMode.FilterOnlyFull
-                                 || _NullValueMode == NullValueMode.Full)
+                                else if (_nullValueMode == NullValueMode.FilterOnlyMinimum
+                                 || _nullValueMode == NullValueMode.FilterOnlyFull
+                                 || _nullValueMode == NullValueMode.Full)
                                 {
                                     param.Value = ReplaceNullWithDbNull(param.Value);
                                 }
@@ -505,9 +514,9 @@ namespace Susanoo
                                     continue; //If we don't know what to do with the Type of the property
                                 //and there isn't a explicit inclusion of the property, then ignore it.
 
-                                if (_NullValueMode == NullValueMode.FilterOnlyMinimum
-                                    || _NullValueMode == NullValueMode.FilterOnlyFull
-                                    || _NullValueMode == NullValueMode.Full)
+                                if (_nullValueMode == NullValueMode.FilterOnlyMinimum
+                                    || _nullValueMode == NullValueMode.FilterOnlyFull
+                                    || _nullValueMode == NullValueMode.Full)
                                 {
                                     param.Value = ReplaceNullWithDbNull(param.Value);
                                 }

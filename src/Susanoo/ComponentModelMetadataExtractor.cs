@@ -2,7 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+#if NETFX40
+#else
 using System.ComponentModel.DataAnnotations.Schema;
+#endif
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
