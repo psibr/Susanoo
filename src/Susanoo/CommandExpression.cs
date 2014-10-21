@@ -435,7 +435,7 @@ namespace Susanoo
                         param.ParameterName = item.Key;
                         param.Direction = ParameterDirection.Input;
 
-#if NETFX45
+#if !NETFX40
                         param.Value = propInfo.GetValue(filter);
 #else
                         param.Value = propInfo.GetValue(filter, null);
@@ -478,7 +478,7 @@ namespace Susanoo
                             param.Direction = ParameterDirection.Input;
 
 
-#if NETFX45
+#if !NETFX40
                             param.Value = propInfo.GetValue(filter);
 #else
                             param.Value = propInfo.GetValue(filter, null);

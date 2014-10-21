@@ -271,7 +271,7 @@ namespace Susanoo
         /// <param name="defaultValue">The default value.</param>
         /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
         /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
-#if NETFX45
+#if !NETFX40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static object CastValue(Type newType, object value, object defaultValue, string typeName)
@@ -389,7 +389,7 @@ namespace Susanoo
         #endregion IDisposable Members
     }
 
-#if NETFX45
+#if !NETFX40
     /// <summary>
     ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>

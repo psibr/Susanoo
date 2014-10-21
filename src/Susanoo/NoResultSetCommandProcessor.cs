@@ -103,7 +103,7 @@ namespace Susanoo
     }
 
 
-#if NETFX45
+#if !NETFX40
     /// <summary>
     ///     A fully built and ready to be executed command expression with a filter parameter.
     /// </summary>

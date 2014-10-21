@@ -29,7 +29,7 @@ namespace Susanoo
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandProcessor<TFilter> : ICommandProcessorInterop<TFilter>
-#if NETFX45
+#if !NETFX40
         , ICommandProcessorAsync<TFilter>
 #endif
     {
@@ -71,7 +71,7 @@ namespace Susanoo
         int ExecuteNonQuery(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
-#if NETFX45
+#if !NETFX40
     public interface ICommandProcessorAsync<TFilter>
     {
         /// <summary>
@@ -143,7 +143,7 @@ namespace Susanoo
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult>
         : ICommandProcessorInterop<TFilter>
-#if NETFX45
+#if !NETFX40
         , ICommandProcessorAsync<TFilter, TResult>
 #endif
         where TResult : new()

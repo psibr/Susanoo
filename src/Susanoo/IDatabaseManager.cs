@@ -23,7 +23,7 @@ namespace Susanoo
         /// <returns>IDataReader.</returns>
         IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
 
-#if NETFX45
+#if !NETFX40
         /// <summary>
         ///     Executes the data reader asynchronously.
         /// </summary>
