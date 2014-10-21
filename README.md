@@ -1,6 +1,8 @@
-Susano'o (.NET 4.0+)
+Susanoo 
 ====
 A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! 
+
+Support for .NET 4.0+
 
 #####Usage
 ```csharp
