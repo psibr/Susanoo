@@ -2,8 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-#if NETFX40
-#else
+#if !NETFX40
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
 using System.Diagnostics.CodeAnalysis;
