@@ -11,7 +11,7 @@ var command = CommandManager
                      FROM Customers
                      WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
     .DefineResults<Customer>()
-    .Finalize();
+    .Realize();
 ```
 ```csharp
 using (var databaseManager =
