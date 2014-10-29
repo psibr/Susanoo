@@ -72,6 +72,7 @@ namespace Susanoo
         /// Retrieves a cached result.
         /// </summary>
         /// <param name="hashCode">The hash code.</param>
+        /// <param name="value">The value.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public bool TryRetrieveCacheResult(BigInteger hashCode, out object value)
         {
@@ -93,7 +94,7 @@ namespace Susanoo
                 }
             }
 
-            value = cache.Item ?? null;
+            value = cache != null ? cache.Item ?? null : null;
 
             return result;
         }
