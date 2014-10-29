@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
+    <Compile Include="CacheItem.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="ColumnBindingException.cs" />
     <Compile Include="ColumnChecker.cs" />

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -48,6 +49,55 @@ namespace Susanoo
             return obj;
         }
 
+        private bool _resultCachingEnabled = false;
+        private CacheMode _resultCachingMode = CacheMode.None;
+        private double _resultCachingInterval = 0d;
+
+        private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
+
+        public ICommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        {
+            if (mode == CacheMode.None)
+                throw new ArgumentException(
+                    @"Calling EnableResultCaching with CacheMode None effectively would disable caching, this is confusing and therefor is not allowed.",
+                    "mode");
+
+            _resultCachingEnabled = true;
+            _resultCachingMode = mode;
+            _resultCachingInterval = interval != null && mode != CacheMode.Permanent ? interval.Value : 0d;
+            return this;
+        }
+
+        /// <summary>
+        /// Retrieves a cached result.
+        /// </summary>
+        /// <param name="hashCode">The hash code.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        public bool TryRetrieveCacheResult(BigInteger hashCode, out object value)
+        {
+            CacheItem cache = null;
+            bool result = false;
+            if (_resultCacheContainer.TryGetValue(hashCode, out cache))
+            {
+                if (cache.CachingMode == CacheMode.Permanent
+                    || cache.CachingMode == CacheMode.TimeSpan && cache.TimeStamp.AddSeconds(cache.Interval) <= DateTime.Now
+                    || cache.CachingMode == CacheMode.RepeatedRequestLimit && cache.CallCount < cache.Interval)
+                {
+                    value = cache.Item;
+                    result = true;
+                }
+                else
+                {
+                    CacheItem trash;
+                    _resultCacheContainer.TryRemove(hashCode, out trash);
+                }
+            }
+
+            value = cache.Item ?? null;
+
+            return result;
+        }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
         /// </summary>
@@ -57,8 +107,9 @@ namespace Susanoo
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;
 
+            _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>();
 
-            CompiledMapping = typeof (TResult) != typeof (object) ? CompileMappings() : DynamicConversion;
+            CompiledMapping = typeof(TResult) != typeof(object) ? CompileMappings() : DynamicConversion;
         }
 
         /// <summary>
@@ -82,7 +133,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return (CommandResultExpression.CacheHash*31) ^ CommandExpression.CacheHash; }
+            get { return (CommandResultExpression.CacheHash * 31) ^ CommandExpression.CacheHash; }
         }
 
         /// <summary>
@@ -114,20 +165,46 @@ namespace Susanoo
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult> results;
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+
+            IEnumerable<TResult> results = null;
 
             ICommandExpression<TFilter> commandExpression = CommandResultExpression.CommandExpression;
 
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+
+            if (_resultCachingEnabled)
             {
-                results = (((IResultMapper<TResult>) this).MapResult(record, CompiledMapping));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p += (c.ParameterName + c.Value.ToString()));
+
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+                
+                results = value as IEnumerable<TResult>;                    
+
+                cachedItemPresent = results != null;
             }
 
-            return results;
+            if (!cachedItemPresent)
+            {
+                using (IDataReader records = databaseManager
+                    .ExecuteDataReader(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        parameters))
+                {
+                    results = (((IResultMapper<TResult>)this).MapResult(records, CompiledMapping));
+                }
+
+                if (_resultCachingEnabled)
+                    _resultCacheContainer.TryAdd(hashCode, new CacheItem(results, _resultCachingMode, _resultCachingInterval));
+            }
+
+
+            return results ?? new LinkedList<TResult>();
         }
 
 #if !NETFX40
@@ -176,22 +253,49 @@ namespace Susanoo
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult> results;
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+
+            IEnumerable<TResult> results = null;
 
             ICommandExpression<TFilter> commandExpression = CommandResultExpression.CommandExpression;
 
-            using (IDataReader record = await databaseManager
-                .ExecuteDataReaderAsync(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    cancellationToken,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters))
-                .ConfigureAwait(false))
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+
+            if (_resultCachingEnabled)
             {
-                results = (((IResultMapper<TResult>) this).MapResult(record, CompiledMapping));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p += (c.ParameterName + c.Value.ToString()));
+
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+
+                results = value as IEnumerable<TResult>;
+
+                cachedItemPresent = results != null;
             }
 
-            return results;
+            if (!cachedItemPresent)
+            {
+                using (IDataReader records = await databaseManager
+                    .ExecuteDataReaderAsync(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        cancellationToken,
+                        parameters)
+                    .ConfigureAwait(false))
+                {
+                    results = (((IResultMapper<TResult>)this).MapResult(records, CompiledMapping));
+                }
+
+                if (_resultCachingEnabled)
+                    _resultCacheContainer.TryAdd(hashCode, new CacheItem(results, _resultCachingMode, _resultCachingInterval));
+            }
+
+
+            return results ?? new LinkedList<TResult>();
+
         }
 
         /// <summary>
@@ -224,7 +328,7 @@ namespace Susanoo
 
             while (record.Read())
             {
-                list.AddLast((TResult) mapping.Invoke(record));
+                list.AddLast((TResult)mapping.Invoke(record));
             }
 
             return list;
@@ -250,27 +354,27 @@ namespace Susanoo
 
             var statements = new List<Expression>();
 
-            ParameterExpression readerExp = Expression.Parameter(typeof (IDataRecord));
-            ParameterExpression descriptorExp = Expression.Variable(typeof (TResult), "descriptor");
-            ParameterExpression columnCheckerExp = Expression.Variable(typeof (ColumnChecker), "columnChecker");
+            ParameterExpression readerExp = Expression.Parameter(typeof(IDataRecord));
+            ParameterExpression descriptorExp = Expression.Variable(typeof(TResult), "descriptor");
+            ParameterExpression columnCheckerExp = Expression.Variable(typeof(ColumnChecker), "columnChecker");
 
             statements.Add(Expression.Assign(
-                columnCheckerExp, Expression.New(typeof (ColumnChecker))));
+                columnCheckerExp, Expression.New(typeof(ColumnChecker))));
 
             statements.Add(Expression.Assign(
-                descriptorExp, Expression.New(typeof (TResult))));
+                descriptorExp, Expression.New(typeof(TResult))));
 
             foreach (var pair in mappings)
             {
-                var ex = Expression.Variable(typeof (Exception), "ex");
+                var ex = Expression.Variable(typeof(Exception), "ex");
 
-                var localOrdinal = Expression.Variable(typeof (int), "ordinal");
+                var localOrdinal = Expression.Variable(typeof(int), "ordinal");
 
                 statements.Add(
-                    Expression.Block(new[] {localOrdinal},
+                    Expression.Block(new[] { localOrdinal },
                         Expression.Assign(localOrdinal,
                             Expression.Call(columnCheckerExp,
-                                typeof (ColumnChecker).GetMethod("HasColumn",
+                                typeof(ColumnChecker).GetMethod("HasColumn",
                                     BindingFlags.Public | BindingFlags.Instance),
                                 readerExp,
                                 Expression.Constant(pair.Value.ActiveAlias))),
@@ -279,20 +383,19 @@ namespace Susanoo
                                 Expression.IsTrue(
                                     Expression.GreaterThanOrEqual(localOrdinal, Expression.Constant(0))),
                                 Expression.IsFalse(
-                                    Expression.Call(readerExp, typeof (IDataRecord).GetMethod("IsDBNull"), localOrdinal))),
+                                    Expression.Call(readerExp, typeof(IDataRecord).GetMethod("IsDBNull"), localOrdinal))),
                             Expression.TryCatch(
-                                Expression.Block(typeof (void),
+                                Expression.Block(typeof(void),
                                     Expression.Invoke(
                                         pair.Value.AssembleMappingExpression(
                                             Expression.Property(descriptorExp, pair.Value.PropertyMetadata)),
                                         readerExp)),
                                 Expression.Catch(
                                     ex,
-                                    Expression.Block(typeof (void),
+                                    Expression.Block(typeof(void),
                                         Expression.Throw(
                                             Expression.New(
-                                                typeof (ColumnBindingException).GetConstructor(new[]
-                                                {typeof (string), typeof (Exception)}),
+                                                typeof(ColumnBindingException).GetConstructor(new[] { typeof(string), typeof(Exception) }),
                                                 Expression.Constant(pair.Value.PropertyMetadata.Name +
                                                                     " encountered an exception on column [" +
                                                                     pair.Value.ActiveAlias + "] when binding"
@@ -307,12 +410,12 @@ namespace Susanoo
 
             statements.Add(descriptorExp);
 
-            var body = Expression.Block(new[] {descriptorExp, columnCheckerExp}, statements);
+            var body = Expression.Block(new[] { descriptorExp, columnCheckerExp }, statements);
             var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, readerExp);
 
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
-                    typeof (TResult).Name,
+                    typeof(TResult).Name,
                     Guid.NewGuid().ToString().Replace("-", string.Empty)),
                     TypeAttributes.Public);
 
@@ -320,8 +423,8 @@ namespace Susanoo
 
             Type dynamicType = type.CreateType();
 
-            return (Func<IDataRecord, object>) Delegate
-                .CreateDelegate(typeof (Func<IDataRecord, object>),
+            return (Func<IDataRecord, object>)Delegate
+                .CreateDelegate(typeof(Func<IDataRecord, object>),
                     dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
         }
     }
