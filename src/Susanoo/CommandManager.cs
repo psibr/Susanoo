@@ -172,6 +172,19 @@ namespace Susanoo
         {
             _registeredCommandProcessors.Add(new WeakReference<CommandProcessorCommon>(processor));
         }
+
+        /// <summary>
+        /// Flushes caches on all command processors.
+        /// </summary>
+        public static void FlushCacheGlobally()
+        {
+            foreach (var registeredCommandProcessor in _registeredCommandProcessors)
+            {
+                CommandProcessorCommon processor;
+                if(registeredCommandProcessor.TryGetTarget(out processor))
+                    processor.FlushCache();
+            }
+        }
     }
 
     //Testing CI.
