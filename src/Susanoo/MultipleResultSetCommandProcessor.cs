@@ -19,7 +19,7 @@ namespace Susanoo
     /// <typeparam name="TResult2">The type of the result2.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>
-        : ICommandProcessor<TFilter, TResult1, TResult2>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2>
         where TResult1 : new()
         where TResult2 : new()
     {
@@ -90,12 +90,13 @@ namespace Susanoo
             IEnumerable<TResult2> results2 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
             using (IDataReader record = databaseManager
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DbCommandType,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+                    parameters))
             {
                 results1 = _item1Mapper.MapResult(record);
 
@@ -131,7 +132,7 @@ namespace Susanoo
     /// <typeparam name="TResult3">The type of the result3.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>
-        : ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -208,12 +209,12 @@ namespace Susanoo
             IEnumerable<TResult3> results3 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
-
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
             using (IDataReader record = databaseManager
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DbCommandType,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+                    parameters))
             {
                 results1 = _item1Mapper.MapResult(record);
 
@@ -257,7 +258,7 @@ namespace Susanoo
     /// <typeparam name="TResult4">The type of the result4.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
-        : ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -349,12 +350,12 @@ namespace Susanoo
             IEnumerable<TResult4> results4 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
-
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
             using (IDataReader record = databaseManager
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DbCommandType,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+                    parameters))
             {
                 results1 = _item1Mapper.MapResult(record);
 
@@ -410,7 +411,7 @@ namespace Susanoo
     /// <typeparam name="TResult5">The type of the result5.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-        : ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -514,12 +515,12 @@ namespace Susanoo
             IEnumerable<TResult5> results5 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
-
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
             using (IDataReader record = databaseManager
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DbCommandType,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+                    parameters))
             {
                 results1 = _item1Mapper.MapResult(record);
 
@@ -587,7 +588,7 @@ namespace Susanoo
     /// <typeparam name="TResult6">The type of the result6.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-        : ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -700,12 +701,12 @@ namespace Susanoo
             IEnumerable<TResult6> results6 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
-
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
             using (IDataReader record = databaseManager
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DbCommandType,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+                    parameters))
             {
                 results1 = _item1Mapper.MapResult(record);
 
@@ -783,7 +784,7 @@ namespace Susanoo
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6,
         TResult7>
-        : ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -906,12 +907,12 @@ namespace Susanoo
             IEnumerable<TResult7> results7 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
-
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
             using (IDataReader record = databaseManager
                 .ExecuteDataReader(
                     commandExpression.CommandText,
                     commandExpression.DbCommandType,
-                    commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
+                    parameters))
             {
                 //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
 

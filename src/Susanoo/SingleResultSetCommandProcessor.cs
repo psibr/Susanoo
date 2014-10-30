@@ -26,7 +26,7 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public sealed class SingleResultSetCommandProcessor<TFilter, TResult>
-        : ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>
         where TResult : new()
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
@@ -49,54 +49,20 @@ namespace Susanoo
             return obj;
         }
 
-        private bool _resultCachingEnabled = false;
-        private CacheMode _resultCachingMode = CacheMode.None;
-        private double _resultCachingInterval = 0d;
-
-        private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
-
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        ///  this is confusing and therefor is not allowed.;mode
+        /// </exception>
         public ICommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
-            if (mode == CacheMode.None)
-                throw new ArgumentException(
-                    @"Calling EnableResultCaching with CacheMode None effectively would disable caching, this is confusing and therefor is not allowed.",
-                    "mode");
+            ActivateResultCaching(mode, interval);
 
-            _resultCachingEnabled = true;
-            _resultCachingMode = mode;
-            _resultCachingInterval = interval != null && mode != CacheMode.Permanent ? interval.Value : 0d;
             return this;
-        }
-
-        /// <summary>
-        /// Retrieves a cached result.
-        /// </summary>
-        /// <param name="hashCode">The hash code.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public bool TryRetrieveCacheResult(BigInteger hashCode, out object value)
-        {
-            CacheItem cache = null;
-            bool result = false;
-            if (_resultCacheContainer.TryGetValue(hashCode, out cache))
-            {
-                if (cache.CachingMode == CacheMode.Permanent
-                    || cache.CachingMode == CacheMode.TimeSpan && cache.TimeStamp.AddSeconds(cache.Interval) <= DateTime.Now
-                    || cache.CachingMode == CacheMode.RepeatedRequestLimit && cache.CallCount < cache.Interval)
-                {
-                    value = cache.Item;
-                    result = true;
-                }
-                else
-                {
-                    CacheItem trash;
-                    _resultCacheContainer.TryRemove(hashCode, out trash);
-                }
-            }
-
-            value = cache != null ? cache.Item ?? null : null;
-
-            return result;
         }
 
         /// <summary>
@@ -104,11 +70,10 @@ namespace Susanoo
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         public SingleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult> mappings)
+            : base()
         {
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;
-
-            _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>();
 
             CompiledMapping = typeof(TResult) != typeof(object) ? CompileMappings() : DynamicConversion;
         }
@@ -117,7 +82,7 @@ namespace Susanoo
         ///     Gets the compiled mapping.
         /// </summary>
         /// <value>The compiled mapping.</value>
-        public Func<IDataRecord, object> CompiledMapping { get; private set; }
+        private Func<IDataRecord, object> CompiledMapping { get; set; }
 
         /// <summary>
         ///     Gets the command expression.
@@ -175,16 +140,16 @@ namespace Susanoo
 
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            if (_resultCachingEnabled)
+            if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p += (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
-                
-                results = value as IEnumerable<TResult>;                    
+
+                results = value as IEnumerable<TResult>;
 
                 cachedItemPresent = results != null;
             }
@@ -200,8 +165,8 @@ namespace Susanoo
                     results = (((IResultMapper<TResult>)this).MapResult(records, CompiledMapping));
                 }
 
-                if (_resultCachingEnabled)
-                    _resultCacheContainer.TryAdd(hashCode, new CacheItem(results, _resultCachingMode, _resultCachingInterval));
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(results, ResultCachingMode, ResultCachingInterval));
             }
 
 
@@ -263,9 +228,9 @@ namespace Susanoo
 
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            if (_resultCachingEnabled)
+            if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p += (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
@@ -290,8 +255,8 @@ namespace Susanoo
                     results = (((IResultMapper<TResult>)this).MapResult(records, CompiledMapping));
                 }
 
-                if (_resultCachingEnabled)
-                    _resultCacheContainer.TryAdd(hashCode, new CacheItem(results, _resultCachingMode, _resultCachingInterval));
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(results, ResultCachingMode, ResultCachingInterval));
             }
 
 

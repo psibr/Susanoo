@@ -161,6 +161,17 @@ namespace Susanoo
 
             return typeToUse;
         }
+
+        private static readonly ConcurrentBag<WeakReference<CommandProcessorCommon>> _registeredCommandProcessors = new ConcurrentBag<WeakReference<CommandProcessorCommon>>();
+
+        /// <summary>
+        /// Registers the command processor.
+        /// </summary>
+        /// <param name="processor">The processor.</param>
+        public static void RegisterCommandProcessor(CommandProcessorCommon processor)
+        {
+            _registeredCommandProcessors.Add(new WeakReference<CommandProcessorCommon>(processor));
+        }
     }
 
     //Testing CI.
