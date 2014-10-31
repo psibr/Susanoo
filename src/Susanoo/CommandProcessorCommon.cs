@@ -101,7 +101,7 @@ namespace Susanoo
             if (_resultCacheContainer.TryGetValue(hashCode, out cache))
             {
                 if (cache.CachingMode == CacheMode.Permanent
-                    || cache.CachingMode == CacheMode.TimeSpan && cache.TimeStamp.AddSeconds(cache.Interval) <= DateTime.Now
+                    || cache.CachingMode == CacheMode.TimeSpan && cache.TimeStamp.AddSeconds(cache.Interval) > DateTime.Now
                     || cache.CachingMode == CacheMode.RepeatedRequestLimit && cache.CallCount < cache.Interval)
                 {
                     result = true;
