@@ -56,7 +56,7 @@ namespace Susanoo
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
         public virtual Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property)
         {
-            ParameterExpression recordParam = Expression.Parameter(typeof (IDataRecord), "record");
+            ParameterExpression recordParam = Expression.Parameter(typeof(IDataRecord), "record");
 
             Expression body = (_mapOnCondition != null)
                 ? HasMapCondition(property, recordParam)
@@ -139,9 +139,9 @@ namespace Susanoo
                     property,
                     Expression.Convert(
                         Expression.Invoke(_conversionProcessExpression,
-                            Expression.Constant(PropertyMetadata.PropertyType, typeof (Type)),
+                            Expression.Constant(PropertyMetadata.PropertyType, typeof(Type)),
                             Expression.MakeIndex(recordParam,
-                                typeof (IDataRecord).GetProperty("Item", new[] {typeof (string)}),
+                                typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
                                 new[]
                                 {
                                     Expression.Constant(ActiveAlias)

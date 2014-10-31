@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -30,7 +29,6 @@ namespace Susanoo
         where TResult : new()
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
-
 
         /// <summary>
         /// Dumps all columns into an expando for simple use cases.
@@ -169,11 +167,11 @@ namespace Susanoo
                     ResultCacheContainer.TryAdd(hashCode, new CacheItem(results, ResultCachingMode, ResultCachingInterval));
             }
 
-
             return results ?? new LinkedList<TResult>();
         }
 
 #if !NETFX40
+
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -259,9 +257,7 @@ namespace Susanoo
                     ResultCacheContainer.TryAdd(hashCode, new CacheItem(results, ResultCachingMode, ResultCachingInterval));
             }
 
-
             return results ?? new LinkedList<TResult>();
-
         }
 
         /// <summary>
@@ -280,6 +276,7 @@ namespace Susanoo
                     ExecuteAsync(databaseManager, filter, default(CancellationToken), explicitParameters)
                         .ConfigureAwait(false);
         }
+
 #endif
 
         /// <summary>

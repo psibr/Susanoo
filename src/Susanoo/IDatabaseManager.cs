@@ -24,6 +24,7 @@ namespace Susanoo
         IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
 
 #if !NETFX40
+
         /// <summary>
         ///     Executes the data reader asynchronously.
         /// </summary>
@@ -57,6 +58,7 @@ namespace Susanoo
         /// <returns>Task&lt;System.Int32&gt;.</returns>
         Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken,
             params DbParameter[] parameters);
+
 #endif
 
         /// <summary>

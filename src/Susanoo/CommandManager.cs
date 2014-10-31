@@ -181,7 +181,7 @@ namespace Susanoo
             foreach (var registeredCommandProcessor in _registeredCommandProcessors)
             {
                 CommandProcessorCommon processor;
-                if(registeredCommandProcessor.TryGetTarget(out processor))
+                if (registeredCommandProcessor.TryGetTarget(out processor))
                     processor.FlushCache();
             }
         }

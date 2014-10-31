@@ -50,7 +50,7 @@ namespace Susanoo
             {
                 var hashCombinations = new List<BigInteger>();
 
-                var hashText = new StringBuilder(typeof (TResult).FullName);
+                var hashText = new StringBuilder(typeof(TResult).FullName);
                 foreach (var item in Export())
                 {
                     hashText.Append(item.Key);
@@ -59,7 +59,7 @@ namespace Susanoo
 
                 BigInteger initialHash = FnvHash.GetHash(hashText.ToString(), 64);
 
-                return hashCombinations.Aggregate(initialHash, (current, hash) => (current*31) ^ hash);
+                return hashCombinations.Aggregate(initialHash, (current, hash) => (current * 31) ^ hash);
             }
         }
 

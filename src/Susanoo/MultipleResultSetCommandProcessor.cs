@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Numerics;
 
 #endregion
@@ -72,7 +73,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash*31) ^ _item2Mapper.CacheHash; }
+            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
 
         /// <summary>
@@ -86,27 +87,51 @@ namespace Susanoo
         public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1;
+            IEnumerable<TResult1> results1 = null;
             IEnumerable<TResult2> results2 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    parameters))
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+            Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> finalResults = null;
+            if (ResultCachingEnabled)
             {
-                results1 = _item1Mapper.MapResult(record);
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
 
-                if (record.NextResult())
-                {
-                    results2 = _item2Mapper.MapResult(record);
-                }
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+
+                finalResults = value as Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>;
+                cachedItemPresent = finalResults != null;
             }
 
-            return new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>(results1, results2);
+            if (!cachedItemPresent)
+            {
+                using (IDataReader record = databaseManager
+                    .ExecuteDataReader(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        parameters))
+                {
+                    results1 = _item1Mapper.MapResult(record);
+
+                    if (record.NextResult())
+                    {
+                        results2 = _item2Mapper.MapResult(record);
+                    }
+                }
+
+                finalResults = new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>(results1, results2);
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
+            }
+
+            return finalResults;
         }
 
         /// <summary>
@@ -119,6 +144,13 @@ namespace Susanoo
             params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        {
+            ActivateResultCaching(mode, interval);
+
+            return this;
         }
     }
 
@@ -190,7 +222,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash*31) ^ _item2Mapper.CacheHash; }
+            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
 
         /// <summary>
@@ -210,27 +242,51 @@ namespace Susanoo
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    parameters))
-            {
-                results1 = _item1Mapper.MapResult(record);
 
-                if (record.NextResult())
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+            Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> finalResults = null;
+            if (ResultCachingEnabled)
+            {
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+
+                finalResults = value as Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>;
+                cachedItemPresent = finalResults != null;
+            }
+
+            if (!cachedItemPresent)
+            {
+                using (IDataReader record = databaseManager
+                    .ExecuteDataReader(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        parameters))
                 {
-                    results2 = _item2Mapper.MapResult(record);
+                    results1 = _item1Mapper.MapResult(record);
 
                     if (record.NextResult())
                     {
-                        results3 = _item3Mapper.MapResult(record);
+                        results2 = _item2Mapper.MapResult(record);
+
+                        if (record.NextResult())
+                        {
+                            results3 = _item3Mapper.MapResult(record);
+                        }
                     }
                 }
+
+                finalResults = new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>(results1, results2, results3);
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
             }
 
-            return new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>(results1, results2,
-                results3);
+            return finalResults;
         }
 
         /// <summary>
@@ -244,6 +300,13 @@ namespace Susanoo
             params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        {
+            ActivateResultCaching(mode, interval);
+
+            return this;
         }
     }
 
@@ -324,7 +387,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash*31) ^ _item2Mapper.CacheHash; }
+            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
 
         /// <summary>
@@ -351,34 +414,67 @@ namespace Susanoo
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    parameters))
-            {
-                results1 = _item1Mapper.MapResult(record);
 
-                if (record.NextResult())
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+            Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>> finalResults = null;
+            if (ResultCachingEnabled)
+            {
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+
+                finalResults = value as Tuple<IEnumerable<TResult1>,
+                                                IEnumerable<TResult2>,
+                                                IEnumerable<TResult3>,
+                                                IEnumerable<TResult4>>;
+                cachedItemPresent = finalResults != null;
+            }
+
+            if (!cachedItemPresent)
+            {
+                using (IDataReader record = databaseManager
+                    .ExecuteDataReader(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        parameters))
                 {
-                    results2 = _item2Mapper.MapResult(record);
+                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
+
+                    results1 = _item1Mapper.MapResult(record);
 
                     if (record.NextResult())
                     {
-                        results3 = _item3Mapper.MapResult(record);
+                        results2 = _item2Mapper.MapResult(record);
 
                         if (record.NextResult())
                         {
-                            results4 = _item4Mapper.MapResult(record);
+                            results3 = _item3Mapper.MapResult(record);
+
+                            if (record.NextResult())
+                            {
+                                results4 = _item4Mapper.MapResult(record);
+                            }
                         }
                     }
                 }
+
+                finalResults = new Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>>(results1, results2, results3, results4);
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
             }
 
-            return new Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>>(results1, results2, results3, results4);
+            return finalResults;
         }
 
         /// <summary>
@@ -396,6 +492,13 @@ namespace Susanoo
             IEnumerable<TResult4>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        {
+            ActivateResultCaching(mode, interval);
+
+            return this;
         }
     }
 
@@ -483,7 +586,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash*31) ^ _item2Mapper.CacheHash; }
+            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
 
         /// <summary>
@@ -516,40 +619,75 @@ namespace Susanoo
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    parameters))
-            {
-                results1 = _item1Mapper.MapResult(record);
 
-                if (record.NextResult())
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+            Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>,
+                IEnumerable<TResult5>> finalResults = null;
+            if (ResultCachingEnabled)
+            {
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+
+                finalResults = value as Tuple<IEnumerable<TResult1>,
+                                                IEnumerable<TResult2>,
+                                                IEnumerable<TResult3>,
+                                                IEnumerable<TResult4>,
+                                                IEnumerable<TResult5>>;
+                cachedItemPresent = finalResults != null;
+            }
+
+            if (!cachedItemPresent)
+            {
+                using (IDataReader record = databaseManager
+                    .ExecuteDataReader(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        parameters))
                 {
-                    results2 = _item2Mapper.MapResult(record);
+                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
+
+                    results1 = _item1Mapper.MapResult(record);
 
                     if (record.NextResult())
                     {
-                        results3 = _item3Mapper.MapResult(record);
+                        results2 = _item2Mapper.MapResult(record);
 
                         if (record.NextResult())
                         {
-                            results4 = _item4Mapper.MapResult(record);
+                            results3 = _item3Mapper.MapResult(record);
 
                             if (record.NextResult())
                             {
-                                results5 = _item5Mapper.MapResult(record);
+                                results4 = _item4Mapper.MapResult(record);
+
+                                if (record.NextResult())
+                                {
+                                    results5 = _item5Mapper.MapResult(record);
+                                }
                             }
                         }
                     }
                 }
+
+                finalResults = new Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>,
+            IEnumerable<TResult5>>(results1, results2, results3, results4, results5);
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
             }
 
-            return new Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>,
-                IEnumerable<TResult5>>(results1, results2, results3, results4, results5);
+            return finalResults;
         }
 
         /// <summary>
@@ -572,6 +710,13 @@ namespace Susanoo
             IEnumerable<TResult5>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        {
+            ActivateResultCaching(mode, interval);
+
+            return this;
         }
     }
 
@@ -666,7 +811,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash*31) ^ _item2Mapper.CacheHash; }
+            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
 
         /// <summary>
@@ -702,46 +847,83 @@ namespace Susanoo
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    parameters))
-            {
-                results1 = _item1Mapper.MapResult(record);
 
-                if (record.NextResult())
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+            Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>,
+                IEnumerable<TResult5>,
+                IEnumerable<TResult6>> finalResults = null;
+            if (ResultCachingEnabled)
+            {
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+
+                finalResults = value as Tuple<IEnumerable<TResult1>,
+                                                IEnumerable<TResult2>,
+                                                IEnumerable<TResult3>,
+                                                IEnumerable<TResult4>,
+                                                IEnumerable<TResult5>,
+                                                IEnumerable<TResult6>>;
+                cachedItemPresent = finalResults != null;
+            }
+
+            if (!cachedItemPresent)
+            {
+                using (IDataReader record = databaseManager
+                    .ExecuteDataReader(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        parameters))
                 {
-                    results2 = _item2Mapper.MapResult(record);
+                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
+
+                    results1 = _item1Mapper.MapResult(record);
 
                     if (record.NextResult())
                     {
-                        results3 = _item3Mapper.MapResult(record);
+                        results2 = _item2Mapper.MapResult(record);
 
                         if (record.NextResult())
                         {
-                            results4 = _item4Mapper.MapResult(record);
+                            results3 = _item3Mapper.MapResult(record);
 
                             if (record.NextResult())
                             {
-                                results5 = _item5Mapper.MapResult(record);
+                                results4 = _item4Mapper.MapResult(record);
 
                                 if (record.NextResult())
                                 {
-                                    results6 = _item6Mapper.MapResult(record);
+                                    results5 = _item5Mapper.MapResult(record);
+
+                                    if (record.NextResult())
+                                    {
+                                        results6 = _item6Mapper.MapResult(record);
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                finalResults = new Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>,
+            IEnumerable<TResult5>,
+            IEnumerable<TResult6>>(results1, results2, results3, results4, results5, results6);
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
             }
 
-            return new Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>,
-                IEnumerable<TResult5>,
-                IEnumerable<TResult6>>(results1, results2, results3, results4, results5, results6);
+            return finalResults;
         }
 
         /// <summary>
@@ -766,6 +948,13 @@ namespace Susanoo
             IEnumerable<TResult6>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        {
+            ActivateResultCaching(mode, interval);
+
+            return this;
         }
     }
 
@@ -869,7 +1058,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash*31) ^ _item2Mapper.CacheHash; }
+            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
 
         /// <summary>
@@ -908,54 +1097,91 @@ namespace Susanoo
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
-            using (IDataReader record = databaseManager
-                .ExecuteDataReader(
-                    commandExpression.CommandText,
-                    commandExpression.DbCommandType,
-                    parameters))
+
+            bool cachedItemPresent = false;
+            BigInteger hashCode = BigInteger.Zero;
+            Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>,
+                IEnumerable<TResult5>,
+                IEnumerable<TResult6>,
+                IEnumerable<TResult7>> finalResults = null;
+            if (ResultCachingEnabled)
             {
-                //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
 
-                results1 = _item1Mapper.MapResult(record);
+                hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
-                if (record.NextResult())
+                object value = null;
+                TryRetrieveCacheResult(hashCode, out value);
+
+                finalResults = value as Tuple<IEnumerable<TResult1>,
+                                                IEnumerable<TResult2>,
+                                                IEnumerable<TResult3>,
+                                                IEnumerable<TResult4>,
+                                                IEnumerable<TResult5>,
+                                                IEnumerable<TResult6>,
+                                                IEnumerable<TResult7>>;
+                cachedItemPresent = finalResults != null;
+            }
+
+            if (!cachedItemPresent)
+            {
+                using (IDataReader record = databaseManager
+                    .ExecuteDataReader(
+                        commandExpression.CommandText,
+                        commandExpression.DbCommandType,
+                        parameters))
                 {
-                    results2 = _item2Mapper.MapResult(record);
+                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
+
+                    results1 = _item1Mapper.MapResult(record);
 
                     if (record.NextResult())
                     {
-                        results3 = _item3Mapper.MapResult(record);
+                        results2 = _item2Mapper.MapResult(record);
 
                         if (record.NextResult())
                         {
-                            results4 = _item4Mapper.MapResult(record);
+                            results3 = _item3Mapper.MapResult(record);
 
                             if (record.NextResult())
                             {
-                                results5 = _item5Mapper.MapResult(record);
+                                results4 = _item4Mapper.MapResult(record);
 
                                 if (record.NextResult())
                                 {
-                                    results6 = _item6Mapper.MapResult(record);
+                                    results5 = _item5Mapper.MapResult(record);
 
                                     if (record.NextResult())
                                     {
-                                        results7 = _item7Mapper.MapResult(record);
+                                        results6 = _item6Mapper.MapResult(record);
+
+                                        if (record.NextResult())
+                                        {
+                                            results7 = _item7Mapper.MapResult(record);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+
+                finalResults = new Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>,
+            IEnumerable<TResult5>,
+            IEnumerable<TResult6>,
+            IEnumerable<TResult7>>(results1, results2, results3, results4, results5, results6, results7);
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode, new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
             }
 
-            return new Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>,
-                IEnumerable<TResult5>,
-                IEnumerable<TResult6>,
-                IEnumerable<TResult7>>(results1, results2, results3, results4, results5, results6, results7);
+            return finalResults;
         }
 
         /// <summary>
@@ -982,6 +1208,13 @@ namespace Susanoo
             IEnumerable<TResult7>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        {
+            ActivateResultCaching(mode, interval);
+
+            return this;
         }
     }
 }

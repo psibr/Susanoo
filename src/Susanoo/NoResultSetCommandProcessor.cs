@@ -99,18 +99,16 @@ namespace Susanoo
         {
             return ExecuteNonQuery(databaseManager, default(TFilter), explicitParameters);
         }
-
     }
 
-
 #if !NETFX40
+
     /// <summary>
     ///     A fully built and ready to be executed command expression with a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public partial class NoResultSetCommandProcessor<TFilter>
     {
-
         /// <summary>
         ///     Execute scalar as an asynchronous operation.
         /// </summary>
@@ -251,5 +249,6 @@ namespace Susanoo
                 .ConfigureAwait(false);
         }
     }
+
 #endif
 }

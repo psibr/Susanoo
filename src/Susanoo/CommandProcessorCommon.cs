@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
@@ -33,7 +29,8 @@ namespace Susanoo
         /// Gets the result cache container.
         /// </summary>
         /// <value>The result cache container.</value>
-        protected ConcurrentDictionary<BigInteger, CacheItem> ResultCacheContainer {
+        protected ConcurrentDictionary<BigInteger, CacheItem> ResultCacheContainer
+        {
             get { return _resultCacheContainer; }
         }
 
@@ -41,7 +38,8 @@ namespace Susanoo
         /// Gets a value indicating whether [result caching enabled].
         /// </summary>
         /// <value><c>true</c> if [result caching enabled]; otherwise, <c>false</c>.</value>
-        protected bool ResultCachingEnabled {
+        protected bool ResultCachingEnabled
+        {
             get { return _resultCachingEnabled; }
         }
 
