@@ -181,7 +181,6 @@ namespace Susanoo
             return parameters;
         }
 
-
         /// <summary>
         /// ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard parameters.
         /// Properties with modifier Actions do NOT qualify for this behavior
@@ -476,7 +475,6 @@ namespace Susanoo
 
                             param.ParameterName = propInfo.Name;
                             param.Direction = ParameterDirection.Input;
-
 
 #if !NETFX40
                             param.Value = propInfo.GetValue(filter);

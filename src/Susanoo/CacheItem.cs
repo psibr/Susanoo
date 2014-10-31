@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
-    internal class CacheItem
+    public class CacheItem
     {
         private readonly object _item;
 
@@ -22,7 +17,7 @@ namespace Susanoo
 
         public CacheMode CachingMode { get; private set; }
 
-        public double Interval { get; set; }
+        public double Interval { get; private set; }
 
         public int CallCount { get; private set; }
 
@@ -39,10 +34,13 @@ namespace Susanoo
 
             TimeStamp = DateTime.Now;
 
-            if (Interval == 0)
+            if (Interval <= 0)
                 CachingMode = CacheMode.Permanent;
         }
 
+        /// <summary>
+        /// Renews the intervals.
+        /// </summary>
         public void RenewIntervals()
         {
             CallCount = 0;

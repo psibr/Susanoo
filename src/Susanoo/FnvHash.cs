@@ -148,13 +148,13 @@ namespace Susanoo
             var hash = fnvOffset;
             for (int i = 0; i < value.Length; i++)
             {
-                hash ^= (uint) value[i];
+                hash ^= (uint)value[i];
                 hash %= fnvMod;
                 hash *= fnvPrime;
             }
             if (!IsPowerOfTwo(hashBitSize))
             {
-                var mask = BigInteger.Parse(new string('f', (hashBitSize/4) + (hashBitSize%4 != 0 ? 1 : 0)),
+                var mask = BigInteger.Parse(new string('f', (hashBitSize / 4) + (hashBitSize % 4 != 0 ? 1 : 0)),
                     NumberStyles.HexNumber);
                 hash = (hash >> hashBitSize) ^ (mask & hash);
             }

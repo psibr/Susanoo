@@ -30,7 +30,7 @@ namespace Susanoo
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandProcessor<TFilter> : ICommandProcessorInterop<TFilter>
 #if !NETFX40
-        , ICommandProcessorAsync<TFilter>
+, ICommandProcessorAsync<TFilter>
 #endif
     {
         /// <summary>
@@ -72,6 +72,7 @@ namespace Susanoo
     }
 
 #if !NETFX40
+
     public interface ICommandProcessorAsync<TFilter>
     {
         /// <summary>
@@ -133,7 +134,9 @@ namespace Susanoo
         Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters);
     }
+
 #endif
+
     /// <summary>
     ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
     ///     and a filter parameter.
@@ -144,9 +147,9 @@ namespace Susanoo
     public interface ICommandProcessor<TFilter, TResult>
         : ICommandProcessorInterop<TFilter>
 #if !NETFX40
-        , ICommandProcessorAsync<TFilter, TResult>
+, ICommandProcessorAsync<TFilter, TResult>
 #endif
-        where TResult : new()
+ where TResult : new()
     {
         /// <summary>
         ///     Gets the command result expression.
@@ -173,6 +176,16 @@ namespace Susanoo
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
+        ICommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
     }
 
     /// <summary>
@@ -188,6 +201,16 @@ namespace Susanoo
         where TResult1 : new()
         where TResult2 : new()
     {
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
+        ICommandProcessor<TFilter, TResult1, TResult2> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
+
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -235,6 +258,16 @@ namespace Susanoo
         where TResult2 : new()
         where TResult3 : new()
     {
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
+
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -286,6 +319,16 @@ namespace Susanoo
         where TResult3 : new()
         where TResult4 : new()
     {
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
+
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -341,6 +384,16 @@ namespace Susanoo
         where TResult4 : new()
         where TResult5 : new()
     {
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
+
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -404,6 +457,16 @@ namespace Susanoo
         where TResult5 : new()
         where TResult6 : new()
     {
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
+
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -471,6 +534,16 @@ namespace Susanoo
         where TResult6 : new()
         where TResult7 : new()
     {
+        /// <summary>
+        /// Enables result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
+
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
         ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.

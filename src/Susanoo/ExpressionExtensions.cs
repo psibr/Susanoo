@@ -268,9 +268,9 @@ namespace Susanoo
         {
             string name;
             if (propertySelector.Body is UnaryExpression)
-                name = ((MemberExpression) (propertySelector.Body as UnaryExpression).Operand).Member.Name;
+                name = ((MemberExpression)(propertySelector.Body as UnaryExpression).Operand).Member.Name;
             else
-                name = ((MemberExpression) propertySelector.Body).Member.Name;
+                name = ((MemberExpression)propertySelector.Body).Member.Name;
 
             return name;
         }

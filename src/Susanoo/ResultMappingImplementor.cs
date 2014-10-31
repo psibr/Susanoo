@@ -88,7 +88,7 @@ namespace Susanoo
 
             foreach (var item in _mappingActions)
             {
-                var config = new PropertyMappingConfiguration(typeof (TResult).GetProperty(item.Key));
+                var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(item.Key));
                 item.Value.Invoke(config);
 
                 exportDictionary.Add(item.Key, config);
@@ -103,7 +103,7 @@ namespace Susanoo
         public void MapDeclarativeProperties()
         {
             foreach (var item in PropertyMetadataExtractor
-                .FindAllowedProperties(typeof (TResult), DescriptorActions.Read))
+                .FindAllowedProperties(typeof(TResult), DescriptorActions.Read))
             {
                 KeyValuePair<PropertyInfo, PropertyMap> item1 = item;
                 _mappingActions.Add(item.Key.Name, o => o.UseAlias(item1.Value.ActiveAlias));

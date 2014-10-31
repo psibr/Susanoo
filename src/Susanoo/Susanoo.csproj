@@ -74,6 +74,7 @@
     <Compile Include="CommandBuilder.cs" />
     <Compile Include="CommandExpression.cs" />
     <Compile Include="CommandManager.cs" />
+    <Compile Include="CommandProcessorCommon.cs" />
     <Compile Include="CommandResultExpression.cs" />
     <Compile Include="CommandResultImplementor.cs" />
     <Compile Include="FnvHash.cs" />

@@ -272,6 +272,7 @@ namespace Susanoo
         /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
         /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
 #if !NETFX40
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static object CastValue(Type newType, object value, object defaultValue, string typeName)
@@ -390,12 +391,12 @@ namespace Susanoo
     }
 
 #if !NETFX40
+
     /// <summary>
     ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
     public partial class DatabaseManager : IDatabaseManager, IDisposable
     {
-
         /// <summary>
         ///     Executes the data reader asynchronously.
         /// </summary>
@@ -496,7 +497,7 @@ namespace Susanoo
                 {
                     return
                         (T)
-                            CastValue(typeof (T),
+                            CastValue(typeof(T),
                                 await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T),
                                 null);
                 }
@@ -508,5 +509,6 @@ namespace Susanoo
             }
         }
     }
+
 #endif
 }
