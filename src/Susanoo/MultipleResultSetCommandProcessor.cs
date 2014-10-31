@@ -98,7 +98,7 @@ namespace Susanoo
             Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> finalResults = null;
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
@@ -248,7 +248,7 @@ namespace Susanoo
             Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> finalResults = null;
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
@@ -423,7 +423,7 @@ namespace Susanoo
                 IEnumerable<TResult4>> finalResults = null;
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
@@ -629,7 +629,7 @@ namespace Susanoo
                 IEnumerable<TResult5>> finalResults = null;
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
@@ -858,7 +858,7 @@ namespace Susanoo
                 IEnumerable<TResult6>> finalResults = null;
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
@@ -1109,7 +1109,7 @@ namespace Susanoo
                 IEnumerable<TResult7>> finalResults = null;
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 

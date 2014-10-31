@@ -140,7 +140,7 @@ namespace Susanoo
 
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
@@ -228,7 +228,7 @@ namespace Susanoo
 
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + c.Value.ToString()));
+                var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = FnvHash.GetHash(parameterAggregate, 128);
 
