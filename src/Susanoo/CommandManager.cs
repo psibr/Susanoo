@@ -164,13 +164,20 @@ namespace Susanoo
 
         private static readonly ConcurrentBag<WeakReference<CommandProcessorCommon>> _registeredCommandProcessors = new ConcurrentBag<WeakReference<CommandProcessorCommon>>();
 
+        private static readonly ConcurrentDictionary<string, WeakReference<CommandProcessorCommon>> _namedCommandProcessors = 
+            new ConcurrentDictionary<string, WeakReference<CommandProcessorCommon>>();
+
         /// <summary>
         /// Registers the command processor.
         /// </summary>
         /// <param name="processor">The processor.</param>
-        public static void RegisterCommandProcessor(CommandProcessorCommon processor)
+        /// <param name="name">The name.</param>
+        public static void RegisterCommandProcessor(CommandProcessorCommon processor, string name)
         {
             _registeredCommandProcessors.Add(new WeakReference<CommandProcessorCommon>(processor));
+            
+            if(!string.IsNullOrWhiteSpace(name))
+                _namedCommandProcessors.TryAdd(name, new WeakReference<CommandProcessorCommon>(processor));
         }
 
         /// <summary>
@@ -184,6 +191,18 @@ namespace Susanoo
                 if (registeredCommandProcessor.TryGetTarget(out processor))
                     processor.FlushCache();
             }
+        }
+
+        /// <summary>
+        /// Flushes caches on a specific command processor.
+        /// </summary>
+        public static void FlushCache(string name)
+        {
+            WeakReference<CommandProcessorCommon> reference;
+            CommandProcessorCommon value;
+            if(_namedCommandProcessors.TryGetValue(name, out reference))
+                if(reference.TryGetTarget(out value))
+                    value.FlushCache();
         }
     }
 

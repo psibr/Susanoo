@@ -31,22 +31,24 @@ namespace Susanoo
         private readonly IResultMapper<TResult2> _item2Mapper;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2}" />
-        ///     class.
+        /// Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2> commandResultExpression)
+            ICommandResultExpression<TFilter, TResult1, TResult2> commandResultExpression, string name)
+            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>());
+                    CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>());
+                    CommandResultExpression.ToSingleResult<TResult2>(), null);
         }
 
         /// <summary>
@@ -146,6 +148,12 @@ namespace Susanoo
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
+        /// <summary>
+        /// Enables the result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
         public ICommandProcessor<TFilter, TResult1, TResult2> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
@@ -177,25 +185,27 @@ namespace Susanoo
         private readonly IResultMapper<TResult3> _item3Mapper;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3}" /> class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> commandResultExpression)
+            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> commandResultExpression, string name)
+            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>());
+                    CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>());
+                    CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>());
+                    CommandResultExpression.ToSingleResult<TResult3>(), null);
         }
 
         /// <summary>
@@ -302,6 +312,12 @@ namespace Susanoo
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
+        /// <summary>
+        /// Enables the result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
@@ -338,29 +354,31 @@ namespace Susanoo
         private readonly IResultMapper<TResult4> _item4Mapper;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4}" /> class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
-                commandResultExpression)
+                commandResultExpression, string name)
+            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>());
+                    CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>());
+                    CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>());
+                    CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>());
+                    CommandResultExpression.ToSingleResult<TResult4>(), null);
         }
 
         /// <summary>
@@ -494,6 +512,12 @@ namespace Susanoo
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
+        /// <summary>
+        /// Enables the result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
@@ -533,32 +557,34 @@ namespace Susanoo
         private readonly IResultMapper<TResult5> _item5Mapper;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" /> class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-                commandResultExpression)
+                commandResultExpression, string name)
+            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>());
+                    CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>());
+                    CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>());
+                    CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>());
+                    CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>());
+                    CommandResultExpression.ToSingleResult<TResult5>(), null);
         }
 
         /// <summary>
@@ -712,6 +738,12 @@ namespace Susanoo
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
+        /// <summary>
+        /// Enables the result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
@@ -754,36 +786,38 @@ namespace Susanoo
         private readonly IResultMapper<TResult6> _item6Mapper;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" />
-        ///     class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-                commandResultExpression)
+                commandResultExpression, string name)
+            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>());
+                    CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>());
+                    CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>());
+                    CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>());
+                    CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>());
+                    CommandResultExpression.ToSingleResult<TResult5>(), null);
             _item6Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult6>(
-                    CommandResultExpression.ToSingleResult<TResult6>());
+                    CommandResultExpression.ToSingleResult<TResult6>(), null);
         }
 
         /// <summary>
@@ -950,6 +984,12 @@ namespace Susanoo
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
+        /// <summary>
+        /// Enables the result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
@@ -997,40 +1037,41 @@ namespace Susanoo
         private readonly IResultMapper<TResult7> _item7Mapper;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see
-        ///         cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}" />
-        ///     class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-                commandResultExpression)
+                commandResultExpression, string name)
+            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>());
+                    CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>());
+                    CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>());
+                    CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>());
+                    CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>());
+                    CommandResultExpression.ToSingleResult<TResult5>(), null);
             _item6Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult6>(
-                    CommandResultExpression.ToSingleResult<TResult6>());
+                    CommandResultExpression.ToSingleResult<TResult6>(), null);
             _item7Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult7>(
-                    CommandResultExpression.ToSingleResult<TResult7>());
+                    CommandResultExpression.ToSingleResult<TResult7>(), null);
         }
 
         /// <summary>
@@ -1210,6 +1251,12 @@ namespace Susanoo
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
+        /// <summary>
+        /// Enables the result caching.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="interval">The interval.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);

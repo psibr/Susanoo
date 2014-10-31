@@ -129,10 +129,11 @@ namespace Susanoo
         /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
+        /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult> Realize()
+        public ICommandProcessor<TFilter, TResult> Realize(string name = null)
         {
-            return new SingleResultSetCommandProcessor<TFilter, TResult>(this);
+            return new SingleResultSetCommandProcessor<TFilter, TResult>(this, name);
         }
 
         /// <summary>
@@ -184,10 +185,11 @@ namespace Susanoo
         /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
+        /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2> Realize()
+        public ICommandProcessor<TFilter, TResult1, TResult2> Realize(string name = null)
         {
-            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>(this);
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>(this, name);
         }
     }
 
@@ -232,10 +234,11 @@ namespace Susanoo
         /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
+        /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Realize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Realize(string name = null)
         {
-            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>(this);
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>(this, name);
         }
     }
 
@@ -280,12 +283,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
+        /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Realize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Realize(string name = null)
         {
-            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>(this, name);
         }
     }
 
@@ -336,10 +340,11 @@ namespace Susanoo
         /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
+        /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Realize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Realize(string name = null)
         {
-            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
+            return new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this, name);
         }
     }
 
@@ -392,12 +397,13 @@ namespace Susanoo
         /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
+        /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Realize()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Realize(string name = null)
         {
             return
                 new MultipleResultSetCommandProcessor
-                    <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
+                    <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this, name);
         }
     }
 
@@ -453,13 +459,13 @@ namespace Susanoo
         /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
+        /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Realize
-            ()
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Realize(string name = null)
         {
             return
                 new MultipleResultSetCommandProcessor
-                    <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
+                    <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this, name);
         }
     }
 }

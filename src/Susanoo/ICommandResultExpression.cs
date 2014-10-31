@@ -57,7 +57,7 @@ namespace Susanoo
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        ICommandProcessor<TFilter, TResult> Realize();
+        ICommandProcessor<TFilter, TResult> Realize(string name = null);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ namespace Susanoo
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2> Realize();
+        ICommandProcessor<TFilter, TResult1, TResult2> Realize(string name = null);
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ namespace Susanoo
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Realize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Realize(string name = null);
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ namespace Susanoo
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Realize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Realize(string name = null);
     }
 
     /// <summary>
@@ -181,7 +181,7 @@ namespace Susanoo
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Realize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Realize(string name = null);
     }
 
     /// <summary>
@@ -218,7 +218,7 @@ namespace Susanoo
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Realize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> Realize(string name = null);
     }
 
     /// <summary>
@@ -257,6 +257,6 @@ namespace Susanoo
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Realize();
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Realize(string name = null);
     }
 }

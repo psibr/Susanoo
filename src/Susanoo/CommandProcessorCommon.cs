@@ -12,11 +12,11 @@ namespace Susanoo
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandProcessorCommon"/> class.
         /// </summary>
-        protected CommandProcessorCommon()
+        protected CommandProcessorCommon(string name = null)
         {
             _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>();
 
-            CommandManager.RegisterCommandProcessor(this);
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         private bool _resultCachingEnabled = false;

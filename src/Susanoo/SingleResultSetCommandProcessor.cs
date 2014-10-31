@@ -64,11 +64,12 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
+        /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
-        public SingleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult> mappings)
-            : base()
+        /// <param name="name">The name.</param>
+        public SingleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult> mappings, string name)
+            : base(name)
         {
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;

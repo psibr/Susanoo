@@ -33,7 +33,7 @@ namespace Susanoo
         /// <summary>
         ///     Realizes the pipeline with no result mappings.
         /// </summary>
-        ICommandProcessor<TFilter> Realize();
+        ICommandProcessor<TFilter> Realize(string name = null);
 
         /// <summary>
         /// ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard parameters.

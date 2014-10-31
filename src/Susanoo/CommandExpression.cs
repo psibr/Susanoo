@@ -112,7 +112,7 @@ namespace Susanoo
         ///     Realizes the pipeline with no result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
-        public ICommandProcessor<TFilter> Realize()
+        public ICommandProcessor<TFilter> Realize(string name = null)
         {
             return new NoResultSetCommandProcessor<TFilter>(this);
         }
