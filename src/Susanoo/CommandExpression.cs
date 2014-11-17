@@ -114,7 +114,7 @@ namespace Susanoo
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         public ICommandProcessor<TFilter> Realize(string name = null)
         {
-            return new NoResultSetCommandProcessor<TFilter>(this);
+            return new NoResultSetCommandProcessor<TFilter>(this, name);
         }
 
         /// <summary>

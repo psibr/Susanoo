@@ -75,6 +75,8 @@ namespace Susanoo
             _commandExpression = mappings.CommandExpression;
 
             CompiledMapping = typeof(TResult) != typeof(object) ? CompileMappings() : DynamicConversion;
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>

@@ -49,6 +49,8 @@ namespace Susanoo
             _item2Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult2>(
                     CommandResultExpression.ToSingleResult<TResult2>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -75,7 +77,11 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return (_item1Mapper.CacheHash * 31)
+                     ^ (_item2Mapper.CacheHash * 31);
+            }
         }
 
         /// <summary>
@@ -206,6 +212,8 @@ namespace Susanoo
             _item3Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult3>(
                     CommandResultExpression.ToSingleResult<TResult3>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -225,14 +233,18 @@ namespace Susanoo
         {
             get { return _commandExpression; }
         }
-
         /// <summary>
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return (_item1Mapper.CacheHash * 31)
+                     ^ (_item2Mapper.CacheHash * 31)
+                     ^ (_item3Mapper.CacheHash * 31);
+            }
         }
 
         /// <summary>
@@ -379,6 +391,8 @@ namespace Susanoo
             _item4Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult4>(
                     CommandResultExpression.ToSingleResult<TResult4>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -405,7 +419,13 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return (_item1Mapper.CacheHash * 31)
+                     ^ (_item2Mapper.CacheHash * 31)
+                     ^ (_item3Mapper.CacheHash * 31)
+                     ^ (_item4Mapper.CacheHash * 31);
+            }
         }
 
         /// <summary>
@@ -585,6 +605,8 @@ namespace Susanoo
             _item5Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult5>(
                     CommandResultExpression.ToSingleResult<TResult5>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -612,7 +634,14 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return (_item1Mapper.CacheHash * 31)
+                     ^ (_item2Mapper.CacheHash * 31)
+                     ^ (_item3Mapper.CacheHash * 31)
+                     ^ (_item4Mapper.CacheHash * 31)
+                     ^ (_item5Mapper.CacheHash * 31);
+            }
         }
 
         /// <summary>
@@ -818,6 +847,8 @@ namespace Susanoo
             _item6Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult6>(
                     CommandResultExpression.ToSingleResult<TResult6>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -845,7 +876,15 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return (_item1Mapper.CacheHash * 31)
+                     ^ (_item2Mapper.CacheHash * 31)
+                     ^ (_item3Mapper.CacheHash * 31)
+                     ^ (_item4Mapper.CacheHash * 31)
+                     ^ (_item5Mapper.CacheHash * 31)
+                     ^ (_item6Mapper.CacheHash * 31);
+            }
         }
 
         /// <summary>
@@ -1072,6 +1111,8 @@ namespace Susanoo
             _item7Mapper =
                 new SingleResultSetCommandProcessor<TFilter, TResult7>(
                     CommandResultExpression.ToSingleResult<TResult7>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -1099,7 +1140,16 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return (_item1Mapper.CacheHash * 31)
+                     ^ (_item2Mapper.CacheHash * 31)
+                     ^ (_item3Mapper.CacheHash * 31)
+                     ^ (_item4Mapper.CacheHash * 31)
+                     ^ (_item5Mapper.CacheHash * 31)
+                     ^ (_item6Mapper.CacheHash * 31)
+                     ^ (_item7Mapper.CacheHash * 31);
+            }
         }
 
         /// <summary>

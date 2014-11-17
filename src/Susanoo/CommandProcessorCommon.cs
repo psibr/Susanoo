@@ -15,8 +15,6 @@ namespace Susanoo
         protected CommandProcessorCommon(string name = null)
         {
             _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>();
-
-            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         private bool _resultCachingEnabled = false;
