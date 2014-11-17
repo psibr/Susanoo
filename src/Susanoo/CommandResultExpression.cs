@@ -93,6 +93,18 @@ namespace Susanoo
         ICommandResultExpression<TFilter, TResult>
         where TResult : new()
     {
+        public static ICommandProcessor<TFilter, TResult> BuildOrRegenCommandProcessor(ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
+        {
+            CommandProcessorCommon instance;
+            SingleResultSetCommandProcessor<TFilter, TResult> result;
+
+            if (CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
+                result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+            else
+                result = new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultExpression, name);
+
+            return result;
+        }
         /// <summary>
         ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
         /// </summary>
@@ -145,15 +157,7 @@ namespace Susanoo
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public ICommandProcessor<TFilter, TResult> Realize(string name = null)
         {
-            CommandProcessorCommon instance;
-            SingleResultSetCommandProcessor<TFilter, TResult> result;
-
-            if (CommandManager.TryGetCommandProcessor(CacheHash, out instance))
-                result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
-            else
-                result = new SingleResultSetCommandProcessor<TFilter, TResult>(this, name);
-
-            return result;
+            return BuildOrRegenCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -163,7 +167,7 @@ namespace Susanoo
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public override ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>()
         {
-            return this as ICommandResultExpression<TFilter, TSingle>;
+            return new CommandResultExpression<TFilter, TSingle>(this.CommandExpression);
         }
     }
 

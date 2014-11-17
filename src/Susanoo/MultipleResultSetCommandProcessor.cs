@@ -44,11 +44,9 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -204,14 +202,11 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -380,17 +375,13 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -591,20 +582,15 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult5>(), null);
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -830,23 +816,17 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult5>(), null);
             _item6Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult6>(
-                    CommandResultExpression.ToSingleResult<TResult6>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult6>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult6>(), null);
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -1091,26 +1071,19 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult5>(), null);
             _item6Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult6>(
-                    CommandResultExpression.ToSingleResult<TResult6>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult6>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult6>(), null);
             _item7Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult7>(
-                    CommandResultExpression.ToSingleResult<TResult7>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult7>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult7>(), null);
 
             CommandManager.RegisterCommandProcessor(this, name);
         }

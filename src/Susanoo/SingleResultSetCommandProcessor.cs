@@ -79,6 +79,11 @@ namespace Susanoo
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
+        public static IResultMapper<TResult> BuildOrRegenResultMapper(ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
+        {
+            return (IResultMapper<TResult>)CommandResultExpression<TFilter, TResult>.BuildOrRegenCommandProcessor(commandResultExpression, name);
+        }
+
         /// <summary>
         ///     Gets the compiled mapping.
         /// </summary>
