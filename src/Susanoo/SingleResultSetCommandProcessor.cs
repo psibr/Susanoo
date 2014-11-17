@@ -100,7 +100,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (CommandResultExpression.CacheHash * 31) ^ CommandExpression.CacheHash; }
+            get { return CommandResultExpression.CacheHash; }
         }
 
         /// <summary>
