@@ -77,8 +77,7 @@ namespace Susanoo
         {
             get
             {
-                return (_item1Mapper.CacheHash * 31)
-                     ^ (_item2Mapper.CacheHash * 31);
+                return CommandResultExpression.CacheHash;
             }
         }
 
@@ -228,6 +227,7 @@ namespace Susanoo
         {
             get { return _commandExpression; }
         }
+
         /// <summary>
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
@@ -236,9 +236,7 @@ namespace Susanoo
         {
             get
             {
-                return (_item1Mapper.CacheHash * 31)
-                     ^ (_item2Mapper.CacheHash * 31)
-                     ^ (_item3Mapper.CacheHash * 31);
+                return CommandResultExpression.CacheHash;
             }
         }
 
@@ -412,10 +410,7 @@ namespace Susanoo
         {
             get
             {
-                return (_item1Mapper.CacheHash * 31)
-                     ^ (_item2Mapper.CacheHash * 31)
-                     ^ (_item3Mapper.CacheHash * 31)
-                     ^ (_item4Mapper.CacheHash * 31);
+                return CommandResultExpression.CacheHash;
             }
         }
 
@@ -622,11 +617,7 @@ namespace Susanoo
         {
             get
             {
-                return (_item1Mapper.CacheHash * 31)
-                     ^ (_item2Mapper.CacheHash * 31)
-                     ^ (_item3Mapper.CacheHash * 31)
-                     ^ (_item4Mapper.CacheHash * 31)
-                     ^ (_item5Mapper.CacheHash * 31);
+                return CommandResultExpression.CacheHash;
             }
         }
 
@@ -858,12 +849,7 @@ namespace Susanoo
         {
             get
             {
-                return (_item1Mapper.CacheHash * 31)
-                     ^ (_item2Mapper.CacheHash * 31)
-                     ^ (_item3Mapper.CacheHash * 31)
-                     ^ (_item4Mapper.CacheHash * 31)
-                     ^ (_item5Mapper.CacheHash * 31)
-                     ^ (_item6Mapper.CacheHash * 31);
+                return CommandResultExpression.CacheHash;
             }
         }
 
@@ -1115,13 +1101,7 @@ namespace Susanoo
         {
             get
             {
-                return (_item1Mapper.CacheHash * 31)
-                     ^ (_item2Mapper.CacheHash * 31)
-                     ^ (_item3Mapper.CacheHash * 31)
-                     ^ (_item4Mapper.CacheHash * 31)
-                     ^ (_item5Mapper.CacheHash * 31)
-                     ^ (_item6Mapper.CacheHash * 31)
-                     ^ (_item7Mapper.CacheHash * 31);
+                return CommandResultExpression.CacheHash;
             }
         }
 
