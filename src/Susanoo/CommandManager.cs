@@ -194,7 +194,8 @@ namespace Susanoo
         /// <param name="name">The name.</param>
         public static void RegisterCommandProcessor(CommandProcessorCommon processor, string name)
         {
-            _registeredCommandProcessors.TryAdd(processor.CacheHash, new WeakReference<CommandProcessorCommon>(processor));
+            _registeredCommandProcessors.AddOrUpdate(processor.CacheHash, new WeakReference<CommandProcessorCommon>(processor), 
+                (hash, reference) => new WeakReference<CommandProcessorCommon>(processor));
             
             if(!string.IsNullOrWhiteSpace(name))
                 _namedCommandProcessors.TryAdd(name, new WeakReference<CommandProcessorCommon>(processor));
