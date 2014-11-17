@@ -58,7 +58,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
         {
-            get { return _implementor.CacheHash; }
+            get { return _implementor.CacheHash ^ (CommandExpression.CacheHash * 31); }
         }
 
         /// <summary>
