@@ -127,6 +127,18 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31) ^ FnvHash.GetHash(typeof(TResult).AssemblyQualifiedName, 128);
+            }
+        }
+
+        /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
@@ -191,6 +203,20 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31) 
+                    ^ FnvHash.GetHash(typeof(TResult1).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult2).AssemblyQualifiedName, 128);
+            }
+        }
+
+        /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
@@ -230,6 +256,21 @@ namespace Susanoo
         public CommandResultExpression(ICommandExpression<TFilter> command)
             : base(command)
         {
+        }
+
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31)
+                    ^ FnvHash.GetHash(typeof(TResult1).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult2).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult3).AssemblyQualifiedName, 128);
+            }
         }
 
         /// <summary>
@@ -292,6 +333,22 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31)
+                    ^ FnvHash.GetHash(typeof(TResult1).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult2).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult3).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult4).AssemblyQualifiedName, 128);
+            }
+        }
+
+        /// <summary>
         ///     Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
@@ -351,6 +408,23 @@ namespace Susanoo
         public CommandResultExpression(ICommandExpression<TFilter> command)
             : base(command)
         {
+        }
+
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31)
+                    ^ FnvHash.GetHash(typeof(TResult1).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult2).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult3).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult4).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult5).AssemblyQualifiedName, 128);
+            }
         }
 
         /// <summary>
@@ -419,6 +493,24 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31)
+                    ^ FnvHash.GetHash(typeof(TResult1).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult2).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult3).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult4).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult5).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult6).AssemblyQualifiedName, 128);
+            }
+        }
+
+        /// <summary>
         ///     Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
@@ -484,6 +576,25 @@ namespace Susanoo
         public CommandResultExpression(ICommandExpression<TFilter> command)
             : base(command)
         {
+        }
+
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31)
+                    ^ FnvHash.GetHash(typeof(TResult1).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult2).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult3).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult4).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult5).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult6).AssemblyQualifiedName, 128)
+                    ^ FnvHash.GetHash(typeof(TResult7).AssemblyQualifiedName, 128);
+            }
         }
 
         /// <summary>
