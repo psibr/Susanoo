@@ -73,7 +73,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
@@ -230,7 +230,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
@@ -403,7 +403,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
@@ -610,7 +610,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
@@ -843,7 +843,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }
@@ -1097,7 +1097,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
         }

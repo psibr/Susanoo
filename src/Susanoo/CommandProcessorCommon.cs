@@ -7,7 +7,7 @@ namespace Susanoo
     /// <summary>
     /// Common components between all CommandProcessors
     /// </summary>
-    public abstract class CommandProcessorCommon
+    public abstract class CommandProcessorCommon : IFluentPipelineFragment
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandProcessorCommon"/> class.
@@ -116,6 +116,15 @@ namespace Susanoo
             value = cache != null ? cache.Item : null;
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public abstract BigInteger CacheHash
+        {
+            get;
         }
     }
 }

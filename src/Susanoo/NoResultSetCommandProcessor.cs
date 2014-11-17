@@ -39,7 +39,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return _commandExpression.CacheHash; }
         }
