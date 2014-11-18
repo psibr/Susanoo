@@ -80,7 +80,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
         {
-            get { return FnvHash.GetHash(PropertyMetadata.Name + ActiveAlias + _conversionProcess, 64); }
+            get { return FnvHash.GetHash(PropertyMetadata.Name + ActiveAlias + _conversionProcess, 32); }
         }
 
         /// <summary>

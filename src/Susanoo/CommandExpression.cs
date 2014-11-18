@@ -102,7 +102,7 @@ namespace Susanoo
                 hashText.Append(_parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
 
                 string resultBeforeHash = hashText.ToString();
-                BigInteger hashCode = FnvHash.GetHash(resultBeforeHash, 128);
+                BigInteger hashCode = FnvHash.GetHash(resultBeforeHash, 32);
 
                 return hashCode;
             }

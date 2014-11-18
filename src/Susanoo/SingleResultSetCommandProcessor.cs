@@ -150,7 +150,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = FnvHash.GetHash(parameterAggregate, 32);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
