@@ -57,7 +57,7 @@ namespace Susanoo
                     hashCombinations.Add(item.Value.CacheHash);
                 }
 
-                BigInteger initialHash = FnvHash.GetHash(hashText.ToString(), 32);
+                BigInteger initialHash = FnvHash.GetHash32(hashText.ToString());
 
                 return hashCombinations.Aggregate(initialHash, (current, hash) => (current * 31) ^ hash);
             }
