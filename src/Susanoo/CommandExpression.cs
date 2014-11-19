@@ -160,14 +160,19 @@ namespace Susanoo
 
             var propertyParameters = filter != null ? BuildPropertyParameters(databaseManager, filter) : null;
             int parameterCount;
-            var dbParameters = propertyParameters as DbParameter[] ?? propertyParameters.ToArray();
+            DbParameter[] dbParameters = null;
 
             if (propertyParameters != null)
+            {
+                dbParameters = propertyParameters as DbParameter[] ?? propertyParameters.ToArray();
                 parameterCount = (dbParameters.Count() + _constantParameters.Count) +
                                  ((explicitParameters != null) ? explicitParameters.Count() : 0);
+            }
             else
+            {
                 parameterCount = (_constantParameters.Count) +
                                  ((explicitParameters != null) ? explicitParameters.Count() : 0);
+            }
 
 
             var parameters = new DbParameter[parameterCount];
