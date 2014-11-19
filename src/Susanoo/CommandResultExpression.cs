@@ -98,7 +98,7 @@ namespace Susanoo
             CommandProcessorCommon instance;
             SingleResultSetCommandProcessor<TFilter, TResult> result;
 
-            if (typeof(TResult) != typeof(object) && CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
+            if (CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
                 result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
             else
                 result = new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultExpression, name);

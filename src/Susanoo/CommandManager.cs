@@ -163,10 +163,10 @@ namespace Susanoo
             return typeToUse;
         }
 
-        private static readonly ConcurrentDictionary<BigInteger, WeakReference<CommandProcessorCommon>> _registeredCommandProcessors = new ConcurrentDictionary<BigInteger, WeakReference<CommandProcessorCommon>>();
+        private static readonly ConcurrentDictionary<BigInteger, CommandProcessorCommon> _registeredCommandProcessors = new ConcurrentDictionary<BigInteger, CommandProcessorCommon>();
 
-        private static readonly ConcurrentDictionary<string, WeakReference<CommandProcessorCommon>> _namedCommandProcessors = 
-            new ConcurrentDictionary<string, WeakReference<CommandProcessorCommon>>();
+        private static readonly ConcurrentDictionary<string, CommandProcessorCommon> _namedCommandProcessors = 
+            new ConcurrentDictionary<string, CommandProcessorCommon>();
 
         /// <summary>
         /// Attempts to get a command processor by hashcode.
@@ -176,13 +176,7 @@ namespace Susanoo
         /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected, <c>false</c> otherwise.</returns>
         public static bool TryGetCommandProcessor(BigInteger hash, out CommandProcessorCommon commandProcessor)
         {
-            WeakReference<CommandProcessorCommon> processor;
-            var result = _registeredCommandProcessors.TryGetValue(hash, out processor);
-
-            if (result)
-                result = processor.TryGetTarget(out commandProcessor);
-            else
-                commandProcessor = null;
+            var result = _registeredCommandProcessors.TryGetValue(hash, out commandProcessor);
 
             return result;
         }
@@ -194,11 +188,11 @@ namespace Susanoo
         /// <param name="name">The name.</param>
         public static void RegisterCommandProcessor(CommandProcessorCommon processor, string name)
         {
-            _registeredCommandProcessors.AddOrUpdate(processor.CacheHash, new WeakReference<CommandProcessorCommon>(processor), 
-                (hash, reference) => new WeakReference<CommandProcessorCommon>(processor));
+            _registeredCommandProcessors.AddOrUpdate(processor.CacheHash, processor, 
+                (hash, reference) => processor);
             
             if(!string.IsNullOrWhiteSpace(name))
-                _namedCommandProcessors.TryAdd(name, new WeakReference<CommandProcessorCommon>(processor));
+                _namedCommandProcessors.TryAdd(name, processor);
         }
 
         /// <summary>
@@ -208,9 +202,7 @@ namespace Susanoo
         {
             foreach (var registeredCommandProcessor in _registeredCommandProcessors)
             {
-                CommandProcessorCommon processor;
-                if (registeredCommandProcessor.Value.TryGetTarget(out processor))
-                    processor.FlushCache();
+                    registeredCommandProcessor.Value.FlushCache();
             }
         }
 
@@ -219,11 +211,9 @@ namespace Susanoo
         /// </summary>
         public static void FlushCache(string name)
         {
-            WeakReference<CommandProcessorCommon> reference;
-            CommandProcessorCommon value;
+            CommandProcessorCommon reference;
             if(_namedCommandProcessors.TryGetValue(name, out reference))
-                if(reference.TryGetTarget(out value))
-                    value.FlushCache();
+                reference.FlushCache();
         }
     }
 }
