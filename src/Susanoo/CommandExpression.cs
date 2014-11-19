@@ -155,7 +155,7 @@ namespace Susanoo
         public virtual DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            var propertyParameters = BuildPropertyParameters(databaseManager, filter);
+            var propertyParameters = filter != null ? BuildPropertyParameters(databaseManager, filter) : new DbParameter[0];
 
             var dbParameters = propertyParameters as DbParameter[] ?? propertyParameters.ToArray();
             int parameterCount = (dbParameters.Count() + _constantParameters.Count) +
