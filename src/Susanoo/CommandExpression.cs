@@ -93,20 +93,32 @@ namespace Susanoo
         {
             get
             {
-                var hashText = new StringBuilder(CommandText);
+                if(_CacheHash == -1)
+                    ComputeHash();
 
-                hashText.Append(DbCommandType);
-                hashText.Append(_explicitInclusionMode.ToString());
-                hashText.Append(_constantParameters.Aggregate(string.Empty, (p, c) => p + c.Key));
-                hashText.Append(_parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
-                hashText.Append(_parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
-
-                //string resultBeforeHash = hashText.ToString();
-                //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
-
-                return new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(hashText.ToString())));
+                return _CacheHash;
             }
         }
+
+        private void ComputeHash()
+        {
+            var hashText = new StringBuilder(CommandText);
+
+            hashText.Append(DbCommandType);
+            hashText.Append(_explicitInclusionMode);
+            hashText.Append(_nullValueMode);
+            hashText.Append(_constantParameters.Aggregate(string.Empty, (p, c) => p + c.Key));
+            hashText.Append(_parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
+            hashText.Append(_parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
+
+            //string resultBeforeHash = hashText.ToString();
+            //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
+
+            _CacheHash = new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(hashText.ToString())));
+        }
+
+        private BigInteger _CacheHash = BigInteger.MinusOne;
+
 
         /// <summary>
         ///     Realizes the pipeline with no result mappings.
@@ -114,6 +126,8 @@ namespace Susanoo
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         public ICommandProcessor<TFilter> Realize(string name = null)
         {
+            ComputeHash();
+
             return new NoResultSetCommandProcessor<TFilter>(this, name);
         }
 
@@ -291,6 +305,8 @@ namespace Susanoo
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult> DefineResults<TResult>() where TResult : new()
         {
+            ComputeHash();
+
             return new CommandResultExpression<TFilter, TResult>(this);
         }
 
@@ -304,6 +320,8 @@ namespace Susanoo
             where TResult1 : new()
             where TResult2 : new()
         {
+            ComputeHash();
+
             return new CommandResultExpression<TFilter, TResult1, TResult2>(this);
         }
 
@@ -320,6 +338,8 @@ namespace Susanoo
             where TResult2 : new()
             where TResult3 : new()
         {
+            ComputeHash();
+
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3>(this);
         }
 
@@ -338,6 +358,8 @@ namespace Susanoo
             where TResult3 : new()
             where TResult4 : new()
         {
+            ComputeHash();
+
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
         }
 
@@ -358,6 +380,8 @@ namespace Susanoo
             where TResult4 : new()
             where TResult5 : new()
         {
+            ComputeHash();
+
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
         }
 
@@ -380,6 +404,8 @@ namespace Susanoo
             where TResult5 : new()
             where TResult6 : new()
         {
+            ComputeHash();
+
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
         }
 
@@ -405,6 +431,8 @@ namespace Susanoo
             where TResult6 : new()
             where TResult7 : new()
         {
+            ComputeHash();
+
             return
                 new CommandResultExpression
                     <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
