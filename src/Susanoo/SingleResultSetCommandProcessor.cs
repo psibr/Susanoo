@@ -75,6 +75,13 @@ namespace Susanoo
             _commandExpression = mappings.CommandExpression;
 
             CompiledMapping = typeof(TResult) != typeof(object) ? CompileMappings() : DynamicConversion;
+
+            CommandManager.RegisterCommandProcessor(this, name);
+        }
+
+        public static IResultMapper<TResult> BuildOrRegenResultMapper(ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
+        {
+            return (IResultMapper<TResult>)CommandResultExpression<TFilter, TResult>.BuildOrRegenCommandProcessor(commandResultExpression, name);
         }
 
         /// <summary>
@@ -96,9 +103,9 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
-            get { return (CommandResultExpression.CacheHash * 31) ^ CommandExpression.CacheHash; }
+            get { return CommandResultExpression.CacheHash; }
         }
 
         /// <summary>
@@ -143,7 +150,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
@@ -231,7 +238,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);

@@ -18,12 +18,15 @@ namespace Susanoo
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public NoResultSetCommandProcessor(ICommandExpression<TFilter> command)
+        /// <param name="name">The name of the processor.</param>
+        public NoResultSetCommandProcessor(ICommandExpression<TFilter> command, string name)
         {
             _commandExpression = command;
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
             get { return _commandExpression.CacheHash; }
         }

@@ -44,11 +44,11 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -73,9 +73,12 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return CommandResultExpression.CacheHash;
+            }
         }
 
         /// <summary>
@@ -102,7 +105,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
@@ -198,14 +201,13 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -230,9 +232,12 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return CommandResultExpression.CacheHash;
+            }
         }
 
         /// <summary>
@@ -260,7 +265,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
@@ -368,17 +373,15 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -403,9 +406,12 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return CommandResultExpression.CacheHash;
+            }
         }
 
         /// <summary>
@@ -443,7 +449,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
@@ -571,20 +577,17 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult5>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -610,9 +613,12 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return CommandResultExpression.CacheHash;
+            }
         }
 
         /// <summary>
@@ -657,7 +663,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
@@ -801,23 +807,19 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult5>(), null);
             _item6Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult6>(
-                    CommandResultExpression.ToSingleResult<TResult6>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult6>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult6>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -843,9 +845,12 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return CommandResultExpression.CacheHash;
+            }
         }
 
         /// <summary>
@@ -894,7 +899,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
@@ -1052,26 +1057,21 @@ namespace Susanoo
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult1>(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult1>(), null);
             _item2Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult2>(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult2>(), null);
             _item3Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult3>(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult3>(), null);
             _item4Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult4>(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult4>(), null);
             _item5Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult5>(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult5>(), null);
             _item6Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult6>(
-                    CommandResultExpression.ToSingleResult<TResult6>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult6>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult6>(), null);
             _item7Mapper =
-                new SingleResultSetCommandProcessor<TFilter, TResult7>(
-                    CommandResultExpression.ToSingleResult<TResult7>(), null);
+                SingleResultSetCommandProcessor<TFilter, TResult7>.BuildOrRegenResultMapper(CommandResultExpression.ToSingleResult<TResult7>(), null);
+
+            CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
@@ -1097,9 +1097,12 @@ namespace Susanoo
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
+        public override BigInteger CacheHash
         {
-            get { return (_item1Mapper.CacheHash * 31) ^ _item2Mapper.CacheHash; }
+            get
+            {
+                return CommandResultExpression.CacheHash;
+            }
         }
 
         /// <summary>
@@ -1152,7 +1155,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash(parameterAggregate, 128);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
