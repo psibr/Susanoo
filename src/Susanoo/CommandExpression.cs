@@ -448,6 +448,8 @@ namespace Susanoo
         {
             var properties = new List<DbParameter>();
 
+            var propertiesInfo = filter.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).ToDictionary(pi => pi.Name);
+
             // ReSharper disable once CompareNonConstrainedGenericWithNull
             if (filter != null)
             {
@@ -455,8 +457,7 @@ namespace Susanoo
                 {
                     foreach (var item in _parameterInclusions)
                     {
-                        var propInfo = filter.GetType()
-                            .GetProperty(item.Key, BindingFlags.Instance | BindingFlags.Public);
+                        var propInfo = propertiesInfo[item.Key];
                         var param = databaseManager.CreateParameter();
 
                         param.ParameterName = item.Key;
