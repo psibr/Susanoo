@@ -146,7 +146,7 @@ namespace Susanoo
         {
             get
             {
-                return (base.CacheHash * 31) ^ FnvHash.GetHash32(typeof(TResult).AssemblyQualifiedName);
+                return (base.CacheHash * 31) ^ HashBuilder.Compute(typeof(TResult).AssemblyQualifiedName);
             }
         }
 
@@ -215,8 +215,8 @@ namespace Susanoo
             get
             {
                 return (base.CacheHash * 31) 
-                    ^ FnvHash.GetHash32(typeof(TResult1).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult2).AssemblyQualifiedName);
+                    ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName);
             }
         }
 
@@ -271,9 +271,9 @@ namespace Susanoo
             get
             {
                 return (base.CacheHash * 31)
-                    ^ FnvHash.GetHash32(typeof(TResult1).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult2).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult3).AssemblyQualifiedName);
+                    ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName);
             }
         }
 
@@ -345,10 +345,10 @@ namespace Susanoo
             get
             {
                 return (base.CacheHash * 31)
-                    ^ FnvHash.GetHash32(typeof(TResult1).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult2).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult3).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult4).AssemblyQualifiedName);
+                    ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName);
             }
         }
 
@@ -423,11 +423,11 @@ namespace Susanoo
             get
             {
                 return (base.CacheHash * 31)
-                    ^ FnvHash.GetHash32(typeof(TResult1).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult2).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult3).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult4).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult5).AssemblyQualifiedName);
+                    ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName);
             }
         }
 
@@ -505,12 +505,12 @@ namespace Susanoo
             get
             {
                 return (base.CacheHash * 31)
-                    ^ FnvHash.GetHash32(typeof(TResult1).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult2).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult3).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult4).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult5).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult6).AssemblyQualifiedName);
+                    ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult6).AssemblyQualifiedName);
             }
         }
 
@@ -591,13 +591,13 @@ namespace Susanoo
             get
             {
                 return (base.CacheHash * 31)
-                    ^ FnvHash.GetHash32(typeof(TResult1).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult2).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult3).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult4).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult5).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult6).AssemblyQualifiedName)
-                    ^ FnvHash.GetHash32(typeof(TResult7).AssemblyQualifiedName);
+                    ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult6).AssemblyQualifiedName)
+                    ^ HashBuilder.Compute(typeof(TResult7).AssemblyQualifiedName);
             }
         }
 

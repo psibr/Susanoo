@@ -101,10 +101,10 @@ namespace Susanoo
                 hashText.Append(_parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
                 hashText.Append(_parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
 
-                string resultBeforeHash = hashText.ToString();
-                BigInteger hashCode = FnvHash.GetHash32(resultBeforeHash);
+                //string resultBeforeHash = hashText.ToString();
+                //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
 
-                return hashCode;
+                return new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(hashText.ToString())));
             }
         }
 

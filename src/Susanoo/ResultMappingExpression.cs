@@ -48,18 +48,15 @@ namespace Susanoo
         {
             get
             {
-                var hashCombinations = new List<BigInteger>();
 
                 var hashText = new StringBuilder(typeof(TResult).FullName);
                 foreach (var item in Export())
                 {
                     hashText.Append(item.Key);
-                    hashCombinations.Add(item.Value.CacheHash);
+                    hashText.Append(item.Value.CacheHash);
                 }
 
-                BigInteger initialHash = FnvHash.GetHash32(hashText.ToString());
-
-                return hashCombinations.Aggregate(initialHash, (current, hash) => (current * 31) ^ hash);
+                return HashBuilder.Compute(hashText.ToString());
             }
         }
 

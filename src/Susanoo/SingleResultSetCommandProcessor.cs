@@ -150,7 +150,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash32(parameterAggregate);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
@@ -238,7 +238,7 @@ namespace Susanoo
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty, (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
-                hashCode = FnvHash.GetHash32(parameterAggregate);
+                hashCode = HashBuilder.Compute(parameterAggregate);
 
                 object value = null;
                 TryRetrieveCacheResult(hashCode, out value);
