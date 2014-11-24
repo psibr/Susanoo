@@ -16,25 +16,11 @@ namespace Susanoo
     public interface IPropertyMappingConfiguration : IFluentPipelineFragment
     {
         /// <summary>
-        ///     Gets the property metadata.
-        /// </summary>
-        /// <value>The property metadata.</value>
-        PropertyInfo PropertyMetadata { get; }
-
-        /// <summary>
         ///     Uses the specified alias when mapping from the data call.
         /// </summary>
         /// <param name="alias">The alias.</param>
         /// <returns>Susanoo.IResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
         IPropertyMappingConfiguration UseAlias(string alias);
-
-        /// <summary>
-        ///     Processes the value in some form before assignment.
-        /// </summary>
-        /// <param name="process">The process.</param>
-        /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        IPropertyMappingConfiguration ProcessValueUsing(Func<Type, object, object> process);
     }
 
     /// <summary>
@@ -53,12 +39,6 @@ namespace Susanoo
         /// </summary>
         /// <value>The name of the return.</value>
         string ActiveAlias { get; }
-
-        /// <summary>
-        ///     Gets the conversion process.
-        /// </summary>
-        /// <value>The conversion process.</value>
-        Func<Type, object, object> ConversionProcess { get; }
 
         /// <summary>
         ///     Assembles the mapping expression.

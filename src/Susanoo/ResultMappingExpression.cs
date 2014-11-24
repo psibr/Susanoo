@@ -46,18 +46,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
         {
-            get
-            {
-
-                var hashText = new StringBuilder(typeof(TResult).FullName);
-                foreach (var item in Export())
-                {
-                    hashText.Append(item.Key);
-                    hashText.Append(item.Value.CacheHash);
-                }
-
-                return HashBuilder.Compute(hashText.ToString());
-            }
+            get { return Implementor.CacheHash; }
         }
 
         /// <summary>

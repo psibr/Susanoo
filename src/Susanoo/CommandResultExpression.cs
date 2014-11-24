@@ -93,6 +93,12 @@ namespace Susanoo
         ICommandResultExpression<TFilter, TResult>
         where TResult : new()
     {
+        /// <summary>
+        /// Builds the or regens a command processor from cache.
+        /// </summary>
+        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public static ICommandProcessor<TFilter, TResult> BuildOrRegenCommandProcessor(ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
         {
             CommandProcessorCommon instance;
@@ -146,7 +152,7 @@ namespace Susanoo
         {
             get
             {
-                return (base.CacheHash * 31) ^ HashBuilder.Compute(typeof(TResult).AssemblyQualifiedName);
+                return (base.CacheHash * 31) ^ typeof(TResult).AssemblyQualifiedName.GetHashCode();
             }
         }
 
@@ -215,8 +221,8 @@ namespace Susanoo
             get
             {
                 return (base.CacheHash * 31) 
-                    ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
-                    ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName);
+                    ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
+                    ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode();
             }
         }
 

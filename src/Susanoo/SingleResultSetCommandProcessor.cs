@@ -79,6 +79,12 @@ namespace Susanoo
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
+        /// <summary>
+        /// Builds the or regen result mapper from cache.
+        /// </summary>
+        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
+        /// <returns>IResultMapper&lt;TResult&gt;.</returns>
         public static IResultMapper<TResult> BuildOrRegenResultMapper(ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
         {
             return (IResultMapper<TResult>)CommandResultExpression<TFilter, TResult>.BuildOrRegenCommandProcessor(commandResultExpression, name);

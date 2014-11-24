@@ -15,6 +15,7 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
+using Susanoo.Annotations;
 
 #endregion
 
@@ -83,9 +84,13 @@ internal static class HashBuilder
     {
         return new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(value)));
     }
+
+    public static BigInteger Seed {
+        get { return Murmur3.Seed; }
+    }
 }
 
-public static class IntHelpers
+internal static class IntHelpers
 {
     public static ulong RotateLeft(this ulong original, int bits)
     {
@@ -105,14 +110,14 @@ public static class IntHelpers
     }
 }
 
-internal class Murmur3 {     
+internal class Murmur3 {
 
     // 128 bit output, 64 bit platform version
-    public static ulong READ_SIZE = 16;
-    private static ulong C1 = 0x87c37b91114253d5L;
-    private static ulong C2 = 0x4cf5ad432745937fL;
-    private ulong length;
-    private uint seed;
+    public const ulong READ_SIZE = 16;
+    private const ulong C1 = 0x87c37b91114253d5L;
+    private const ulong C2 = 0x4cf5ad432745937fL;
+    private ulong _length;
+    [UsedImplicitly] internal static uint Seed = 866398230;
     // if want to start with a seed, create a constructor
     ulong h1;
     ulong h2;
@@ -158,8 +163,8 @@ internal class Murmur3 {
     }
     private void ProcessBytes(byte[] bb)
     {
-        h1 = seed;
-        this.length = 0L;
+        h1 = Seed;
+        this._length = 0L;
         int pos = 0;
         ulong remaining = (ulong)bb.Length;
         // read 128 bits, 16 bytes, 2 longs in eacy cycle
@@ -169,7 +174,7 @@ internal class Murmur3 {
             pos += 8;
             ulong k2 = bb.GetUInt64(pos);
             pos += 8;
-            length += READ_SIZE;
+            _length += READ_SIZE;
             remaining -= READ_SIZE;
             MixBody(k1, k2);
         }
@@ -181,7 +186,7 @@ internal class Murmur3 {
     {
         ulong k1 = 0;
         ulong k2 = 0;
-        length += remaining;
+        _length += remaining;
         // little endian (x86) processing
         switch (remaining)
         {
@@ -236,12 +241,13 @@ internal class Murmur3 {
         h1 ^= MixKey1(k1);
         h2 ^= MixKey2(k2);
     }
-    public byte[] Hash    
+
+    private byte[] Hash    
     {
         get
         {
-            h1 ^= length;
-            h2 ^= length;
+            h1 ^= _length;
+            h2 ^= _length;
             h1 += h2;
             h2 += h1;
             h1 = Murmur3.MixFinal(h1);

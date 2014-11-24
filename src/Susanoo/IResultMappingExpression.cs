@@ -53,7 +53,7 @@ namespace Susanoo
     ///     A step in the command definition Fluent API, in which properties are mapped to potential result data.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface IResultMappingImplementor<TResult>
+    public interface IResultMappingImplementor<TResult> : IFluentPipelineFragment
         where TResult : new()
     {
         /// <summary>

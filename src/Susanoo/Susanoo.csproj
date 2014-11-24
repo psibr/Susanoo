@@ -86,6 +86,7 @@
     <Compile Include="IResultMapper.cs" />
     <Compile Include="MultipleResultSetCommandProcessor.cs" />
     <Compile Include="NoResultSetCommandProcessor.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ResultMappingImplementor.cs" />
     <Compile Include="SingleResultSetCommandProcessor.cs" />
     <Compile Include="ResultMappingExpression.cs" />
@@ -107,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Key.snk" />
+    <None Include="Susanoo.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

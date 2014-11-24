@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 
 #endregion
@@ -18,8 +20,8 @@ namespace Susanoo
         : IResultMappingImplementor<TResult>
         where TResult : new()
     {
-        private readonly IDictionary<string, Action<IPropertyMappingConfiguration>> _mappingActions =
-            new Dictionary<string, Action<IPropertyMappingConfiguration>>();
+        private readonly IDictionary<string, IPropertyMapping> _mappingActions =
+            new Dictionary<string, IPropertyMapping>();
 
         private IPropertyMetadataExtractor _propertyMetadataExtractor = new ComponentModelMetadataExtractor();
 
@@ -63,6 +65,18 @@ namespace Susanoo
         }
 
         /// <summary>
+        ///     Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public BigInteger CacheHash
+        {
+            get
+            {
+                return _mappingActions.Aggregate(HashBuilder.Seed, (i, pair) => (i * 31) ^ pair.Value.CacheHash);
+            }
+        }
+
+        /// <summary>
         ///     Mapping options for a property in the result model.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
@@ -71,10 +85,13 @@ namespace Susanoo
             string propertyName,
             Action<IPropertyMappingConfiguration> options)
         {
+            var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(propertyName));
+            options.Invoke(config);
+
             if (!_mappingActions.ContainsKey(propertyName))
-                _mappingActions.Add(propertyName, options);
+                _mappingActions.Add(propertyName, config);
             else
-                _mappingActions[propertyName] = options;
+                _mappingActions[propertyName] = config;
         }
 
         /// <summary>
@@ -84,17 +101,7 @@ namespace Susanoo
         /// <exception cref="NotImplementedException"></exception>
         public virtual IDictionary<string, IPropertyMapping> Export()
         {
-            var exportDictionary = new Dictionary<string, IPropertyMapping>();
-
-            foreach (var item in _mappingActions)
-            {
-                var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(item.Key));
-                item.Value.Invoke(config);
-
-                exportDictionary.Add(item.Key, config);
-            }
-
-            return exportDictionary;
+            return new Dictionary<string, IPropertyMapping>(_mappingActions);
         }
 
         /// <summary>
@@ -105,8 +112,13 @@ namespace Susanoo
             foreach (var item in PropertyMetadataExtractor
                 .FindAllowedProperties(typeof(TResult), DescriptorActions.Read))
             {
-                KeyValuePair<PropertyInfo, PropertyMap> item1 = item;
-                _mappingActions.Add(item.Key.Name, o => o.UseAlias(item1.Value.ActiveAlias));
+                var item1 = item;
+
+                var configuration = new PropertyMappingConfiguration(item1.Key);
+
+                configuration.UseAlias(item1.Value.ActiveAlias);
+
+                _mappingActions.Add(item.Key.Name, configuration);
             }
         }
     }
