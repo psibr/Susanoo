@@ -182,6 +182,19 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Attempts to get a command processor by name.
+        /// </summary>
+        /// <param name="name">The name of the processor.</param>
+        /// <param name="commandProcessor">The command processor.</param>
+        /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected, <c>false</c> otherwise.</returns>
+        public static bool TryGetCommandProcessor(string name, out CommandProcessorCommon commandProcessor)
+        {
+            var result = _namedCommandProcessors.TryGetValue(name, out commandProcessor);
+
+            return result;
+        }
+
+        /// <summary>
         /// Registers the command processor.
         /// </summary>
         /// <param name="processor">The processor.</param>
