@@ -96,11 +96,20 @@ namespace Susanoo
         public static ICommandProcessor<TFilter, TResult> BuildOrRegenCommandProcessor(ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
         {
             CommandProcessorCommon instance;
-            SingleResultSetCommandProcessor<TFilter, TResult> result;
+            SingleResultSetCommandProcessor<TFilter, TResult> result = null;
 
-            if (CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
-                result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                if (CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
+                    result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+            }
             else
+            {
+                if(CommandManager.TryGetCommandProcessor(name, out instance))
+                    result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+            }
+
+            if(result == null)
                 result = new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultExpression, name);
 
             return result;
