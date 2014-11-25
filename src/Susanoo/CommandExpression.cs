@@ -126,8 +126,6 @@ namespace Susanoo
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         public ICommandProcessor<TFilter> Realize(string name = null)
         {
-            ComputeHash();
-
             return new NoResultSetCommandProcessor<TFilter>(this, name);
         }
 
@@ -325,8 +323,6 @@ namespace Susanoo
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult> DefineResults<TResult>() where TResult : new()
         {
-            ComputeHash();
-
             return new CommandResultExpression<TFilter, TResult>(this);
         }
 
@@ -340,8 +336,6 @@ namespace Susanoo
             where TResult1 : new()
             where TResult2 : new()
         {
-            ComputeHash();
-
             return new CommandResultExpression<TFilter, TResult1, TResult2>(this);
         }
 
@@ -358,8 +352,6 @@ namespace Susanoo
             where TResult2 : new()
             where TResult3 : new()
         {
-            ComputeHash();
-
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3>(this);
         }
 
@@ -378,8 +370,6 @@ namespace Susanoo
             where TResult3 : new()
             where TResult4 : new()
         {
-            ComputeHash();
-
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
         }
 
@@ -400,8 +390,6 @@ namespace Susanoo
             where TResult4 : new()
             where TResult5 : new()
         {
-            ComputeHash();
-
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
         }
 
@@ -424,8 +412,6 @@ namespace Susanoo
             where TResult5 : new()
             where TResult6 : new()
         {
-            ComputeHash();
-
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
         }
 
@@ -451,8 +437,6 @@ namespace Susanoo
             where TResult6 : new()
             where TResult7 : new()
         {
-            ComputeHash();
-
             return
                 new CommandResultExpression
                     <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
