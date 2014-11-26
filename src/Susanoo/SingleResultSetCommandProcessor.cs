@@ -393,7 +393,7 @@ namespace Susanoo
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
                     typeof(TResult).Name,
-                    Guid.NewGuid().ToString().Replace("-", string.Empty)),
+                    CacheHash.ToString()),
                     TypeAttributes.Public);
 
             lambda.CompileToMethod(type.DefineMethod("Map", MethodAttributes.Public | MethodAttributes.Static));
