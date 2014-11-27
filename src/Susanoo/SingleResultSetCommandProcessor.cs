@@ -339,7 +339,7 @@ namespace Susanoo
             ParameterExpression resultSet = Expression.Variable(typeof(IEnumerable<TResult>), "resultSet");
 
             // var resultSet = new LinkedList<TResult>();
-            statements.Add(Expression.Assign(resultSet, Expression.New(typeof(LinkedList<TResult>))));
+            //statements.Add(Expression.Assign(resultSet, Expression.New(typeof(LinkedList<TResult>))));
 
             //var columnChecker = new ColumnChecker();
             statements.Add(Expression.Assign(
