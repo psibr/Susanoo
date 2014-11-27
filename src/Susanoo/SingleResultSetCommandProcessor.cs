@@ -327,49 +327,73 @@ namespace Susanoo
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         private Func<IDataRecord, object> CompileMappings()
         {
+            //Get the properties we care about.
             var mappings = CommandResultExpression.Export<TResult>();
 
             var statements = new List<Expression>();
 
-            ParameterExpression readerExp = Expression.Parameter(typeof(IDataRecord));
-            ParameterExpression descriptorExp = Expression.Variable(typeof(TResult), "descriptor");
-            ParameterExpression columnCheckerExp = Expression.Variable(typeof(ColumnChecker), "columnChecker");
+            ParameterExpression reader = Expression.Parameter(typeof(IDataRecord), "reader");
+            ParameterExpression descriptor = Expression.Variable(typeof(TResult), "descriptor");
+            ParameterExpression columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
+            LabelTarget returnStatement = Expression.Label(typeof(IEnumerable<TResult>), "return");
+            ParameterExpression resultSet = Expression.Variable(typeof(IEnumerable<TResult>), "resultSet");
 
-            statements.Add(Expression.Assign(
-                columnCheckerExp, Expression.New(typeof(ColumnChecker))));
+            // var resultSet = new LinkedList<TResult>();
+            statements.Add(Expression.Assign(resultSet, Expression.New(typeof(LinkedList<TResult>))));
 
+            //var columnChecker = new ColumnChecker();
             statements.Add(Expression.Assign(
-                descriptorExp, Expression.New(typeof(TResult))));
+                columnChecker, Expression.New(typeof(ColumnChecker))));
+
+            //var descriptor = new TResult();
+            statements.Add(Expression.Assign(
+                descriptor, Expression.New(typeof(TResult))));
+
 
             foreach (var pair in mappings)
             {
-                var ex = Expression.Variable(typeof(Exception), "ex");
+                #region locals
+                //These are local variables inside of a block. Similar to defining variables inside an if.
 
-                var localOrdinal = Expression.Variable(typeof(int), "ordinal");
+                //var ex;
+                var ex = Expression.Variable(typeof(Exception), "ex");
+                //var ordinal; 
+                var ordinal = Expression.Variable(typeof(int), "ordinal");
+
+                #endregion locals
 
                 statements.Add(
-                    Expression.Block(new[] { localOrdinal },
-                        Expression.Assign(localOrdinal,
-                            Expression.Call(columnCheckerExp,
+                    Expression.Block(new[] { /* LOCAL */ ordinal },
+                        // ordinal = columnChecker.HasColumn(pair.Value.ActiveAlias);
+                        Expression.Assign(ordinal,
+                            Expression.Call(columnChecker,
                                 typeof(ColumnChecker).GetMethod("HasColumn",
                                     BindingFlags.Public | BindingFlags.Instance),
-                                readerExp,
+                                reader,
                                 Expression.Constant(pair.Value.ActiveAlias))),
+                        
+                        // if(ordinal > 0 && !reader.IsDBNull(ordinal)) 
                         Expression.IfThen(
                             Expression.AndAlso(
                                 Expression.IsTrue(
-                                    Expression.GreaterThanOrEqual(localOrdinal, Expression.Constant(0))),
+                                    Expression.GreaterThanOrEqual(ordinal, Expression.Constant(0))),
                                 Expression.IsFalse(
-                                    Expression.Call(readerExp, typeof(IDataRecord).GetMethod("IsDBNull"), localOrdinal))),
+                                    Expression.Call(reader, typeof(IDataRecord).GetMethod("IsDBNull"), ordinal))),
+                            // try
                             Expression.TryCatch(
                                 Expression.Block(typeof(void),
+
+                                    //Assignment Expression
                                     Expression.Invoke(
                                         pair.Value.AssembleMappingExpression(
-                                            Expression.Property(descriptorExp, pair.Value.PropertyMetadata)),
-                                        readerExp)),
+                                            Expression.Property(descriptor, pair.Value.PropertyMetadata)),
+                                        reader, ordinal)),
+                            // catch
                                 Expression.Catch(
-                                    ex,
+                                    /* Exception being caught is assigned to ex */ ex,
                                     Expression.Block(typeof(void),
+
+                                        //throw new ColumnBindingException("...", ex); 
                                         Expression.Throw(
                                             Expression.New(
                                                 typeof(ColumnBindingException).GetConstructor(new[] { typeof(string), typeof(Exception) }),
@@ -385,10 +409,11 @@ namespace Susanoo
                                                 ))))))));
             }
 
-            statements.Add(descriptorExp);
+            //return descriptor;
+            statements.Add(descriptor);
 
-            var body = Expression.Block(new[] { descriptorExp, columnCheckerExp }, statements);
-            var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, readerExp);
+            var body = Expression.Block(new[] { descriptor, columnChecker }, statements);
+            var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, reader);
 
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",

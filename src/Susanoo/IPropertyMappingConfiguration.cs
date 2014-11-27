@@ -44,7 +44,7 @@ namespace Susanoo
         ///     Assembles the mapping expression.
         /// </summary>
         /// <param name="propertyExpression">The property.</param>
-        /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
-        Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression propertyExpression);
+        /// <returns>Expression&lt;Action&lt;IDataRecord, int&gt;&gt;.</returns>
+        Expression<Action<IDataRecord, int>> AssembleMappingExpression(MemberExpression propertyExpression);
     }
 }

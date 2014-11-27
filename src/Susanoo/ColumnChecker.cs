@@ -37,5 +37,10 @@ namespace Susanoo
             int value1;
             return _fields.TryGetValue(name, out value1) ? value1 : -1;
         }
+
+        public Dictionary<string, int> ExportReport()
+        {
+            return new Dictionary<string, int>(_fields);
+        }
     }
 }

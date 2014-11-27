@@ -84,6 +84,7 @@
     <Compile Include="ICommandResultImplementor.cs" />
     <Compile Include="IFluentPipelineFragment.cs" />
     <Compile Include="IResultMapper.cs" />
+    <Compile Include="LinkedListResult.cs" />
     <Compile Include="MultipleResultSetCommandProcessor.cs" />
     <Compile Include="NoResultSetCommandProcessor.cs" />
     <Compile Include="Properties\Annotations.cs" />

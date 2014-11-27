@@ -54,16 +54,17 @@ namespace Susanoo
         ///     Assembles the mapping expression.
         /// </summary>
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
-        public virtual Expression<Action<IDataRecord>> AssembleMappingExpression(MemberExpression property)
+        public virtual Expression<Action<IDataRecord, int>> AssembleMappingExpression(MemberExpression property)
         {
-            ParameterExpression recordParam = Expression.Parameter(typeof(IDataRecord), "record");
+            ParameterExpression record = Expression.Parameter(typeof(IDataRecord), "record");
+            ParameterExpression ordinal = Expression.Parameter(typeof(int), "ordinal");
 
             Expression body = (_mapOnCondition != null)
-                ? HasMapCondition(property, recordParam)
-                : AssembleAssignment(property, recordParam);
+                ? HasMapCondition(property, record, ordinal)
+                : AssembleAssignment(property, record, ordinal);
 
             var assignmentExpression =
-                Expression.Lambda<Action<IDataRecord>>(body, recordParam);
+                Expression.Lambda<Action<IDataRecord, int>>(body, record, ordinal);
 
             return assignmentExpression;
         }
@@ -113,40 +114,47 @@ namespace Susanoo
         ///     Determines whether the specified property has a mapping condition.
         /// </summary>
         /// <param name="property">The property.</param>
-        /// <param name="recordParam">The record parameter.</param>
-        protected virtual Expression HasMapCondition(MemberExpression property, ParameterExpression recordParam)
+        /// <param name="record">The record parameter.</param>
+        /// <param name="ordinal">The ordinal parameter.</param>
+        protected virtual Expression HasMapCondition(MemberExpression property, ParameterExpression record, ParameterExpression ordinal)
         {
+            //TODO: This isn't currently exposed, or at least isn't supported fully.
             return Expression.Block(
                 Expression.IfThen(
                     Expression.IsTrue(
                         Expression.Invoke(
                             _mapOnCondition,
-                            recordParam,
+                            record,
                             Expression.Constant(ActiveAlias))),
-                    AssembleAssignment(property, recordParam)));
+                    AssembleAssignment(property, record, ordinal)));
         }
 
         /// <summary>
         ///     Assembles the assignment expression.
         /// </summary>
         /// <param name="property">The property.</param>
-        /// <param name="recordParam">The record parameter.</param>
+        /// <param name="record">The record parameter.</param>
+        /// <param name="ordinal">The ordinal parameter.</param>
         /// <returns>BinaryExpression.</returns>
-        protected virtual BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression recordParam)
+        protected virtual BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression record, ParameterExpression ordinal)
         {
+
+            // descriptor.property = (property.Type)_conversionProcessExpression(PropertyMetadata.PropertyType, record[ordinal]);
             return
                 Expression.Assign(
                     property,
                     Expression.Convert(
                         Expression.Invoke(_conversionProcessExpression,
                             Expression.Constant(PropertyMetadata.PropertyType, typeof(Type)),
-                            Expression.MakeIndex(recordParam,
-                                typeof(IDataRecord).GetProperty("Item", new[] { typeof(string) }),
+                            Expression.MakeIndex(record,
+                                typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) }),
                                 new[]
                                 {
-                                    Expression.Constant(ActiveAlias)
+                                    ordinal
                                 })),
                         property.Type));
+
+
         }
     }
 }
