@@ -114,7 +114,7 @@ namespace Susanoo
             //string resultBeforeHash = hashText.ToString();
             //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
 
-            _CacheHash = new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(hashText.ToString())));
+            _CacheHash = HashBuilder.Compute(hashText.ToString());
         }
 
         private BigInteger _CacheHash = BigInteger.MinusOne;

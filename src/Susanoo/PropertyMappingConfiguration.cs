@@ -20,10 +20,10 @@ namespace Susanoo
         private readonly Expression<Func<IDataRecord, string, bool>> _mapOnCondition = null;
 
         private Func<Type, object, object> _conversionProcess =
-            (type, value) => DatabaseManager.CastValue(type, value, type, null);
+            (type, value) => DatabaseManager.CastValue(type, value);
 
         private Expression<Func<Type, object, object>> _conversionProcessExpression =
-            (type, value) => DatabaseManager.CastValue(type, value, type, null);
+            (type, value) => DatabaseManager.CastValue(type, value);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="PropertyMappingConfiguration" /> class.

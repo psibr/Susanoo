@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 
 #endregion
@@ -23,8 +22,6 @@ namespace Susanoo
         {
             if (property == null)
                 throw new ArgumentNullException("property");
-
-            Contract.EndContractBlock();
 
             PropertyMetadata = property;
             ActiveAlias = (!string.IsNullOrWhiteSpace(alias)) ? alias : property.Name;

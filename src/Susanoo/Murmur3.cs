@@ -15,91 +15,60 @@ using System;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
-using Susanoo.Annotations;
 
 #endregion
 
 namespace Susanoo
 {
-    /// <summary>
-    ///     Implementation of the FNV variable bit hash algorithm.
-    /// </summary>
-    internal static class FnvHash
+    internal static class HashBuilder
     {
-        #region Constants
+        public static BigInteger Compute(string value)
+    {
+        return new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(value)));
+        //return FnvHash.GetHash32(value);
+    }
 
-        private const uint FnvPrime32 = 16777619;
-
-        private const ulong FnvPrime64 = 1099511628211;
-
-        private const uint FnvOffset32 = 2166136261;
-
-        private const ulong FnvOffset64 = 14695981039346656037;
-
-        private const uint FnvMod32 = 2 ^ 32;
-
-        private const ulong FnvMod64 = 2 ^ 64;
-
-        #endregion Constants
-
-        //public static uint GetHash32(string value)
-        //{
-        //    const uint fnvPrime = FnvPrime32;
-        //    const uint fnvOffset = FnvOffset32;
-        //    const uint fnvMod = FnvMod32;
-        //    var hash = fnvOffset;
-
-        //    for (int i = 0; i < value.Length; i++)
-        //    {
-        //        hash ^= (uint)value[i];
-        //        hash %= fnvMod;
-        //        hash *= fnvPrime;
-        //    }
-
-        //    return hash;
-        //}
-
-        public static ulong GetHash64(string value)
+        public static BigInteger Seed
         {
-            const ulong fnvPrime = FnvPrime64;
-            const ulong fnvOffset = FnvOffset64;
-            const ulong fnvMod = FnvMod64;
-            var hash = fnvOffset;
-
-            for (int i = 0; i < value.Length; i++)
-            {
-                hash ^= (uint)value[i];
-                hash %= fnvMod;
-                hash *= fnvPrime;
-            }
-
-            return hash;
+            get { return Murmur3.Seed; }
+            //get { return 866398230; }
         }
     }
 }
 
-internal static class HashBuilder
-{
-    public static BigInteger Compute(string value)
-    {
-        return new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(value)));
-    }
 
-    public static BigInteger Seed {
-        get { return Murmur3.Seed; }
-    }
-}
 
-internal static class IntHelpers
+/// <summary>
+/// Murmur3 helper extensions.
+/// </summary>
+internal static class UInt64Helpers
 {
+    /// <summary>
+    /// Rotates the ulong left.
+    /// </summary>
+    /// <param name="original">The original.</param>
+    /// <param name="bits">The bits.</param>
+    /// <returns>System.UInt64.</returns>
     public static ulong RotateLeft(this ulong original, int bits)
     {
         return (original << bits) | (original >> (64 - bits));
     }
+    /// <summary>
+    /// Rotates the ulong right.
+    /// </summary>
+    /// <param name="original">The original.</param>
+    /// <param name="bits">The bits.</param>
+    /// <returns>System.UInt64.</returns>
     public static ulong RotateRight(this ulong original, int bits)
     {
         return (original >> bits) | (original << (64 - bits));
     }
+    /// <summary>
+    /// Converts byte array to ulong.
+    /// </summary>
+    /// <param name="bb">The bb.</param>
+    /// <param name="pos">The position.</param>
+    /// <returns>System.UInt64.</returns>
     unsafe public static ulong GetUInt64(this byte[] bb, int pos)
     {
         // we only read aligned longs, so a simple casting is enough
@@ -110,14 +79,15 @@ internal static class IntHelpers
     }
 }
 
-internal class Murmur3 {
+internal class Murmur3
+{
 
     // 128 bit output, 64 bit platform version
-    public const ulong READ_SIZE = 16;
+    private const ulong READ_SIZE = 16;
     private const ulong C1 = 0x87c37b91114253d5L;
     private const ulong C2 = 0x4cf5ad432745937fL;
     private ulong _length;
-    [UsedImplicitly] internal static uint Seed = 866398230;
+    internal static uint Seed = 866398230;
     // if want to start with a seed, create a constructor
     ulong h1;
     ulong h2;
@@ -242,7 +212,7 @@ internal class Murmur3 {
         h2 ^= MixKey2(k2);
     }
 
-    private byte[] Hash    
+    private byte[] Hash
     {
         get
         {
@@ -253,7 +223,7 @@ internal class Murmur3 {
             h1 = Murmur3.MixFinal(h1);
             h2 = Murmur3.MixFinal(h2);
             h1 += h2;
-            h2 += h1; 
+            h2 += h1;
             var hash = new byte[Murmur3.READ_SIZE];
             Array.Copy(BitConverter.GetBytes(h1), 0, hash, 0, 8);
             Array.Copy(BitConverter.GetBytes(h2), 0, hash, 8, 8);

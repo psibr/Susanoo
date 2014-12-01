@@ -46,8 +46,6 @@ namespace Susanoo
             if (objectType == null)
                 throw new ArgumentNullException("objectType");
 
-            Contract.EndContractBlock();
-
             var actionable = new Dictionary<PropertyInfo, PropertyMap>();
 
             foreach (PropertyInfo pi in objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
@@ -72,8 +70,6 @@ namespace Susanoo
             if (propertyInfo == null)
                 throw new ArgumentNullException("propertyInfo");
 
-            Contract.EndContractBlock();
-
             ColumnAttribute column = customAttributes != null
                 ? customAttributes
                     .OfType<ColumnAttribute>()
@@ -95,8 +91,6 @@ namespace Susanoo
             if (propertyInfo == null)
                 throw new ArgumentNullException("propertyInfo");
 
-            Contract.EndContractBlock();
-
             return (whitelist != null && whitelist.Contains(propertyInfo.Name));
         }
 
@@ -111,8 +105,6 @@ namespace Susanoo
         {
             if (propertyInfo == null)
                 throw new ArgumentNullException("propertyInfo");
-
-            Contract.EndContractBlock();
 
             return (blacklist != null && blacklist.Contains(propertyInfo.Name));
         }
@@ -144,8 +136,6 @@ namespace Susanoo
                 throw new ArgumentNullException("propertyInfo");
             if (customAttributes == null)
                 throw new ArgumentNullException("customAttributes");
-
-            Contract.EndContractBlock();
 
             var attribute = customAttributes
                 .OfType<AllowedActionsAttribute>()

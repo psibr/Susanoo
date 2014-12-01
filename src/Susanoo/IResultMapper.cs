@@ -12,7 +12,7 @@ namespace Susanoo
     ///     Performs the actual map operation between an IDataRecord and a result type.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface IResultMapper<out TResult> : IFluentPipelineFragment
+    public interface IResultMapper<TResult> : IFluentPipelineFragment
     {
         /// <summary>
         ///     Maps the result.
@@ -20,7 +20,7 @@ namespace Susanoo
         /// <param name="record">The record.</param>
         /// <param name="mapping">The mapping.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> MapResult(IDataReader record, Func<IDataRecord, object> mapping);
+        IEnumerable<TResult> MapResult(IDataReader record, Func<IDataReader, IEnumerable<TResult>> mapping);
 
         /// <summary>
         ///     Maps the result.

@@ -79,7 +79,7 @@
     <Compile Include="CommandProcessorCommon.cs" />
     <Compile Include="CommandResultExpression.cs" />
     <Compile Include="CommandResultImplementor.cs" />
-    <Compile Include="FnvHash.cs" />
+    <Compile Include="Murmur3.cs" />
     <Compile Include="ICommandResultExpression.cs" />
     <Compile Include="ICommandResultImplementor.cs" />
     <Compile Include="IFluentPipelineFragment.cs" />
@@ -87,7 +87,6 @@
     <Compile Include="LinkedListResult.cs" />
     <Compile Include="MultipleResultSetCommandProcessor.cs" />
     <Compile Include="NoResultSetCommandProcessor.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ResultMappingImplementor.cs" />
     <Compile Include="SingleResultSetCommandProcessor.cs" />
     <Compile Include="ResultMappingExpression.cs" />

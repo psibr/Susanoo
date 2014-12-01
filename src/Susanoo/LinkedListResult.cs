@@ -1,22 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Susanoo
 {
-    public class LinkedListResult<TResult> : LinkedList<TResult>
+    /// <summary>
+    /// A linked list that implements IResultSet
+    /// </summary>
+    /// <typeparam name="TResult">The type of the t result.</typeparam>
+    public class LinkedListResult<TResult> : LinkedList<TResult>, IResultSet
     {
-        private readonly Dictionary<string, int> _QueryResultColumnInfo;
-        Dictionary<string, int> QueryResultColumnInfo
+        private  Dictionary<string, int> _QueryResultColumnInfo;
+        private ColumnChecker _Checker;
+
+        /// <summary>
+        /// Gets the available columns in the result set.
+        /// </summary>
+        /// <value>The available columns.</value>
+        public Dictionary<string, int> AvailableColumns
         {
-            get { return new Dictionary<string, int>(_QueryResultColumnInfo); }
+            get 
+            {
+                if(_QueryResultColumnInfo == null)
+                    _QueryResultColumnInfo = _Checker.ExportReport();
+
+                return new Dictionary<string, int>(_QueryResultColumnInfo); 
+            }
         }
-        public LinkedListResult(ColumnChecker checker)
-            : base()
+
+        /// <summary>
+        /// Provides the information to build a mapping report.
+        /// </summary>
+        /// <param name="checker">The checker.</param>
+        internal void BuildReport(ColumnChecker checker)
         {
-            _QueryResultColumnInfo = checker.ExportReport();
+            _Checker = checker;
         }
+    }
+
+    /// <summary>
+    /// A result object that returns columns that were available.
+    /// </summary>
+    public interface IResultSet
+    {
+        /// <summary>
+        /// Gets the available columns in the result set.
+        /// </summary>
+        /// <value>The available columns.</value>
+        Dictionary<string, int> AvailableColumns { get; }
     }
 }

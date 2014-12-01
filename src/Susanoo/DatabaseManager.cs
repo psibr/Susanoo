@@ -163,7 +163,7 @@ namespace Susanoo
 
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    return (T)CastValue(typeof(T), command.ExecuteScalar(), default(T), null);
+                    return (T)CastValue(typeof(T), command.ExecuteScalar());
                 }
             }
             finally
@@ -264,37 +264,22 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Detects if a value is DBNull, null, or has value.
+        /// Returns value or it's string representation.
         /// </summary>
         /// <param name="newType">The new type.</param>
         /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <param name="typeName">Name of the type from the database (used for date/time to string conversion).</param>
-        /// <returns>Value as type T if value is not DBNull, null, or invalid cast; otherwise defaultValue.</returns>
+        /// <returns>Value or string representation.</returns>
 #if !NETFX40
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static object CastValue(Type newType, object value, object defaultValue, string typeName)
+        public static object CastValue(Type newType, object value)
         {
             var returnValue = value;
 
-            if (value == DBNull.Value)
-                returnValue = defaultValue;
-
-            //else if (newType == typeof(bool) && (value.GetType() == typeof(Int16) || value.GetType() == typeof(Int32)))
-            //    returnValue = ((object)(int.Parse(value.ToString(), CultureInfo.InvariantCulture) > 0 ? true : false));
-            //else if (newType == typeof(int) && value.GetType() == typeof(long))
-            //    returnValue = ((object)((int)((long)value)));
-            //else if (newType == typeof(int) && value.GetType() == typeof(decimal))
-            //    returnValue = ((object)((int)((decimal)value)));
             if (newType == typeof(string))
             {
                 returnValue = value.ToString();
-
-                //if (!string.IsNullOrEmpty(typeName))
-                //    if (typeName == "date")
-                //        returnValue = ((DateTime)value).ToString("MM/dd/yyyy", CultureInfo.CurrentCulture);
             }
 
             return returnValue;
@@ -498,8 +483,7 @@ namespace Susanoo
                     return
                         (T)
                             CastValue(typeof(T),
-                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false), default(T),
-                                null);
+                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
                 }
             }
             finally

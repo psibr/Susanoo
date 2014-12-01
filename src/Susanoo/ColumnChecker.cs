@@ -38,6 +38,10 @@ namespace Susanoo
             return _fields.TryGetValue(name, out value1) ? value1 : -1;
         }
 
+        /// <summary>
+        /// Exports a dictionary showing mapped columns and indexes.
+        /// </summary>
+        /// <returns>Dictionary&lt;System.String, System.Int32&gt;.</returns>
         public Dictionary<string, int> ExportReport()
         {
             return new Dictionary<string, int>(_fields);

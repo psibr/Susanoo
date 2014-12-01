@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
@@ -33,18 +34,25 @@ namespace Susanoo
         /// <summary>
         /// Dumps all columns into an expando for simple use cases.
         /// </summary>
-        /// <param name="record">The record.</param>
+        /// <param name="reader">The reader.</param>
         /// <returns>dynamic.</returns>
-        private static dynamic DynamicConversion(IDataRecord record)
+        private static IEnumerable<TResult> DynamicConversion(IDataReader reader)
         {
-            dynamic obj = new ExpandoObject();
+            LinkedList<TResult> resultSet = new LinkedList<TResult>();
 
-            for (var i = 0; i < record.FieldCount; i++)
+            while (reader.Read())
             {
-                ((IDictionary<string, Object>)obj).Add(record.GetName(i), record.GetValue(i));
+                dynamic obj = new ExpandoObject();
+
+                for (var i = 0; i < reader.FieldCount; i++)
+                {
+                    ((IDictionary<string, Object>)obj).Add(reader.GetName(i), reader.GetValue(i));
+                }
+
+                resultSet.AddLast(obj);
             }
 
-            return obj;
+            return resultSet;
         }
 
         /// <summary>
@@ -94,7 +102,7 @@ namespace Susanoo
         ///     Gets the compiled mapping.
         /// </summary>
         /// <value>The compiled mapping.</value>
-        private Func<IDataRecord, object> CompiledMapping { get; set; }
+        private Func<IDataReader, IEnumerable<TResult>> CompiledMapping { get; set; }
 
         /// <summary>
         ///     Gets the command expression.
@@ -294,21 +302,14 @@ namespace Susanoo
 #endif
 
         /// <summary>
-        ///     Maps the result.
+        /// Maps the result.
         /// </summary>
-        /// <param name="record">The record.</param>
+        /// <param name="reader">The reader.</param>
         /// <param name="mapping">The mapping.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record, Func<IDataRecord, object> mapping)
+        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader reader, Func<IDataReader, IEnumerable<TResult>> mapping)
         {
-            var list = new LinkedList<TResult>();
-
-            while (record.Read())
-            {
-                list.AddLast((TResult)mapping.Invoke(record));
-            }
-
-            return list;
+            return mapping(reader);
         }
 
         /// <summary>
@@ -321,34 +322,51 @@ namespace Susanoo
             return (this as IResultMapper<TResult>).MapResult(record, CompiledMapping);
         }
 
+        private static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", BindingFlags.Public | BindingFlags.Instance);
+
         /// <summary>
         ///     Compiles the result mappings.
         /// </summary>
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
-        private Func<IDataRecord, object> CompileMappings()
+        private Func<IDataReader, IEnumerable<TResult>> CompileMappings()
         {
+            MethodInfo AddLastMethod = typeof(LinkedList<TResult>).GetMethod("AddLast", new [] { typeof(TResult) });
+
             //Get the properties we care about.
             var mappings = CommandResultExpression.Export<TResult>();
 
-            var statements = new List<Expression>();
+            var outerStatements = new List<Expression>();
+            var innerStatements = new List<Expression>();
 
-            ParameterExpression reader = Expression.Parameter(typeof(IDataRecord), "reader");
-            ParameterExpression descriptor = Expression.Variable(typeof(TResult), "descriptor");
+            ParameterExpression reader = Expression.Parameter(typeof(IDataReader), "reader");
             ParameterExpression columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
+            ParameterExpression resultSet = Expression.Variable(typeof(LinkedListResult<TResult>), "resultSet");
+            
             LabelTarget returnStatement = Expression.Label(typeof(IEnumerable<TResult>), "return");
-            ParameterExpression resultSet = Expression.Variable(typeof(IEnumerable<TResult>), "resultSet");
 
-            // var resultSet = new LinkedList<TResult>();
-            //statements.Add(Expression.Assign(resultSet, Expression.New(typeof(LinkedList<TResult>))));
-
-            //var columnChecker = new ColumnChecker();
-            statements.Add(Expression.Assign(
+            // resultSet = new LinkedListResult<TResult>();
+            outerStatements.Add(Expression.Assign(resultSet, Expression.New(typeof(LinkedListResult<TResult>))));
+            
+            // columnChecker = new ColumnChecker();
+            outerStatements.Add(Expression.Assign(
                 columnChecker, Expression.New(typeof(ColumnChecker))));
 
-            //var descriptor = new TResult();
-            statements.Add(Expression.Assign(
-                descriptor, Expression.New(typeof(TResult))));
+            #region Loop Code
 
+            // var descriptor;
+            ParameterExpression descriptor = Expression.Variable(typeof(TResult), "descriptor");
+
+            // if(!reader.Read) { return resultSet; }
+            innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, ReadMethod)), 
+                Expression.Block(
+                    Expression.Call(resultSet, 
+                        typeof(LinkedListResult<TResult>).GetMethod("BuildReport", BindingFlags.Public | BindingFlags.Instance), 
+                        columnChecker),
+                    Expression.Break(returnStatement, resultSet))));
+
+            // descriptor = new TResult();
+            innerStatements.Add(Expression.Assign(
+                descriptor, Expression.New(typeof(TResult))));
 
             foreach (var pair in mappings)
             {
@@ -362,8 +380,9 @@ namespace Susanoo
 
                 #endregion locals
 
-                statements.Add(
+                innerStatements.Add(
                     Expression.Block(new[] { /* LOCAL */ ordinal },
+
                         // ordinal = columnChecker.HasColumn(pair.Value.ActiveAlias);
                         Expression.Assign(ordinal,
                             Expression.Call(columnChecker,
@@ -393,7 +412,7 @@ namespace Susanoo
                                     /* Exception being caught is assigned to ex */ ex,
                                     Expression.Block(typeof(void),
 
-                                        //throw new ColumnBindingException("...", ex); 
+                                       //throw new ColumnBindingException("...", ex); 
                                         Expression.Throw(
                                             Expression.New(
                                                 typeof(ColumnBindingException).GetConstructor(new[] { typeof(string), typeof(Exception) }),
@@ -409,11 +428,19 @@ namespace Susanoo
                                                 ))))))));
             }
 
-            //return descriptor;
-            statements.Add(descriptor);
+            //resultSet.AddLast(descriptor);
+            innerStatements.Add(Expression.Call(resultSet, AddLastMethod, descriptor));
 
-            var body = Expression.Block(new[] { descriptor, columnChecker }, statements);
-            var lambda = Expression.Lambda<Func<IDataRecord, object>>(body, reader);
+            var loopBody = Expression.Block(new [] { descriptor }, innerStatements);
+
+            #endregion Loop Code
+
+
+
+            outerStatements.Add(Expression.Loop(loopBody, returnStatement));
+
+            var body = Expression.Block(new[] { columnChecker, resultSet }, outerStatements);
+            var lambda = Expression.Lambda<Func<IDataReader, IEnumerable<TResult>>>(body, reader);
 
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
@@ -425,8 +452,8 @@ namespace Susanoo
 
             Type dynamicType = type.CreateType();
 
-            return (Func<IDataRecord, object>)Delegate
-                .CreateDelegate(typeof(Func<IDataRecord, object>),
+            return (Func<IDataReader, IEnumerable<TResult>>)Delegate
+                .CreateDelegate(typeof(Func<IDataReader, IEnumerable<TResult>>),
                     dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
         }
     }
