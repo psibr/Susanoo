@@ -39,7 +39,7 @@ namespace Susanoo
         /// <returns>dynamic.</returns>
         private static IEnumerable<TResult> DynamicConversion(IDataReader reader, ColumnChecker checker)
         {
-            var resultSet = new LinkedList<TResult>();
+            var resultSet = new LinkedListResult<TResult>();
 
             while (reader.Read())
             {
@@ -51,6 +51,8 @@ namespace Susanoo
 
                 resultSet.AddLast(obj);
             }
+
+            resultSet.BuildReport(checker);
 
             return resultSet;
         }
