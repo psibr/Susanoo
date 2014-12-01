@@ -35,15 +35,15 @@ namespace Susanoo
         /// Dumps all columns into an expando for simple use cases.
         /// </summary>
         /// <param name="reader">The reader.</param>
+        /// <param name="checker">The column checker.</param>
         /// <returns>dynamic.</returns>
-        private static IEnumerable<TResult> DynamicConversion(IDataReader reader)
+        private static IEnumerable<TResult> DynamicConversion(IDataReader reader, ColumnChecker checker)
         {
-            LinkedList<TResult> resultSet = new LinkedList<TResult>();
+            var resultSet = new LinkedList<TResult>();
 
             while (reader.Read())
             {
                 dynamic obj = new ExpandoObject();
-
                 for (var i = 0; i < reader.FieldCount; i++)
                 {
                     ((IDictionary<string, Object>)obj).Add(reader.GetName(i), reader.GetValue(i));
@@ -102,7 +102,7 @@ namespace Susanoo
         ///     Gets the compiled mapping.
         /// </summary>
         /// <value>The compiled mapping.</value>
-        private Func<IDataReader, IEnumerable<TResult>> CompiledMapping { get; set; }
+        private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompiledMapping { get; set; }
 
         /// <summary>
         ///     Gets the command expression.
@@ -182,7 +182,9 @@ namespace Susanoo
                         commandExpression.DbCommandType,
                         parameters))
                 {
-                    results = (((IResultMapper<TResult>)this).MapResult(records, CompiledMapping));
+                    results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
+
+                    this.ColumnReport = ((LinkedListResult<TResult>)results).ColumnReport;
                 }
 
                 if (ResultCachingEnabled)
@@ -272,7 +274,9 @@ namespace Susanoo
                         parameters)
                     .ConfigureAwait(false))
                 {
-                    results = (((IResultMapper<TResult>)this).MapResult(records, CompiledMapping));
+                    results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
+
+                    this.ColumnReport = ((LinkedListResult<TResult>)results).ColumnReport;
                 }
 
                 if (ResultCachingEnabled)
@@ -283,8 +287,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -305,32 +309,48 @@ namespace Susanoo
         /// Maps the result.
         /// </summary>
         /// <param name="reader">The reader.</param>
+        /// <param name="checker">The column checker.</param>
         /// <param name="mapping">The mapping.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader reader, Func<IDataReader, IEnumerable<TResult>> mapping)
+        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader reader, ColumnChecker checker,
+            Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping)
         {
-            return mapping(reader);
+            return mapping(reader, checker);
+        }
+
+        private ColumnChecker _columnChecker;
+
+        private ColumnChecker ColumnReport
+        {
+            get { return _columnChecker; }
+            set
+            {
+                if (value != null)
+                {
+                    _columnChecker = value;
+                }
+            }
         }
 
         /// <summary>
-        ///     Maps the result.
+        /// Maps the result.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
         {
-            return (this as IResultMapper<TResult>).MapResult(record, CompiledMapping);
+            return (this as IResultMapper<TResult>).MapResult(record, ColumnReport, CompiledMapping);
         }
 
-        private static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", BindingFlags.Public | BindingFlags.Instance);
+        private readonly MethodInfo _readMethod = typeof(IDataReader).GetMethod("Read", BindingFlags.Public | BindingFlags.Instance);
 
         /// <summary>
         ///     Compiles the result mappings.
         /// </summary>
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
-        private Func<IDataReader, IEnumerable<TResult>> CompileMappings()
+        private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompileMappings()
         {
-            MethodInfo AddLastMethod = typeof(LinkedList<TResult>).GetMethod("AddLast", new [] { typeof(TResult) });
+            MethodInfo AddLastMethod = typeof(LinkedList<TResult>).GetMethod("AddLast", new[] { typeof(TResult) });
 
             //Get the properties we care about.
             var mappings = CommandResultExpression.Export<TResult>();
@@ -339,17 +359,18 @@ namespace Susanoo
             var innerStatements = new List<Expression>();
 
             ParameterExpression reader = Expression.Parameter(typeof(IDataReader), "reader");
+            ParameterExpression columnReport = Expression.Parameter(typeof(ColumnChecker), "columnReport");
             ParameterExpression columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
             ParameterExpression resultSet = Expression.Variable(typeof(LinkedListResult<TResult>), "resultSet");
-            
+
             LabelTarget returnStatement = Expression.Label(typeof(IEnumerable<TResult>), "return");
 
             // resultSet = new LinkedListResult<TResult>();
             outerStatements.Add(Expression.Assign(resultSet, Expression.New(typeof(LinkedListResult<TResult>))));
-            
-            // columnChecker = new ColumnChecker();
-            outerStatements.Add(Expression.Assign(
-                columnChecker, Expression.New(typeof(ColumnChecker))));
+
+            // columnChecker = (columnReport == null) ? new ColumnChecker() : columnReport;
+            outerStatements.Add(Expression.IfThenElse(Expression.Equal(columnReport, Expression.Constant(null)), Expression.Assign(
+                columnChecker, Expression.New(typeof(ColumnChecker))), Expression.Assign(columnChecker, columnReport)));
 
             #region Loop Code
 
@@ -357,10 +378,10 @@ namespace Susanoo
             ParameterExpression descriptor = Expression.Variable(typeof(TResult), "descriptor");
 
             // if(!reader.Read) { return resultSet; }
-            innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, ReadMethod)), 
+            innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, _readMethod)),
                 Expression.Block(
-                    Expression.Call(resultSet, 
-                        typeof(LinkedListResult<TResult>).GetMethod("BuildReport", BindingFlags.Public | BindingFlags.Instance), 
+                    Expression.Call(resultSet,
+                        typeof(LinkedListResult<TResult>).GetMethod("BuildReport", BindingFlags.Public | BindingFlags.Instance),
                         columnChecker),
                     Expression.Break(returnStatement, resultSet))));
 
@@ -390,7 +411,7 @@ namespace Susanoo
                                     BindingFlags.Public | BindingFlags.Instance),
                                 reader,
                                 Expression.Constant(pair.Value.ActiveAlias))),
-                        
+
                         // if(ordinal > 0 && !reader.IsDBNull(ordinal)) 
                         Expression.IfThen(
                             Expression.AndAlso(
@@ -398,7 +419,7 @@ namespace Susanoo
                                     Expression.GreaterThanOrEqual(ordinal, Expression.Constant(0))),
                                 Expression.IsFalse(
                                     Expression.Call(reader, typeof(IDataRecord).GetMethod("IsDBNull"), ordinal))),
-                            // try
+                    // try
                             Expression.TryCatch(
                                 Expression.Block(typeof(void),
 
@@ -407,9 +428,9 @@ namespace Susanoo
                                         pair.Value.AssembleMappingExpression(
                                             Expression.Property(descriptor, pair.Value.PropertyMetadata)),
                                         reader, ordinal)),
-                            // catch
+                    // catch
                                 Expression.Catch(
-                                    /* Exception being caught is assigned to ex */ ex,
+                    /* Exception being caught is assigned to ex */ ex,
                                     Expression.Block(typeof(void),
 
                                        //throw new ColumnBindingException("...", ex); 
@@ -431,7 +452,7 @@ namespace Susanoo
             //resultSet.AddLast(descriptor);
             innerStatements.Add(Expression.Call(resultSet, AddLastMethod, descriptor));
 
-            var loopBody = Expression.Block(new [] { descriptor }, innerStatements);
+            var loopBody = Expression.Block(new[] { descriptor }, innerStatements);
 
             #endregion Loop Code
 
@@ -440,7 +461,7 @@ namespace Susanoo
             outerStatements.Add(Expression.Loop(loopBody, returnStatement));
 
             var body = Expression.Block(new[] { columnChecker, resultSet }, outerStatements);
-            var lambda = Expression.Lambda<Func<IDataReader, IEnumerable<TResult>>>(body, reader);
+            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, IEnumerable<TResult>>>(body, columnReport, reader);
 
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
@@ -452,8 +473,8 @@ namespace Susanoo
 
             Type dynamicType = type.CreateType();
 
-            return (Func<IDataReader, IEnumerable<TResult>>)Delegate
-                .CreateDelegate(typeof(Func<IDataReader, IEnumerable<TResult>>),
+            return (Func<IDataReader, ColumnChecker, IEnumerable<TResult>>)Delegate
+                .CreateDelegate(typeof(Func<IDataReader, ColumnChecker, IEnumerable<TResult>>),
                     dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
         }
     }

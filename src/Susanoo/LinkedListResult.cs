@@ -13,8 +13,7 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the t result.</typeparam>
     public class LinkedListResult<TResult> : LinkedList<TResult>, IResultSet
     {
-        private  Dictionary<string, int> _QueryResultColumnInfo;
-        private ColumnChecker _Checker;
+        private  Dictionary<string, int> _queryResultColumnInfo;
 
         /// <summary>
         /// Gets the available columns in the result set.
@@ -24,12 +23,14 @@ namespace Susanoo
         {
             get 
             {
-                if(_QueryResultColumnInfo == null)
-                    _QueryResultColumnInfo = _Checker.ExportReport();
+                if(_queryResultColumnInfo == null)
+                    _queryResultColumnInfo = ColumnReport.ExportReport();
 
-                return new Dictionary<string, int>(_QueryResultColumnInfo); 
+                return new Dictionary<string, int>(_queryResultColumnInfo); 
             }
         }
+
+        internal ColumnChecker ColumnReport { get; private set; }
 
         /// <summary>
         /// Provides the information to build a mapping report.
@@ -37,7 +38,7 @@ namespace Susanoo
         /// <param name="checker">The checker.</param>
         public void BuildReport(ColumnChecker checker)
         {
-            _Checker = checker;
+            ColumnReport = checker;
         }
     }
 
