@@ -360,6 +360,7 @@ namespace Susanoo
 
             ParameterExpression reader = Expression.Parameter(typeof(IDataReader), "reader");
             ParameterExpression columnReport = Expression.Parameter(typeof(ColumnChecker), "columnReport");
+
             ParameterExpression columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
             ParameterExpression resultSet = Expression.Variable(typeof(LinkedListResult<TResult>), "resultSet");
 
@@ -461,7 +462,7 @@ namespace Susanoo
             outerStatements.Add(Expression.Loop(loopBody, returnStatement));
 
             var body = Expression.Block(new[] { columnChecker, resultSet }, outerStatements);
-            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, IEnumerable<TResult>>>(body, columnReport, reader);
+            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, IEnumerable<TResult>>>(body, reader, columnReport);
 
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
