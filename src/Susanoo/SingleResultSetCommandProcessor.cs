@@ -43,13 +43,13 @@ namespace Susanoo
 
             while (reader.Read())
             {
-                dynamic obj = new ExpandoObject();
+                var obj = new ExpandoObject();
                 for (var i = 0; i < reader.FieldCount; i++)
                 {
                     ((IDictionary<string, Object>)obj).Add(reader.GetName(i), reader.GetValue(i));
                 }
 
-                resultSet.AddLast(obj);
+                resultSet.AddLast((dynamic)obj);
             }
 
             resultSet.BuildReport(checker);
