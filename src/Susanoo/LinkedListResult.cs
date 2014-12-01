@@ -35,7 +35,7 @@ namespace Susanoo
         /// Provides the information to build a mapping report.
         /// </summary>
         /// <param name="checker">The checker.</param>
-        internal void BuildReport(ColumnChecker checker)
+        public void BuildReport(ColumnChecker checker)
         {
             _Checker = checker;
         }
