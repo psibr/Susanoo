@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace Susanoo
 {
     /// <summary>
-    /// A linked list that implements IResultSet
+    /// A list that implements IResultSet
     /// </summary>
     /// <typeparam name="TResult">The type of the t result.</typeparam>
-    public class LinkedListResult<TResult> : LinkedList<TResult>, IResultSet
+    public class ListResult<TResult> : List<TResult>, IResultSet
     {
         private  Dictionary<string, int> _queryResultColumnInfo;
 

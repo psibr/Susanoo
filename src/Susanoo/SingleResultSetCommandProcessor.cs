@@ -39,17 +39,17 @@ namespace Susanoo
         /// <returns>dynamic.</returns>
         private static IEnumerable<TResult> DynamicConversion(IDataReader reader, ColumnChecker checker)
         {
-            var resultSet = new LinkedListResult<TResult>();
+            var resultSet = new ListResult<TResult>();
 
             while (reader.Read())
             {
-                var obj = new ExpandoObject();
+                IDictionary<string, Object> obj = new ExpandoObject();
                 for (var i = 0; i < reader.FieldCount; i++)
                 {
-                    ((IDictionary<string, Object>)obj).Add(reader.GetName(i), reader.GetValue(i));
+                    obj.Add(reader.GetName(i), reader.GetValue(i));
                 }
 
-                resultSet.AddLast((dynamic)obj);
+                resultSet.Add((dynamic)obj);
             }
 
             resultSet.BuildReport(checker);
@@ -186,7 +186,7 @@ namespace Susanoo
                 {
                     results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
-                    this.ColumnReport = ((LinkedListResult<TResult>)results).ColumnReport;
+                    this.ColumnReport = ((ListResult<TResult>)results).ColumnReport;
                 }
 
                 if (ResultCachingEnabled)
@@ -278,7 +278,7 @@ namespace Susanoo
                 {
                     results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
-                    this.ColumnReport = ((LinkedListResult<TResult>)results).ColumnReport;
+                    this.ColumnReport = ((ListResult<TResult>)results).ColumnReport;
                 }
 
                 if (ResultCachingEnabled)
@@ -352,7 +352,7 @@ namespace Susanoo
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompileMappings()
         {
-            MethodInfo AddLastMethod = typeof(LinkedList<TResult>).GetMethod("AddLast", new[] { typeof(TResult) });
+            MethodInfo AddLastMethod = typeof(List<TResult>).GetMethod("Add", new[] { typeof(TResult) });
 
             //Get the properties we care about.
             var mappings = CommandResultExpression.Export<TResult>();
@@ -364,12 +364,12 @@ namespace Susanoo
             ParameterExpression columnReport = Expression.Parameter(typeof(ColumnChecker), "columnReport");
 
             ParameterExpression columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
-            ParameterExpression resultSet = Expression.Variable(typeof(LinkedListResult<TResult>), "resultSet");
+            ParameterExpression resultSet = Expression.Variable(typeof(ListResult<TResult>), "resultSet");
 
             LabelTarget returnStatement = Expression.Label(typeof(IEnumerable<TResult>), "return");
 
             // resultSet = new LinkedListResult<TResult>();
-            outerStatements.Add(Expression.Assign(resultSet, Expression.New(typeof(LinkedListResult<TResult>))));
+            outerStatements.Add(Expression.Assign(resultSet, Expression.New(typeof(ListResult<TResult>))));
 
             // columnChecker = (columnReport == null) ? new ColumnChecker() : columnReport;
             outerStatements.Add(Expression.IfThenElse(Expression.Equal(columnReport, Expression.Constant(null)), Expression.Assign(
@@ -384,7 +384,7 @@ namespace Susanoo
             innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, _readMethod)),
                 Expression.Block(
                     Expression.Call(resultSet,
-                        typeof(LinkedListResult<TResult>).GetMethod("BuildReport", BindingFlags.Public | BindingFlags.Instance),
+                        typeof(ListResult<TResult>).GetMethod("BuildReport", BindingFlags.Public | BindingFlags.Instance),
                         columnChecker),
                     Expression.Break(returnStatement, resultSet))));
 
