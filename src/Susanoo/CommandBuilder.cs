@@ -28,13 +28,6 @@ namespace Susanoo
         /// </exception>
         public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
-            if (commandText == null)
-                throw new ArgumentNullException("commandText");
-            if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentException("No command text provided.", "commandText");
-            if (commandType == CommandType.TableDirect)
-                throw new ArgumentException("TableDirect is not supported.", "commandType");
-
             return new CommandExpression<TFilter>(commandText, commandType);
         }
 
@@ -53,13 +46,6 @@ namespace Susanoo
         /// </exception>
         public virtual ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
-            if (commandText == null)
-                throw new ArgumentNullException("commandText");
-            if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentException("No command text provided.", "commandText");
-            if (commandType == CommandType.TableDirect)
-                throw new ArgumentException("TableDirect is not supported.", "commandType");
-
             return new CommandExpression<dynamic>(commandText, commandType);
         }
     }
