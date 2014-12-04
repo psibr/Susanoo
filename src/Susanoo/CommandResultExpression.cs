@@ -115,10 +115,8 @@ namespace Susanoo
                     result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
             }
 
-            if(result == null)
-                result = new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultExpression, name);
-
-            return result;
+            return result ??
+                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultExpression, name);
         }
         /// <summary>
         ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
