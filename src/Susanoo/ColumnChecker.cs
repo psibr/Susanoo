@@ -56,11 +56,8 @@ namespace Susanoo
             string value;
             if (_isInit)
             {                
-                return _intKeyFields.TryGetValue(index, out value) ? value : null;
-            }
-            else
-            {
-                _isStringBased = false;
+                if( _intKeyFields.TryGetValue(index, out value))
+                    return value;
             }
 
             value = record.GetName(index);
