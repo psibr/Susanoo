@@ -477,9 +477,10 @@ namespace Susanoo
                         if (type.HasValue)
                             param.DbType = type.Value;
 
-                        if (item.Value != null)
+                        Action<DbParameter> value = item.Value;
+                        if (value != null)
                         {
-                            item.Value.Invoke(param);
+                            value.Invoke(param);
                             if (_nullValueMode == NullValueMode.FilterOnlyFull
                                 || _nullValueMode == NullValueMode.Full)
                             {

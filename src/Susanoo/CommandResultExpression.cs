@@ -104,7 +104,7 @@ namespace Susanoo
             CommandProcessorCommon instance;
             SingleResultSetCommandProcessor<TFilter, TResult> result = null;
 
-            if (string.IsNullOrWhiteSpace(name))
+            if (name == null)
             {
                 if (CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
                     result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;

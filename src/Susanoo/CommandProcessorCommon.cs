@@ -32,6 +32,8 @@ namespace Susanoo
             get { return _resultCacheContainer; }
         }
 
+
+
         /// <summary>
         /// Gets a value indicating whether [result caching enabled].
         /// </summary>
