@@ -40,13 +40,18 @@ namespace Susanoo
         private static IEnumerable<TResult> DynamicConversion(IDataReader reader, ColumnChecker checker)
         {
             var resultSet = new ListResult<TResult>();
+            checker = checker ?? new ColumnChecker();
 
+            int fieldCount = reader.FieldCount;
             while (reader.Read())
             {
+
                 IDictionary<string, Object> obj = new ExpandoObject();
-                for (var i = 0; i < reader.FieldCount; i++)
+                for (var i = 0; i < fieldCount; i++)
                 {
-                    obj.Add(reader.GetName(i), reader.GetValue(i));
+                    var name = checker.HasColumn(reader, i);
+                    if (name != null)
+                        obj.Add(name, reader.GetValue(i));
                 }
 
                 resultSet.Add((dynamic)obj);
@@ -410,8 +415,7 @@ namespace Susanoo
                         // ordinal = columnChecker.HasColumn(pair.Value.ActiveAlias);
                         Expression.Assign(ordinal,
                             Expression.Call(columnChecker,
-                                typeof(ColumnChecker).GetMethod("HasColumn",
-                                    BindingFlags.Public | BindingFlags.Instance),
+                                typeof(ColumnChecker).GetMethod("HasColumn", new [] { typeof(IDataReader), typeof(string) }),
                                 reader,
                                 Expression.Constant(pair.Value.ActiveAlias))),
 
