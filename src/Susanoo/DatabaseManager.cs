@@ -281,11 +281,14 @@ namespace Susanoo
 #endif
         public static object CastValue(Type newType, object value)
         {
+            if (value == DBNull.Value)
+                value = null;
+
             var returnValue = value;
 
             if (newType == typeof(string))
             {
-                returnValue = value.ToString();
+                returnValue = (value ?? "").ToString();
             }
 
             return returnValue;
