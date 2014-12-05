@@ -4,6 +4,7 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlTypes;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -167,7 +168,9 @@ namespace Susanoo
 
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    return (T)CastValue(typeof(T), command.ExecuteScalar());
+                    object result = CastValue(typeof (T), command.ExecuteScalar());
+
+                    return (T)result;
                 }
             }
             finally

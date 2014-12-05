@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Scalar\DBNullCheck.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Dynamic\TypeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,21 +1,20 @@
 ﻿using System.Data;
 using NUnit.Framework;
+using Susanoo;
 
-namespace Susanoo.Tests
+[SetUpFixture]
+public class Setup
 {
-    [SetUpFixture]
-    public class Setup
+    public static readonly DatabaseManager databaseManager = new DatabaseManager("Susanoo");
+
+    [SetUp]
+    public void Configure()
     {
-        public static readonly DatabaseManager databaseManager = new DatabaseManager("Susanoo");
+        //By explicitly opening the connection, it becomes a shared connection.
+        databaseManager.OpenConnection();
 
-        [SetUp]
-        public void Configure()
-        {
-            //By explicitly opening the connection, it becomes a shared connection.
-            databaseManager.OpenConnection();
-
-            CommandManager.DefineCommand(
-                @"
+        CommandManager.DefineCommand(
+            @"
                 IF OBJECT_ID('tempdb..#DataTypeTable') IS NOT NULL 
                 BEGIN
                     DROP TABLE #DataTypeTable;
@@ -42,15 +41,14 @@ namespace Susanoo.Tests
                     GUID = CAST('E75B92A3-3299-4407-A913-C5CA196B3CAB' AS uniqueidentifier)
 
                 INTO #DataTypeTable;",
-                CommandType.Text)
-                .Realize("DataTypeTableBuilder")
-                .ExecuteNonQuery(databaseManager);
-        }
+            CommandType.Text)
+            .Realize("DataTypeTableBuilder")
+            .ExecuteNonQuery(databaseManager);
+    }
 
-        [TearDown]
-        public void Close()
-        {
-            databaseManager.CloseConnection();
-        }
+    [TearDown]
+    public void Close()
+    {
+        databaseManager.CloseConnection();
     }
 }
