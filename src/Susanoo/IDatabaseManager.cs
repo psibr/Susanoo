@@ -105,5 +105,21 @@ namespace Susanoo
         /// <param name="value">The value.</param>
         /// <returns>DbParameter.</returns>
         DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value);
+
+        /// <summary>
+        /// Opens the connection.
+        /// </summary>
+        void OpenConnection();
+
+        /// <summary>
+        /// Closes the connection.
+        /// </summary>
+        void CloseConnection();
+
+        /// <summary>
+        /// Gets the state of the connection.
+        /// </summary>
+        /// <value>The state.</value>
+        ConnectionState State { get; }
     }
 }

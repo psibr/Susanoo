@@ -124,11 +124,13 @@ namespace Susanoo
 
             try
             {
+                var open = this.Connection.State != ConnectionState.Closed;
                 OpenConnection();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    results = command.ExecuteReader();
+                    // If the connection was open before execute was called, then do not automatically close connection.
+                    results = open ? command.ExecuteReader() : command.ExecuteReader(CommandBehavior.CloseConnection);
                 }
             }
             catch
@@ -157,6 +159,8 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
+            var open = (Connection.State != ConnectionState.Closed);
+
             try
             {
                 OpenConnection();
@@ -168,7 +172,7 @@ namespace Susanoo
             }
             finally
             {
-                if (Transaction.Current == null)
+                if (Transaction.Current == null && !open)
                     CloseConnection();
             }
         }
@@ -187,6 +191,8 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
+            var open = (Connection.State != ConnectionState.Closed);
+
             try
             {
                 OpenConnection();
@@ -198,7 +204,7 @@ namespace Susanoo
             }
             finally
             {
-                if (Transaction.Current == null)
+                if (Transaction.Current == null && !open)
                     CloseConnection();
             }
         }
@@ -275,11 +281,14 @@ namespace Susanoo
 #endif
         public static object CastValue(Type newType, object value)
         {
+            if (value == DBNull.Value)
+                value = null;
+
             var returnValue = value;
 
             if (newType == typeof(string))
             {
-                returnValue = value.ToString();
+                returnValue = (value ?? "").ToString();
             }
 
             return returnValue;
@@ -337,18 +346,18 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Opens the connection.
+        /// Opens the connection.
         /// </summary>
-        protected virtual void OpenConnection()
+        public virtual void OpenConnection()
         {
             if (Connection.State != ConnectionState.Open)
                 Connection.Open();
         }
 
         /// <summary>
-        ///     Closes the connection.
+        /// Closes the connection.
         /// </summary>
-        protected virtual void CloseConnection()
+        public virtual void CloseConnection()
         {
             if (Connection.State != ConnectionState.Closed)
                 Connection.Close();
@@ -373,6 +382,16 @@ namespace Susanoo
         }
 
         #endregion IDisposable Members
+
+
+        /// <summary>
+        /// Gets the state of the connection.
+        /// </summary>
+        /// <value>The state.</value>
+        public ConnectionState State
+        {
+            get { return Connection.State; }
+        }
     }
 
 #if !NETFX40
@@ -401,14 +420,20 @@ namespace Susanoo
                 throw new ArgumentNullException("commandText");
 
             IDataReader results = null;
-
+            var open = (Connection.State != ConnectionState.Closed);
             try
             {
                 OpenConnection();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    results = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                    if (open)
+                        results = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                    else
+                        results =
+                            await
+                                command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken)
+                                    .ConfigureAwait(false);
                 }
             }
             catch
@@ -440,6 +465,8 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
+            var open = (Connection.State != ConnectionState.Closed);
+
             try
             {
                 OpenConnection();
@@ -451,7 +478,7 @@ namespace Susanoo
             }
             finally
             {
-                if (Transaction.Current == null)
+                if (Transaction.Current == null && !open)
                     CloseConnection();
             }
         }
@@ -474,6 +501,8 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
+            var open = (Connection.State != ConnectionState.Closed);
+
             try
             {
                 OpenConnection();
@@ -488,7 +517,7 @@ namespace Susanoo
             }
             finally
             {
-                if (Transaction.Current == null)
+                if (Transaction.Current == null && !open)
                     CloseConnection();
             }
         }
