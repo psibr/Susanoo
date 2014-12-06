@@ -57,9 +57,6 @@ namespace Susanoo
                 resultSet.Add((dynamic)obj);
             }
 
-            if(!reader.IsClosed)
-                reader.Close();
-
             resultSet.BuildReport(checker);
 
             return resultSet;
@@ -326,9 +323,6 @@ namespace Susanoo
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping)
         {
             var result = mapping(reader, checker);
-
-            if(!reader.IsClosed)
-                reader.Close();
 
             return result;
         }
