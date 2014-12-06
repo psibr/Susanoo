@@ -126,7 +126,7 @@ namespace Susanoo
             try
             {
                 var open = this.Connection.State != ConnectionState.Closed;
-                OpenConnection();
+                OpenConnectionInternal();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
@@ -164,7 +164,7 @@ namespace Susanoo
 
             try
             {
-                OpenConnection();
+                OpenConnectionInternal();
 
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
@@ -198,7 +198,7 @@ namespace Susanoo
 
             try
             {
-                OpenConnection();
+                OpenConnectionInternal();
 
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
@@ -304,7 +304,7 @@ namespace Susanoo
         [Obsolete("Prefer using System.Transactions.TransactionScope.", false)]
         public virtual DbTransaction BeginTransaction()
         {
-            OpenConnection();
+            OpenConnectionInternal();
             return Connection.BeginTransaction();
         }
 
@@ -353,6 +353,16 @@ namespace Susanoo
         /// </summary>
         public virtual void OpenConnection()
         {
+            ExplicitlyOpened = true;
+
+            OpenConnectionInternal();
+        }
+
+        /// <summary>
+        /// Opens the connection.
+        /// </summary>
+        protected virtual void OpenConnectionInternal()
+        {
             if (Connection.State != ConnectionState.Open)
                 Connection.Open();
         }
@@ -363,8 +373,13 @@ namespace Susanoo
         public virtual void CloseConnection()
         {
             if (Connection.State != ConnectionState.Closed)
+            {
                 Connection.Close();
+                ExplicitlyOpened = false;
+            }
         }
+
+        private bool ExplicitlyOpened;
 
         #region IDisposable Members
 
@@ -426,7 +441,7 @@ namespace Susanoo
             var open = (Connection.State != ConnectionState.Closed);
             try
             {
-                OpenConnection();
+                OpenConnectionInternal();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
@@ -472,7 +487,7 @@ namespace Susanoo
 
             try
             {
-                OpenConnection();
+                OpenConnectionInternal();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
@@ -508,7 +523,7 @@ namespace Susanoo
 
             try
             {
-                OpenConnection();
+                OpenConnectionInternal();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
