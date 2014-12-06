@@ -125,7 +125,7 @@ namespace Susanoo
 
             try
             {
-                var open = this.Connection.State != ConnectionState.Closed;
+                var open = ExplicitlyOpened;
                 OpenConnectionInternal();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
@@ -160,7 +160,7 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
-            var open = (Connection.State != ConnectionState.Closed);
+            var open = ExplicitlyOpened;
 
             try
             {
@@ -438,7 +438,7 @@ namespace Susanoo
                 throw new ArgumentNullException("commandText");
 
             IDataReader results = null;
-            var open = (Connection.State != ConnectionState.Closed);
+            var open = ExplicitlyOpened;
             try
             {
                 OpenConnectionInternal();
@@ -483,7 +483,7 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
-            var open = (Connection.State != ConnectionState.Closed);
+            var open = ExplicitlyOpened;
 
             try
             {
@@ -519,7 +519,7 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
-            var open = (Connection.State != ConnectionState.Closed);
+            var open = ExplicitlyOpened;
 
             try
             {
