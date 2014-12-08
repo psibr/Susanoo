@@ -34,7 +34,7 @@ namespace Susanoo.Tests.Scalar
         [ExpectedException(typeof(NullReferenceException))]
         public void NonNullScalarThrows()
         {
-            var result = CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
+            CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize("NullScalar")
                 .ExecuteScalar<int>(databaseManager);
         }
