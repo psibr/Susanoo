@@ -2,7 +2,7 @@ Susanoo
 ====
 A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! 
 
-Continuous Integration: [![susanoo-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/susanoo-ci?identifier=776e9352-77be-4427-b372-c091644d9568)](https://www.myget.org/)
+Continuous Integration: [![susanoo-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/susanoo-ci?identifier=776e9352-77be-4427-b372-c091644d9568)](https://www.myget.org/feed/susanoo-ci/package/Susanoo.Core)
 
 
 Support for .NET 4.0+
