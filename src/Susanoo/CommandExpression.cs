@@ -22,13 +22,20 @@ namespace Susanoo
     public class CommandExpression<TFilter>
         : ICommandExpression<TFilter>
     {
+        private BigInteger _CacheHash = BigInteger.MinusOne;
+
+        /// <summary>
+        ///     The explicit inclusion mode
+        /// </summary>
+        private bool _explicitInclusionMode;
+
+        private NullValueMode _nullValueMode = NullValueMode.Never;
+
         /// <summary>
         ///     The constant parameters
         /// </summary>
         private readonly Dictionary<string, Action<DbParameter>> _constantParameters =
             new Dictionary<string, Action<DbParameter>>();
-
-        private NullValueMode _nullValueMode = NullValueMode.Never;
 
         /// <summary>
         ///     The parameter exclusions
@@ -40,11 +47,6 @@ namespace Susanoo
         /// </summary>
         private readonly IDictionary<string, Action<DbParameter>> _parameterInclusions =
             new Dictionary<string, Action<DbParameter>>();
-
-        /// <summary>
-        ///     The explicit inclusion mode
-        /// </summary>
-        private bool _explicitInclusionMode;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
@@ -93,32 +95,12 @@ namespace Susanoo
         {
             get
             {
-                if(_CacheHash == -1)
+                if (_CacheHash == -1)
                     ComputeHash();
 
                 return _CacheHash;
             }
         }
-
-        private void ComputeHash()
-        {
-            var hashText = new StringBuilder(CommandText);
-
-            hashText.Append(DbCommandType);
-            hashText.Append(_explicitInclusionMode);
-            hashText.Append(_nullValueMode);
-            hashText.Append(_constantParameters.Aggregate(string.Empty, (p, c) => p + c.Key));
-            hashText.Append(_parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
-            hashText.Append(_parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
-
-            //string resultBeforeHash = hashText.ToString();
-            //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
-
-            _CacheHash = HashBuilder.Compute(hashText.ToString());
-        }
-
-        private BigInteger _CacheHash = BigInteger.MinusOne;
-
 
         /// <summary>
         ///     Realizes the pipeline with no result mappings.
@@ -153,7 +135,7 @@ namespace Susanoo
         public virtual DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            if(filter == null && _constantParameters.Count == 0 && explicitParameters == null )
+            if (filter == null && _constantParameters.Count == 0 && explicitParameters == null)
                 return new DbParameter[0];
 
             var propertyParameters = filter != null ? BuildPropertyParameters(databaseManager, filter) : null;
@@ -214,13 +196,14 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard parameters.
-        /// Properties with modifier Actions do NOT qualify for this behavior
+        ///     ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard
+        ///     parameters.
+        ///     Properties with modifier Actions do NOT qualify for this behavior
         /// </summary>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         public ICommandExpression<TFilter> SendNullValues(NullValueMode mode = NullValueMode.FilterOnlyMinimum)
         {
-            this._nullValueMode = mode;
+            _nullValueMode = mode;
 
             return this;
         }
@@ -442,6 +425,23 @@ namespace Susanoo
                     <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
         }
 
+        private void ComputeHash()
+        {
+            var hashText = new StringBuilder(CommandText);
+
+            hashText.Append(DbCommandType);
+            hashText.Append(_explicitInclusionMode);
+            hashText.Append(_nullValueMode);
+            hashText.Append(_constantParameters.Aggregate(string.Empty, (p, c) => p + c.Key));
+            hashText.Append(_parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
+            hashText.Append(_parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
+
+            //string resultBeforeHash = hashText.ToString();
+            //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
+
+            _CacheHash = HashBuilder.Compute(hashText.ToString());
+        }
+
         /// <summary>
         ///     Builds the property inclusion parameters.
         /// </summary>
@@ -450,10 +450,9 @@ namespace Susanoo
         /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
         public virtual IEnumerable<DbParameter> BuildPropertyParameters(IDatabaseManager databaseManager, TFilter filter)
         {
-            var properties = new List<DbParameter>();
+            var parameters = new List<DbParameter>();
 
-            // ReSharper disable once CompareNonConstrainedGenericWithNull
-            if (filter != null)
+            if (typeof (TFilter).IsValueType || filter != null)
             {
                 if (_explicitInclusionMode)
                 {
@@ -494,13 +493,15 @@ namespace Susanoo
                             param.Value = ReplaceNullWithDbNull(param.Value);
                         }
 
-                        properties.Add(param);
+                        parameters.Add(param);
                     }
                 }
                 else
                 {
-                    foreach (var propInfo in filter.GetType()
-                        .GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                    var implicitProperties = filter.GetType()
+                        .GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+                    foreach (var propInfo in implicitProperties)
                     {
                         if (!_parameterExclusions.Contains(propInfo.Name))
                         {
@@ -533,8 +534,8 @@ namespace Susanoo
                                     }
                                 }
                                 else if (_nullValueMode == NullValueMode.FilterOnlyMinimum
-                                 || _nullValueMode == NullValueMode.FilterOnlyFull
-                                 || _nullValueMode == NullValueMode.Full)
+                                         || _nullValueMode == NullValueMode.FilterOnlyFull
+                                         || _nullValueMode == NullValueMode.Full)
                                 {
                                     param.Value = ReplaceNullWithDbNull(param.Value);
                                 }
@@ -553,17 +554,17 @@ namespace Susanoo
                                 }
                             }
 
-                            properties.Add(param);
+                            parameters.Add(param);
                         }
                     }
                 }
             }
 
-            return properties;
+            return parameters;
         }
 
         /// <summary>
-        /// Replaces the null with database null.
+        ///     Replaces the null with database null.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>System.Object.</returns>

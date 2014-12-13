@@ -31,7 +31,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return _mappingContainer.Aggregate(default(BigInteger), (p, c) => (p * 31) ^ c.Value.CacheHash); }
+            get { return _mappingContainer.Aggregate(default(BigInteger), (p, c) => (p*31) ^ c.Value.CacheHash); }
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace Susanoo
         {
             IResultMappingExpression<TFilter, TResult> result = null;
 
-            if (_mappingContainer.ContainsKey(typeof(TResult)))
-                result = _mappingContainer[typeof(TResult)] as IResultMappingExpression<TFilter, TResult>;
+            if (_mappingContainer.ContainsKey(typeof (TResult)))
+                result = _mappingContainer[typeof (TResult)] as IResultMappingExpression<TFilter, TResult>;
 
             return result ?? new ResultMappingExpression<TFilter, TResult>();
         }
@@ -57,9 +57,9 @@ namespace Susanoo
         public virtual void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping)
             where TResult : new()
         {
-            if (_mappingContainer.ContainsKey(typeof(TResult)))
+            if (_mappingContainer.ContainsKey(typeof (TResult)))
             {
-                mapping(_mappingContainer[typeof(TResult)] as IResultMappingExpression<TFilter, TResult>);
+                mapping(_mappingContainer[typeof (TResult)] as IResultMappingExpression<TFilter, TResult>);
             }
             else
             {
@@ -68,7 +68,7 @@ namespace Susanoo
 
                 mapping(mappingExpression);
 
-                _mappingContainer.Add(typeof(TResult), mappingExpression);
+                _mappingContainer.Add(typeof (TResult), mappingExpression);
             }
         }
 

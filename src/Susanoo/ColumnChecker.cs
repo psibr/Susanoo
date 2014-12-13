@@ -13,10 +13,10 @@ namespace Susanoo
     /// </summary>
     public class ColumnChecker
     {
-        private Dictionary<string, int> _stringKeyFields = new Dictionary<string,int>();
-        private Dictionary<int, string> _intKeyFields = new Dictionary<int,string>();
         private bool _isInit;
         private bool _isStringBased;
+        private readonly Dictionary<int, string> _intKeyFields = new Dictionary<int, string>();
+        private readonly Dictionary<string, int> _stringKeyFields = new Dictionary<string, int>();
 
         /// <summary>
         ///     Determines whether the specified record has a column.
@@ -31,10 +31,7 @@ namespace Susanoo
                 int value;
                 return _stringKeyFields.TryGetValue(name, out value) ? value : -1;
             }
-            else
-            {
-                _isStringBased = true;
-            }
+            _isStringBased = true;
             // Could be possible to speed things up by using GetOrdinal.
             for (var i = 0; i < record.FieldCount; i++)
                 _stringKeyFields.Add(record.GetName(i), i);
@@ -46,7 +43,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Determines whether the specified record has a column.
+        ///     Determines whether the specified record has a column.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <param name="index">The index.</param>
@@ -55,8 +52,8 @@ namespace Susanoo
         {
             string value;
             if (_isInit)
-            {                
-                if( _intKeyFields.TryGetValue(index, out value))
+            {
+                if (_intKeyFields.TryGetValue(index, out value))
                     return value;
             }
 
@@ -69,12 +66,14 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Exports a dictionary showing mapped columns and indexes.
+        ///     Exports a dictionary showing mapped columns and indexes.
         /// </summary>
         /// <returns>Dictionary&lt;System.String, System.Int32&gt;.</returns>
         public Dictionary<string, int> ExportReport()
         {
-            return _isStringBased ? new Dictionary<string, int>(_stringKeyFields) : _intKeyFields.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+            return _isStringBased
+                ? new Dictionary<string, int>(_stringKeyFields)
+                : _intKeyFields.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
         }
     }
 }

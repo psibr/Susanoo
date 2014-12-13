@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region
+
+using System;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Core;
 using NUnit.Framework;
+
+#endregion
 
 namespace Susanoo.Tests.Scalar
 {
@@ -17,7 +16,6 @@ namespace Susanoo.Tests.Scalar
         [TestFixtureSetUp]
         public void SetUp()
         {
-
         }
 
         [Test]
@@ -31,13 +29,12 @@ namespace Susanoo.Tests.Scalar
         }
 
         [Test]
-        [ExpectedException(typeof(NullReferenceException))]
-        public void NonNullScalarThrows()
+        [ExpectedException(typeof (NullReferenceException))]
+        public void NonNullScalarThrowsIfNull()
         {
             CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize("NullScalar")
                 .ExecuteScalar<int>(databaseManager);
         }
-
     }
 }

@@ -1,10 +1,14 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
 
+#endregion
+
 namespace Susanoo.Tests.Dynamic
-{	
+{
     [TestFixture]
     public class TypeTest
     {
@@ -27,10 +31,10 @@ namespace Susanoo.Tests.Dynamic
             Assert.AreEqual(first.Bit, true);
 
             Assert.IsTrue(first.TinyInt is byte);
-            Assert.AreEqual(first.TinyInt, (byte)0x05);
+            Assert.AreEqual(first.TinyInt, (byte) 0x05);
 
             Assert.IsTrue(first.SmallInt is Int16);
-            Assert.AreEqual(first.SmallInt, (Int16)0x0004);
+            Assert.AreEqual(first.SmallInt, (Int16) 0x0004);
 
             Assert.IsTrue(first.Int is int);
             Assert.AreEqual(first.Int, 1);
@@ -61,13 +65,13 @@ namespace Susanoo.Tests.Dynamic
 
             Assert.IsTrue(first.Text is string);
             Assert.AreEqual(first.Text, "text");
-            
+
             Assert.IsTrue(first.Date is DateTime);
             Assert.AreEqual(first.Date, new DateTime(2014, 12, 25));
-            
+
             Assert.IsTrue(first.SmallDateTime is DateTime);
             Assert.AreEqual(first.SmallDateTime, new DateTime(2014, 12, 25, 12, 00, 00));
-            
+
             Assert.IsTrue(first.DateTime is DateTime);
             Assert.AreEqual(first.DateTime, new DateTime(2014, 12, 25, 12, 00, 00));
 
@@ -81,6 +85,4 @@ namespace Susanoo.Tests.Dynamic
             Assert.AreEqual(first.GUID, new Guid("E75B92A3-3299-4407-A913-C5CA196B3CAB"));
         }
     }
-
 }
-

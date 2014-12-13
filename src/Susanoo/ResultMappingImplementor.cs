@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
-using System.Reflection;
 
 #endregion
 
@@ -20,10 +19,10 @@ namespace Susanoo
         : IResultMappingImplementor<TResult>
         where TResult : new()
     {
+        private IPropertyMetadataExtractor _propertyMetadataExtractor = new ComponentModelMetadataExtractor();
+
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();
-
-        private IPropertyMetadataExtractor _propertyMetadataExtractor = new ComponentModelMetadataExtractor();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ResultMappingImplementor{TResult}" /> class.
@@ -70,10 +69,7 @@ namespace Susanoo
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get
-            {
-                return _mappingActions.Aggregate(HashBuilder.Seed, (i, pair) => (i * 31) ^ pair.Value.CacheHash);
-            }
+            get { return _mappingActions.Aggregate(HashBuilder.Seed, (i, pair) => (i*31) ^ pair.Value.CacheHash); }
         }
 
         /// <summary>
@@ -85,7 +81,7 @@ namespace Susanoo
             string propertyName,
             Action<IPropertyMappingConfiguration> options)
         {
-            var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(propertyName));
+            var config = new PropertyMappingConfiguration(typeof (TResult).GetProperty(propertyName));
             options.Invoke(config);
 
             if (!_mappingActions.ContainsKey(propertyName))
@@ -110,7 +106,7 @@ namespace Susanoo
         public void MapDeclarativeProperties()
         {
             foreach (var item in PropertyMetadataExtractor
-                .FindAllowedProperties(typeof(TResult), DescriptorActions.Read))
+                .FindAllowedProperties(typeof (TResult), DescriptorActions.Read))
             {
                 var item1 = item;
 

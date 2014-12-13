@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -13,20 +14,10 @@ using System.Reflection.Emit;
 namespace Susanoo
 {
     /// <summary>
-    ///     This class is used as the single entry point when dealing with Susanoo.
+    /// This class is used as the single entry point when using with Susanoo.
     /// </summary>
     public static class CommandManager
     {
-        /// <summary>
-        ///     Gets the expression assembly that contains runtime compiled methods used for mappings.
-        /// </summary>
-        /// <value>The expression assembly.</value>
-        private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
-            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
-
-        private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
-            .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
-
         private static readonly IDictionary<Type, DbType> BuiltinTypeConversions =
             new ConcurrentDictionary<Type, DbType>(new Dictionary<Type, DbType>
             {
@@ -71,8 +62,14 @@ namespace Susanoo
         private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
             new DatabaseManager(connectionStringName);
 
+        private static readonly ConcurrentDictionary<BigInteger, CommandProcessorCommon> _registeredCommandProcessors =
+            new ConcurrentDictionary<BigInteger, CommandProcessorCommon>();
+
+        private static readonly ConcurrentDictionary<string, CommandProcessorCommon> _namedCommandProcessors =
+            new ConcurrentDictionary<string, CommandProcessorCommon>();
+
         /// <summary>
-        ///     Gets the commander.
+        /// Gets the commander.
         /// </summary>
         /// <value>The commander.</value>
         public static ICommandExpressionBuilder Commander
@@ -81,7 +78,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the dynamic namespace.
+        /// Gets the dynamic namespace.
         /// </summary>
         /// <value>The dynamic namespace.</value>
         internal static ModuleBuilder DynamicNamespace
@@ -90,7 +87,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the database manager.
+        /// Gets the database manager.
         /// </summary>
         /// <param name="connectionString">The connection string.</param>
         /// <returns>IDatabaseManager.</returns>
@@ -101,7 +98,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Registers the database manager.
+        /// Registers the database manager.
         /// </summary>
         /// <param name="databaseManagerFactoryMethod">The database manager factory method.</param>
         public static void RegisterDatabaseManagerFactory(Func<string, IDatabaseManager> databaseManagerFactoryMethod)
@@ -111,7 +108,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Registers a command builder.
+        /// Registers a command builder.
         /// </summary>
         /// <param name="builder">The builder.</param>
         public static void RegisterCommandBuilder(ICommandExpressionBuilder builder)
@@ -120,8 +117,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
-        ///     the result of this call.
+        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
+        /// the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandText">The command text.</param>
@@ -134,8 +131,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
-        ///     the result of this call.
+        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
+        /// the result of this call.
         /// </summary>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -160,20 +157,18 @@ namespace Susanoo
             else
                 typeToUse = dataType;
 
-            return typeToUse;
+            return typeToUse; 
         }
 
-        private static readonly ConcurrentDictionary<BigInteger, CommandProcessorCommon> _registeredCommandProcessors = new ConcurrentDictionary<BigInteger, CommandProcessorCommon>();
-
-        private static readonly ConcurrentDictionary<string, CommandProcessorCommon> _namedCommandProcessors = 
-            new ConcurrentDictionary<string, CommandProcessorCommon>();
-
         /// <summary>
-        /// Attempts to get a command processor by hashcode.
+        ///     Attempts to get a command processor by hash code.
         /// </summary>
         /// <param name="hash">The hash.</param>
         /// <param name="commandProcessor">The command processor.</param>
-        /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected, <c>false</c> otherwise.</returns>
+        /// <returns>
+        ///     <c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
+        ///     <c>false</c> otherwise.
+        /// </returns>
         public static bool TryGetCommandProcessor(BigInteger hash, out CommandProcessorCommon commandProcessor)
         {
             var result = _registeredCommandProcessors.TryGetValue(hash, out commandProcessor);
@@ -186,7 +181,10 @@ namespace Susanoo
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <param name="commandProcessor">The command processor.</param>
-        /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected, <c>false</c> otherwise.</returns>
+        /// <returns>
+        ///     <c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
+        ///     <c>false</c> otherwise.
+        /// </returns>
         public static bool TryGetCommandProcessor(string name, out CommandProcessorCommon commandProcessor)
         {
             var result = _namedCommandProcessors.TryGetValue(name, out commandProcessor);
@@ -202,8 +200,8 @@ namespace Susanoo
         public static void RegisterCommandProcessor(CommandProcessorCommon processor, string name)
         {
             _registeredCommandProcessors.TryAdd(processor.CacheHash, processor);
-            
-            if(!string.IsNullOrWhiteSpace(name))
+
+            if (!string.IsNullOrWhiteSpace(name))
                 _namedCommandProcessors.TryAdd(name, processor);
         }
 
@@ -214,18 +212,59 @@ namespace Susanoo
         {
             foreach (var registeredCommandProcessor in _registeredCommandProcessors)
             {
-                    registeredCommandProcessor.Value.FlushCache();
+                registeredCommandProcessor.Value.FlushCache();
             }
         }
 
         /// <summary>
-        /// Flushes caches on a specific command processor.
+        /// Clears any column index information that may have been cached.
+        /// </summary>
+        public static void ClearColumnIndexInfo(CommandProcessorCommon processor)
+        {
+            if(processor == null)
+                throw new ArgumentNullException("processor");
+
+            processor.ClearColumnIndexInfo();
+        }
+
+        /// <summary>
+        /// Clears any column index information that may have been cached.
+        /// </summary>>
+        public static void ClearColumnIndexInfo()
+        {
+            _registeredCommandProcessors
+                .Select(kvp => kvp.Value)
+                .ToList()
+                .ForEach(processor => processor.ClearColumnIndexInfo());
+        }
+
+        /// <summary>
+        /// Flushes caches on a specific named command processor.
         /// </summary>
         public static void FlushCache(string name)
         {
             CommandProcessorCommon reference;
-            if(_namedCommandProcessors.TryGetValue(name, out reference))
+            if (_namedCommandProcessors.TryGetValue(name, out reference))
                 reference.FlushCache();
         }
+
+        /// <summary>
+        /// Saves the dynamic assembly to disk.
+        /// </summary>
+        /// <param name="assemblyFileName">Name of the assembly file.</param>
+        public static void SaveDynamicAssemblyToDisk(string assemblyFileName)
+        {
+            ExpressionAssembly.Save(assemblyFileName);
+        }
+
+        /// <summary>
+        /// Gets the expression assembly that contains runtime compiled methods used for mappings.
+        /// </summary>
+        /// <value>The expression assembly.</value>
+        private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
+            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
+
+        private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
+            .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
     }
 }

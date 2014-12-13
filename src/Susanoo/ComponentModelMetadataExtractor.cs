@@ -2,17 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-
-#if !NETFX40
-
-using System.ComponentModel.DataAnnotations.Schema;
-
-#endif
-
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
+#if !NETFX40
+using System.ComponentModel.DataAnnotations.Schema;
+#endif
 
 #endregion
 

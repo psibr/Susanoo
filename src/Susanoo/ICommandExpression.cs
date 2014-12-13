@@ -36,8 +36,9 @@ namespace Susanoo
         ICommandProcessor<TFilter> Realize(string name = null);
 
         /// <summary>
-        /// ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard parameters.
-        /// Properties with modifier Actions do NOT qualify for this behavior
+        ///     ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard
+        ///     parameters.
+        ///     Properties with modifier Actions do NOT qualify for this behavior
         /// </summary>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         ICommandExpression<TFilter> SendNullValues(NullValueMode mode = NullValueMode.FilterOnlyMinimum);
@@ -218,32 +219,32 @@ namespace Susanoo
     }
 
     /// <summary>
-    /// Opt-in levels for sending null values in commands.
+    ///     Opt-in levels for sending null values in commands.
     /// </summary>
     public enum NullValueMode
     {
         /// <summary>
-        /// Default option, standard ADO.NET behavior, values of null exclude the parameter from the parameter set.
+        ///     Default option, standard ADO.NET behavior, values of null exclude the parameter from the parameter set.
         /// </summary>
         Never = 0,
 
         /// <summary>
-        /// Replaces null with DbNull on filter properties when no modifier action is provided.
+        ///     Replaces null with DbNull on filter properties when no modifier action is provided.
         /// </summary>
         FilterOnlyMinimum,
 
         /// <summary>
-        /// Replaces null with DbNull on all filter properties.
+        ///     Replaces null with DbNull on all filter properties.
         /// </summary>
         FilterOnlyFull,
 
         /// <summary>
-        /// Replaces null with DbNull on explicit parameters only.
+        ///     Replaces null with DbNull on explicit parameters only.
         /// </summary>
         ExplicitParametersOnly,
 
         /// <summary>
-        /// Replaces null with DbNull on all parameters EXCEPT constants.
+        ///     Replaces null with DbNull on all parameters EXCEPT constants.
         /// </summary>
         Full
     }

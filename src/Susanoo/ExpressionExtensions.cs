@@ -1,8 +1,6 @@
 ﻿#region
 
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq.Expressions;
 
 #endregion
@@ -24,7 +22,9 @@ namespace Susanoo
         internal static string GetPropertyName<TModel, TValue>(this Expression<Func<TModel, TValue>> propertySelector)
         {
             var body = propertySelector.Body as UnaryExpression;
-            var name = body != null ? ((MemberExpression)body.Operand).Member.Name : ((MemberExpression)propertySelector.Body).Member.Name;
+            var name = body != null
+                ? ((MemberExpression) body.Operand).Member.Name
+                : ((MemberExpression) propertySelector.Body).Member.Name;
 
             return name;
         }

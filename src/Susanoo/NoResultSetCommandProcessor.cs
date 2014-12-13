@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Susanoo
 {
     /// <summary>
-    /// A fully built and ready to be executed command expression with a filter parameter.
+    ///     A fully built and ready to be executed command expression with a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public partial class NoResultSetCommandProcessor<TFilter> : CommandProcessorCommon, ICommandProcessor<TFilter>
@@ -18,7 +18,7 @@ namespace Susanoo
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
+        ///     Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="name">The name of the processor.</param>

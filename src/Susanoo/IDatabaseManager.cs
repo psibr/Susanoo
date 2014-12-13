@@ -15,6 +15,12 @@ namespace Susanoo
     public interface IDatabaseManager
     {
         /// <summary>
+        ///     Gets the state of the connection.
+        /// </summary>
+        /// <value>The state.</value>
+        ConnectionState State { get; }
+
+        /// <summary>
         ///     Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
@@ -23,44 +29,6 @@ namespace Susanoo
         /// <returns>IDataReader.</returns>
         IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
 
-#if !NETFX40
-
-        /// <summary>
-        ///     Executes the data reader asynchronously.
-        /// </summary>
-        /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>Task&lt;IDataReader&gt;.</returns>
-        Task<IDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType,
-            CancellationToken cancellationToken, params DbParameter[] parameters);
-
-        /// <summary>
-        ///     Executes the scalar action asynchronously.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>Task&lt;T&gt;.</returns>
-        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken,
-            params DbParameter[] parameters);
-
-        /// <summary>
-        ///     Executes the stored procedure asynchronously.
-        /// </summary>
-        /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>Task&lt;System.Int32&gt;.</returns>
-        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken,
-            params DbParameter[] parameters);
-
-#endif
-
         /// <summary>
         ///     Executes the scalar.
         /// </summary>
@@ -68,7 +36,7 @@ namespace Susanoo
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
-        /// <returns>T.</returns>
+        /// <returns>A single value of type T.</returns>
         T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
@@ -107,19 +75,51 @@ namespace Susanoo
         DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value);
 
         /// <summary>
-        /// Opens the connection.
+        ///     Opens the connection.
         /// </summary>
         void OpenConnection();
 
         /// <summary>
-        /// Closes the connection.
+        ///     Closes the connection.
         /// </summary>
         void CloseConnection();
 
+#if !NETFX40
+
         /// <summary>
-        /// Gets the state of the connection.
+        ///     Executes the data reader asynchronously.
         /// </summary>
-        /// <value>The state.</value>
-        ConnectionState State { get; }
+        /// <param name="commandText">Name of the procedure.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;IDataReader&gt;.</returns>
+        Task<IDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType,
+            CancellationToken cancellationToken, params DbParameter[] parameters);
+
+        /// <summary>
+        ///     Executes the scalar action asynchronously.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;T&gt;.</returns>
+        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken,
+            params DbParameter[] parameters);
+
+        /// <summary>
+        ///     Executes the stored procedure asynchronously.
+        /// </summary>
+        /// <param name="commandText">Name of the procedure.</param>
+        /// <param name="commandType">Type of the command.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Task&lt;System.Int32&gt;.</returns>
+        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken,
+            params DbParameter[] parameters);
+
+#endif
     }
 }

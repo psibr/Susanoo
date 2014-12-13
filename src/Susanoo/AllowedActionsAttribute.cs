@@ -14,6 +14,14 @@ namespace Susanoo
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class AllowedActionsAttribute : Attribute
     {
+        /// <summary>
+        ///     Gets the allowed actions for a property.
+        /// </summary>
+        /// <value>
+        ///     The actions allowed.
+        /// </value>
+        public DescriptorActions Actions { get; private set; }
+
         #region Constructors
 
         /// <summary>
@@ -34,13 +42,5 @@ namespace Susanoo
         }
 
         #endregion Constructors
-
-        /// <summary>
-        ///     Gets the allowed actions for a property.
-        /// </summary>
-        /// <value>
-        ///     The actions allowed.
-        /// </value>
-        public DescriptorActions Actions { get; private set; }
     }
 }

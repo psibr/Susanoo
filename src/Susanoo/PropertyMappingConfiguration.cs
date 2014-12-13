@@ -17,8 +17,6 @@ namespace Susanoo
     public class PropertyMappingConfiguration
         : IPropertyMappingConfiguration, IPropertyMapping
     {
-        private readonly Expression<Func<IDataRecord, string, bool>> _mapOnCondition = null;
-
         private Func<Type, object, object> _conversionProcess =
             (type, value) => DatabaseManager.CastValue(type, value);
 
@@ -56,12 +54,10 @@ namespace Susanoo
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
         public virtual Expression<Action<IDataRecord, int>> AssembleMappingExpression(MemberExpression property)
         {
-            ParameterExpression record = Expression.Parameter(typeof(IDataRecord), "record");
-            ParameterExpression ordinal = Expression.Parameter(typeof(int), "ordinal");
+            ParameterExpression record = Expression.Parameter(typeof (IDataRecord), "record");
+            ParameterExpression ordinal = Expression.Parameter(typeof (int), "ordinal");
 
-            Expression body = (_mapOnCondition != null)
-                ? HasMapCondition(property, record, ordinal)
-                : AssembleAssignment(property, record, ordinal);
+            Expression body = AssembleAssignment(property, record, ordinal);
 
             var assignmentExpression =
                 Expression.Lambda<Action<IDataRecord, int>>(body, record, ordinal);
@@ -111,50 +107,29 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Determines whether the specified property has a mapping condition.
-        /// </summary>
-        /// <param name="property">The property.</param>
-        /// <param name="record">The record parameter.</param>
-        /// <param name="ordinal">The ordinal parameter.</param>
-        protected virtual Expression HasMapCondition(MemberExpression property, ParameterExpression record, ParameterExpression ordinal)
-        {
-            //TODO: This isn't currently exposed, or at least isn't supported fully.
-            return Expression.Block(
-                Expression.IfThen(
-                    Expression.IsTrue(
-                        Expression.Invoke(
-                            _mapOnCondition,
-                            record,
-                            Expression.Constant(ActiveAlias))),
-                    AssembleAssignment(property, record, ordinal)));
-        }
-
-        /// <summary>
         ///     Assembles the assignment expression.
         /// </summary>
         /// <param name="property">The property.</param>
         /// <param name="record">The record parameter.</param>
         /// <param name="ordinal">The ordinal parameter.</param>
         /// <returns>BinaryExpression.</returns>
-        protected virtual BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression record, ParameterExpression ordinal)
+        protected virtual BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression record,
+            ParameterExpression ordinal)
         {
-
             // descriptor.property = (property.Type)_conversionProcessExpression(PropertyMetadata.PropertyType, record[ordinal]);
             return
                 Expression.Assign(
                     property,
                     Expression.Convert(
                         Expression.Invoke(_conversionProcessExpression,
-                            Expression.Constant(PropertyMetadata.PropertyType, typeof(Type)),
+                            Expression.Constant(PropertyMetadata.PropertyType, typeof (Type)),
                             Expression.MakeIndex(record,
-                                typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) }),
+                                typeof (IDataRecord).GetProperty("Item", new[] {typeof (int)}),
                                 new[]
                                 {
                                     ordinal
                                 })),
                         property.Type));
-
-
         }
     }
 }

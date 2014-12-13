@@ -1,10 +1,10 @@
 ﻿#region
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlTypes;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -20,9 +20,10 @@ namespace Susanoo
     /// </summary>
     public partial class DatabaseManager : IDatabaseManager, IDisposable
     {
+        private DbConnection _connection;
+        private bool ExplicitlyOpened;
         private readonly string _connectionString;
         private readonly Action<DbCommand> _providerSpecificCommandSettings;
-        private DbConnection _connection;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="DatabaseManager" /> class.
@@ -152,7 +153,7 @@ namespace Susanoo
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="parameters">The parameters.</param>
-        /// <returns>T.</returns>
+        /// <returns>A single value of type T.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters)
@@ -170,7 +171,7 @@ namespace Susanoo
                 {
                     object result = CastValue(typeof (T), command.ExecuteScalar());
 
-                    return (T)result;
+                    return (T) result;
                 }
             }
             finally
@@ -256,12 +257,60 @@ namespace Susanoo
         }
 
         /// <summary>
+        ///     Opens the connection.
+        /// </summary>
+        public virtual void OpenConnection()
+        {
+            ExplicitlyOpened = true;
+
+            OpenConnectionInternal();
+        }
+
+        /// <summary>
+        ///     Closes the connection.
+        /// </summary>
+        public virtual void CloseConnection()
+        {
+            if (Connection.State != ConnectionState.Closed)
+            {
+                Connection.Close();
+                ExplicitlyOpened = false;
+            }
+        }
+
+        /// <summary>
+        ///     Gets the state of the connection.
+        /// </summary>
+        /// <value>The state.</value>
+        public ConnectionState State
+        {
+            get { return Connection.State; }
+        }
+
+        /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Performs a bulk copy operation.
+        /// </summary>
+        /// <typeparam name="TRecord">The type of the record.</typeparam>
+        /// <param name="destinationTableName">Name of the destination table.</param>
+        /// <param name="records">The records.</param>
+        /// <param name="whiteList">The white list of properties to include. Default is NULL.</param>
+        /// <param name="blackList">The black list of properties to exclude. Default is NULL.</param>
+        public virtual void BulkCopy<TRecord>(string destinationTableName,
+            IEnumerable<TRecord> records,
+            IEnumerable<string> whiteList = null,
+            IEnumerable<string> blackList = null)
+        {
+            //TODO: Implement BulkCopy operation.
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -273,13 +322,12 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Returns value or it's string representation.
+        ///     Returns value or it's string representation.
         /// </summary>
         /// <param name="newType">The new type.</param>
         /// <param name="value">The value.</param>
         /// <returns>Value or string representation.</returns>
 #if !NETFX40
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static object CastValue(Type newType, object value)
@@ -289,7 +337,7 @@ namespace Susanoo
 
             var returnValue = value;
 
-            if (newType == typeof(string))
+            if (newType == typeof (string))
             {
                 returnValue = (value ?? "").ToString();
             }
@@ -349,37 +397,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Opens the connection.
-        /// </summary>
-        public virtual void OpenConnection()
-        {
-            ExplicitlyOpened = true;
-
-            OpenConnectionInternal();
-        }
-
-        /// <summary>
-        /// Opens the connection.
+        ///     Opens the connection.
         /// </summary>
         protected virtual void OpenConnectionInternal()
         {
             if (Connection.State != ConnectionState.Open)
                 Connection.Open();
         }
-
-        /// <summary>
-        /// Closes the connection.
-        /// </summary>
-        public virtual void CloseConnection()
-        {
-            if (Connection.State != ConnectionState.Closed)
-            {
-                Connection.Close();
-                ExplicitlyOpened = false;
-            }
-        }
-
-        private bool ExplicitlyOpened;
 
         #region IDisposable Members
 
@@ -400,20 +424,10 @@ namespace Susanoo
         }
 
         #endregion IDisposable Members
-
-
-        /// <summary>
-        /// Gets the state of the connection.
-        /// </summary>
-        /// <value>The state.</value>
-        public ConnectionState State
-        {
-            get { return Connection.State; }
-        }
     }
 
 #if !NETFX40
-
+    
     /// <summary>
     ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
@@ -529,7 +543,7 @@ namespace Susanoo
                 {
                     return
                         (T)
-                            CastValue(typeof(T),
+                            CastValue(typeof (T),
                                 await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
                 }
             }

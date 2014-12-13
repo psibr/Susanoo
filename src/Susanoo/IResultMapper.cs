@@ -15,13 +15,14 @@ namespace Susanoo
     public interface IResultMapper<TResult> : IFluentPipelineFragment
     {
         /// <summary>
-        /// Maps the result.
+        ///     Maps the result.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <param name="checker">The column checker.</param>
         /// <param name="mapping">The mapping.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> MapResult(IDataReader record, ColumnChecker checker, Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping);
+        IEnumerable<TResult> MapResult(IDataReader record, ColumnChecker checker,
+            Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping);
 
         /// <summary>
         ///     Maps the result.

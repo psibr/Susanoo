@@ -1,6 +1,10 @@
-﻿using System.Data;
+﻿#region
+
+using System.Data;
 using NUnit.Framework;
 using Susanoo;
+
+#endregion
 
 [SetUpFixture]
 public class Setup
@@ -13,6 +17,14 @@ public class Setup
         //By explicitly opening the connection, it becomes a shared connection.
         databaseManager.OpenConnection();
 
+        BuildDataTypeTable();
+    }
+
+    /// <summary>
+    ///     Builds the data type table used for testing conversions.
+    /// </summary>
+    private static void BuildDataTypeTable()
+    {
         CommandManager.DefineCommand(
             @"
                 IF OBJECT_ID('tempdb..#DataTypeTable') IS NOT NULL 

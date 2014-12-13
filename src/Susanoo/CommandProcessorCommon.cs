@@ -1,6 +1,10 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Concurrent;
 using System.Numerics;
+
+#endregion
 
 namespace Susanoo
 {
@@ -9,22 +13,21 @@ namespace Susanoo
     /// </summary>
     public abstract class CommandProcessorCommon : IFluentPipelineFragment
     {
+        private bool _resultCachingEnabled;
+        private double _resultCachingInterval;
+        private CacheMode _resultCachingMode = CacheMode.None;
+        private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandProcessorCommon"/> class.
+        ///     Initializes a new instance of the <see cref="CommandProcessorCommon" /> class.
         /// </summary>
         protected CommandProcessorCommon(string name = null)
         {
             _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>();
         }
 
-        private bool _resultCachingEnabled = false;
-        private CacheMode _resultCachingMode = CacheMode.None;
-        private double _resultCachingInterval = 0d;
-
-        private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
-
         /// <summary>
-        /// Gets the result cache container.
+        ///     Gets the result cache container.
         /// </summary>
         /// <value>The result cache container.</value>
         protected ConcurrentDictionary<BigInteger, CacheItem> ResultCacheContainer
@@ -32,10 +35,8 @@ namespace Susanoo
             get { return _resultCacheContainer; }
         }
 
-
-
         /// <summary>
-        /// Gets a value indicating whether [result caching enabled].
+        ///     Gets a value indicating whether [result caching enabled].
         /// </summary>
         /// <value><c>true</c> if [result caching enabled]; otherwise, <c>false</c>.</value>
         protected bool ResultCachingEnabled
@@ -44,7 +45,15 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Gets the result caching interval.
+        /// Clears any column index information that may have been cached.
+        /// </summary>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public virtual void ClearColumnIndexInfo()
+        {
+        }
+
+        /// <summary>
+        ///     Gets the result caching interval.
         /// </summary>
         /// <value>The result caching interval.</value>
         protected double ResultCachingInterval
@@ -53,7 +62,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Gets the result caching mode.
+        ///     Gets the result caching mode.
         /// </summary>
         /// <value>The result caching mode.</value>
         protected CacheMode ResultCachingMode
@@ -62,7 +71,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Flushes the cache.
+        ///     Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public abstract BigInteger CacheHash { get; }
+
+        /// <summary>
+        ///     Flushes the cache.
         /// </summary>
         public void FlushCache()
         {
@@ -70,12 +85,14 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Activates the result caching.
+        ///     Activates the result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
-        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///  this is confusing and therefor is not allowed.;mode</exception>
+        /// <exception cref="System.ArgumentException">
+        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        ///     this is confusing and therefor is not allowed.;mode
+        /// </exception>
         protected void ActivateResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             if (mode == CacheMode.None)
@@ -89,7 +106,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Retrieves a cached result.
+        ///     Retrieves a cached result.
         /// </summary>
         /// <param name="hashCode">The hash code.</param>
         /// <param name="value">The value.</param>
@@ -101,7 +118,8 @@ namespace Susanoo
             if (_resultCacheContainer.TryGetValue(hashCode, out cache))
             {
                 if (cache.CachingMode == CacheMode.Permanent
-                    || cache.CachingMode == CacheMode.TimeSpan && cache.TimeStamp.AddSeconds(cache.Interval) > DateTime.Now
+                    ||
+                    cache.CachingMode == CacheMode.TimeSpan && cache.TimeStamp.AddSeconds(cache.Interval) > DateTime.Now
                     || cache.CachingMode == CacheMode.RepeatedRequestLimit && cache.CallCount < cache.Interval)
                 {
                     result = true;
@@ -116,15 +134,6 @@ namespace Susanoo
             value = cache != null ? cache.Item : null;
 
             return result;
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public abstract BigInteger CacheHash
-        {
-            get;
         }
     }
 }
