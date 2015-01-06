@@ -58,7 +58,7 @@ namespace Susanoo
 
         private ColumnChecker ColumnReport
         {
-            get { return _columnChecker; }
+            get { return CommandExpression.AllowStoringColumnInfo ? _columnChecker : null; }
             set
             {
                 if (value != null)
@@ -352,9 +352,7 @@ namespace Susanoo
 
                                         //throw new ColumnBindingException("...", ex); 
                                         Expression.Throw(
-                                            Expression.New(
-                                                typeof (ColumnBindingException).GetConstructor(new[]
-                                                {typeof (string), typeof (Exception)}),
+                                            Expression.New(ColumnBindingException.MessageAndInnerExceptionConstructorInfo,
                                                 Expression.Constant(pair.Value.PropertyMetadata.Name +
                                                                     " encountered an exception on column [" +
                                                                     pair.Value.ActiveAlias + "] when binding"

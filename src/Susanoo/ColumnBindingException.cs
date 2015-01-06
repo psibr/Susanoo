@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Reflection;
 using System.Runtime.Serialization;
 
 #endregion
@@ -28,6 +29,12 @@ namespace Susanoo
             : base(message)
         {
         }
+
+        /// <summary>
+        /// The message and inner exception constructor information for this type.
+        /// </summary>
+        public static readonly ConstructorInfo MessageAndInnerExceptionConstructorInfo = typeof (ColumnBindingException).GetConstructor(new[]
+        {typeof (string), typeof (Exception)});
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ColumnBindingException" /> class with a specified error message and a

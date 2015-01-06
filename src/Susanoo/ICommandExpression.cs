@@ -36,6 +36,19 @@ namespace Susanoo
         ICommandProcessor<TFilter> Realize(string name = null);
 
         /// <summary>
+        /// Gets a value indicating whether storing column information is allowed.
+        /// </summary>
+        /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
+        bool AllowStoringColumnInfo { get; }
+
+        /// <summary>
+        /// Disables Susanoo's ability to cache a result sets column indexes and names for faster retrieval.
+        /// This is typically only needed for stored procedures that return different columns or columns in different orders based on criteria in the procedure.
+        /// </summary>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        ICommandExpression<TFilter> DoNotStoreColumnIndexes();
+
+        /// <summary>
         ///     ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard
         ///     parameters.
         ///     Properties with modifier Actions do NOT qualify for this behavior

@@ -97,7 +97,7 @@ namespace Susanoo
         {
             if (mode == CacheMode.None)
                 throw new ArgumentException(
-                    @"Calling EnableResultCaching with CacheMode None effectively would disable caching, this is confusing and therefor is not allowed.",
+                    @"Calling EnableResultCaching with CacheMode.None effectively would disable caching, this is confusing and therefor is not allowed.",
                     "mode");
 
             _resultCachingEnabled = true;

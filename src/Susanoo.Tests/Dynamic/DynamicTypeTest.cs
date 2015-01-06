@@ -10,9 +10,9 @@ using NUnit.Framework;
 namespace Susanoo.Tests.Dynamic
 {
     [TestFixture]
-    public class TypeTest
+    public class DynamicTypeTest
     {
-        private readonly DatabaseManager databaseManager = Setup.databaseManager;
+        private readonly DatabaseManager _databaseManager = Setup.databaseManager;
 
         [Test(Description = "Tests that dynamic results correctly map data to CLR types.")]
         public void DynamicResultDataTypes()
@@ -20,7 +20,7 @@ namespace Susanoo.Tests.Dynamic
             var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<dynamic>()
                 .Realize("DynamicDataTypeTest")
-                .Execute(databaseManager);
+                .Execute(_databaseManager);
 
             Assert.IsNotNull(results);
             Assert.AreEqual(results.Count(), 1);

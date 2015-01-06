@@ -29,6 +29,8 @@ namespace Susanoo
         /// </summary>
         private bool _explicitInclusionMode;
 
+        private bool _doNotStoreColumnInfo;
+
         private NullValueMode _nullValueMode = NullValueMode.Never;
 
         /// <summary>
@@ -100,6 +102,15 @@ namespace Susanoo
 
                 return _CacheHash;
             }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether storing column information is allowed.
+        /// </summary>
+        /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
+        public bool AllowStoringColumnInfo
+        {
+            get { return !_doNotStoreColumnInfo; }
         }
 
         /// <summary>
@@ -204,6 +215,18 @@ namespace Susanoo
         public ICommandExpression<TFilter> SendNullValues(NullValueMode mode = NullValueMode.FilterOnlyMinimum)
         {
             _nullValueMode = mode;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Disables Susanoo's ability to cache a result sets column indexes and names for faster retrieval.
+        /// This is typically only needed for stored procedures that return different columns or columns in different orders based on criteria in the procedure.
+        /// </summary>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        public ICommandExpression<TFilter> DoNotStoreColumnIndexes()
+        {
+            _doNotStoreColumnInfo = true;
 
             return this;
         }
@@ -452,7 +475,7 @@ namespace Susanoo
         {
             var parameters = new List<DbParameter>();
 
-            if (typeof (TFilter).IsValueType || filter != null)
+            if (typeof(TFilter).IsValueType || filter != null)
             {
                 if (_explicitInclusionMode)
                 {
