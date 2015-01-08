@@ -10,7 +10,7 @@
     <projectUrl>http://susanoo.net/</projectUrl>
     <iconUrl>https://avatars0.githubusercontent.com/u/621605?v=3&amp;s=460</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Adds dataset to JSON capability to Susanoo using JSON.NET</description>
+    <description>$description$</description>
     <copyright>Psibernetic Solutions, LLC 2014</copyright>
     <tags>ADO.NET microORM orm C# .net json json.net</tags>
   </metadata>
