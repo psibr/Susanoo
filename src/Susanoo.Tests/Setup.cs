@@ -62,5 +62,6 @@ public class Setup
     public void Close()
     {
         databaseManager.CloseConnection();
+        databaseManager.Dispose();
     }
 }

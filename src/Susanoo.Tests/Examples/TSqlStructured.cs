@@ -47,7 +47,7 @@ namespace Susanoo.Tests.Examples
                 .ExecuteNonQuery(_databaseManager);
         }
 
-        [Test]
+        [Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]
         public void StructuredSqlDbType()
         {
             using (var referenceTable = new DataTable("ReferenceTable"))

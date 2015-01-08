@@ -9,7 +9,7 @@ using System.Linq;
 namespace Susanoo
 {
     /// <summary>
-    ///     Tracks available fields in return results to allow for efficient column existence checks.
+    /// Tracks available fields in return results to allow for efficient column existence checks.
     /// </summary>
     public class ColumnChecker
     {
@@ -18,8 +18,21 @@ namespace Susanoo
         private readonly Dictionary<int, string> _intKeyFields = new Dictionary<int, string>();
         private readonly Dictionary<string, int> _stringKeyFields = new Dictionary<string, int>();
 
+        private ColumnChecker(IDictionary<int, string> intKey, IDictionary<string, int> stringKey, bool isStringBased)
+        {
+            _isInit = true;
+            _intKeyFields = new Dictionary<int, string>(intKey);
+            _stringKeyFields = new Dictionary<string, int>(stringKey);
+            _isStringBased = isStringBased;
+        }
+
         /// <summary>
-        ///     Determines whether the specified record has a column.
+        /// Initializes a new instance of the <see cref="ColumnChecker"/> class.
+        /// </summary>
+        public ColumnChecker() { }
+
+        /// <summary>
+        ///  Determines whether the specified record has a column.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <param name="name">The name.</param>
@@ -43,7 +56,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Determines whether the specified record has a column.
+        /// Determines whether the specified record has a column.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <param name="index">The index.</param>
@@ -66,7 +79,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Exports a dictionary showing mapped columns and indexes.
+        /// Exports a dictionary showing mapped columns and indexes.
         /// </summary>
         /// <returns>Dictionary&lt;System.String, System.Int32&gt;.</returns>
         public Dictionary<string, int> ExportReport()
@@ -74,6 +87,15 @@ namespace Susanoo
             return _isStringBased
                 ? new Dictionary<string, int>(_stringKeyFields)
                 : _intKeyFields.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        }
+
+        /// <summary>
+        /// Copies this instance.
+        /// </summary>
+        /// <returns>ColumnChecker.</returns>
+        public ColumnChecker Copy()
+        {
+            return new ColumnChecker(_intKeyFields, _stringKeyFields, _isStringBased);
         }
     }
 }

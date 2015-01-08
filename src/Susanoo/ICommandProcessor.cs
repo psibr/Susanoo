@@ -78,7 +78,7 @@ namespace Susanoo
 
 #if !NETFX40
 
-    public interface ICommandProcessorAsync<TFilter>
+    public interface ICommandProcessorAsync<in TFilter>
     {
         /// <summary>
         ///     Executes the scalar action asynchronously.
@@ -93,7 +93,7 @@ namespace Susanoo
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
     }
 
-    public interface ICommandProcessorAsync<TFilter, TResult> where TResult : new()
+    public interface ICommandProcessorAsync<in TFilter, TResult> where TResult : new()
     {
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
@@ -105,6 +105,8 @@ namespace Susanoo
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
         Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager, CancellationToken cancellationToken,
             params DbParameter[] explicitParameters);
+
+
 
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,
@@ -161,6 +163,17 @@ namespace Susanoo
         /// </summary>
         /// <value>The command result expression.</value>
         ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; }
+
+        /// <summary>
+        /// Updates the column index information.
+        /// </summary>
+        /// <param name="info">The column checker.</param>
+        void UpdateColumnIndexInfo(ColumnChecker info);
+
+        /// <summary>
+        /// Retrieves a copy of the column index info.
+        /// </summary>
+        ColumnChecker RetrieveColumnIndexInfo();
 
         /// <summary>
         ///     Assembles a data command for an ADO.NET provider,

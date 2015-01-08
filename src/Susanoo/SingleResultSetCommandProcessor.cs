@@ -105,6 +105,24 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Updates the column index information.
+        /// </summary>
+        /// <param name="info">The column checker.</param>
+        public override void UpdateColumnIndexInfo(ColumnChecker info)
+        {
+            ColumnReport = info;
+        }
+
+        /// <summary>
+        /// Retrieves a copy of the column index info.
+        /// </summary>
+        /// <returns>ColumnChecker.</returns>
+        public override ColumnChecker RetrieveColumnIndexInfo()
+        {
+            return ColumnReport.Copy();
+        }
+
+        /// <summary>
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>

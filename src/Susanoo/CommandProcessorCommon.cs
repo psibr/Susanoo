@@ -53,6 +53,24 @@ namespace Susanoo
         }
 
         /// <summary>
+        /// Updates the column index information.
+        /// </summary>
+        /// <param name="info">The information.</param>
+        public virtual void UpdateColumnIndexInfo(ColumnChecker info)
+        {
+
+        }
+
+        /// <summary>
+        /// Retrieves a copy of the column index information.
+        /// </summary>
+        /// <returns>ColumnChecker.</returns>
+        public virtual ColumnChecker RetrieveColumnIndexInfo()
+        {
+            return new ColumnChecker();
+        }
+
+        /// <summary>
         ///     Gets the result caching interval.
         /// </summary>
         /// <value>The result caching interval.</value>

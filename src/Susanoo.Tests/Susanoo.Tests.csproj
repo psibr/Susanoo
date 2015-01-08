@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbManager\ConnectionTests.cs" />
     <Compile Include="Examples\TSqlStructured.cs" />
     <Compile Include="Scalar\DBNullCheck.cs" />
     <Compile Include="Setup.cs" />
