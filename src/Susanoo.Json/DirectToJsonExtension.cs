@@ -2,7 +2,7 @@
 using System.IO;
 using JSON = Newtonsoft.Json;
 
-namespace Susanoo.Json
+namespace Susanoo
 {
     public static class DirectToJsonExtension
     {
