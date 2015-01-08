@@ -14,16 +14,14 @@ namespace Susanoo
     public class ColumnChecker
     {
         private bool _isInit;
-        private bool _isStringBased;
         private readonly Dictionary<int, string> _intKeyFields = new Dictionary<int, string>();
         private readonly Dictionary<string, int> _stringKeyFields = new Dictionary<string, int>();
 
-        private ColumnChecker(IDictionary<int, string> intKey, IDictionary<string, int> stringKey, bool isStringBased)
+        private ColumnChecker(IDictionary<int, string> intKey, IDictionary<string, int> stringKey)
         {
             _isInit = true;
             _intKeyFields = new Dictionary<int, string>(intKey);
             _stringKeyFields = new Dictionary<string, int>(stringKey);
-            _isStringBased = isStringBased;
         }
 
         /// <summary>
@@ -44,7 +42,7 @@ namespace Susanoo
                 int value;
                 return _stringKeyFields.TryGetValue(name, out value) ? value : -1;
             }
-            _isStringBased = true;
+
             // Could be possible to speed things up by using GetOrdinal.
             for (var i = 0; i < record.FieldCount; i++)
                 _stringKeyFields.Add(record.GetName(i), i);
@@ -84,9 +82,8 @@ namespace Susanoo
         /// <returns>Dictionary&lt;System.String, System.Int32&gt;.</returns>
         public Dictionary<string, int> ExportReport()
         {
-            return _isStringBased
-                ? new Dictionary<string, int>(_stringKeyFields)
-                : _intKeyFields.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+            return _stringKeyFields.Concat(_intKeyFields.ToDictionary(kvp => kvp.Value, kvp => kvp.Key))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         /// <summary>
@@ -95,7 +92,7 @@ namespace Susanoo
         /// <returns>ColumnChecker.</returns>
         public ColumnChecker Copy()
         {
-            return new ColumnChecker(_intKeyFields, _stringKeyFields, _isStringBased);
+            return new ColumnChecker(_intKeyFields, _stringKeyFields);
         }
     }
 }
