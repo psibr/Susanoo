@@ -13,5 +13,10 @@
     <description>$description$</description>
     <copyright>Psibernetic Solutions, LLC 2014</copyright>
     <tags>ADO.NET microORM orm C# .net json json.net</tags>
+    <dependencies>
+      <group>
+        <dependency id="Susanoo.Core" version="0.5.4" />
+      </group>
+    </dependencies>
   </metadata>
 </package>

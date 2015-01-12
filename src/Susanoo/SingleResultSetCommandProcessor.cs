@@ -18,8 +18,8 @@ using System.Threading.Tasks;
 namespace Susanoo
 {
     /// <summary>
-    ///     A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
-    ///     filter parameter.
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
+    /// filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
@@ -28,14 +28,16 @@ namespace Susanoo
         : CommandProcessorCommon, ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>
         where TResult : new()
     {
+
         private ColumnChecker _columnChecker;
+
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         private readonly MethodInfo _readMethod = typeof (IDataReader).GetMethod("Read",
             BindingFlags.Public | BindingFlags.Instance);
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
+        /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
@@ -51,11 +53,15 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the compiled mapping.
+        /// Gets the compiled mapping.
         /// </summary>
         /// <value>The compiled mapping.</value>
         private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompiledMapping { get; set; }
 
+        /// <summary>
+        /// Gets or sets the column report.
+        /// </summary>
+        /// <value>The column report.</value>
         private ColumnChecker ColumnReport
         {
             get { return CommandExpression.AllowStoringColumnInfo ? _columnChecker : null; }
@@ -69,15 +75,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         public ICommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent,
             double? interval = null)
         {
@@ -87,7 +91,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -123,7 +127,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -132,14 +136,14 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the mapping expressions.
+        /// Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>
         public ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; private set; }
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -150,8 +154,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -206,7 +210,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Maps the result.
+        /// Maps the result.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>
@@ -221,7 +225,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Maps the result.
+        /// Maps the result.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
@@ -231,7 +235,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Dumps all columns into an expando for simple use cases.
+        /// Dumps all columns into an expando for simple use cases.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>
@@ -261,7 +265,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Builds the or regen result mapper from cache.
+        /// Builds the or regen result mapper from cache.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
@@ -275,7 +279,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Compiles the result mappings.
+        /// Compiles the result mappings.
         /// </summary>
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompileMappings()
@@ -414,8 +418,8 @@ namespace Susanoo
 #if !NETFX40
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -431,8 +435,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -447,8 +451,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -506,8 +510,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>

@@ -161,14 +161,12 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Attempts to get a command processor by hash code.
+        /// Attempts to get a command processor by hash code.
         /// </summary>
         /// <param name="hash">The hash.</param>
         /// <param name="commandProcessor">The command processor.</param>
-        /// <returns>
-        ///     <c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
-        ///     <c>false</c> otherwise.
-        /// </returns>
+        /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
+        /// <c>false</c> otherwise.</returns>
         public static bool TryGetCommandProcessor(BigInteger hash, out CommandProcessorCommon commandProcessor)
         {
             var result = _registeredCommandProcessors.TryGetValue(hash, out commandProcessor);
@@ -181,10 +179,8 @@ namespace Susanoo
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <param name="commandProcessor">The command processor.</param>
-        /// <returns>
-        ///     <c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
-        ///     <c>false</c> otherwise.
-        /// </returns>
+        /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
+        /// <c>false</c> otherwise.</returns>
         public static bool TryGetCommandProcessor(string name, out CommandProcessorCommon commandProcessor)
         {
             var result = _namedCommandProcessors.TryGetValue(name, out commandProcessor);
@@ -219,6 +215,8 @@ namespace Susanoo
         /// <summary>
         /// Clears any column index information that may have been cached.
         /// </summary>
+        /// <param name="processor">The processor.</param>
+        /// <exception cref="System.ArgumentNullException">processor</exception>
         public static void ClearColumnIndexInfo(CommandProcessorCommon processor)
         {
             if(processor == null)
@@ -229,7 +227,7 @@ namespace Susanoo
 
         /// <summary>
         /// Clears any column index information that may have been cached.
-        /// </summary>>
+        /// </summary>
         public static void ClearColumnIndexInfo()
         {
             _registeredCommandProcessors
@@ -241,6 +239,7 @@ namespace Susanoo
         /// <summary>
         /// Flushes caches on a specific named command processor.
         /// </summary>
+        /// <param name="name">The name of the command processor.</param>
         public static void FlushCache(string name)
         {
             CommandProcessorCommon reference;
@@ -264,6 +263,9 @@ namespace Susanoo
         private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
             .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
 
+        /// <summary>
+        /// The module builder for the dynamic assembly.
+        /// </summary>
         private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
             .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
     }
