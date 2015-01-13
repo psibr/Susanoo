@@ -25,7 +25,7 @@ using (var databaseManager =
 ```
 
 #####How does it work?
-Susanoo uses Linq expression trees to dynamically write and compile code to map your objects before the command ever executes, leaving your SQL calls unaffected.
+Susanoo uses Linq expression trees to dynamically write and compile code to map your objects before the command ever executes, leaving your SQL calls unaffected. It does this all while avoiding slow reflection code and nasty reflection.emit IL.
 
 #####Installation
 Susanoo does not require any configuration out of the box. The easiest way to install is of course via nuget package.
