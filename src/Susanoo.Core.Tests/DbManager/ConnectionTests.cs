@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using NUnit.Framework;
 
 namespace Susanoo.Tests.DbManager
 {
+    [Category("Connection")]
     [TestFixture]
     public class ConnectionTests
     {

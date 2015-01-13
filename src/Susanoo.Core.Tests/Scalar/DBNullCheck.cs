@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 namespace Susanoo.Tests.Scalar
 {
+    [Category("Scalar")]
     [TestFixture]
     public class ScalarTests
     {
@@ -19,7 +20,7 @@ namespace Susanoo.Tests.Scalar
         }
 
         [Test]
-        public void ScalarDbNullCheck()
+        public void NullableScalarAcceptsNull()
         {
             var result = CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize("NullScalar")
@@ -30,7 +31,7 @@ namespace Susanoo.Tests.Scalar
 
         [Test]
         [ExpectedException(typeof (NullReferenceException))]
-        public void NonNullScalarThrowsIfNull()
+        public void NonNullableScalarThrowsIfNull()
         {
             CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize("NullScalar")

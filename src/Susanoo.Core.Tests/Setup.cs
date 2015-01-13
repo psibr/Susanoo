@@ -2,32 +2,32 @@
 
 using System.Data;
 using NUnit.Framework;
-using Susanoo;
 
 #endregion
 
-[SetUpFixture]
-// ReSharper disable once CheckNamespace
-public class Setup
+namespace Susanoo.Tests
 {
-    public static readonly DatabaseManager DatabaseManager = new DatabaseManager("Susanoo");
-
-    [SetUp]
-    public void Configure()
+    [SetUpFixture]
+    public class Setup
     {
-        //By explicitly opening the connection, it becomes a shared connection.
-        DatabaseManager.OpenConnection();
+        public static readonly DatabaseManager DatabaseManager = new DatabaseManager("Susanoo");
 
-        BuildDataTypeTable();
-    }
+        [SetUp]
+        public void Configure()
+        {
+            //By explicitly opening the connection, it becomes a shared connection.
+            DatabaseManager.OpenConnection();
 
-    /// <summary>
-    ///     Builds the data type table used for testing conversions.
-    /// </summary>
-    private static void BuildDataTypeTable()
-    {
-        CommandManager.DefineCommand(
-            @"
+            BuildDataTypeTable();
+        }
+
+        /// <summary>
+        ///     Builds the data type table used for testing conversions.
+        /// </summary>
+        private static void BuildDataTypeTable()
+        {
+            CommandManager.DefineCommand(
+                @"
                 IF OBJECT_ID('tempdb..#DataTypeTable') IS NOT NULL 
                 BEGIN
                     DROP TABLE #DataTypeTable;
@@ -54,15 +54,16 @@ public class Setup
                     Guid = CAST('E75B92A3-3299-4407-A913-C5CA196B3CAB' AS uniqueidentifier)
 
                 INTO #DataTypeTable;",
-            CommandType.Text)
-            .Realize("DataTypeTableBuilder")
-            .ExecuteNonQuery(DatabaseManager);
-    }
+                CommandType.Text)
+                .Realize("DataTypeTableBuilder")
+                .ExecuteNonQuery(DatabaseManager);
+        }
 
-    [TearDown]
-    public void Close()
-    {
-        DatabaseManager.CloseConnection();
-        DatabaseManager.Dispose();
+        [TearDown]
+        public void Close()
+        {
+            DatabaseManager.CloseConnection();
+            DatabaseManager.Dispose();
+        }
     }
 }

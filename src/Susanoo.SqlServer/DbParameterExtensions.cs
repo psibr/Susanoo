@@ -1,32 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Susanoo.SqlServer;
 
-namespace Susanoo
+namespace Susanoo.SqlServer
 {
-    /// <summary>
-    /// Microsoft Sql Server specific extensions to IDatabaseManager
-    /// </summary>
-    public static class DatabaseManagerExtensions
+    public static class DbParameterExtensions
     {
         /// <summary>
         /// Creates a table valued parameter from an IEnumerable of T.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="parameter">The parameter.</param>
         /// <param name="name">The name of the parameter.</param>
         /// <param name="typeName">Name of the type.</param>
         /// <param name="direction">The direction of the parameter.</param>
-        /// <param name="items">The items.</param>
         /// <returns>DbParameter.</returns>
+        /// <exception cref="System.NotSupportedException">databaseManager is not using SqlClient as provider.</exception>
         /// <exception cref="NotSupportedException">databaseManager is not using SqlClient as provider.</exception>
-        public static SqlParameter CreateTableValuedParameter<T>(this IDatabaseManager databaseManager, string name,
-            string typeName, IEnumerable<T> items, ParameterDirection direction = ParameterDirection.Input)
+        internal static SqlParameter MakeTableValuedParameter(this DbParameter parameter, string name,
+            string typeName, ParameterDirection direction = ParameterDirection.Input)
         {
-            var param = databaseManager.CreateParameter(name, direction, DbType.Object, null);
+            var param = parameter;
 
             var sqlParam = param as SqlParameter;
 
@@ -36,11 +31,9 @@ namespace Susanoo
             sqlParam.ResetDbType();
             sqlParam.SqlDbType = SqlDbType.Structured;
             sqlParam.TypeName = typeName;
-            sqlParam.Value = items.ToDataRecords();
+            sqlParam.Value = ((IEnumerable)sqlParam.Value).ToDataRecords();
 
             return sqlParam;
         }
-
-
     }
 }

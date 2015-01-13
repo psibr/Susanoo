@@ -22,7 +22,6 @@ namespace Susanoo.SqlServer
         /// <summary>
         /// Converts an IEnumerable to appropriate SqlDataRecords for TVP.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="items">The items.</param>
         /// <returns>IEnumerable&lt;SqlDataRecord&gt;.</returns>
         public static IEnumerable<SqlDataRecord> ToDataRecords(this IEnumerable items)

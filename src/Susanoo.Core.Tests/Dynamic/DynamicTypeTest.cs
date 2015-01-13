@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 namespace Susanoo.Tests.Dynamic
 {
+    [Category("Type Resolution")]
     [TestFixture]
     public class DynamicTypeTest
     {

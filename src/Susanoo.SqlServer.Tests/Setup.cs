@@ -1,27 +1,29 @@
 ﻿#region
 
-using System.Data;
 using NUnit.Framework;
-using Susanoo;
 
 #endregion
 
-[SetUpFixture]
-public class Setup
+
+namespace Susanoo.SqlServer.Tests
 {
-    public static readonly DatabaseManager DatabaseManager = new DatabaseManager("Susanoo");
-
-    [SetUp]
-    public void Configure()
+    [SetUpFixture]
+    public class Setup
     {
-        //By explicitly opening the connection, it becomes a shared connection.
-        DatabaseManager.OpenConnection();
-    }
+        public static readonly DatabaseManager DatabaseManager = new DatabaseManager("Susanoo");
+    
+        [SetUp]
+        public void Configure()
+        {
+            //By explicitly opening the connection, it becomes a shared connection.
+            DatabaseManager.OpenConnection();
+        }
 
-    [TearDown]
-    public void Close()
-    {
-        DatabaseManager.CloseConnection();
-        DatabaseManager.Dispose();
+        [TearDown]
+        public void Close()
+        {
+            DatabaseManager.CloseConnection();
+            DatabaseManager.Dispose();
+        }
     }
 }

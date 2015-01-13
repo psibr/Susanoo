@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 namespace Susanoo.Tests.Static
 {
+    [Category("Type Resolution")]
     [TestFixture]
     public class StaticTypeTest
     {

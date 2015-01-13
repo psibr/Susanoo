@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 namespace Susanoo.SqlServer.Tests.Structured
 {
+    [Category("Structured DataType")]
     [TestFixture]
     public class TSqlStructured
     {
@@ -48,7 +49,7 @@ namespace Susanoo.SqlServer.Tests.Structured
         }
 
         [Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]
-        public void StructuredSqlDbType()
+        public void StructuredViaInclude()
         {
             var list = new List<KeyValuePair<int, string>>();
 
@@ -58,8 +59,27 @@ namespace Susanoo.SqlServer.Tests.Structured
             var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
                 .IncludePropertyAsStructured("ReferenceTable", "ReferenceTable")
                 .DefineResults<dynamic>()
-                .Realize("StructuredParameterTest")
+                .Realize("StructuredViaInclude")
                 .Execute(_databaseManager, new { ReferenceTable = list.Select(o => new { Id = o.Key }) });
+
+            var enumerable = results as IList<dynamic> ?? results.ToList();
+            Assert.AreEqual(enumerable.Count(), 1);
+            Assert.AreEqual(enumerable.First().Id, 2);
+        }
+
+        [Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]
+        public void StructuredViaCreate()
+        {
+            var list = new List<KeyValuePair<int, string>>();
+
+            for (var i = 2; i < 501; i++)
+                list.Add(new KeyValuePair<int, string>(i, null));
+
+            var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
+                .DefineResults<dynamic>()
+                .Realize("StructuredViaCreate")
+                .Execute(_databaseManager, _databaseManager
+                    .CreateTableValuedParameter("ReferenceTable", "ReferenceTable", list.Select(o => new { Id = o.Key })));
 
             var enumerable = results as IList<dynamic> ?? results.ToList();
             Assert.AreEqual(enumerable.Count(), 1);

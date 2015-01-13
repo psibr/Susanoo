@@ -49,8 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandExpressionExtensions.cs" />
-    <Compile Include="IDatabaseManagerExtensions.cs" />
-    <Compile Include="IEnumerableExtensions.cs" />
+    <Compile Include="DatabaseManagerExtensions.cs" />
+    <Compile Include="DbParameterExtensions.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
