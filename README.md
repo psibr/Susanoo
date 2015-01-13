@@ -4,9 +4,6 @@ A simple, fast, fluently structured library that takes the pain out of writing A
 
 [![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
 
-CI Build: [![susanoo-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/susanoo-ci?identifier=776e9352-77be-4427-b372-c091644d9568)](https://www.myget.org/feed/susanoo-ci/package/Susanoo.Core)
-
-
 Support for .NET 4.0+
 
 #####Usage
@@ -41,3 +38,14 @@ PM> Install-Package Susanoo.Core
 
 Debugging symbols are hosted at [SymbolSource](http://www.symbolsource.org/MyGet/Metadata/susanoo/Project/Susanoo.Core).
 A guide on adding the symbol server to Visual Studio is available [here](http://www.symbolsource.org/Public/Wiki/Using).
+
+## License
+
+Susanoo is licensed under [MIT](http://www.opensource.org/licenses/mit-license.php "Read more about the MIT license form"). Refer to license.txt for more information.
+
+## CI Builds
+
+### MyGet
+[![susanoo-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/susanoo-ci?identifier=776e9352-77be-4427-b372-c091644d9568)](https://www.myget.org/feed/susanoo-ci/package/Susanoo.Core)
+
+
