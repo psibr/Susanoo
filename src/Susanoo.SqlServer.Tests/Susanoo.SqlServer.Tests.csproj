@@ -52,6 +52,10 @@
       <HintPath>..\packages\NUnitTestAdapter.1.2\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Susanoo.Core, Version=0.5.5.0, Culture=neutral, PublicKeyToken=0a505ce04f8a59d5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Susanoo.Core.0.5.5.3\lib\net45\Susanoo.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -70,10 +74,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Susanoo.Core\Susanoo.Core.csproj">
-      <Project>{3f241cbd-fff8-45ab-ad2a-f4780bb5fa59}</Project>
-      <Name>Susanoo.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Susanoo.SqlServer\Susanoo.SqlServer.csproj">
       <Project>{9858ce1e-ab22-49a0-8139-be61829c5111}</Project>
       <Name>Susanoo.SqlServer</Name>
