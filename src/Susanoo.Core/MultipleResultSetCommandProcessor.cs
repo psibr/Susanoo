@@ -37,17 +37,16 @@ namespace Susanoo
         /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2> commandResultExpression, string name)
-            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                    CommandResultExpression.ToSingleResult<TResult1>());
             _item2Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                    CommandResultExpression.ToSingleResult<TResult2>());
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -90,7 +89,7 @@ namespace Susanoo
         public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1 = null;
+            IEnumerable<TResult1> results1;
             IEnumerable<TResult2> results2 = null;
 
             ICommandExpression<TFilter> commandExpression = CommandExpression;
@@ -106,7 +105,7 @@ namespace Susanoo
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
+                object value;
                 TryRetrieveCacheResult(hashCode, out value);
 
                 finalResults = value as Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>;
@@ -195,14 +194,13 @@ namespace Susanoo
         /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> commandResultExpression, string name)
-            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                    CommandResultExpression.ToSingleResult<TResult1>());
             _item2Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
                     CommandResultExpression.ToSingleResult<TResult2>(), null);
@@ -371,7 +369,6 @@ namespace Susanoo
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
                 commandResultExpression, string name)
-            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
@@ -579,7 +576,6 @@ namespace Susanoo
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
                 commandResultExpression, string name)
-            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
@@ -814,7 +810,6 @@ namespace Susanoo
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
                 commandResultExpression, string name)
-            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
@@ -1072,32 +1067,31 @@ namespace Susanoo
         public MultipleResultSetCommandProcessor(
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
                 commandResultExpression, string name)
-            : base(name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
             _commandResultExpression = commandResultExpression;
 
             _item1Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
+                    CommandResultExpression.ToSingleResult<TResult1>());
             _item2Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
+                    CommandResultExpression.ToSingleResult<TResult2>());
             _item3Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+                    CommandResultExpression.ToSingleResult<TResult3>());
             _item4Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+                    CommandResultExpression.ToSingleResult<TResult4>());
             _item5Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+                    CommandResultExpression.ToSingleResult<TResult5>());
             _item6Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult6>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult6>(), null);
+                    CommandResultExpression.ToSingleResult<TResult6>());
             _item7Mapper =
                 SingleResultSetCommandProcessor<TFilter, TResult7>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult7>(), null);
+                    CommandResultExpression.ToSingleResult<TResult7>());
 
             CommandManager.RegisterCommandProcessor(this, name);
         }

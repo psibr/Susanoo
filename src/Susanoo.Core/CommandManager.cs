@@ -62,10 +62,10 @@ namespace Susanoo
         private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
             new DatabaseManager(connectionStringName);
 
-        private static readonly ConcurrentDictionary<BigInteger, CommandProcessorCommon> _registeredCommandProcessors =
+        private static readonly ConcurrentDictionary<BigInteger, CommandProcessorCommon> RegisteredCommandProcessors =
             new ConcurrentDictionary<BigInteger, CommandProcessorCommon>();
 
-        private static readonly ConcurrentDictionary<string, CommandProcessorCommon> _namedCommandProcessors =
+        private static readonly ConcurrentDictionary<string, CommandProcessorCommon> NamedCommandProcessors =
             new ConcurrentDictionary<string, CommandProcessorCommon>();
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Susanoo
         /// <c>false</c> otherwise.</returns>
         public static bool TryGetCommandProcessor(BigInteger hash, out CommandProcessorCommon commandProcessor)
         {
-            var result = _registeredCommandProcessors.TryGetValue(hash, out commandProcessor);
+            var result = RegisteredCommandProcessors.TryGetValue(hash, out commandProcessor);
 
             return result;
         }
@@ -183,7 +183,7 @@ namespace Susanoo
         /// <c>false</c> otherwise.</returns>
         public static bool TryGetCommandProcessor(string name, out CommandProcessorCommon commandProcessor)
         {
-            var result = _namedCommandProcessors.TryGetValue(name, out commandProcessor);
+            var result = NamedCommandProcessors.TryGetValue(name, out commandProcessor);
 
             return result;
         }
@@ -195,10 +195,10 @@ namespace Susanoo
         /// <param name="name">The name.</param>
         public static void RegisterCommandProcessor(CommandProcessorCommon processor, string name)
         {
-            _registeredCommandProcessors.TryAdd(processor.CacheHash, processor);
+            RegisteredCommandProcessors.TryAdd(processor.CacheHash, processor);
 
             if (!string.IsNullOrWhiteSpace(name))
-                _namedCommandProcessors.TryAdd(name, processor);
+                NamedCommandProcessors.TryAdd(name, processor);
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Susanoo
         /// </summary>
         public static void FlushCacheGlobally()
         {
-            foreach (var registeredCommandProcessor in _registeredCommandProcessors)
+            foreach (var registeredCommandProcessor in RegisteredCommandProcessors)
             {
                 registeredCommandProcessor.Value.FlushCache();
             }
@@ -230,7 +230,7 @@ namespace Susanoo
         /// </summary>
         public static void ClearColumnIndexInfo()
         {
-            _registeredCommandProcessors
+            RegisteredCommandProcessors
                 .Select(kvp => kvp.Value)
                 .ToList()
                 .ForEach(processor => processor.ClearColumnIndexInfo());
@@ -243,7 +243,7 @@ namespace Susanoo
         public static void FlushCache(string name)
         {
             CommandProcessorCommon reference;
-            if (_namedCommandProcessors.TryGetValue(name, out reference))
+            if (NamedCommandProcessors.TryGetValue(name, out reference))
                 reference.FlushCache();
         }
 

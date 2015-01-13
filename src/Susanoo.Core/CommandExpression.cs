@@ -22,7 +22,7 @@ namespace Susanoo
     public class CommandExpression<TFilter>
         : ICommandExpression<TFilter>
     {
-        private BigInteger _CacheHash = BigInteger.MinusOne;
+        private BigInteger _cacheHash = BigInteger.MinusOne;
 
         /// <summary>
         ///     The explicit inclusion mode
@@ -93,10 +93,10 @@ namespace Susanoo
         {
             get
             {
-                if (_CacheHash == -1)
+                if (_cacheHash == -1)
                     ComputeHash();
 
-                return _CacheHash;
+                return _cacheHash;
             }
         }
 
@@ -463,7 +463,7 @@ namespace Susanoo
             //string resultBeforeHash = hashText.ToString();
             //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
 
-            _CacheHash = HashBuilder.Compute(hashText.ToString());
+            _cacheHash = HashBuilder.Compute(hashText.ToString());
         }
 
         /// <summary>

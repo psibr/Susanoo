@@ -12,7 +12,7 @@ namespace Susanoo.Tests.Static
     [TestFixture]
     public class StaticTypeTest
     {
-        private readonly DatabaseManager _databaseManager = Setup.databaseManager;
+        private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypes()
@@ -61,7 +61,7 @@ namespace Susanoo.Tests.Static
 
             Assert.AreEqual(first.Time, new TimeSpan(12, 00, 00));
 
-            Assert.AreEqual(first.GUID, new Guid("E75B92A3-3299-4407-A913-C5CA196B3CAB"));
+            Assert.AreEqual(first.Guid, new Guid("E75B92A3-3299-4407-A913-C5CA196B3CAB"));
         }
     }
 }

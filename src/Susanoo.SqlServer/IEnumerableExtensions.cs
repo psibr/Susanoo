@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -7,9 +8,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.SqlServer.Server;
 
-namespace Susanoo
+namespace Susanoo.SqlServer
 {
-    internal static class IEnumerableExtensions
+    internal static class EnumerableExtensions
     {
         private static readonly Dictionary<string, DelegateInfo> CompiledFuncs =
             new Dictionary<string, DelegateInfo>();
@@ -18,11 +19,21 @@ namespace Susanoo
         private static readonly ConstructorInfo SqlDataRecordConstructorInfo =
             typeof(SqlDataRecord).GetConstructor(new[] { typeof(SqlMetaData[]) });
 
-        public static IEnumerable<SqlDataRecord> ToDataRecords<T>(this IEnumerable<T> items)
+        /// <summary>
+        /// Converts an IEnumerable to appropriate SqlDataRecords for TVP.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items">The items.</param>
+        /// <returns>IEnumerable&lt;SqlDataRecord&gt;.</returns>
+        public static IEnumerable<SqlDataRecord> ToDataRecords(this IEnumerable items)
         {
             if (items == null) yield break;
 
-            var itemType = items.First().GetType();
+            var enumerator = items.GetEnumerator();
+
+            enumerator.MoveNext();
+
+            var itemType = enumerator.Current.GetType();
 
             if (!CompiledFuncs.ContainsKey(itemType.AssemblyQualifiedName))
             {

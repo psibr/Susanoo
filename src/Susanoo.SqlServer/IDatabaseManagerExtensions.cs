@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
+using Susanoo.SqlServer;
 
 namespace Susanoo
 {
     /// <summary>
-    /// Sql Server specific extensions to IDatabaseManager
+    /// Microsoft Sql Server specific extensions to IDatabaseManager
     /// </summary>
-    public static class IDatabaseManagerExtensions
+    public static class DatabaseManagerExtensions
     {
         /// <summary>
         /// Creates a table valued parameter from an IEnumerable of T.
@@ -38,5 +40,7 @@ namespace Susanoo
 
             return sqlParam;
         }
+
+
     }
 }

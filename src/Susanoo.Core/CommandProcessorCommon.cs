@@ -13,15 +13,13 @@ namespace Susanoo
     /// </summary>
     public abstract class CommandProcessorCommon : IFluentPipelineFragment
     {
-        private bool _resultCachingEnabled;
-        private double _resultCachingInterval;
         private CacheMode _resultCachingMode = CacheMode.None;
         private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="CommandProcessorCommon" /> class.
         /// </summary>
-        protected CommandProcessorCommon(string name = null)
+        protected CommandProcessorCommon()
         {
             _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>();
         }
@@ -39,10 +37,7 @@ namespace Susanoo
         ///     Gets a value indicating whether [result caching enabled].
         /// </summary>
         /// <value><c>true</c> if [result caching enabled]; otherwise, <c>false</c>.</value>
-        protected bool ResultCachingEnabled
-        {
-            get { return _resultCachingEnabled; }
-        }
+        protected bool ResultCachingEnabled { get; private set; }
 
         /// <summary>
         /// Clears any column index information that may have been cached.
@@ -74,10 +69,7 @@ namespace Susanoo
         ///     Gets the result caching interval.
         /// </summary>
         /// <value>The result caching interval.</value>
-        protected double ResultCachingInterval
-        {
-            get { return _resultCachingInterval; }
-        }
+        protected double ResultCachingInterval { get; private set; }
 
         /// <summary>
         ///     Gets the result caching mode.
@@ -118,9 +110,9 @@ namespace Susanoo
                     @"Calling EnableResultCaching with CacheMode.None effectively would disable caching, this is confusing and therefor is not allowed.",
                     "mode");
 
-            _resultCachingEnabled = true;
+            ResultCachingEnabled = true;
             _resultCachingMode = mode;
-            _resultCachingInterval = interval != null && mode != CacheMode.Permanent ? interval.Value : 0d;
+            ResultCachingInterval = interval != null && mode != CacheMode.Permanent ? interval.Value : 0d;
         }
 
         /// <summary>
@@ -131,7 +123,7 @@ namespace Susanoo
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public bool TryRetrieveCacheResult(BigInteger hashCode, out object value)
         {
-            CacheItem cache = null;
+            CacheItem cache;
             bool result = false;
             if (_resultCacheContainer.TryGetValue(hashCode, out cache))
             {

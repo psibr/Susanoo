@@ -7,15 +7,16 @@ using Susanoo;
 #endregion
 
 [SetUpFixture]
+// ReSharper disable once CheckNamespace
 public class Setup
 {
-    public static readonly DatabaseManager databaseManager = new DatabaseManager("Susanoo");
+    public static readonly DatabaseManager DatabaseManager = new DatabaseManager("Susanoo");
 
     [SetUp]
     public void Configure()
     {
         //By explicitly opening the connection, it becomes a shared connection.
-        databaseManager.OpenConnection();
+        DatabaseManager.OpenConnection();
 
         BuildDataTypeTable();
     }
@@ -50,18 +51,18 @@ public class Setup
                     DateTime = CAST('12/25/2014 12:00:00' AS DateTime),
                     DateTime2 = CAST('12/25/2014 12:00:00' AS DateTime2(7)),
                     Time = CAST('12:00:00' AS Time),
-                    GUID = CAST('E75B92A3-3299-4407-A913-C5CA196B3CAB' AS uniqueidentifier)
+                    Guid = CAST('E75B92A3-3299-4407-A913-C5CA196B3CAB' AS uniqueidentifier)
 
                 INTO #DataTypeTable;",
             CommandType.Text)
             .Realize("DataTypeTableBuilder")
-            .ExecuteNonQuery(databaseManager);
+            .ExecuteNonQuery(DatabaseManager);
     }
 
     [TearDown]
     public void Close()
     {
-        databaseManager.CloseConnection();
-        databaseManager.Dispose();
+        DatabaseManager.CloseConnection();
+        DatabaseManager.Dispose();
     }
 }

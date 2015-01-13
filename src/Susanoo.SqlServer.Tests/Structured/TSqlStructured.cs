@@ -5,12 +5,12 @@ using System.Data.SqlClient;
 using System.Linq;
 using NUnit.Framework;
 
-namespace Susanoo.Tests.Examples
+namespace Susanoo.SqlServer.Tests.Structured
 {
     [TestFixture]
     public class TSqlStructured
     {
-        private readonly DatabaseManager _databaseManager = Setup.databaseManager;
+        private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
         [SetUp]
         public void DefineReferenceTypeIfNeeded()
@@ -56,15 +56,14 @@ namespace Susanoo.Tests.Examples
                 list.Add(new KeyValuePair<int, string>(i, null));
 
             var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
+                .IncludePropertyAsStructured("ReferenceTable", "ReferenceTable")
                 .DefineResults<dynamic>()
                 .Realize("StructuredParameterTest")
-                .Execute(_databaseManager, _databaseManager.CreateTableValuedParameter("ReferenceTable", "ReferenceTable", 
-                    list.Select(o => new { Id = o.Key })));
+                .Execute(_databaseManager, new { ReferenceTable = list.Select(o => new { Id = o.Key }) });
 
             var enumerable = results as IList<dynamic> ?? results.ToList();
             Assert.AreEqual(enumerable.Count(), 1);
             Assert.AreEqual(enumerable.First().Id, 2);
         }
-
     }
 }

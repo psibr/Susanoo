@@ -9,19 +9,19 @@ using Susanoo;
 [SetUpFixture]
 public class Setup
 {
-    public static readonly DatabaseManager databaseManager = new DatabaseManager("Susanoo");
+    public static readonly DatabaseManager DatabaseManager = new DatabaseManager("Susanoo");
 
     [SetUp]
     public void Configure()
     {
         //By explicitly opening the connection, it becomes a shared connection.
-        databaseManager.OpenConnection();
+        DatabaseManager.OpenConnection();
     }
 
     [TearDown]
     public void Close()
     {
-        databaseManager.CloseConnection();
-        databaseManager.Dispose();
+        DatabaseManager.CloseConnection();
+        DatabaseManager.Dispose();
     }
 }

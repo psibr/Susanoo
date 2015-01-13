@@ -42,7 +42,6 @@ namespace Susanoo
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
         public SingleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult> mappings, string name)
-            : base(name)
         {
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;
@@ -284,7 +283,7 @@ namespace Susanoo
         /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
         private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompileMappings()
         {
-            MethodInfo AddLastMethod = typeof (List<TResult>).GetMethod("Add", new[] {typeof (TResult)});
+            MethodInfo addLastMethod = typeof (List<TResult>).GetMethod("Add", new[] {typeof (TResult)});
 
             //Get the properties we care about.
             var mappings = CommandResultExpression.Export<TResult>();
@@ -388,7 +387,7 @@ namespace Susanoo
             }
 
             //resultSet.AddLast(descriptor);
-            innerStatements.Add(Expression.Call(resultSet, AddLastMethod, descriptor));
+            innerStatements.Add(Expression.Call(resultSet, addLastMethod, descriptor));
 
             var loopBody = Expression.Block(new[] {descriptor}, innerStatements);
 

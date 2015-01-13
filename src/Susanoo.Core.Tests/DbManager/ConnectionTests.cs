@@ -11,7 +11,7 @@ namespace Susanoo.Tests.DbManager
     [TestFixture]
     public class ConnectionTests
     {
-        private readonly DatabaseManager _databaseManager = Setup.databaseManager;
+        private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
         [Test]
         public void AffirmConnectionOpen()

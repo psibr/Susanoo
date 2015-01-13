@@ -16,12 +16,12 @@ using System.Transactions;
 namespace Susanoo
 {
     /// <summary>
-    ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
+    /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    public partial class DatabaseManager : IDatabaseManager, IDisposable
+    public partial class DatabaseManager
     {
         private DbConnection _connection;
-        private bool ExplicitlyOpened;
+        private bool _explicitlyOpened;
         private readonly string _connectionString;
         private readonly Action<DbCommand> _providerSpecificCommandSettings;
 
@@ -126,7 +126,7 @@ namespace Susanoo
 
             try
             {
-                var open = ExplicitlyOpened;
+                var open = _explicitlyOpened;
                 OpenConnectionInternal();
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
@@ -161,7 +161,7 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
-            var open = ExplicitlyOpened;
+            var open = _explicitlyOpened;
 
             try
             {
@@ -261,7 +261,7 @@ namespace Susanoo
         /// </summary>
         public virtual void OpenConnection()
         {
-            ExplicitlyOpened = true;
+            _explicitlyOpened = true;
 
             OpenConnectionInternal();
         }
@@ -274,7 +274,7 @@ namespace Susanoo
             if (Connection.State != ConnectionState.Closed)
             {
                 Connection.Close();
-                ExplicitlyOpened = false;
+                _explicitlyOpened = false;
             }
         }
 
@@ -452,7 +452,7 @@ namespace Susanoo
                 throw new ArgumentNullException("commandText");
 
             IDataReader results = null;
-            var open = ExplicitlyOpened;
+            var open = _explicitlyOpened;
             try
             {
                 OpenConnectionInternal();
@@ -497,7 +497,7 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
-            var open = ExplicitlyOpened;
+            var open = _explicitlyOpened;
 
             try
             {
@@ -533,7 +533,7 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException("commandText");
 
-            var open = ExplicitlyOpened;
+            var open = _explicitlyOpened;
 
             try
             {

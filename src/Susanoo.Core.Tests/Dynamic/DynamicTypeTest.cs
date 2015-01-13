@@ -12,7 +12,7 @@ namespace Susanoo.Tests.Dynamic
     [TestFixture]
     public class DynamicTypeTest
     {
-        private readonly DatabaseManager _databaseManager = Setup.databaseManager;
+        private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
         [Test(Description = "Tests that dynamic results correctly map data to CLR types.")]
         public void DynamicResultDataTypes()
@@ -81,8 +81,8 @@ namespace Susanoo.Tests.Dynamic
             Assert.IsTrue(first.Time is TimeSpan);
             Assert.AreEqual(first.Time, new TimeSpan(12, 00, 00));
 
-            Assert.IsTrue(first.GUID is Guid);
-            Assert.AreEqual(first.GUID, new Guid("E75B92A3-3299-4407-A913-C5CA196B3CAB"));
+            Assert.IsTrue(first.Guid is Guid);
+            Assert.AreEqual(first.Guid, new Guid("E75B92A3-3299-4407-A913-C5CA196B3CAB"));
         }
     }
 }
