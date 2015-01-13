@@ -11,7 +11,7 @@ namespace Susanoo
     public static class IDatabaseManagerExtensions
     {
         /// <summary>
-        /// Creates a table valued parameter from an IEnumerable of T. Must be disposed.
+        /// Creates a table valued parameter from an IEnumerable of T.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="databaseManager">The database manager.</param>

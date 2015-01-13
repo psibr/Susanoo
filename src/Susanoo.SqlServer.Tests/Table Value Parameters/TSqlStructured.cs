@@ -52,16 +52,14 @@ namespace Susanoo.Tests.Examples
         {
             var list = new List<KeyValuePair<int, string>>();
 
-            for(var i = 2; i < 501; i++)
+            for (var i = 2; i < 501; i++)
                 list.Add(new KeyValuePair<int, string>(i, null));
-
-            var referenceTableParam = _databaseManager.CreateTableValuedParameter("ReferenceTable", "ReferenceTable",
-                list.Select(o => new { Id = o.Key }));
 
             var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
                 .DefineResults<dynamic>()
                 .Realize("StructuredParameterTest")
-                .Execute(_databaseManager, referenceTableParam);
+                .Execute(_databaseManager, _databaseManager.CreateTableValuedParameter("ReferenceTable", "ReferenceTable", 
+                    list.Select(o => new { Id = o.Key })));
 
             var enumerable = results as IList<dynamic> ?? results.ToList();
             Assert.AreEqual(enumerable.Count(), 1);

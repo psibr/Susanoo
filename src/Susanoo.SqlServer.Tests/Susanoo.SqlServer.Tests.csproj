@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9858CE1E-AB22-49A0-8139-BE61829C5111}</ProjectGuid>
+    <ProjectGuid>{D4511C80-A760-4291-9015-426A24CCCCB6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Susanoo.SqlServer</RootNamespace>
-    <AssemblyName>Susanoo.SqlServer</AssemblyName>
+    <RootNamespace>Susanoo.SqlServer.Tests</RootNamespace>
+    <AssemblyName>Susanoo.SqlServer.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -28,15 +28,30 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Susanoo.SqlServer.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Properties\Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core">
+      <HintPath>..\packages\NUnitTestAdapter.1.2\lib\nunit.core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.core.interfaces">
+      <HintPath>..\packages\NUnitTestAdapter.1.2\lib\nunit.core.interfaces.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.util">
+      <HintPath>..\packages\NUnitTestAdapter.1.2\lib\nunit.util.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="NUnit.VisualStudio.TestAdapter">
+      <HintPath>..\packages\NUnitTestAdapter.1.2\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,19 +61,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDatabaseManagerExtensions.cs" />
-    <Compile Include="IEnumerableExtensions.cs" />
+    <Compile Include="Table Value Parameters\TSqlStructured.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\Key.snk" />
-    <None Include="Susanoo.SqlServer.nuspec" />
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Susanoo.SqlServer\Susanoo.SqlServer.csproj">
+      <Project>{9858ce1e-ab22-49a0-8139-be61829c5111}</Project>
+      <Name>Susanoo.SqlServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Susanoo\Susanoo.Core.csproj">
       <Project>{3f241cbd-fff8-45ab-ad2a-f4780bb5fa59}</Project>
       <Name>Susanoo.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
