@@ -55,7 +55,7 @@
     <None Include="Susanoo.SqlServer.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Susanoo\Susanoo.Core.csproj">
+    <ProjectReference Include="..\Susanoo.Core\Susanoo.Core.csproj">
       <Project>{3f241cbd-fff8-45ab-ad2a-f4780bb5fa59}</Project>
       <Name>Susanoo.Core</Name>
     </ProjectReference>
