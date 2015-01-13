@@ -46,11 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDatabaseManagerExtensions.cs" />
+    <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Properties\Key.snk" />
+    <None Include="Susanoo.SqlServer.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Susanoo\Susanoo.Core.csproj">
