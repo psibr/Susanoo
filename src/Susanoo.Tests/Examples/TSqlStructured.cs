@@ -50,27 +50,23 @@ namespace Susanoo.Tests.Examples
         [Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]
         public void StructuredSqlDbType()
         {
-            using (var referenceTable = new DataTable("ReferenceTable"))
-            {
-                referenceTable.Columns.Add("Id", typeof (Int32));
-                referenceTable.Rows.Add(2);
+            var list = new List<KeyValuePair<int, string>>();
 
-                var referenceTableParam = (SqlParameter)_databaseManager.CreateParameter();
+            for(var i = 2; i < 501; i++)
+                list.Add(new KeyValuePair<int, string>(i, null));
 
-                referenceTableParam.SqlDbType = SqlDbType.Structured;
-                referenceTableParam.TypeName = "ReferenceTable";
-                referenceTableParam.ParameterName = "@ReferenceTable";
-                referenceTableParam.Value = referenceTable;
+            var referenceTableParam = _databaseManager.CreateTableValuedParameter("ReferenceTable", "ReferenceTable",
+                list.Select(o => new { Id = o.Key }));
 
-                var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
-                    .DefineResults<dynamic>()
-                    .Realize("StructuredParameterTest")
-                    .Execute(_databaseManager, referenceTableParam);
+            var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
+                .DefineResults<dynamic>()
+                .Realize("StructuredParameterTest")
+                .Execute(_databaseManager, referenceTableParam);
 
-                var enumerable = results as IList<dynamic> ?? results.ToList();
-                Assert.AreEqual(enumerable.Count(), 1);
-                Assert.AreEqual(enumerable.First().Id, 2);
-            }
+            var enumerable = results as IList<dynamic> ?? results.ToList();
+            Assert.AreEqual(enumerable.Count(), 1);
+            Assert.AreEqual(enumerable.First().Id, 2);
         }
+
     }
 }

@@ -94,9 +94,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Susanoo\Susanoo.csproj">
+    <ProjectReference Include="..\Susanoo.Json\Susanoo.Json.csproj">
+      <Project>{bce13f33-4134-41ad-aeb4-74531ef6c1c7}</Project>
+      <Name>Susanoo.Json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Susanoo.SqlServer\Susanoo.SqlServer.csproj">
+      <Project>{9858ce1e-ab22-49a0-8139-be61829c5111}</Project>
+      <Name>Susanoo.SqlServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Susanoo\Susanoo.Core.csproj">
       <Project>{3f241cbd-fff8-45ab-ad2a-f4780bb5fa59}</Project>
-      <Name>Susanoo</Name>
+      <Name>Susanoo.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

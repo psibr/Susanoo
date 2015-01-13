@@ -15,8 +15,8 @@ using System.Text;
 namespace Susanoo
 {
     /// <summary>
-    ///     Contains information needed to build a command and provides FluentPipeline methods for defining results and
-    ///     modifiers.
+    /// Contains information needed to build a command and provides FluentPipeline methods for defining results and
+    /// modifiers.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public class CommandExpression<TFilter>
@@ -34,37 +34,33 @@ namespace Susanoo
         private NullValueMode _nullValueMode = NullValueMode.Never;
 
         /// <summary>
-        ///     The constant parameters
+        /// The constant parameters
         /// </summary>
         private readonly Dictionary<string, Action<DbParameter>> _constantParameters =
             new Dictionary<string, Action<DbParameter>>();
 
         /// <summary>
-        ///     The parameter exclusions
+        /// The parameter exclusions
         /// </summary>
         private readonly IList<string> _parameterExclusions = new List<string>();
 
         /// <summary>
-        ///     The parameter inclusions
+        /// The parameter inclusions
         /// </summary>
         private readonly IDictionary<string, Action<DbParameter>> _parameterInclusions =
             new Dictionary<string, Action<DbParameter>>();
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
         /// </summary>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
-        /// <exception cref="System.ArgumentNullException">
-        ///     databaseManager
-        ///     or
-        ///     commandText
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        ///     No command text provided.;commandText
-        ///     or
-        ///     TableDirect is not supported.;commandType
-        /// </exception>
+        /// <exception cref="System.ArgumentNullException">databaseManager
+        /// or
+        /// commandText</exception>
+        /// <exception cref="System.ArgumentException">No command text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType</exception>
         public CommandExpression(string commandText, CommandType commandType)
         {
             if (commandText == null)
@@ -78,19 +74,19 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the command text.
+        /// Gets the command text.
         /// </summary>
         /// <value>The command text.</value>
         public virtual string CommandText { get; private set; }
 
         /// <summary>
-        ///     Gets the type of the database command.
+        /// Gets the type of the database command.
         /// </summary>
         /// <value>The type of the database command.</value>
         public virtual CommandType DbCommandType { get; private set; }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
@@ -114,8 +110,9 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline with no result mappings.
+        /// Realizes the pipeline with no result mappings.
         /// </summary>
+        /// <param name="name">The name.</param>
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         public ICommandProcessor<TFilter> Realize(string name = null)
         {
@@ -123,7 +120,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Adds parameters that will always use the same value.
+        /// Adds parameters that will always use the same value.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterModifier">The parameter modifier.</param>
@@ -137,7 +134,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Builds the parameters (Not part of Fluent API).
+        /// Builds the parameters (Not part of Fluent API).
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -207,10 +204,11 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard
-        ///     parameters.
-        ///     Properties with modifier Actions do NOT qualify for this behavior
+        /// ADO.NET ignores parameters with NULL values. calling this opts in to send DbNull in place of NULL on standard
+        /// parameters.
+        /// Properties with modifier Actions do NOT qualify for this behavior
         /// </summary>
+        /// <param name="mode">The mode.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         public ICommandExpression<TFilter> SendNullValues(NullValueMode mode = NullValueMode.FilterOnlyMinimum)
         {
@@ -232,7 +230,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Uses the explicit property inclusion mode for a potential filter.
+        /// Uses the explicit property inclusion mode for a potential filter.
         /// </summary>
         /// <returns>ICommandExpression&lt;TResult&gt;.</returns>
         public ICommandExpression<TFilter> UseExplicitPropertyInclusionMode()
@@ -243,7 +241,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Excludes a property of the filter.
+        /// Excludes a property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -253,7 +251,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Excludes a property of the filter.
+        /// Excludes a property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -268,7 +266,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -279,7 +277,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="parameterOptions">The parameter options.</param>
@@ -292,7 +290,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
@@ -303,7 +301,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="parameterOptions">The parameter options.</param>
@@ -323,7 +321,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
@@ -333,7 +331,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
@@ -346,7 +344,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
@@ -362,7 +360,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
@@ -380,7 +378,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
@@ -400,7 +398,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
@@ -422,7 +420,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
@@ -448,6 +446,9 @@ namespace Susanoo
                     <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
         }
 
+        /// <summary>
+        /// Computes the hash.
+        /// </summary>
         private void ComputeHash()
         {
             var hashText = new StringBuilder(CommandText);
@@ -466,7 +467,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Builds the property inclusion parameters.
+        /// Builds the property inclusion parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -587,11 +588,10 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Replaces the null with database null.
+        /// Replaces the null with database null.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>System.Object.</returns>
-        // ReSharper disable once MemberCanBePrivate.Global
         protected object ReplaceNullWithDbNull(object value)
         {
             var returnValue = value;
@@ -602,7 +602,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Builds the parameters.
+        /// Builds the parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>

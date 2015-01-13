@@ -7,14 +7,15 @@ using System;
 namespace Susanoo
 {
     /// <summary>
-    ///     Class CacheItem.
+    /// Class CacheItem.
     /// </summary>
     public class CacheItem
     {
+
         private readonly object _item;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CacheItem" /> class.
+        /// Initializes a new instance of the <see cref="CacheItem" /> class.
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="mode">The mode.</param>
@@ -27,7 +28,7 @@ namespace Susanoo
 
             _item = item;
             CachingMode = mode;
-            Interval = interval != null ? interval.Value : 0d;
+            Interval = interval ?? 0d;
 
             TimeStamp = DateTime.Now;
 
@@ -36,7 +37,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the item.
+        /// Gets the item.
         /// </summary>
         /// <value>The item.</value>
         public object Item
@@ -49,31 +50,31 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the caching mode.
+        /// Gets the caching mode.
         /// </summary>
         /// <value>The caching mode.</value>
         public CacheMode CachingMode { get; private set; }
 
         /// <summary>
-        ///     Gets the interval.
+        /// Gets the interval.
         /// </summary>
         /// <value>The interval.</value>
         public double Interval { get; private set; }
 
         /// <summary>
-        ///     Gets the call count.
+        /// Gets the call count.
         /// </summary>
         /// <value>The call count.</value>
         public int CallCount { get; private set; }
 
         /// <summary>
-        ///     Gets the time stamp.
+        /// Gets the time stamp.
         /// </summary>
         /// <value>The time stamp.</value>
         public DateTime TimeStamp { get; private set; }
 
         /// <summary>
-        ///     Renews the intervals.
+        /// Renews the intervals.
         /// </summary>
         public void RenewIntervals()
         {
@@ -83,27 +84,27 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Caching modes supported by Susanoo
+    /// Caching modes supported by Susanoo
     /// </summary>
     public enum CacheMode
     {
         /// <summary>
-        ///     No caching
+        /// No caching
         /// </summary>
         None = 0,
 
         /// <summary>
-        ///     Do not expire cached items
+        /// Do not expire cached items
         /// </summary>
         Permanent,
 
         /// <summary>
-        ///     Expire the cached items every second interval
+        /// Expire the cached items every second interval
         /// </summary>
         TimeSpan,
 
         /// <summary>
-        ///     Expire the cached items every interval of requests for the data
+        /// Expire the cached items every interval of requests for the data
         /// </summary>
         RepeatedRequestLimit
     }

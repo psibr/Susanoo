@@ -105,7 +105,7 @@ namespace Susanoo
         /// <value>
         ///     The provider.
         /// </value>
-        protected DbProviderFactory Provider { get; private set; }
+        public DbProviderFactory Provider { get; private set; }
 
         /// <summary>
         ///     Executes the data reader.
