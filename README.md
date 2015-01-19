@@ -46,6 +46,6 @@ Susanoo is licensed under [MIT](http://www.opensource.org/licenses/mit-license.p
 ## CI Builds
 
 ### MyGet
-[![susanoo-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/susanoo-ci?identifier=776e9352-77be-4427-b372-c091644d9568)](https://www.myget.org/feed/susanoo-ci/package/Susanoo.Core)
+[![susanoo-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/susanoo-ci?identifier=776e9352-77be-4427-b372-c091644d9568)](https://www.myget.org/)
 
 
