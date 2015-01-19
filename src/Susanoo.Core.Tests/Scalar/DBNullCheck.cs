@@ -23,7 +23,7 @@ namespace Susanoo.Tests.Scalar
         public void NullableScalarAcceptsNull()
         {
             var result = CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
-                .Realize("NullScalar")
+                .Realize()
                 .ExecuteScalar<int?>(_databaseManager);
 
             Assert.AreEqual(result, null);
@@ -34,7 +34,7 @@ namespace Susanoo.Tests.Scalar
         public void NonNullableScalarThrowsIfNull()
         {
             CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
-                .Realize("NullScalar")
+                .Realize()
                 .ExecuteScalar<int>(_databaseManager);
         }
     }
