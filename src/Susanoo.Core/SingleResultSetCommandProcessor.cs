@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Dynamic;
-using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
 using System.Threading;
@@ -25,7 +23,7 @@ namespace Susanoo
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public sealed class SingleResultSetCommandProcessor<TFilter, TResult>
-        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>
+        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>, IResultMapper
         where TResult : new()
     {
 
@@ -46,7 +44,11 @@ namespace Susanoo
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;
 
-            CompiledMapping = typeof (TResult) != typeof (object) ? CompileMappings() : DynamicConversion;
+            var compiler = new ResultSetCompiler(mappings, typeof (TResult));
+
+            CompiledMapping = typeof(TResult) != typeof(object)
+                ? compiler.Compile<TResult>()
+                : DynamicConversion;
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -132,6 +134,16 @@ namespace Susanoo
         public override BigInteger CacheHash
         {
             get { return CommandResultExpression.CacheHash; }
+        }
+
+        /// <summary>
+        /// Maps the result.
+        /// </summary>
+        /// <param name="record">The record.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        object IResultMapper.MapResult(IDataReader record)
+        {
+            return ((IResultMapper<TResult>)this).MapResult(record);
         }
 
         /// <summary>
@@ -275,143 +287,6 @@ namespace Susanoo
             return
                 (IResultMapper<TResult>)
                     CommandResultExpression<TFilter, TResult>.BuildOrRegenCommandProcessor(commandResultExpression, name);
-        }
-
-        /// <summary>
-        /// Compiles the result mappings.
-        /// </summary>
-        /// <returns>Func&lt;IDataRecord, System.Object&gt;.</returns>
-        private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompileMappings()
-        {
-            MethodInfo addLastMethod = typeof (List<TResult>).GetMethod("Add", new[] {typeof (TResult)});
-
-            //Get the properties we care about.
-            var mappings = CommandResultExpression.Export<TResult>();
-
-            var outerStatements = new List<Expression>();
-            var innerStatements = new List<Expression>();
-
-            ParameterExpression reader = Expression.Parameter(typeof (IDataReader), "reader");
-            ParameterExpression columnReport = Expression.Parameter(typeof (ColumnChecker), "columnReport");
-
-            ParameterExpression columnChecker = Expression.Variable(typeof (ColumnChecker), "columnChecker");
-            ParameterExpression resultSet = Expression.Variable(typeof (ListResult<TResult>), "resultSet");
-
-            LabelTarget returnStatement = Expression.Label(typeof (IEnumerable<TResult>), "return");
-
-            // resultSet = new LinkedListResult<TResult>();
-            outerStatements.Add(Expression.Assign(resultSet, Expression.New(typeof (ListResult<TResult>))));
-
-            // columnChecker = (columnReport == null) ? new ColumnChecker() : columnReport;
-            outerStatements.Add(Expression.IfThenElse(Expression.Equal(columnReport, Expression.Constant(null)),
-                Expression.Assign(
-                    columnChecker, Expression.New(typeof (ColumnChecker))),
-                Expression.Assign(columnChecker, columnReport)));
-
-            #region Loop Code
-
-            // var descriptor;
-            ParameterExpression descriptor = Expression.Variable(typeof (TResult), "descriptor");
-
-            // if(!reader.Read) { return resultSet; }
-            innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, _readMethod)),
-                Expression.Block(
-                    Expression.Call(resultSet,
-                        typeof (ListResult<TResult>).GetMethod("BuildReport",
-                            BindingFlags.Public | BindingFlags.Instance),
-                        columnChecker),
-                    Expression.Break(returnStatement, resultSet))));
-
-            // descriptor = new TResult();
-            innerStatements.Add(Expression.Assign(
-                descriptor, Expression.New(typeof (TResult))));
-
-            foreach (var pair in mappings)
-            {
-                #region locals
-
-                //These are local variables inside of a block. Similar to defining variables inside an if.
-
-                //var ex;
-                var ex = Expression.Variable(typeof (Exception), "ex");
-                //var ordinal; 
-                var ordinal = Expression.Variable(typeof (int), "ordinal");
-
-                #endregion locals
-
-                innerStatements.Add(
-                    Expression.Block(new[] {/* LOCAL */ ordinal},
-
-                        // ordinal = columnChecker.HasColumn(pair.Value.ActiveAlias);
-                        Expression.Assign(ordinal,
-                            Expression.Call(columnChecker,
-                                typeof (ColumnChecker).GetMethod("HasColumn",
-                                    new[] {typeof (IDataReader), typeof (string)}),
-                                reader,
-                                Expression.Constant(pair.Value.ActiveAlias))),
-
-                        // if(ordinal > 0 && !reader.IsDBNull(ordinal)) 
-                        Expression.IfThen(
-                            Expression.AndAlso(
-                                Expression.IsTrue(
-                                    Expression.GreaterThanOrEqual(ordinal, Expression.Constant(0))),
-                                Expression.IsFalse(
-                                    Expression.Call(reader, typeof (IDataRecord).GetMethod("IsDBNull"), ordinal))),
-                            // try
-                            Expression.TryCatch(
-                                Expression.Block(typeof (void),
-
-                                    //Assignment Expression
-                                    Expression.Invoke(
-                                        pair.Value.AssembleMappingExpression(
-                                            Expression.Property(descriptor, pair.Value.PropertyMetadata)),
-                                        reader, ordinal)),
-                                // catch
-                                Expression.Catch(
-                                    /* Exception being caught is assigned to ex */ ex,
-                                    Expression.Block(typeof (void),
-
-                                        //throw new ColumnBindingException("...", ex); 
-                                        Expression.Throw(
-                                            Expression.New(ColumnBindingException.MessageAndInnerExceptionConstructorInfo,
-                                                Expression.Constant(pair.Value.PropertyMetadata.Name +
-                                                                    " encountered an exception on column [" +
-                                                                    pair.Value.ActiveAlias + "] when binding"
-                                                                    + " into property " +
-                                                                    pair.Value.PropertyMetadata.Name +
-                                                                    " which is CLR type of "
-                                                                    + pair.Value.PropertyMetadata.PropertyType.Name +
-                                                                    "."),
-                                                ex
-                                                ))))))));
-            }
-
-            //resultSet.AddLast(descriptor);
-            innerStatements.Add(Expression.Call(resultSet, addLastMethod, descriptor));
-
-            var loopBody = Expression.Block(new[] {descriptor}, innerStatements);
-
-            #endregion Loop Code
-
-            outerStatements.Add(Expression.Loop(loopBody, returnStatement));
-
-            var body = Expression.Block(new[] {columnChecker, resultSet}, outerStatements);
-            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, IEnumerable<TResult>>>(body, reader,
-                columnReport);
-
-            var type = CommandManager.DynamicNamespace
-                .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
-                    typeof (TResult).Name,
-                    Guid.NewGuid().ToString().Replace("-", string.Empty)),
-                    TypeAttributes.Public);
-
-            lambda.CompileToMethod(type.DefineMethod("Map", MethodAttributes.Public | MethodAttributes.Static));
-
-            Type dynamicType = type.CreateType();
-
-            return (Func<IDataReader, ColumnChecker, IEnumerable<TResult>>) Delegate
-                .CreateDelegate(typeof (Func<IDataReader, ColumnChecker, IEnumerable<TResult>>),
-                    dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
         }
 
 #if !NETFX40

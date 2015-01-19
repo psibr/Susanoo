@@ -11,7 +11,7 @@ using System.Numerics;
 namespace Susanoo
 {
     /// <summary>
-    ///     A step in the command definition Fluent API, in which properties are mapped to potential result data.
+    /// A step in the command definition Fluent API, in which properties are mapped to potential result data.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
@@ -22,7 +22,7 @@ namespace Susanoo
         private readonly IResultMappingImplementor<TResult> _implementor;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ResultMappingExpression{TFilter, TResult}" /> class.
+        /// Initializes a new instance of the <see cref="ResultMappingExpression{TFilter, TResult}" /> class.
         /// </summary>
         public ResultMappingExpression()
         {
@@ -30,7 +30,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the implementor this is the Bridge design pattern.
+        /// Gets the implementor this is the Bridge design pattern.
         /// </summary>
         /// <value>The implementor.</value>
         protected IResultMappingImplementor<TResult> Implementor
@@ -39,7 +39,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
@@ -48,7 +48,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Clears the result mappings.
+        /// Clears the result mappings.
         /// </summary>
         /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         public virtual IResultMappingExpression<TFilter, TResult> ClearMappings()
@@ -59,7 +59,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Mapping options for a property in the result model.
+        /// Mapping options for a property in the result model.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="options">The options.</param>
@@ -73,7 +73,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Mapping options for a property in the result model.
+        /// Mapping options for a property in the result model.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="options">The options.</param>
@@ -88,7 +88,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Exports this instance.
+        /// Exports this instance.
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         /// <exception cref="NotImplementedException"></exception>

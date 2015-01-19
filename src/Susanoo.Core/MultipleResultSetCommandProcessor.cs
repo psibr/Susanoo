@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Numerics;
@@ -12,56 +11,63 @@ using System.Numerics;
 namespace Susanoo
 {
     /// <summary>
-    ///     A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
-    ///     filter parameter.
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
+    /// filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the result1.</typeparam>
     /// <typeparam name="TResult2">The type of the result2.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>
-        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2>
+        : CommandProcessorCommon,
+            ICommandProcessor<TFilter, TResult1, TResult2>
         where TResult1 : new()
         where TResult2 : new()
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
-        private readonly ICommandResultExpression<TFilter, TResult1, TResult2> _commandResultExpression;
-        private readonly IResultMapper<TResult1> _item1Mapper;
-        private readonly IResultMapper<TResult2> _item2Mapper;
+
+        private readonly
+            ICommandResultExpression<TFilter, TResult1, TResult2>
+            _resultExpression;
+
+        private readonly IResultMapper[] _mappers;
+
+        private const int ResultCount = 2;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2}" />
-        ///     class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2> commandResultExpression, string name)
+            ICommandResultExpression<TFilter, TResult1, TResult2>
+                commandResultExpression, string name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
-            _commandResultExpression = commandResultExpression;
+            _resultExpression = commandResultExpression;
 
-            _item1Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>());
-            _item2Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>());
+            _mappers = new IResultMapper[ResultCount];
+
+            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
-        ///     Gets the command result expression.
+        /// Gets the command result expression.
         /// </summary>
         /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2> CommandResultExpression
+        public ICommandResultExpression<TFilter, TResult1, TResult2>
+            CommandResultExpression
         {
-            get { return _commandResultExpression; }
+            get { return _resultExpression; }
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -70,7 +76,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -79,25 +85,29 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
-        ///     parameters.
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
+        /// parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;&gt;.</returns>
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager,
-            TFilter filter, params DbParameter[] explicitParameters)
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>>
+            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1;
-            IEnumerable<TResult2> results2 = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandExpression;
+            var results = new object[ResultCount];
+
+            var commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
-            Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> finalResults = null;
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+            object finalResults = null;
+
             if (ResultCachingEnabled)
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty,
@@ -108,56 +118,65 @@ namespace Susanoo
                 object value;
                 TryRetrieveCacheResult(hashCode, out value);
 
-                finalResults = value as Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>;
+                finalResults = value;
+
                 cachedItemPresent = finalResults != null;
             }
 
             if (!cachedItemPresent)
             {
-                using (IDataReader record = databaseManager
+                using (var record = databaseManager
                     .ExecuteDataReader(
                         commandExpression.CommandText,
                         commandExpression.DbCommandType,
                         parameters))
                 {
-                    results1 = _item1Mapper.MapResult(record);
-
-                    if (record.NextResult())
+                    for (var i = 0; i < ResultCount; i++)
                     {
-                        results2 = _item2Mapper.MapResult(record);
+                        if (i > 0)
+                            if (!record.NextResult())
+                                break;
+
+                        results[i] = _mappers[i].MapResult(record);
                     }
                 }
 
-                finalResults = new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>(results1, results2);
+                finalResults = new Tuple<IEnumerable<TResult1>,
+                    IEnumerable<TResult2>>(
+                    results[0] as IEnumerable<TResult1>,
+                    results[1] as IEnumerable<TResult2>);
 
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-            }
 
-            return finalResults;
+            }
+            return finalResults as Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>>;
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally parameters.
+        /// Executes the command using a provided database manager and optionally parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;&gt;.</returns>
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager,
-            params DbParameter[] explicitParameters)
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
         /// <summary>
-        ///     Enables the result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2> EnableResultCaching(CacheMode mode = CacheMode.Permanent,
-            double? interval = null)
+        public ICommandProcessor<TFilter, TResult1, TResult2>
+            EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
 
@@ -166,8 +185,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
-    ///     filter parameter.
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
+    /// filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the result1.</typeparam>
@@ -175,53 +194,57 @@ namespace Susanoo
     /// <typeparam name="TResult3">The type of the result3.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>
-        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
+        : CommandProcessorCommon,
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
-        private readonly ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> _commandResultExpression;
-        private readonly IResultMapper<TResult1> _item1Mapper;
-        private readonly IResultMapper<TResult2> _item2Mapper;
-        private readonly IResultMapper<TResult3> _item3Mapper;
+
+        private readonly
+            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
+            _resultExpression;
+
+        private readonly IResultMapper[] _mappers;
+
+        private const int ResultCount = 3;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
         public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> commandResultExpression, string name)
+            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
+                commandResultExpression, string name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
-            _commandResultExpression = commandResultExpression;
+            _resultExpression = commandResultExpression;
 
-            _item1Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>());
-            _item2Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
-            _item3Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
+            _mappers = new IResultMapper[ResultCount];
+
+            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
-        ///     Gets the command result expression.
+        /// Gets the command result expression.
         /// </summary>
         /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> CommandResultExpression
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
+            CommandResultExpression
         {
-            get { return _commandResultExpression; }
+            get { return _resultExpression; }
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -230,7 +253,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -239,26 +262,31 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
-        ///     parameters.
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
+        /// parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;&gt;.</returns>
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1;
-            IEnumerable<TResult2> results2 = null;
-            IEnumerable<TResult3> results3 = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandExpression;
+            var results = new object[ResultCount];
+
+            var commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
-            Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> finalResults = null;
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+            object finalResults = null;
+
             if (ResultCachingEnabled)
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty,
@@ -266,66 +294,73 @@ namespace Susanoo
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
+                object value;
                 TryRetrieveCacheResult(hashCode, out value);
 
-                finalResults = value as Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>;
+                finalResults = value;
+
                 cachedItemPresent = finalResults != null;
             }
 
             if (!cachedItemPresent)
             {
-                using (IDataReader record = databaseManager
+                using (var record = databaseManager
                     .ExecuteDataReader(
                         commandExpression.CommandText,
                         commandExpression.DbCommandType,
                         parameters))
                 {
-                    results1 = _item1Mapper.MapResult(record);
-
-                    if (record.NextResult())
+                    for (var i = 0; i < ResultCount; i++)
                     {
-                        results2 = _item2Mapper.MapResult(record);
+                        if (i > 0)
+                            if (!record.NextResult())
+                                break;
 
-                        if (record.NextResult())
-                        {
-                            results3 = _item3Mapper.MapResult(record);
-                        }
+                        results[i] = _mappers[i].MapResult(record);
                     }
                 }
 
-                finalResults = new Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>(results1,
-                    results2, results3);
+                finalResults = new Tuple<IEnumerable<TResult1>,
+                    IEnumerable<TResult2>,
+                    IEnumerable<TResult3>>(
+                    results[0] as IEnumerable<TResult1>,
+                    results[1] as IEnumerable<TResult2>,
+                    results[2] as IEnumerable<TResult3>);
 
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-            }
 
-            return finalResults;
+            }
+            return finalResults as Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>>;
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally parameters.
+        /// Executes the command using a provided database manager and optionally parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;&gt;.</returns>
-        public Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>> Execute(
-            IDatabaseManager databaseManager,
-            params DbParameter[] explicitParameters)
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
         }
 
         /// <summary>
-        ///     Enables the result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> EnableResultCaching(
-            CacheMode mode = CacheMode.Permanent, double? interval = null)
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
+            EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
 
@@ -334,8 +369,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
-    ///     filter parameter.
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
+    /// filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the result1.</typeparam>
@@ -344,7 +379,8 @@ namespace Susanoo
     /// <typeparam name="TResult4">The type of the result4.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
-        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
+        : CommandProcessorCommon,
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -352,17 +388,18 @@ namespace Susanoo
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
 
-        private readonly ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
-            _commandResultExpression;
+        private readonly
+            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
+            _resultExpression;
 
-        private readonly IResultMapper<TResult1> _item1Mapper;
-        private readonly IResultMapper<TResult2> _item2Mapper;
-        private readonly IResultMapper<TResult3> _item3Mapper;
-        private readonly IResultMapper<TResult4> _item4Mapper;
+        private readonly IResultMapper[] _mappers;
+
+        private const int ResultCount = 4;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
@@ -371,35 +408,30 @@ namespace Susanoo
                 commandResultExpression, string name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
-            _commandResultExpression = commandResultExpression;
+            _resultExpression = commandResultExpression;
 
-            _item1Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
-            _item2Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
-            _item3Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
-            _item4Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
+            _mappers = new IResultMapper[ResultCount];
+
+            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
-        ///     Gets the command result expression.
+        /// Gets the command result expression.
         /// </summary>
         /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> CommandResultExpression
+        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
+            CommandResultExpression
         {
-            get { return _commandResultExpression; }
+            get { return _resultExpression; }
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -408,7 +440,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -417,36 +449,33 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
-        ///     parameters.
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
+        /// parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable
-        ///     &lt;TResult4&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
             IEnumerable<TResult4>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1;
-            IEnumerable<TResult2> results2 = null;
-            IEnumerable<TResult3> results3 = null;
-            IEnumerable<TResult4> results4 = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandExpression;
+            var results = new object[ResultCount];
+
+            var commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
-            Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>> finalResults = null;
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+            object finalResults = null;
+
             if (ResultCachingEnabled)
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty,
@@ -454,66 +483,62 @@ namespace Susanoo
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
+                object value;
                 TryRetrieveCacheResult(hashCode, out value);
 
-                finalResults = value as Tuple<IEnumerable<TResult1>,
-                    IEnumerable<TResult2>,
-                    IEnumerable<TResult3>,
-                    IEnumerable<TResult4>>;
+                finalResults = value;
+
                 cachedItemPresent = finalResults != null;
             }
 
             if (!cachedItemPresent)
             {
-                using (IDataReader record = databaseManager
+                using (var record = databaseManager
                     .ExecuteDataReader(
                         commandExpression.CommandText,
                         commandExpression.DbCommandType,
                         parameters))
                 {
-                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
-
-                    results1 = _item1Mapper.MapResult(record);
-
-                    if (record.NextResult())
+                    for (var i = 0; i < ResultCount; i++)
                     {
-                        results2 = _item2Mapper.MapResult(record);
+                        if (i > 0)
+                            if (!record.NextResult())
+                                break;
 
-                        if (record.NextResult())
-                        {
-                            results3 = _item3Mapper.MapResult(record);
-
-                            if (record.NextResult())
-                            {
-                                results4 = _item4Mapper.MapResult(record);
-                            }
-                        }
+                        results[i] = _mappers[i].MapResult(record);
                     }
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
                     IEnumerable<TResult2>,
                     IEnumerable<TResult3>,
-                    IEnumerable<TResult4>>(results1, results2, results3, results4);
+                    IEnumerable<TResult4>>(
+                    results[0] as IEnumerable<TResult1>,
+                    results[1] as IEnumerable<TResult2>,
+                    results[2] as IEnumerable<TResult3>,
+                    results[3] as IEnumerable<TResult4>);
 
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-            }
 
-            return finalResults;
+            }
+            return finalResults as Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>>;
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally parameters.
+        /// Executes the command using a provided database manager and optionally parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;IEnumerable&lt;TResult1&gt;, IEnumerable&lt;TResult2&gt;, IEnumerable&lt;TResult3&gt;, IEnumerable
-        ///     &lt;TResult4&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
@@ -523,13 +548,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Enables the result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> EnableResultCaching(
-            CacheMode mode = CacheMode.Permanent, double? interval = null)
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
+            EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
 
@@ -538,8 +563,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
-    ///     filter parameter.
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
+    /// filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the result1.</typeparam>
@@ -549,7 +574,8 @@ namespace Susanoo
     /// <typeparam name="TResult5">The type of the result5.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
+        : CommandProcessorCommon,
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -558,18 +584,18 @@ namespace Susanoo
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
 
-        private readonly ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-            _commandResultExpression;
+        private readonly
+            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
+            _resultExpression;
 
-        private readonly IResultMapper<TResult1> _item1Mapper;
-        private readonly IResultMapper<TResult2> _item2Mapper;
-        private readonly IResultMapper<TResult3> _item3Mapper;
-        private readonly IResultMapper<TResult4> _item4Mapper;
-        private readonly IResultMapper<TResult5> _item5Mapper;
+        private readonly IResultMapper[] _mappers;
+
+        private const int ResultCount = 5;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
@@ -578,39 +604,31 @@ namespace Susanoo
                 commandResultExpression, string name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
-            _commandResultExpression = commandResultExpression;
+            _resultExpression = commandResultExpression;
 
-            _item1Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
-            _item2Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
-            _item3Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
-            _item4Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
-            _item5Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
+            _mappers = new IResultMapper[ResultCount];
+
+            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
+            _mappers[4] = _resultExpression.GetProcessor<TFilter, TResult5>();
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
-        ///     Gets the command result expression.
+        /// Gets the command result expression.
         /// </summary>
         /// <value>The command result expression.</value>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
             CommandResultExpression
         {
-            get { return _commandResultExpression; }
+            get { return _resultExpression; }
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -619,7 +637,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -628,20 +646,18 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
-        ///     parameters.
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
+        /// parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
@@ -649,22 +665,16 @@ namespace Susanoo
             IEnumerable<TResult5>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1;
-            IEnumerable<TResult2> results2 = null;
-            IEnumerable<TResult3> results3 = null;
-            IEnumerable<TResult4> results4 = null;
-            IEnumerable<TResult5> results5 = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandExpression;
+            var results = new object[ResultCount];
+
+            var commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
-            Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>,
-                IEnumerable<TResult5>> finalResults = null;
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+            object finalResults = null;
+
             if (ResultCachingEnabled)
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty,
@@ -672,47 +682,29 @@ namespace Susanoo
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
+                object value;
                 TryRetrieveCacheResult(hashCode, out value);
 
-                finalResults = value as Tuple<IEnumerable<TResult1>,
-                    IEnumerable<TResult2>,
-                    IEnumerable<TResult3>,
-                    IEnumerable<TResult4>,
-                    IEnumerable<TResult5>>;
+                finalResults = value;
+
                 cachedItemPresent = finalResults != null;
             }
 
             if (!cachedItemPresent)
             {
-                using (IDataReader record = databaseManager
+                using (var record = databaseManager
                     .ExecuteDataReader(
                         commandExpression.CommandText,
                         commandExpression.DbCommandType,
                         parameters))
                 {
-                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
-
-                    results1 = _item1Mapper.MapResult(record);
-
-                    if (record.NextResult())
+                    for (var i = 0; i < ResultCount; i++)
                     {
-                        results2 = _item2Mapper.MapResult(record);
+                        if (i > 0)
+                            if (!record.NextResult())
+                                break;
 
-                        if (record.NextResult())
-                        {
-                            results3 = _item3Mapper.MapResult(record);
-
-                            if (record.NextResult())
-                            {
-                                results4 = _item4Mapper.MapResult(record);
-
-                                if (record.NextResult())
-                                {
-                                    results5 = _item5Mapper.MapResult(record);
-                                }
-                            }
-                        }
+                        results[i] = _mappers[i].MapResult(record);
                     }
                 }
 
@@ -720,29 +712,36 @@ namespace Susanoo
                     IEnumerable<TResult2>,
                     IEnumerable<TResult3>,
                     IEnumerable<TResult4>,
-                    IEnumerable<TResult5>>(results1, results2, results3, results4, results5);
+                    IEnumerable<TResult5>>(
+                    results[0] as IEnumerable<TResult1>,
+                    results[1] as IEnumerable<TResult2>,
+                    results[2] as IEnumerable<TResult3>,
+                    results[3] as IEnumerable<TResult4>,
+                    results[4] as IEnumerable<TResult5>);
 
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-            }
 
-            return finalResults;
+            }
+            return finalResults as Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>,
+                IEnumerable<TResult5>>;
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally parameters.
+        /// Executes the command using a provided database manager and optionally parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
@@ -753,13 +752,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Enables the result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> EnableResultCaching(
-            CacheMode mode = CacheMode.Permanent, double? interval = null)
+        public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
+            EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             ActivateResultCaching(mode, interval);
 
@@ -768,8 +767,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
-    ///     filter parameter.
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
+    /// filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the result1.</typeparam>
@@ -780,7 +779,8 @@ namespace Susanoo
     /// <typeparam name="TResult6">The type of the result6.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-        : CommandProcessorCommon, ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
+        : CommandProcessorCommon,
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
         where TResult1 : new()
         where TResult2 : new()
         where TResult3 : new()
@@ -790,20 +790,18 @@ namespace Susanoo
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
 
-        private readonly ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-            _commandResultExpression;
+        private readonly
+            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
+            _resultExpression;
 
-        private readonly IResultMapper<TResult1> _item1Mapper;
-        private readonly IResultMapper<TResult2> _item2Mapper;
-        private readonly IResultMapper<TResult3> _item3Mapper;
-        private readonly IResultMapper<TResult4> _item4Mapper;
-        private readonly IResultMapper<TResult5> _item5Mapper;
-        private readonly IResultMapper<TResult6> _item6Mapper;
+        private readonly IResultMapper[] _mappers;
+
+        private const int ResultCount = 6;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" />
-        ///     class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
@@ -812,42 +810,32 @@ namespace Susanoo
                 commandResultExpression, string name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
-            _commandResultExpression = commandResultExpression;
+            _resultExpression = commandResultExpression;
 
-            _item1Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>(), null);
-            _item2Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>(), null);
-            _item3Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult3>(), null);
-            _item4Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult4>(), null);
-            _item5Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult5>(), null);
-            _item6Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult6>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult6>(), null);
+            _mappers = new IResultMapper[ResultCount];
+
+            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
+            _mappers[4] = _resultExpression.GetProcessor<TFilter, TResult5>();
+            _mappers[5] = _resultExpression.GetProcessor<TFilter, TResult6>();
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
-        ///     Gets the command result expression.
+        /// Gets the command result expression.
         /// </summary>
         /// <value>The command result expression.</value>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
             CommandResultExpression
         {
-            get { return _commandResultExpression; }
+            get { return _resultExpression; }
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -856,7 +844,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -865,21 +853,19 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager
-        ///     and optionally a filter to read parameters from and explicit parameters.
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
+        /// parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
@@ -888,24 +874,16 @@ namespace Susanoo
             IEnumerable<TResult6>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1;
-            IEnumerable<TResult2> results2 = null;
-            IEnumerable<TResult3> results3 = null;
-            IEnumerable<TResult4> results4 = null;
-            IEnumerable<TResult5> results5 = null;
-            IEnumerable<TResult6> results6 = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandExpression;
+            var results = new object[ResultCount];
+
+            var commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
-            Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>,
-                IEnumerable<TResult5>,
-                IEnumerable<TResult6>> finalResults = null;
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+            object finalResults = null;
+
             if (ResultCachingEnabled)
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty,
@@ -913,53 +891,29 @@ namespace Susanoo
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
+                object value;
                 TryRetrieveCacheResult(hashCode, out value);
 
-                finalResults = value as Tuple<IEnumerable<TResult1>,
-                    IEnumerable<TResult2>,
-                    IEnumerable<TResult3>,
-                    IEnumerable<TResult4>,
-                    IEnumerable<TResult5>,
-                    IEnumerable<TResult6>>;
+                finalResults = value;
+
                 cachedItemPresent = finalResults != null;
             }
 
             if (!cachedItemPresent)
             {
-                using (IDataReader record = databaseManager
+                using (var record = databaseManager
                     .ExecuteDataReader(
                         commandExpression.CommandText,
                         commandExpression.DbCommandType,
                         parameters))
                 {
-                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
-
-                    results1 = _item1Mapper.MapResult(record);
-
-                    if (record.NextResult())
+                    for (var i = 0; i < ResultCount; i++)
                     {
-                        results2 = _item2Mapper.MapResult(record);
+                        if (i > 0)
+                            if (!record.NextResult())
+                                break;
 
-                        if (record.NextResult())
-                        {
-                            results3 = _item3Mapper.MapResult(record);
-
-                            if (record.NextResult())
-                            {
-                                results4 = _item4Mapper.MapResult(record);
-
-                                if (record.NextResult())
-                                {
-                                    results5 = _item5Mapper.MapResult(record);
-
-                                    if (record.NextResult())
-                                    {
-                                        results6 = _item6Mapper.MapResult(record);
-                                    }
-                                }
-                            }
-                        }
+                        results[i] = _mappers[i].MapResult(record);
                     }
                 }
 
@@ -968,30 +922,39 @@ namespace Susanoo
                     IEnumerable<TResult3>,
                     IEnumerable<TResult4>,
                     IEnumerable<TResult5>,
-                    IEnumerable<TResult6>>(results1, results2, results3, results4, results5, results6);
+                    IEnumerable<TResult6>>(
+                    results[0] as IEnumerable<TResult1>,
+                    results[1] as IEnumerable<TResult2>,
+                    results[2] as IEnumerable<TResult3>,
+                    results[3] as IEnumerable<TResult4>,
+                    results[4] as IEnumerable<TResult5>,
+                    results[5] as IEnumerable<TResult6>);
 
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-            }
 
-            return finalResults;
+            }
+            return finalResults as Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>,
+                IEnumerable<TResult5>,
+                IEnumerable<TResult6>>;
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally parameters.
+        /// Executes the command using a provided database manager and optionally parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
@@ -1003,7 +966,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Enables the result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
@@ -1018,8 +981,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
-    ///     filter parameter.
+    /// A fully built and ready to be executed command expression with appropriate mapping expressions compiled and a
+    /// filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the result1.</typeparam>
@@ -1046,21 +1009,16 @@ namespace Susanoo
 
         private readonly
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-            _commandResultExpression;
+            _resultExpression;
 
-        private readonly IResultMapper<TResult1> _item1Mapper;
-        private readonly IResultMapper<TResult2> _item2Mapper;
-        private readonly IResultMapper<TResult3> _item3Mapper;
-        private readonly IResultMapper<TResult4> _item4Mapper;
-        private readonly IResultMapper<TResult5> _item5Mapper;
-        private readonly IResultMapper<TResult6> _item6Mapper;
-        private readonly IResultMapper<TResult7> _item7Mapper;
+        private readonly IResultMapper[] _mappers;
+
+        private const int ResultCount = 7;
 
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see
-        ///         cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}" />
-        ///     class.
+        /// Initializes a new instance of the
+        /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}" />
+        /// class.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
@@ -1069,45 +1027,33 @@ namespace Susanoo
                 commandResultExpression, string name)
         {
             _commandExpression = commandResultExpression.CommandExpression;
-            _commandResultExpression = commandResultExpression;
+            _resultExpression = commandResultExpression;
 
-            _item1Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult1>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult1>());
-            _item2Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult2>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult2>());
-            _item3Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult3>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult3>());
-            _item4Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult4>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult4>());
-            _item5Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult5>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult5>());
-            _item6Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult6>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult6>());
-            _item7Mapper =
-                SingleResultSetCommandProcessor<TFilter, TResult7>.BuildOrRegenResultMapper(
-                    CommandResultExpression.ToSingleResult<TResult7>());
+            _mappers = new IResultMapper[ResultCount];
+
+            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
+            _mappers[4] = _resultExpression.GetProcessor<TFilter, TResult5>();
+            _mappers[5] = _resultExpression.GetProcessor<TFilter, TResult6>();
+            _mappers[6] = _resultExpression.GetProcessor<TFilter, TResult7>();
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
         /// <summary>
-        ///     Gets the command result expression.
+        /// Gets the command result expression.
         /// </summary>
         /// <value>The command result expression.</value>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
             CommandResultExpression
         {
-            get { return _commandResultExpression; }
+            get { return _resultExpression; }
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -1116,7 +1062,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -1125,22 +1071,20 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
-        ///     parameters.
+        /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
+        /// parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;,
-        ///     IEnumerable&lt;TResult7&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;,
+        /// IEnumerable&lt;TResult7&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
@@ -1150,26 +1094,16 @@ namespace Susanoo
             IEnumerable<TResult7>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-            IEnumerable<TResult1> results1;
-            IEnumerable<TResult2> results2 = null;
-            IEnumerable<TResult3> results3 = null;
-            IEnumerable<TResult4> results4 = null;
-            IEnumerable<TResult5> results5 = null;
-            IEnumerable<TResult6> results6 = null;
-            IEnumerable<TResult7> results7 = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandExpression;
+            var results = new object[ResultCount];
+
+            var commandExpression = CommandExpression;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
-            bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
-            Tuple<IEnumerable<TResult1>,
-                IEnumerable<TResult2>,
-                IEnumerable<TResult3>,
-                IEnumerable<TResult4>,
-                IEnumerable<TResult5>,
-                IEnumerable<TResult6>,
-                IEnumerable<TResult7>> finalResults = null;
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+            object finalResults = null;
+
             if (ResultCachingEnabled)
             {
                 var parameterAggregate = parameters.Aggregate(string.Empty,
@@ -1177,59 +1111,29 @@ namespace Susanoo
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
+                object value;
                 TryRetrieveCacheResult(hashCode, out value);
 
-                finalResults = value as Tuple<IEnumerable<TResult1>,
-                    IEnumerable<TResult2>,
-                    IEnumerable<TResult3>,
-                    IEnumerable<TResult4>,
-                    IEnumerable<TResult5>,
-                    IEnumerable<TResult6>,
-                    IEnumerable<TResult7>>;
+                finalResults = value;
+
                 cachedItemPresent = finalResults != null;
             }
 
             if (!cachedItemPresent)
             {
-                using (IDataReader record = databaseManager
+                using (var record = databaseManager
                     .ExecuteDataReader(
                         commandExpression.CommandText,
                         commandExpression.DbCommandType,
                         parameters))
                 {
-                    //This can be replaced with a loop once there is a non-generic IResultMapper interface, I think.
-
-                    results1 = _item1Mapper.MapResult(record);
-
-                    if (record.NextResult())
+                    for (var i = 0; i < ResultCount; i++)
                     {
-                        results2 = _item2Mapper.MapResult(record);
+                        if (i > 0)
+                            if (!record.NextResult())
+                                break;
 
-                        if (record.NextResult())
-                        {
-                            results3 = _item3Mapper.MapResult(record);
-
-                            if (record.NextResult())
-                            {
-                                results4 = _item4Mapper.MapResult(record);
-
-                                if (record.NextResult())
-                                {
-                                    results5 = _item5Mapper.MapResult(record);
-
-                                    if (record.NextResult())
-                                    {
-                                        results6 = _item6Mapper.MapResult(record);
-
-                                        if (record.NextResult())
-                                        {
-                                            results7 = _item7Mapper.MapResult(record);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        results[i] = _mappers[i].MapResult(record);
                     }
                 }
 
@@ -1239,31 +1143,42 @@ namespace Susanoo
                     IEnumerable<TResult4>,
                     IEnumerable<TResult5>,
                     IEnumerable<TResult6>,
-                    IEnumerable<TResult7>>(results1, results2, results3, results4, results5, results6, results7);
+                    IEnumerable<TResult7>>(
+                    results[0] as IEnumerable<TResult1>,
+                    results[1] as IEnumerable<TResult2>,
+                    results[2] as IEnumerable<TResult3>,
+                    results[3] as IEnumerable<TResult4>,
+                    results[4] as IEnumerable<TResult5>,
+                    results[5] as IEnumerable<TResult6>,
+                    results[6] as IEnumerable<TResult7>);
 
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
             }
 
-            return finalResults;
+            return finalResults as Tuple<IEnumerable<TResult1>,
+                IEnumerable<TResult2>,
+                IEnumerable<TResult3>,
+                IEnumerable<TResult4>,
+                IEnumerable<TResult5>,
+                IEnumerable<TResult6>,
+                IEnumerable<TResult7>>;
         }
 
         /// <summary>
-        ///     Executes the command using a provided database manager and optionally parameters.
+        /// Executes the command using a provided database manager and optionally parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;,
-        ///     IEnumerable&lt;TResult7&gt;&gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;,
+        /// IEnumerable&lt;TResult7&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
@@ -1276,7 +1191,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Enables the result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>

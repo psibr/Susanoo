@@ -18,6 +18,7 @@ namespace Susanoo.Tests.Static
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypes()
         {
+
             var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel>()
                 .Realize("StaticDataTypeTest")

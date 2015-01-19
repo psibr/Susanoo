@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Susanoo
 {
     /// <summary>
-    ///     A list that implements IResultSet
+    /// A list that implements IResultSet
     /// </summary>
     /// <typeparam name="TResult">The type of the t result.</typeparam>
     public class ListResult<TResult> : List<TResult>, IResultSet
@@ -16,7 +16,7 @@ namespace Susanoo
         internal ColumnChecker ColumnReport { get; private set; }
 
         /// <summary>
-        ///     Gets the available columns in the result set.
+        /// Gets the available columns in the result set.
         /// </summary>
         /// <value>The available columns.</value>
         public Dictionary<string, int> AvailableColumns
@@ -31,7 +31,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provides the information to build a mapping report.
+        /// Provides the information to build a mapping report.
         /// </summary>
         /// <param name="checker">The checker.</param>
         public void BuildReport(ColumnChecker checker)
@@ -41,7 +41,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     A result object that returns columns that were available.
+    /// A result object that returns columns that were available.
     /// </summary>
     public interface IResultSet
     {

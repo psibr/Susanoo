@@ -12,7 +12,7 @@ using System.Numerics;
 namespace Susanoo
 {
     /// <summary>
-    ///     A step in the command definition Fluent API, in which properties are mapped to potential result data.
+    /// A step in the command definition Fluent API, in which properties are mapped to potential result data.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class ResultMappingImplementor<TResult>
@@ -25,7 +25,7 @@ namespace Susanoo
             new Dictionary<string, IPropertyMapping>();
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ResultMappingImplementor{TResult}" /> class.
+        /// Initializes a new instance of the <see cref="ResultMappingImplementor{TResult}" /> class.
         /// </summary>
         public ResultMappingImplementor()
         {
@@ -33,7 +33,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets or sets the property metadata extractor.
+        /// Gets or sets the property metadata extractor.
         /// </summary>
         /// <value>The property metadata extractor.</value>
         protected IPropertyMetadataExtractor PropertyMetadataExtractor
@@ -43,7 +43,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Clears the result mappings.
+        /// Clears the result mappings.
         /// </summary>
         public virtual void ClearMappings()
         {
@@ -51,7 +51,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Mapping options for a property in the result model.
+        /// Mapping options for a property in the result model.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="options">The options.</param>
@@ -64,7 +64,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
@@ -73,7 +73,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Mapping options for a property in the result model.
+        /// Mapping options for a property in the result model.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="options">The options.</param>
@@ -91,7 +91,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Exports this instance.
+        /// Exports this instance.
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         /// <exception cref="NotImplementedException"></exception>
@@ -101,7 +101,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Maps the declarative properties.
+        /// Maps the declarative properties.
         /// </summary>
         public void MapDeclarativeProperties()
         {

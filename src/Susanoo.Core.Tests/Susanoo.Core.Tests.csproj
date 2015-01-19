@@ -85,7 +85,8 @@
     <Compile Include="Setup.cs" />
     <Compile Include="Dynamic\DynamicTypeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Static\StaticTypeTest.cs" />
+    <Compile Include="Static\MultipleResults\IdenticalResults.cs" />
+    <Compile Include="Static\SingleResult\StaticTypeTest.cs" />
     <Compile Include="Static\TypeTestModel.cs" />
   </ItemGroup>
   <ItemGroup>

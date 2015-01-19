@@ -6,8 +6,9 @@ using System;
 
 namespace Susanoo
 {
+
     /// <summary>
-    /// Class CacheItem.
+    /// Represents cached data and the rules surrounding it.
     /// </summary>
     public class CacheItem
     {

@@ -9,15 +9,15 @@ using System.Numerics;
 namespace Susanoo
 {
     /// <summary>
-    ///     Base implementation for Command Results.
+    /// Base implementation for Command Results.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public abstract class CommandResultCommon<TFilter> : IFluentPipelineFragment
+    public abstract class CommandResultCommon<TFilter> : ICommandResultMappingExport, IFluentPipelineFragment
     {
         private readonly ICommandResultImplementor<TFilter> _implementor;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="implementor">The implementor.</param>
@@ -29,7 +29,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         protected CommandResultCommon(ICommandExpression<TFilter> command)
@@ -38,13 +38,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public virtual ICommandExpression<TFilter> CommandExpression { get; private set; }
 
         /// <summary>
-        ///     Gets the implementor of the Commandresult functionality.
+        /// Gets the implementor of the Commandresult functionality.
         /// </summary>
         /// <value>The implementor.</value>
         protected virtual ICommandResultImplementor<TFilter> Implementor
@@ -53,7 +53,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
@@ -62,7 +62,17 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Exports this instance to property mappings.
+        /// Exports a results mappings for processing.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
+        /// <returns>IDictionary&lt;System.String, IPropertyMapping&gt;.</returns>
+        public IDictionary<string, IPropertyMapping> Export(Type resultType)
+        {
+            return Implementor.Export(resultType);
+        }
+
+        /// <summary>
+        /// Exports this instance to property mappings.
         /// </summary>
         /// <typeparam name="TResultType">The type of the t result type.</typeparam>
         /// <returns>IDictionary&lt;System.String, IPropertyMappingConfiguration&lt;System.Data.IDataRecord&gt;&gt;.</returns>
@@ -73,7 +83,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Converts to a single result expression.
+        /// Converts to a single result expression.
         /// </summary>
         /// <typeparam name="TSingle">The type of the single.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TSingle&gt;.</returns>
@@ -85,7 +95,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Provides methods for customizing how results are handled and compiling result mappings.
+    /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
@@ -94,7 +104,7 @@ namespace Susanoo
         where TResult : new()
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
@@ -103,7 +113,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="implementor">The implementor.</param>
@@ -114,7 +124,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provide mapping actions and options for a result set
+        /// Provide mapping actions and options for a result set
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
@@ -127,7 +137,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -136,7 +146,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
@@ -146,7 +156,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     To the single result.
+        /// To the single result.
         /// </summary>
         /// <typeparam name="TSingle">The type of the single.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
@@ -156,7 +166,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Builds the or regens a command processor from cache.
+        /// Builds the or regens a command processor from cache.
         /// </summary>
         /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="name">The name.</param>
@@ -184,7 +194,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Provides methods for customizing how results are handled and compiling result mappings.
+    /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -195,7 +205,7 @@ namespace Susanoo
         where TResult2 : new()
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2}" /> class.
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
@@ -204,7 +214,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provide mapping actions and options for a result set
+        /// Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
@@ -219,7 +229,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -233,7 +243,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
@@ -252,7 +262,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Provides methods for customizing how results are handled and compiling result mappings.
+    /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -265,8 +275,8 @@ namespace Susanoo
         where TResult3 : new()
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3}" />
-        ///     class.
+        /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3}" />
+        /// class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
@@ -275,7 +285,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -290,7 +300,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provide mapping actions and options for a result set
+        /// Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
@@ -305,7 +315,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
@@ -324,7 +334,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Provides methods for customizing how results are handled and compiling result mappings.
+    /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -339,8 +349,8 @@ namespace Susanoo
         where TResult4 : new()
     {
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
@@ -349,7 +359,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -365,7 +375,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provide mapping actions and options for a result set
+        /// Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
@@ -380,7 +390,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
@@ -400,7 +410,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Provides methods for customizing how results are handled and compiling result mappings.
+    /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -418,8 +428,8 @@ namespace Susanoo
         where TResult5 : new()
     {
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
@@ -428,7 +438,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -445,7 +455,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provide mapping actions and options for a result set
+        /// Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
@@ -461,7 +471,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
@@ -484,7 +494,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Provides methods for customizing how results are handled and compiling result mappings.
+    /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -504,8 +514,8 @@ namespace Susanoo
         where TResult6 : new()
     {
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" /> class.
+        /// Initializes a new instance of the
+        /// <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
@@ -514,7 +524,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -532,7 +542,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provide mapping actions and options for a result set
+        /// Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
@@ -548,7 +558,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
@@ -574,7 +584,7 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Provides methods for customizing how results are handled and compiling result mappings.
+    /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -596,9 +606,9 @@ namespace Susanoo
         where TResult7 : new()
     {
         /// <summary>
-        ///     Initializes a new instance of the
-        ///     <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}" />
-        ///     class.
+        /// Initializes a new instance of the
+        /// <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}" />
+        /// class.
         /// </summary>
         /// <param name="command">The command.</param>
         public CommandResultExpression(ICommandExpression<TFilter> command)
@@ -607,7 +617,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -626,7 +636,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Provide mapping actions and options for a result set
+        /// Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
@@ -642,7 +652,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>

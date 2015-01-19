@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 namespace Susanoo
 {
     /// <summary>
-    ///     Shared members for all command processors.
+    /// Shared members for all command processors.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandProcessorInterop<TFilter> : IFluentPipelineFragment
     {
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         ICommandExpression<TFilter> CommandExpression { get; }
@@ -29,8 +29,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with no mapping expressions and a filter
-    ///     parameter.
+    /// Represents a fully built and ready to be executed command expression with no mapping expressions and a filter
+    /// parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandProcessor<TFilter> : ICommandProcessorInterop<TFilter>
@@ -39,7 +39,7 @@ namespace Susanoo
 #endif
     {
         /// <summary>
-        ///     Executes the command and retrieves a single value.
+        /// Executes the command and retrieves a single value.
         /// </summary>
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -50,7 +50,7 @@ namespace Susanoo
             params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Executes the command and retrieves a single value.
+        /// Executes the command and retrieves a single value.
         /// </summary>
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -59,7 +59,7 @@ namespace Susanoo
         TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Executes the command and returns a return code.
+        /// Executes the command and returns a return code.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -68,7 +68,7 @@ namespace Susanoo
         int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Executes the command and returns a return code.
+        /// Executes the command and returns a return code.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -81,7 +81,7 @@ namespace Susanoo
     public interface ICommandProcessorAsync<in TFilter>
     {
         /// <summary>
-        ///     Executes the scalar action asynchronously.
+        /// Executes the scalar action asynchronously.
         /// </summary>
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -96,8 +96,8 @@ namespace Susanoo
     public interface ICommandProcessorAsync<in TFilter, TResult> where TResult : new()
     {
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -109,8 +109,8 @@ namespace Susanoo
 
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -119,8 +119,8 @@ namespace Susanoo
             params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -131,8 +131,8 @@ namespace Susanoo
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -145,8 +145,8 @@ namespace Susanoo
 #endif
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    /// and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
@@ -159,7 +159,7 @@ namespace Susanoo
         where TResult : new()
     {
         /// <summary>
-        ///     Gets the command result expression.
+        /// Gets the command result expression.
         /// </summary>
         /// <value>The command result expression.</value>
         ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; }
@@ -176,8 +176,8 @@ namespace Susanoo
         ColumnChecker RetrieveColumnIndexInfo();
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -187,8 +187,8 @@ namespace Susanoo
             params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -196,22 +196,20 @@ namespace Susanoo
         IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         ICommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent,
             double? interval = null);
     }
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    /// and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -223,53 +221,47 @@ namespace Susanoo
         where TResult2 : new()
     {
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         ICommandProcessor<TFilter, TResult1, TResult2> EnableResultCaching(CacheMode mode = CacheMode.Permanent,
             double? interval = null);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;
+        /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;
+        /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>>
             Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    /// and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -283,55 +275,49 @@ namespace Susanoo
         where TResult3 : new()
     {
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3> EnableResultCaching(
             CacheMode mode = CacheMode.Permanent, double? interval = null);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;
+        /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;
+        /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>>
             Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    /// and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -347,57 +333,51 @@ namespace Susanoo
         where TResult4 : new()
     {
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> EnableResultCaching(
             CacheMode mode = CacheMode.Permanent, double? interval = null);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;
+        /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;
+        /// &gt;.</returns>
         Tuple<IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>>
             Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    /// and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -415,54 +395,48 @@ namespace Susanoo
         where TResult5 : new()
     {
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> EnableResultCaching(
             CacheMode mode = CacheMode.Permanent, double? interval = null);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;
+        /// &gt;.</returns>
         Tuple
             <IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>,
                 IEnumerable<TResult5>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;
+        /// &gt;.</returns>
         Tuple
             <IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>,
                 IEnumerable<TResult5>>
@@ -470,8 +444,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    /// and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -491,56 +465,50 @@ namespace Susanoo
         where TResult6 : new()
     {
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> EnableResultCaching(
             CacheMode mode = CacheMode.Permanent, double? interval = null);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;
+        /// &gt;.</returns>
         Tuple
             <IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>,
                 IEnumerable<TResult5>, IEnumerable<TResult6>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;
+        /// &gt;.</returns>
         Tuple
             <IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>,
                 IEnumerable<TResult5>, IEnumerable<TResult6>>
@@ -548,8 +516,8 @@ namespace Susanoo
     }
 
     /// <summary>
-    ///     Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
-    ///     and a filter parameter.
+    /// Represents a fully built and ready to be executed command expression with appropriate mapping expressions compiled
+    /// and a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
@@ -571,58 +539,52 @@ namespace Susanoo
         where TResult7 : new()
     {
         /// <summary>
-        ///     Enables result caching.
+        /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        ///     this is confusing and therefor is not allowed.;mode
-        /// </exception>
+        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        /// this is confusing and therefor is not allowed.;mode</exception>
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
             EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;,
-        ///     IEnumerable&lt;TResult7&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;,
+        /// IEnumerable&lt;TResult7&gt;
+        /// &gt;.</returns>
         Tuple
             <IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>,
                 IEnumerable<TResult5>, IEnumerable<TResult6>, IEnumerable<TResult7>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
-        ///     Assembles a data command for an ADO.NET provider,
-        ///     executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>
-        ///     Tuple&lt;
-        ///     IEnumerable&lt;TResult1&gt;,
-        ///     IEnumerable&lt;TResult2&gt;,
-        ///     IEnumerable&lt;TResult3&gt;,
-        ///     IEnumerable&lt;TResult4&gt;,
-        ///     IEnumerable&lt;TResult5&gt;,
-        ///     IEnumerable&lt;TResult6&gt;,
-        ///     IEnumerable&lt;TResult7&gt;
-        ///     &gt;.
-        /// </returns>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;,
+        /// IEnumerable&lt;TResult7&gt;
+        /// &gt;.</returns>
         Tuple
             <IEnumerable<TResult1>, IEnumerable<TResult2>, IEnumerable<TResult3>, IEnumerable<TResult4>,
                 IEnumerable<TResult5>, IEnumerable<TResult6>, IEnumerable<TResult7>>

@@ -9,13 +9,13 @@ using System.Reflection;
 namespace Susanoo
 {
     /// <summary>
-    ///     Describes the required methods for determining if a property can be mapped using Susanoo.
+    /// Describes the required methods for determining if a property can be mapped using Susanoo.
     /// </summary>
     public interface IPropertyMetadataExtractor
     {
         /// <summary>
-        ///     Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate
-        ///     declarative aliases.
+        /// Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate
+        /// declarative aliases.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="actions">The actions.</param>
@@ -31,7 +31,7 @@ namespace Susanoo
             string[] blacklist = null);
 
         /// <summary>
-        ///     Determines whether the specified property is actionable.
+        /// Determines whether the specified property is actionable.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
@@ -49,7 +49,7 @@ namespace Susanoo
             string[] blacklist = null);
 
         /// <summary>
-        ///     Determines whether the specified property is restricted declaratively.
+        /// Determines whether the specified property is restricted declaratively.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="attribute">The attribute.</param>
@@ -63,21 +63,23 @@ namespace Susanoo
                                         | DescriptorActions.Insert);
 
         /// <summary>
-        ///     Determines whether the specified property is blacklisted.
+        /// Determines whether the specified property is blacklisted.
         /// </summary>
         /// <param name="propertyInfo">The property info.</param>
         /// <param name="blacklist">The blacklist.</param>
+        /// <returns><c>true</c> if the specified property information is blacklisted; otherwise, <c>false</c>.</returns>
         bool IsBlacklisted(PropertyInfo propertyInfo, string[] blacklist);
 
         /// <summary>
-        ///     Determines whether the specified property is whitelisted.
+        /// Determines whether the specified property is whitelisted.
         /// </summary>
         /// <param name="propertyInfo">The property info.</param>
         /// <param name="whitelist">The whitelist.</param>
+        /// <returns><c>true</c> if the specified property information is whitelisted; otherwise, <c>false</c>.</returns>
         bool IsWhitelisted(PropertyInfo propertyInfo, string[] whitelist);
 
         /// <summary>
-        ///     Resolves the name of the return column as defined declaratively.
+        /// Resolves the name of the return column as defined declaratively.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>

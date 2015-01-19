@@ -14,14 +14,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Susanoo
 {
     /// <summary>
-    ///     Default implementation of IPropertyMetadataExtractor that uses Component Model ColumnAttributes to resolve
-    ///     declarative aliases.
+    /// Default implementation of IPropertyMetadataExtractor that uses Component Model ColumnAttributes to resolve
+    /// declarative aliases.
     /// </summary>
     public class ComponentModelMetadataExtractor : IPropertyMetadataExtractor
     {
         /// <summary>
-        ///     Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate
-        ///     declarative aliases.
+        /// Finds the properties on an object and resolves if they are actionable for mapping and discerns appropriate
+        /// declarative aliases.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <param name="actions">The actions.</param>
@@ -55,11 +55,12 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Resolves the name of the return column as defined declaratively.
+        /// Resolves the name of the return column as defined declaratively.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
         /// <returns>System.String.</returns>
+        /// <exception cref="System.ArgumentNullException">propertyInfo</exception>
         public virtual string ResolveAlias(PropertyInfo propertyInfo, object[] customAttributes)
         {
             if (propertyInfo == null)
@@ -75,7 +76,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Determines whether the specified property is whitelisted.
+        /// Determines whether the specified property is whitelisted.
         /// </summary>
         /// <param name="propertyInfo">The property info.</param>
         /// <param name="whitelist">The whitelist.</param>
@@ -90,7 +91,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Determines whether the specified property is blacklisted.
+        /// Determines whether the specified property is blacklisted.
         /// </summary>
         /// <param name="propertyInfo">The property info.</param>
         /// <param name="blacklist">The blacklist.</param>
@@ -105,7 +106,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Determines whether the specified property is actionable.
+        /// Determines whether the specified property is actionable.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
@@ -113,11 +114,9 @@ namespace Susanoo
         /// <param name="whitelist">The whitelist.</param>
         /// <param name="blacklist">The blacklist.</param>
         /// <returns><c>true</c> if [is actionable property] [the specified property information]; otherwise, <c>false</c>.</returns>
-        /// <exception cref="System.ArgumentNullException">
-        ///     propertyInfo
-        ///     or
-        ///     customAttributes
-        /// </exception>
+        /// <exception cref="System.ArgumentNullException">propertyInfo
+        /// or
+        /// customAttributes</exception>
         public virtual bool IsActionableProperty(
             PropertyInfo propertyInfo,
             object[] customAttributes,
@@ -144,7 +143,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Determines whether the specified property is restricted declaratively.
+        /// Determines whether the specified property is restricted declaratively.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="attribute">The attribute.</param>

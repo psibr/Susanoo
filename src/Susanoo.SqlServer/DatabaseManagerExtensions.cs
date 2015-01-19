@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using Susanoo.SqlServer;
 
@@ -27,7 +25,9 @@ namespace Susanoo
         public static SqlParameter CreateTableValuedParameter<T>(this IDatabaseManager databaseManager, string name,
             string typeName, IEnumerable<T> items, ParameterDirection direction = ParameterDirection.Input)
         {
-            var param = databaseManager.CreateParameter(name, direction, DbType.Object, null);
+            var param = databaseManager.CreateParameter();
+            param.ParameterName = name;
+            param.Direction = direction;
             param.Value = items;
 
             return param.MakeTableValuedParameter(name, typeName, direction);

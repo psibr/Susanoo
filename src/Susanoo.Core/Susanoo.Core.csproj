@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
+    <Compile Include="AnonymousTypeBuilder.cs" />
     <Compile Include="CacheItem.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="ColumnBindingException.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="CommandProcessorCommon.cs" />
     <Compile Include="CommandResultExpression.cs" />
     <Compile Include="CommandResultImplementor.cs" />
+    <Compile Include="DefaultResultMapping.cs" />
     <Compile Include="Murmur3.cs" />
     <Compile Include="ICommandResultExpression.cs" />
     <Compile Include="ICommandResultImplementor.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="MultipleResultSetCommandProcessor.cs" />
     <Compile Include="NoResultSetCommandProcessor.cs" />
     <Compile Include="ResultMappingImplementor.cs" />
+    <Compile Include="ResultSetCompiler.cs" />
     <Compile Include="SingleResultSetCommandProcessor.cs" />
     <Compile Include="ResultMappingExpression.cs" />
     <Compile Include="DatabaseManager.cs" />

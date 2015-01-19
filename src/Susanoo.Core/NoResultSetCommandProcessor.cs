@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Susanoo
 {
     /// <summary>
-    ///     A fully built and ready to be executed command expression with a filter parameter.
+    /// A fully built and ready to be executed command expression with a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public partial class NoResultSetCommandProcessor<TFilter> : CommandProcessorCommon, ICommandProcessor<TFilter>
@@ -18,7 +18,7 @@ namespace Susanoo
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="name">The name of the processor.</param>
@@ -30,7 +30,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the command expression.
+        /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
         public ICommandExpression<TFilter> CommandExpression
@@ -39,7 +39,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
@@ -48,7 +48,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the scalar.
+        /// Executes the scalar.
         /// </summary>
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -65,7 +65,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the scalar.
+        /// Executes the scalar.
         /// </summary>
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -77,7 +77,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the non query.
+        /// Executes the non query.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -93,7 +93,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the non query.
+        /// Executes the non query.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -107,12 +107,12 @@ namespace Susanoo
 #if !NETFX40
 
     /// <summary>
-    ///     A fully built and ready to be executed command expression with a filter parameter.
+    /// A fully built and ready to be executed command expression with a filter parameter.
     /// </summary>
     public partial class NoResultSetCommandProcessor<TFilter>
     {
         /// <summary>
-        ///     Execute scalar as an asynchronous operation.
+        /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="TReturn">The type of the t return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -131,7 +131,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the non query async.
+        /// Executes the non query async.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -149,7 +149,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the non query async.
+        /// Executes the non query async.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -166,7 +166,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the non query async.
+        /// Executes the non query async.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -183,7 +183,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the non query async.
+        /// Executes the non query async.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -199,7 +199,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Execute scalar as an asynchronous operation.
+        /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="TReturn">The type of the t return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -217,7 +217,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Execute scalar as an asynchronous operation.
+        /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="TReturn">The type of the t return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
@@ -235,7 +235,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Execute scalar as an asynchronous operation.
+        /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="TReturn">The type of the t return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>

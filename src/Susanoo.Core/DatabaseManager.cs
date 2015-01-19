@@ -26,15 +26,12 @@ namespace Susanoo
         private readonly Action<DbCommand> _providerSpecificCommandSettings;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
         /// <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
-        /// <exception cref="System.NotSupportedException">
-        ///     The database provider type specified is not supported. Provider:  +
-        ///     provider.ToString()
-        /// </exception>
+        /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName,
             Action<DbCommand> providerSpecificCommandSettings)
             : this(provider, connectionStringName)
@@ -43,14 +40,11 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <exception cref="System.NotSupportedException">
-        ///     The database provider type specified is not supported. Provider:  +
-        ///     provider.ToString()
-        /// </exception>
+        /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName)
         {
             Provider = provider;
@@ -60,13 +54,11 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <exception cref="System.ArgumentException">
-        ///     Provider is a required component of the connection
-        ///     string.;connectionStringName
-        /// </exception>
+        /// <exception cref="System.ArgumentException">Provider is a required component of the connection
+        /// string.;connectionStringName</exception>
         public DatabaseManager(string connectionStringName)
         {
             _connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
@@ -80,11 +72,9 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the connection.
+        /// Gets the connection.
         /// </summary>
-        /// <value>
-        ///     The connection.
-        /// </value>
+        /// <value>The connection.</value>
         protected DbConnection Connection
         {
             get
@@ -100,15 +90,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the provider.
+        /// Gets the provider.
         /// </summary>
-        /// <value>
-        ///     The provider.
-        /// </value>
+        /// <value>The provider.</value>
         public DbProviderFactory Provider { get; private set; }
 
         /// <summary>
-        ///     Executes the data reader.
+        /// Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -147,7 +135,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the scalar.
+        /// Executes the scalar.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
@@ -169,9 +157,9 @@ namespace Susanoo
 
                 using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    object result = CastValue(typeof (T), command.ExecuteScalar());
+                    object result = CastValue(typeof(T), command.ExecuteScalar());
 
-                    return (T) result;
+                    return (T)result;
                 }
             }
             finally
@@ -182,7 +170,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the stored procedure.
+        /// Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -214,22 +202,22 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Creates a parameter.
+        /// Creates a parameter.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>DbParameter.</returns>
         public virtual DbParameter CreateParameter()
         {
             return Provider.CreateParameter();
         }
 
         /// <summary>
-        ///     Creates a parameter.
+        /// Creates a parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterDirection">The parameter direction.</param>
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <returns>DbParameter.</returns>
         public virtual DbParameter CreateParameter(string parameterName, ParameterDirection parameterDirection,
             DbType parameterType, object value)
         {
@@ -245,19 +233,19 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Creates a parameter.
+        /// Creates a parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterType">Type of the parameter.</param>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <returns>DbParameter.</returns>
         public virtual DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value)
         {
             return CreateParameter(parameterName, ParameterDirection.Input, parameterType, value);
         }
 
         /// <summary>
-        ///     Opens the connection.
+        /// Opens the connection.
         /// </summary>
         public virtual void OpenConnection()
         {
@@ -267,7 +255,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Closes the connection.
+        /// Closes the connection.
         /// </summary>
         public virtual void CloseConnection()
         {
@@ -279,7 +267,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the state of the connection.
+        /// Gets the state of the connection.
         /// </summary>
         /// <value>The state.</value>
         public ConnectionState State
@@ -288,7 +276,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
@@ -297,13 +285,14 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Performs a bulk copy operation.
+        /// Performs a bulk copy operation.
         /// </summary>
         /// <typeparam name="TRecord">The type of the record.</typeparam>
         /// <param name="destinationTableName">Name of the destination table.</param>
         /// <param name="records">The records.</param>
         /// <param name="whiteList">The white list of properties to include. Default is NULL.</param>
         /// <param name="blackList">The black list of properties to exclude. Default is NULL.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
         public virtual void BulkCopy<TRecord>(string destinationTableName,
             IEnumerable<TRecord> records,
             IEnumerable<string> whiteList = null,
@@ -314,7 +303,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Realizes an instance of the <see cref="DatabaseManager" /> class.
+        /// Realizes an instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         ~DatabaseManager()
         {
@@ -322,7 +311,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Returns value or it's string representation.
+        /// Returns value or it's string representation.
         /// </summary>
         /// <param name="newType">The new type.</param>
         /// <param name="value">The value.</param>
@@ -337,7 +326,7 @@ namespace Susanoo
 
             var returnValue = value;
 
-            if (newType == typeof (string))
+            if (newType == typeof(string))
             {
                 returnValue = (value ?? "").ToString();
             }
@@ -346,9 +335,9 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Begins a transaction.
+        /// Begins a transaction.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>DbTransaction.</returns>
         [Obsolete("Prefer using System.Transactions.TransactionScope.", false)]
         public virtual DbTransaction BeginTransaction()
         {
@@ -357,7 +346,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Preps the command.
+        /// Preps the command.
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="commandText">The command text.</param>
@@ -387,7 +376,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Adjusts the command by provider.
+        /// Adjusts the command by provider.
         /// </summary>
         /// <param name="command">The command.</param>
         protected virtual void CallProviderSpecificCommandSettings(DbCommand command)
@@ -397,7 +386,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Opens the connection.
+        /// Opens the connection.
         /// </summary>
         protected virtual void OpenConnectionInternal()
         {
@@ -408,12 +397,10 @@ namespace Susanoo
         #region IDisposable Members
 
         /// <summary>
-        ///     Releases unmanaged and - optionally - managed resources.
+        /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="isDisposing">
-        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
-        ///     unmanaged resources.
-        /// </param>
+        /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only
+        /// unmanaged resources.</param>
         protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposing)
@@ -427,14 +414,14 @@ namespace Susanoo
     }
 
 #if !NETFX40
-    
+
     /// <summary>
-    ///     Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
+    /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
     public partial class DatabaseManager : IDatabaseManager, IDisposable
     {
         /// <summary>
-        ///     Executes the data reader asynchronously.
+        /// Executes the data reader asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -459,13 +446,11 @@ namespace Susanoo
 
                 using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    if (open)
-                        results = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-                    else
-                        results =
-                            await
-                                command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken)
-                                    .ConfigureAwait(false);
+
+                    // If the connection was open before execute was called, then do not automatically close connection.
+                    results = await (open
+                        ? command.ExecuteReaderAsync(cancellationToken)
+                        : command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken));
                 }
             }
             catch
@@ -480,7 +465,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Executes the stored procedure asynchronously.
+        /// Executes the stored procedure asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -516,7 +501,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     execute scalar as an asynchronous operation.
+        /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">The command text.</param>
@@ -543,7 +528,7 @@ namespace Susanoo
                 {
                     return
                         (T)
-                            CastValue(typeof (T),
+                            CastValue(typeof(T),
                                 await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
                 }
             }

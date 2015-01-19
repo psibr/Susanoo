@@ -9,13 +9,13 @@ using System.Data;
 namespace Susanoo
 {
     /// <summary>
-    ///     Performs the actual map operation between an IDataRecord and a result type.
+    /// Performs the actual map operation between an IDataRecord and a result type.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface IResultMapper<TResult> : IFluentPipelineFragment
+    public interface IResultMapper<TResult> : IResultMapper, IFluentPipelineFragment
     {
         /// <summary>
-        ///     Maps the result.
+        /// Maps the result.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <param name="checker">The column checker.</param>
@@ -25,10 +25,24 @@ namespace Susanoo
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping);
 
         /// <summary>
-        ///     Maps the result.
+        /// Maps the result.
         /// </summary>
         /// <param name="record">The record.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> MapResult(IDataReader record);
+        new IEnumerable<TResult> MapResult(IDataReader record);
+    }
+
+    /// <summary>
+    /// Performs the actual map operation between an IDataRecord and a result type.
+    /// </summary>
+    public interface IResultMapper : IFluentPipelineFragment
+    {
+
+        /// <summary>
+        /// Maps the result.
+        /// </summary>
+        /// <param name="record">The record.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        object MapResult(IDataReader record);
     }
 }

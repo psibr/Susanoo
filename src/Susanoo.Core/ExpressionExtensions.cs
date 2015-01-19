@@ -8,12 +8,12 @@ using System.Linq.Expressions;
 namespace Susanoo
 {
     /// <summary>
-    ///     Helpful Expression extension methods
+    /// Helpful Expression extension methods
     /// </summary>
     public static class ExpressionExtensions
     {
         /// <summary>
-        ///     Given an expression, extract the listed property name; similar to reflection but with familiar LINQ+lambdas.
+        /// Given an expression, extract the listed property name; similar to reflection but with familiar LINQ+lambdas.
         /// </summary>
         /// <typeparam name="TModel">the model type to extract property names</typeparam>
         /// <typeparam name="TValue">the value type of the expected property</typeparam>

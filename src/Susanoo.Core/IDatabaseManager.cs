@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 namespace Susanoo
 {
     /// <summary>
-    ///     The interface a Data later abstraction must support for use with Susanoo
+    /// The interface a Data later abstraction must support for use with Susanoo
     /// </summary>
     public interface IDatabaseManager
     {
         /// <summary>
-        ///     Gets the state of the connection.
+        /// Gets the state of the connection.
         /// </summary>
         /// <value>The state.</value>
         ConnectionState State { get; }
 
         /// <summary>
-        ///     Executes the data reader.
+        /// Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -30,7 +30,7 @@ namespace Susanoo
         IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
-        ///     Executes the scalar.
+        /// Executes the scalar.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
@@ -40,7 +40,7 @@ namespace Susanoo
         T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
-        ///     Executes the stored procedure.
+        /// Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -49,13 +49,13 @@ namespace Susanoo
         int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
 
         /// <summary>
-        ///     Creates a parameter.
+        /// Creates a parameter.
         /// </summary>
         /// <returns>DbParameter.</returns>
         DbParameter CreateParameter();
 
         /// <summary>
-        ///     Creates the parameter.
+        /// Creates the parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterDirection">The parameter direction.</param>
@@ -66,7 +66,7 @@ namespace Susanoo
             object value);
 
         /// <summary>
-        ///     Creates the input parameter.
+        /// Creates the input parameter.
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterType">Type of the parameter.</param>
@@ -75,19 +75,19 @@ namespace Susanoo
         DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value);
 
         /// <summary>
-        ///     Opens the connection.
+        /// Opens the connection.
         /// </summary>
         void OpenConnection();
 
         /// <summary>
-        ///     Closes the connection.
+        /// Closes the connection.
         /// </summary>
         void CloseConnection();
 
 #if !NETFX40
 
         /// <summary>
-        ///     Executes the data reader asynchronously.
+        /// Executes the data reader asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -98,7 +98,7 @@ namespace Susanoo
             CancellationToken cancellationToken, params DbParameter[] parameters);
 
         /// <summary>
-        ///     Executes the scalar action asynchronously.
+        /// Executes the scalar action asynchronously.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">The command text.</param>
@@ -110,7 +110,7 @@ namespace Susanoo
             params DbParameter[] parameters);
 
         /// <summary>
-        ///     Executes the stored procedure asynchronously.
+        /// Executes the stored procedure asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the command.</param>
