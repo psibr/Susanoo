@@ -89,11 +89,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
     <Compile Include="AnonymousTypeBuilder.cs" />
-    <Compile Include="Pipeline\Command\ResultSets\Processing\Caching\CacheItem.cs" />
+    <Compile Include="DataReader.cs" />
+    <Compile Include="IAnonymous.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\CacheItem.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="Exceptions\ColumnBindingException.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\ColumnChecker.cs" />
@@ -133,7 +136,6 @@
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMappingConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Key.snk" />
     <None Include="Susanoo.Core.nuspec" />
   </ItemGroup>

@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Susanoo.Pipeline.Command.ResultSets.Processing.Caching
+namespace Susanoo.Pipeline.Command.ResultSets.Processing
 {
 
     /// <summary>

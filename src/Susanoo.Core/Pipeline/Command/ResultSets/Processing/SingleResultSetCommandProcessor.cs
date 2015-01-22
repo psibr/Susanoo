@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Caching;
 
 #endregion
 
@@ -43,11 +42,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;
 
-            var compiler = new ResultSetCompiler(mappings, typeof (TResult));
-
             CompiledMapping = typeof(TResult) != typeof(object)
-                ? compiler.Compile<TResult>()
-                : DynamicConversion;
+                ? new ResultSetCompiler(mappings, typeof (TResult)).Compile<TResult>()
+                : _commandExpression.AllowStoringColumnInfo 
+                    ? (Func<IDataReader, ColumnChecker, IEnumerable<TResult>>) null 
+                    : DynamicConversion;
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -229,8 +228,28 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader reader, ColumnChecker checker,
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping)
         {
-            var result = mapping(reader, checker);
+            if (mapping == null)
+            {
+                
+                if (!reader.Read())
+                    return new List<TResult>();
 
+                var fields = new string[reader.FieldCount];
+                var fieldsAndTypes = new Dictionary<string, Type>();
+                
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    fields[i] = reader.GetName(i);
+
+                    fieldsAndTypes.Add(fields[i], reader.GetFieldType(i));
+                }
+                
+                mapping = new ResultSetCompiler(fieldsAndTypes).Compile<TResult>();
+                
+                reader = new DataReader(reader);
+            }
+
+            var result = mapping(reader, checker);
             return result;
         }
 

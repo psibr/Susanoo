@@ -6,7 +6,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Numerics;
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Caching;
 
 #endregion
 

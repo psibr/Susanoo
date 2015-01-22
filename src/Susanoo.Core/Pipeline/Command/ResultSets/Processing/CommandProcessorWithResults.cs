@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Numerics;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Caching;
 
 #endregion
 

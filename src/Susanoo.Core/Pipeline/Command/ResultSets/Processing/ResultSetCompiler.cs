@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Susanoo.Exceptions;
+using Susanoo.Pipeline.Command.ResultSets.Mapping;
+using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
 namespace Susanoo.Pipeline.Command.ResultSets.Processing
 {
@@ -13,13 +16,30 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// </summary>
     public class ResultSetCompiler
     {
-        private readonly ICommandResultMappingExport _mapping;
+        private readonly IDictionary<string, IPropertyMapping> _mapping;
         private readonly Type _resultType;
+        private readonly Type _actualType;
 
         public ResultSetCompiler(ICommandResultMappingExport mapping, Type resultType)
         {
-            _mapping = mapping;
+            _mapping = mapping.Export(resultType);
             _resultType = resultType;
+            _actualType = resultType;
+        }
+
+        public ResultSetCompiler(Dictionary<string, Type> fields)
+        {
+            _resultType = typeof (object);
+            _actualType = BuildType(fields);
+
+            
+            _mapping = new DefaultResultMapping(_actualType).Export();
+            
+        }
+
+        public static Type BuildType(Dictionary<string, Type> fields)
+        {
+            return AnonymousTypeBuilder.BuildType(fields);
         }
 
         private static readonly MethodInfo ReadMethod = typeof(IDataReader)
@@ -38,7 +58,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             MethodInfo addLastMethod = listType.GetMethod("Add", new[] { _resultType });
 
             //Get the properties we care about.
-            var mappings = _mapping.Export(_resultType);
+            var mappings = _mapping;
 
             var outerStatements = new List<Expression>();
             var innerStatements = new List<Expression>();
@@ -63,7 +83,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             #region Loop Code
 
             // var descriptor;
-            ParameterExpression descriptor = Expression.Variable(_resultType, "descriptor");
+            ParameterExpression descriptor = Expression.Variable(_actualType, "descriptor");
 
             // if(!reader.Read) { return resultSet; }
             innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, ReadMethod)),
@@ -76,7 +96,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             // descriptor = new TResult();
             innerStatements.Add(Expression.Assign(
-                descriptor, Expression.New(_resultType)));
+                descriptor, Expression.New(_actualType)));
 
             foreach (var pair in mappings)
             {
@@ -174,7 +194,9 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         public Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>()
             where TResult : new()
         {
-            return (reader, columnMeta) => (IEnumerable<TResult>)(Compile()(reader, columnMeta));
+            var result = Compile();
+
+            return (reader, columnMeta) => (IEnumerable<TResult>)(result(reader, columnMeta));
         }
     }
 }

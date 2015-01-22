@@ -12,19 +12,19 @@ namespace Susanoo
     /// </summary>
     public static class AnonymousTypeBuilder
     {
-        private static readonly AssemblyName AssemblyName = new AssemblyName() { Name = "Susanoo.AnonymousTypes" };
         private static readonly ModuleBuilder ModuleBuilder;
         private static readonly Dictionary<string, Type> BuiltTypes = new Dictionary<string, Type>();
 
         static AnonymousTypeBuilder()
         {
-            ModuleBuilder = Thread.GetDomain().DefineDynamicAssembly(AssemblyName, AssemblyBuilderAccess.Run).DefineDynamicModule(AssemblyName.Name);
+            ModuleBuilder = CommandManager.DynamicNamespace;
         }
 
-        private static string GetTypeKey(Dictionary<string, Type> properties)
-        {
-            return properties.Aggregate(string.Empty, (current, field) => current + (field.Key + ";" + field.Value.Name + ";"));
-        }
+        //private static string GetTypeKey(Dictionary<string, Type> properties)
+        //{
+        //    return properties.Aggregate(string.Empty,
+        //        (current, field) => current + (field.Key + ";" + field.Value.Name + ";"));
+        //}
 
         /// <summary>
         /// Builds a new type to represent the data.
@@ -43,16 +43,54 @@ namespace Susanoo
             try
             {
                 Monitor.Enter(BuiltTypes);
-                var className = GetTypeKey(fields);
+                var className = Guid.NewGuid().ToString().Replace("-", string.Empty);
 
                 Type value;
                 if (BuiltTypes.TryGetValue(className, out value))
                     return value;
 
-                var typeBuilder = ModuleBuilder.DefineType(className, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable);
+                var typeBuilder = ModuleBuilder.DefineType(className,
+                    TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable);
+
 
                 foreach (var field in fields)
-                    typeBuilder.DefineField(field.Key, field.Value, FieldAttributes.Public);
+                {
+                    var fb = typeBuilder.DefineField("_" + field.Key, field.Value, FieldAttributes.Private);
+
+                    PropertyBuilder pb = typeBuilder
+                        .DefineProperty(field.Key, PropertyAttributes.HasDefault, field.Value, null);
+
+                    const MethodAttributes ma = MethodAttributes.Public |
+                                                MethodAttributes.SpecialName |
+                                                MethodAttributes.HideBySig;
+
+                    MethodBuilder getBuilder =
+                        typeBuilder.DefineMethod("get_" + field.Key,
+                                                   ma,
+                                                   field.Value,
+                                                   Type.EmptyTypes);
+                    MethodBuilder setBuilder =
+                        typeBuilder.DefineMethod("set_" + field.Key,
+                                                   ma,
+                                                   null,
+                                                   new[] { field.Value });
+
+                    pb.SetGetMethod(getBuilder);
+                    ILGenerator getIL = getBuilder.GetILGenerator();
+
+                    getIL.Emit(OpCodes.Ldarg_0);
+                    getIL.Emit(OpCodes.Ldfld, fb);
+                    getIL.Emit(OpCodes.Ret);
+
+                    pb.SetSetMethod(setBuilder);
+                    ILGenerator setIL = setBuilder.GetILGenerator();
+
+                    setIL.Emit(OpCodes.Ldarg_0);
+                    setIL.Emit(OpCodes.Ldarg_1);
+                    //setIL.Emit(OpCodes.Castclass, field.Value);
+                    setIL.Emit(OpCodes.Stfld, fb);
+                    setIL.Emit(OpCodes.Ret);
+                }
 
                 BuiltTypes[className] = typeBuilder.CreateType();
 
