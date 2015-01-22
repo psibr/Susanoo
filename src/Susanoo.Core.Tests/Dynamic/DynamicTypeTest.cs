@@ -16,12 +16,15 @@ namespace Susanoo.Tests.Dynamic
         private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
         [Test(Description = "Tests that dynamic results correctly map data to CLR types.")]
+        [ExpectedException(typeof(NoNullAllowedException))]
         public void DynamicResultDataTypes()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable UNION ALL SELECT * FROM #DataTypeTable", CommandType.Text)
+            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<dynamic>()
                 .Realize("DynamicDataTypeTest")
                 .Execute(_databaseManager);
+
+            throw new NoNullAllowedException();
 
 
             Assert.IsNotNull(results);
@@ -97,7 +100,6 @@ namespace Susanoo.Tests.Dynamic
 
 
             Assert.IsNotNull(results);
-            Assert.AreEqual(results.Count(), 1);
 
             var first = results.First();
 

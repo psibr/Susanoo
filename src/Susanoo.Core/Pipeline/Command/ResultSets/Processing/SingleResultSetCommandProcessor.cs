@@ -244,7 +244,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                     fieldsAndTypes.Add(fields[i], reader.GetFieldType(i));
                 }
                 
-                mapping = new ResultSetCompiler(fieldsAndTypes).Compile<TResult>();
+                CompiledMapping = new ResultSetCompiler(fieldsAndTypes).Compile<TResult>();
+                mapping = CompiledMapping;
                 
                 reader = new DataReader(reader);
             }
