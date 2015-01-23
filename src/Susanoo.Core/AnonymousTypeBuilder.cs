@@ -52,7 +52,6 @@ namespace Susanoo
                 var typeBuilder = ModuleBuilder.DefineType(className,
                     TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable);
 
-
                 foreach (var field in fields)
                 {
                     var fb = typeBuilder.DefineField("_" + field.Key, field.Value, FieldAttributes.Private);
@@ -87,7 +86,6 @@ namespace Susanoo
 
                     setIL.Emit(OpCodes.Ldarg_0);
                     setIL.Emit(OpCodes.Ldarg_1);
-                    //setIL.Emit(OpCodes.Castclass, field.Value);
                     setIL.Emit(OpCodes.Stfld, fb);
                     setIL.Emit(OpCodes.Ret);
                 }
