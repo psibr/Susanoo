@@ -15,6 +15,17 @@ namespace Susanoo.Tests.Dynamic
     {
         private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
+        [Test]
+        public void DynamicRowPerformance()
+        {
+            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+                .DefineResults<dynamic>()
+                .Realize("DynamicDataTypeTest")
+                .Execute(_databaseManager);
+
+            Assert.IsNotNull(results);
+        }
+
         [Test(Description = "Tests that dynamic results correctly map data to CLR types.")]
         public void DynamicResultDataTypes()
         {
@@ -24,7 +35,6 @@ namespace Susanoo.Tests.Dynamic
                 .Execute(_databaseManager);
 
             Assert.IsNotNull(results);
-            Assert.AreEqual(results.Count(), 1);
 
             var first = results.First();
 
@@ -32,10 +42,10 @@ namespace Susanoo.Tests.Dynamic
             Assert.AreEqual(first.Bit, true);
 
             Assert.IsTrue(first.TinyInt is byte);
-            Assert.AreEqual(first.TinyInt, (byte) 0x05);
+            Assert.AreEqual(first.TinyInt, (byte)0x05);
 
             Assert.IsTrue(first.SmallInt is Int16);
-            Assert.AreEqual(first.SmallInt, (Int16) 0x0004);
+            Assert.AreEqual(first.SmallInt, (Int16)0x0004);
 
             Assert.IsTrue(first.Int is int);
             Assert.AreEqual(first.Int, 1);

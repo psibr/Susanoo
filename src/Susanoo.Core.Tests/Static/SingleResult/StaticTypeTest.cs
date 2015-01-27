@@ -4,16 +4,18 @@ using System;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
+using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
 
-namespace Susanoo.Tests.Static
+namespace Susanoo.Tests.Static.SingleResult
 {
     [Category("Type Resolution")]
     [TestFixture]
     public class StaticTypeTest
     {
         private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
+
 
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypes()

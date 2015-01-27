@@ -8,6 +8,8 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using Susanoo.Pipeline.Command;
+using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
 
@@ -62,11 +64,11 @@ namespace Susanoo
         private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
             new DatabaseManager(connectionStringName);
 
-        private static readonly ConcurrentDictionary<BigInteger, CommandProcessorCommon> RegisteredCommandProcessors =
-            new ConcurrentDictionary<BigInteger, CommandProcessorCommon>();
+        private static readonly ConcurrentDictionary<BigInteger, ICommandProcessorWithResults> RegisteredCommandProcessors =
+            new ConcurrentDictionary<BigInteger, ICommandProcessorWithResults>();
 
-        private static readonly ConcurrentDictionary<string, CommandProcessorCommon> NamedCommandProcessors =
-            new ConcurrentDictionary<string, CommandProcessorCommon>();
+        private static readonly ConcurrentDictionary<string, ICommandProcessorWithResults> NamedCommandProcessors =
+            new ConcurrentDictionary<string, ICommandProcessorWithResults>();
 
         /// <summary>
         /// Gets the commander.
@@ -167,7 +169,7 @@ namespace Susanoo
         /// <param name="commandProcessor">The command processor.</param>
         /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
         /// <c>false</c> otherwise.</returns>
-        public static bool TryGetCommandProcessor(BigInteger hash, out CommandProcessorCommon commandProcessor)
+        public static bool TryGetCommandProcessor(BigInteger hash, out ICommandProcessorWithResults commandProcessor)
         {
             var result = RegisteredCommandProcessors.TryGetValue(hash, out commandProcessor);
 
@@ -181,7 +183,7 @@ namespace Susanoo
         /// <param name="commandProcessor">The command processor.</param>
         /// <returns><c>true</c> if a command processor with the same configuration has been registered and not garbage collected,
         /// <c>false</c> otherwise.</returns>
-        public static bool TryGetCommandProcessor(string name, out CommandProcessorCommon commandProcessor)
+        public static bool TryGetCommandProcessor(string name, out ICommandProcessorWithResults commandProcessor)
         {
             var result = NamedCommandProcessors.TryGetValue(name, out commandProcessor);
 
@@ -193,7 +195,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="processor">The processor.</param>
         /// <param name="name">The name.</param>
-        public static void RegisterCommandProcessor(CommandProcessorCommon processor, string name)
+        public static void RegisterCommandProcessor(ICommandProcessorWithResults processor, string name)
         {
             RegisteredCommandProcessors.TryAdd(processor.CacheHash, processor);
 
@@ -217,7 +219,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="processor">The processor.</param>
         /// <exception cref="System.ArgumentNullException">processor</exception>
-        public static void ClearColumnIndexInfo(CommandProcessorCommon processor)
+        public static void ClearColumnIndexInfo(ICommandProcessorWithResults processor)
         {
             if(processor == null)
                 throw new ArgumentNullException("processor");
@@ -242,7 +244,7 @@ namespace Susanoo
         /// <param name="name">The name of the command processor.</param>
         public static void FlushCache(string name)
         {
-            CommandProcessorCommon reference;
+            ICommandProcessorWithResults reference;
             if (NamedCommandProcessors.TryGetValue(name, out reference))
                 reference.FlushCache();
         }
