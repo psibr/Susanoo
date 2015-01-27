@@ -14,20 +14,50 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     public class ColumnChecker
     {
         private bool _isInit;
-        private readonly Dictionary<int, string> _intKeyFields = new Dictionary<int, string>();
-        private readonly Dictionary<string, int> _stringKeyFields = new Dictionary<string, int>();
+
+        private readonly Map<int, string> _fieldMap;
+
+        /// <summary>
+        /// Tries the get value.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns><c>true</c> if contains key, <c>false</c> otherwise.</returns>
+        public bool TryGetValue(int key, out string value)
+        {
+            return _fieldMap.TryGetValue(key, out value);
+        }
+
+        /// <summary>
+        /// Tries the get value.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns><c>true</c> if contains key, <c>false</c> otherwise.</returns>
+        public bool TryGetValue(string key, out int value)
+        {
+            return _fieldMap.TryGetValue(key, out value);
+        }
+
+        /// <summary>
+        /// Gets the count of columns mapped.
+        /// </summary>
+        /// <value>The count.</value>
+        public int Count
+        {
+            get { return _fieldMap.Forward.Count; }
+        }
 
         private ColumnChecker(IDictionary<int, string> intKey, IDictionary<string, int> stringKey)
         {
             _isInit = true;
-            _intKeyFields = new Dictionary<int, string>(intKey);
-            _stringKeyFields = new Dictionary<string, int>(stringKey);
+            _fieldMap = new Map<int, string>(intKey, stringKey);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnChecker"/> class.
         /// </summary>
-        public ColumnChecker() { }
+        public ColumnChecker() { _fieldMap = new Map<int, string>(); }
 
         /// <summary>
         ///  Determines whether the specified record has a column.
@@ -37,20 +67,19 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <returns><c>true</c> if the specified record has column; otherwise, <c>false</c>.</returns>
         public int HasColumn(IDataRecord record, string name)
         {
+            int value;
             if (_isInit)
             {
-                int value;
-                return _stringKeyFields.TryGetValue(name, out value) ? value : -1;
+                if (_fieldMap.TryGetValue(name, out value))
+                    return value;
             }
 
-            // Could be possible to speed things up by using GetOrdinal.
-            for (var i = 0; i < record.FieldCount; i++)
-                _stringKeyFields.Add(record.GetName(i), i);
+            value = record.GetOrdinal(name);
+            _fieldMap.Add(name, value);
 
             _isInit = true;
 
-            int value1;
-            return _stringKeyFields.TryGetValue(name, out value1) ? value1 : -1;
+            return value;
         }
 
         /// <summary>
@@ -64,12 +93,12 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             string value;
             if (_isInit)
             {
-                if (_intKeyFields.TryGetValue(index, out value))
+                if (_fieldMap.TryGetValue(index, out value))
                     return value;
             }
 
             value = record.GetName(index);
-            _intKeyFields.Add(index, value);
+            _fieldMap.Add(index, value);
 
             _isInit = true;
 
@@ -82,8 +111,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <returns>Dictionary&lt;System.String, System.Int32&gt;.</returns>
         public Dictionary<string, int> ExportReport()
         {
-            return _stringKeyFields.Concat(_intKeyFields.ToDictionary(kvp => kvp.Value, kvp => kvp.Key))
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            return _fieldMap.Reverse.ToDictionary();
         }
 
         /// <summary>
@@ -92,7 +120,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <returns>ColumnChecker.</returns>
         public ColumnChecker Copy()
         {
-            return new ColumnChecker(_intKeyFields, _stringKeyFields);
+            return new ColumnChecker(_fieldMap.Forward.ToDictionary(), _fieldMap.Reverse.ToDictionary());
         }
     }
 }

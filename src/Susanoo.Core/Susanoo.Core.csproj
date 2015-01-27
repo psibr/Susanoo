@@ -93,9 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
-    <Compile Include="AnonymousTypeBuilder.cs" />
-    <Compile Include="DataReader.cs" />
-    <Compile Include="IAnonymous.cs" />
+    <Compile Include="DynamicRow.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\CacheItem.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="Exceptions\ColumnBindingException.cs" />

@@ -44,9 +44,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             CompiledMapping = typeof(TResult) != typeof(object)
                 ? new ResultSetCompiler(mappings, typeof (TResult)).Compile<TResult>()
-                : _commandExpression.AllowStoringColumnInfo 
-                    ? (Func<IDataReader, ColumnChecker, IEnumerable<TResult>>) null 
-                    : DynamicConversion;
+                : DynamicConversion;
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -228,28 +226,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader reader, ColumnChecker checker,
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping)
         {
-            if (mapping == null)
-            {
-                
-                if (!reader.Read())
-                    return new List<TResult>();
-
-                var fields = new string[reader.FieldCount];
-                var fieldsAndTypes = new Dictionary<string, Type>();
-                
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    fields[i] = reader.GetName(i);
-
-                    fieldsAndTypes.Add(fields[i], reader.GetFieldType(i));
-                }
-                
-                CompiledMapping = new ResultSetCompiler(fieldsAndTypes).Compile<TResult>();
-                mapping = CompiledMapping;
-                
-                reader = new DataReader(reader);
-            }
-
             var result = mapping(reader, checker);
             return result;
         }
@@ -272,26 +248,39 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <returns>dynamic.</returns>
         private static IEnumerable<TResult> DynamicConversion(IDataReader reader, ColumnChecker checker)
         {
-            var resultSet = new ListResult<TResult>();
+            var resultSet = new ListResult<object>();
             checker = checker ?? new ColumnChecker();
 
             int fieldCount = reader.FieldCount;
+
+            bool needsFieldNames = fieldCount > checker.Count;
+            
             while (reader.Read())
             {
-                IDictionary<string, Object> obj = new ExpandoObject();
-                for (var i = 0; i < fieldCount; i++)
+                object[] values;
+                if (needsFieldNames)
                 {
-                    var name = checker.HasColumn(reader, i);
-                    if (name != null)
-                        obj.Add(name, reader.GetValue(i));
+                    List<object> obj = new List<object>();
+                    for (var i = 0; i < fieldCount; i++)
+                    {
+                        checker.HasColumn(reader, i);
+                        obj.Add(reader.GetValue(i));
+                    }
+
+                    values = obj.ToArray();
+                }
+                else
+                {
+                    values = new object[fieldCount];
+                    reader.GetValues(values);
                 }
 
-                resultSet.Add((dynamic) obj);
+                resultSet.Add(new DynamicRow(checker, values));
             }
 
             resultSet.BuildReport(checker);
 
-            return resultSet;
+            return resultSet as IEnumerable<TResult>;
         }
 
         /// <summary>

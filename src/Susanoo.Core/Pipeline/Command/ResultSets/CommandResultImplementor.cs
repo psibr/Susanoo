@@ -52,6 +52,11 @@ namespace Susanoo.Pipeline.Command.ResultSets
             return result ?? new ResultMappingExpression<TFilter, TResult>();
         }
 
+        /// <summary>
+        /// Retrieves a mapping exporter.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
+        /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         public IResultMappingExport RetrieveExporter(Type resultType)
         {
             IResultMappingExport result = null;

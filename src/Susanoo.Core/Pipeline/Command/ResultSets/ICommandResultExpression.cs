@@ -31,8 +31,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         IDictionary<string, IPropertyMapping> Export<TResultType>()
             where TResultType : new();
 
-
-
         /// <summary>
         /// Converts to a single result expression.
         /// </summary>

@@ -20,26 +20,16 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         private readonly Type _resultType;
         private readonly Type _actualType;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ResultSetCompiler"/> class.
+        /// </summary>
+        /// <param name="mapping">The mapping.</param>
+        /// <param name="resultType">Type of the result.</param>
         public ResultSetCompiler(ICommandResultMappingExport mapping, Type resultType)
         {
             _mapping = mapping.Export(resultType);
             _resultType = resultType;
             _actualType = resultType;
-        }
-
-        public ResultSetCompiler(Dictionary<string, Type> fields)
-        {
-            _resultType = typeof (object);
-            _actualType = BuildType(fields);
-
-            
-            _mapping = new DefaultResultMapping(_actualType).Export();
-            
-        }
-
-        public static Type BuildType(Dictionary<string, Type> fields)
-        {
-            return AnonymousTypeBuilder.BuildType(fields);
         }
 
         private static readonly MethodInfo ReadMethod = typeof(IDataReader)

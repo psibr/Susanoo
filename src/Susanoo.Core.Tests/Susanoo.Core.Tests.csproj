@@ -80,7 +80,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Anonymous\TypeBuilderTests.cs" />
     <Compile Include="DbManager\ConnectionTests.cs" />
     <Compile Include="Scalar\DBNullCheck.cs" />
     <Compile Include="Setup.cs" />

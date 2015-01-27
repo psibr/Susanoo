@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace Susanoo.SqlServer
 {
+    /// <summary>
+    /// Extensions for SQL Parameters
+    /// </summary>
     public static class DbParameterExtensions
     {
         /// <summary>
@@ -17,8 +20,7 @@ namespace Susanoo.SqlServer
         /// <param name="direction">The direction of the parameter.</param>
         /// <returns>DbParameter.</returns>
         /// <exception cref="System.NotSupportedException">databaseManager is not using SqlClient as provider.</exception>
-        /// <exception cref="NotSupportedException">databaseManager is not using SqlClient as provider.</exception>
-        internal static SqlParameter MakeTableValuedParameter(this DbParameter parameter, string name,
+        public static SqlParameter MakeTableValuedParameter(this DbParameter parameter, string name,
             string typeName, ParameterDirection direction = ParameterDirection.Input)
         {
             var param = parameter;
@@ -28,6 +30,7 @@ namespace Susanoo.SqlServer
             if (sqlParam == null)
                 throw new NotSupportedException("databaseManager is not using SqlClient as provider.");
 
+            sqlParam.Direction = direction;
             sqlParam.ResetDbType();
             sqlParam.SqlDbType = SqlDbType.Structured;
             sqlParam.TypeName = typeName;

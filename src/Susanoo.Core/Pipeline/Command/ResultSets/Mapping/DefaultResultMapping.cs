@@ -5,6 +5,9 @@ using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
 namespace Susanoo.Pipeline.Command.ResultSets.Mapping
 {
+    /// <summary>
+    /// Simple mapping when none were explicitly provided.
+    /// </summary>
     public class DefaultResultMapping : IResultMappingExport
     {
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
@@ -12,6 +15,10 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
 
         private readonly Type _resultType;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultResultMapping"/> class.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
         public DefaultResultMapping(Type resultType)
         {
             _resultType = resultType;
