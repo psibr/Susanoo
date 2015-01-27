@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using System.IO;
+using Susanoo.Pipeline.Command.ResultSets.Processing;
 using JSON = Newtonsoft.Json;
 
 namespace Susanoo
