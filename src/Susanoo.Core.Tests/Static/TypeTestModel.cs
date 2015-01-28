@@ -39,5 +39,7 @@ namespace Susanoo.Tests.Static
         public TimeSpan Time { get; set; }
 
         public Guid Guid { get; set; }
+
+        public string UnusedProperty { get; set; }
     }
 }

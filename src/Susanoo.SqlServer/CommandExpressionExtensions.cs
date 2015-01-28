@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Data.Common;
 using System.Linq.Expressions;
+using Susanoo.Pipeline.Command;
 using Susanoo.SqlServer;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Extension methods for SQL Server
+    /// </summary>
     public static class CommandExpressionExtensions
     {
         /// <summary>
-        /// Includes the property as structured datatype (Table Valued Parameter).
+        /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
         /// <typeparam name="TFilter">The type of the t filter.</typeparam>
         /// <param name="commandExpression">The command expression.</param>
@@ -22,7 +26,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Includes the property as structured datatype (Table Valued Parameter).
+        /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
         /// <typeparam name="TFilter">The type of the t filter.</typeparam>
         /// <param name="commandExpression">The command expression.</param>
@@ -39,7 +43,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Includes the property as structured datatype (Table Valued Parameter).
+        /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
         /// <typeparam name="TFilter">The type of the t filter.</typeparam>
         /// <param name="commandExpression">The command expression.</param>
@@ -67,7 +71,7 @@ namespace Susanoo
 
 
         /// <summary>
-        /// Includes the property as structured datatype (Table Valued Parameter).
+        /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
         /// <typeparam name="TFilter">The type of the t filter.</typeparam>
         /// <param name="commandExpression">The command expression.</param>

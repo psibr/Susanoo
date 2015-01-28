@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
@@ -65,23 +66,11 @@ namespace Susanoo.SqlServer.Tests.Structured
             Assert.AreEqual(enumerable.First().Id, 2);
         }
 
-        [Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]
-        public void StructuredViaCreate()
+        [Test]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void MakeTVPThrowsIfParamIsNull()
         {
-            var list = new List<KeyValuePair<int, string>>();
-
-            for (var i = 2; i < 501; i++)
-                list.Add(new KeyValuePair<int, string>(i, null));
-
-            var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
-                .DefineResults<dynamic>()
-                .Realize("StructuredViaCreate")
-                .Execute(_databaseManager, _databaseManager
-                    .CreateTableValuedParameter("ReferenceTable", "ReferenceTable", list.Select(o => new { Id = o.Key })));
-
-            var enumerable = results as IList<dynamic> ?? results.ToList();
-            Assert.AreEqual(enumerable.Count(), 1);
-            Assert.AreEqual(enumerable.First().Id, 2);
+            DbParameterExtensions.MakeTableValuedParameter(null, string.Empty, string.Empty);
         }
     }
 }

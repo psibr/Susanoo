@@ -55,7 +55,7 @@ namespace Susanoo.Tests
 
                 INTO #DataTypeTable;",
                 CommandType.Text)
-                .Realize("DataTypeTableBuilder")
+                .Realize()
                 .ExecuteNonQuery(DatabaseManager);
         }
 
