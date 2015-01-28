@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
@@ -26,10 +27,13 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DynamicRow"/> class.
+        /// Initializes a new instance of the <see cref="DynamicRow" /> class.
         /// </summary>
         /// <param name="columns">The columns Susanoo has discovered and will map to properties.</param>
-        /// <param name="values"></param>
+        /// <param name="values">The values.</param>
+        /// <exception cref="System.IndexOutOfRangeException">
+        /// Thrown if column count and value count do not match.
+        /// </exception>
         public DynamicRow(ColumnChecker columns, object[] values)
         {
             if(columns.Count != values.Length)
@@ -47,7 +51,7 @@ namespace Susanoo
         /// <returns>The <see cref="T:System.Dynamic.DynamicMetaObject" /> to bind this object.</returns>
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
-            return new DynamicRowMeta(parameter, BindingRestrictions.Empty, this);
+            return new DynamicRowMeta(parameter, BindingRestrictions.Empty, this, _columns);
         }
 
         /// <summary>
@@ -102,6 +106,7 @@ namespace Susanoo
     /// </summary>
     public class DynamicRowMeta : DynamicMetaObject
     {
+        private readonly ColumnChecker _columns;
         static readonly MethodInfo GetValueMethod = typeof(DynamicRow).GetMethod("GetValue", new[] { typeof(string) });
         static readonly MethodInfo SetValueMethod = typeof(DynamicRow).GetMethod("SetValue", new[] { typeof(string), typeof(object) });
 
@@ -114,9 +119,10 @@ namespace Susanoo
         /// <param name="restrictions">
         /// The set of binding restrictions under which the binding is valid.
         /// </param>
-        public DynamicRowMeta(Expression expression, BindingRestrictions restrictions)
+        public DynamicRowMeta(Expression expression, BindingRestrictions restrictions, ColumnChecker columns)
             : base(expression, restrictions)
         {
+            _columns = columns;
         }
 
         /// <summary>
@@ -125,15 +131,13 @@ namespace Susanoo
         /// <param name="expression">
         /// The expression representing this <see cref="T:System.Dynamic.DynamicMetaObject" /> during the dynamic binding process.
         /// </param>
-        /// <param name="restrictions">
-        /// The set of binding restrictions under which the binding is valid.
-        /// </param>
-        /// <param name="value">
-        /// The runtime value represented by the <see cref="T:System.Dynamic.DynamicMetaObject" />.
-        /// </param>
-        public DynamicRowMeta(Expression expression, BindingRestrictions restrictions, object value)
+        /// <param name="restrictions">The set of binding restrictions under which the binding is valid.</param>
+        /// <param name="value">The runtime value represented by the <see cref="T:System.Dynamic.DynamicMetaObject" />.</param>
+        /// <param name="columns">The columns.</param>
+        public DynamicRowMeta(Expression expression, BindingRestrictions restrictions, object value, ColumnChecker columns)
             : base(expression, restrictions, value)
         {
+            _columns = columns;
         }
 
         DynamicMetaObject CallMethod(MethodInfo method, Expression[] parameters)
@@ -144,6 +148,8 @@ namespace Susanoo
                     method,
                     parameters),
                 BindingRestrictions.GetTypeRestriction(Expression, LimitType));
+
+
         }
 
         /// <summary>
@@ -166,7 +172,6 @@ namespace Susanoo
 
             return callMethod;
         }
-
 
         /// <summary>
         /// Performs the binding of the dynamic get member operation.
@@ -211,6 +216,60 @@ namespace Susanoo
             return callMethod;
         }
 
+        /// <summary>
+        /// Returns the enumeration of all dynamic member names.
+        /// </summary>
+        /// <returns>The list of dynamic member names.</returns>
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return _columns.ExportReport()
+                .Select(i => i.Key);
+        }
+
+        /// <summary>
+        /// Performs the binding of the dynamic get index operation.
+        /// </summary>
+        /// <param name="binder">
+        /// An instance of the <see cref="T:System.Dynamic.GetIndexBinder" /> that represents the details of the dynamic operation.
+        /// </param>
+        /// <param name="indexes">
+        /// An array of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances - indexes for the get index operation.
+        /// </param>
+        /// <returns>
+        /// The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.
+        /// </returns>
+        public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
+        {
+            Expression[] parameters = { Expression.Constant(indexes.First(ix => ix.LimitType == typeof(string)).Value) };
+
+            var callMethod = CallMethod(GetValueMethod, parameters);
+
+            return callMethod;
+        }
+
+        /// <summary>
+        /// Performs the binding of the dynamic set index operation.
+        /// </summary>
+        /// <param name="binder">
+        /// An instance of the <see cref="T:System.Dynamic.SetIndexBinder" /> that represents the details of the dynamic operation.
+        /// </param>
+        /// <param name="indexes">
+        /// An array of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances - indexes for the set index operation.
+        /// </param>
+        /// <param name="value">The <see cref="T:System.Dynamic.DynamicMetaObject" /> 
+        /// representing the value for the set index operation.
+        /// </param>
+        /// <returns>
+        /// The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.
+        /// </returns>
+        public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
+        {
+            Expression[] parameters = { Expression.Constant(indexes.First().Value) };
+
+            var callMethod = CallMethod(SetValueMethod, parameters);
+
+            return callMethod;
+        }
     }
 
 }

@@ -67,19 +67,19 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <returns><c>true</c> if the specified record has column; otherwise, <c>false</c>.</returns>
         public int HasColumn(IDataRecord record, string name)
         {
-            int value;
-            if (_isInit)
+            if (!_isInit)
             {
-                if (_fieldMap.TryGetValue(name, out value))
-                    return value;
+
+                /* Cant use GetOrdinal here since not all fields will be present and
+                 * exception handling is slower than a one time read */
+                for (var i = 0; i < record.FieldCount; i++)
+                    _fieldMap.Add(record.GetName(i), i);
+
+                _isInit = true;
             }
 
-            value = record.GetOrdinal(name);
-            _fieldMap.Add(name, value);
-
-            _isInit = true;
-
-            return value;
+            int value;
+            return _fieldMap.TryGetValue(name, out value) ? value : -1;
         }
 
         /// <summary>

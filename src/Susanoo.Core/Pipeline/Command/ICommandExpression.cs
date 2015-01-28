@@ -18,20 +18,8 @@ namespace Susanoo.Pipeline.Command
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandExpression<TFilter>
-        : IFluentPipelineFragment
+        : ICommandExpressionInfo, IFluentPipelineFragment
     {
-        /// <summary>
-        /// Gets the command text.
-        /// </summary>
-        /// <value>The command text.</value>
-        string CommandText { get; }
-
-        /// <summary>
-        /// Gets the type of the database command.
-        /// </summary>
-        /// <value>The type of the database command.</value>
-        CommandType DbCommandType { get; }
-
         /// <summary>
         /// Realizes the pipeline with no result mappings.
         /// </summary>
@@ -39,14 +27,9 @@ namespace Susanoo.Pipeline.Command
         ICommandProcessor<TFilter> Realize();
 
         /// <summary>
-        /// Gets a value indicating whether storing column information is allowed.
-        /// </summary>
-        /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
-        bool AllowStoringColumnInfo { get; }
-
-        /// <summary>
         /// Disables Susanoo's ability to cache a result sets column indexes and names for faster retrieval.
-        /// This is typically only needed for stored procedures that return different columns or columns in different orders based on criteria in the procedure.
+        /// This is typically only needed for stored procedures that return different columns or columns 
+        /// in different orders based on criteria in the procedure.
         /// </summary>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         ICommandExpression<TFilter> DoNotStoreColumnIndexes();
@@ -233,6 +216,30 @@ namespace Susanoo.Pipeline.Command
             where TResult5 : new()
             where TResult6 : new()
             where TResult7 : new();
+    }
+
+    /// <summary>
+    /// Basic details about a Command Expression
+    /// </summary>
+    public interface ICommandExpressionInfo
+    {
+        /// <summary>
+        /// Gets the command text.
+        /// </summary>
+        /// <value>The command text.</value>
+        string CommandText { get; }
+
+        /// <summary>
+        /// Gets the type of the database command.
+        /// </summary>
+        /// <value>The type of the database command.</value>
+        CommandType DbCommandType { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether storing column information is allowed.
+        /// </summary>
+        /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
+        bool AllowStoringColumnInfo { get; }
     }
 
     /// <summary>

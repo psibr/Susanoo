@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Transactions;
 using Susanoo.Pipeline.Command;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
 
@@ -110,7 +111,8 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Registers a command builder.
+        /// Registers a command builder for the CommandManager to use when building commands.
+        /// This is an ideal extension point for providing default command options.
         /// </summary>
         /// <param name="builder">The builder.</param>
         public static void RegisterCommandBuilder(ICommandExpressionBuilder builder)
@@ -146,7 +148,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        ///     Gets the database type from the CLR type.
+        /// Gets the database type from the CLR type for use in parameters.
         /// </summary>
         /// <param name="type">The CLR type.</param>
         /// <returns>DbType.</returns>
@@ -159,7 +161,7 @@ namespace Susanoo
             else
                 typeToUse = dataType;
 
-            return typeToUse; 
+            return typeToUse;
         }
 
         /// <summary>

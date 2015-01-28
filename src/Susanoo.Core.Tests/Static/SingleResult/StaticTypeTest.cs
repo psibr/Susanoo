@@ -16,6 +16,17 @@ namespace Susanoo.Tests.Static.SingleResult
     {
         private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
+        [Test]
+        public void StaticRowPerformance()
+        {
+            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+                .DefineResults<TypeTestModel>()
+                .Realize("StaticDataTypeTest")
+                .Execute(_databaseManager);
+
+            Assert.IsNotNull(results);
+
+        }
 
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypes()
