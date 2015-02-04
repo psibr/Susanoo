@@ -2,8 +2,12 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using NUnit.Framework;
+using Susanoo.Pipeline.Command;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
@@ -31,7 +35,6 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypes()
         {
-
             var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel>()
                 .Realize("StaticDataTypeTest")

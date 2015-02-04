@@ -155,9 +155,9 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
-                    object result = CastValue(typeof(T), command.ExecuteScalar());
+                    var result = CastValue(typeof(T), command.ExecuteScalar());
 
                     return (T)result;
                 }
@@ -189,7 +189,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (DbCommand command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
                 {
                     return command.ExecuteNonQuery();
                 }
@@ -356,7 +356,7 @@ namespace Susanoo
         protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType,
             params DbParameter[] parameters)
         {
-            DbCommand command = Provider.CreateCommand();
+            var command = Provider.CreateCommand();
 
             if (command != null)
             {

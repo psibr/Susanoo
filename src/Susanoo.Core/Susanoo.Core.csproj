@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
     <Compile Include="DynamicRow.cs" />
+    <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\CacheItem.cs" />
     <Compile Include="ColumnAttribute.cs" />

@@ -43,7 +43,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _commandExpression = mappings.CommandExpression;
 
             CompiledMapping = typeof(TResult) != typeof(object)
-                ? new ResultSetCompiler(mappings, typeof (TResult)).Compile<TResult>()
+                ? new ResultSetCompiler(mappings, typeof(TResult)).Compile<TResult>()
                 : DynamicConversion;
 
             CommandManager.RegisterCommandProcessor(this, name);
@@ -197,20 +197,28 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (IDataReader records = databaseManager
-                    .ExecuteDataReader(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        parameters))
+                try
                 {
-                    results = (((IResultMapper<TResult>) this).MapResult(records, ColumnReport, CompiledMapping));
+                    using (IDataReader records = databaseManager
+                        .ExecuteDataReader(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            parameters))
+                    {
+                        results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
-                    ColumnReport = ((ListResult<TResult>) results).ColumnReport;
+                        ColumnReport = ((ListResult<TResult>)results).ColumnReport;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(results, ResultCachingMode, ResultCachingInterval));
+
             }
 
             return results ?? new LinkedList<TResult>();
@@ -254,7 +262,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             int fieldCount = reader.FieldCount;
 
             bool needsFieldNames = fieldCount > checker.Count;
-            
+
             while (reader.Read())
             {
                 object[] values;
@@ -345,7 +353,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
             bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
+            var hashCode = BigInteger.Zero;
 
             IEnumerable<TResult> results = null;
 
@@ -370,17 +378,24 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (IDataReader records = await databaseManager
-                    .ExecuteDataReaderAsync(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        cancellationToken,
-                        parameters)
-                    .ConfigureAwait(false))
+                try
                 {
-                    results = (((IResultMapper<TResult>) this).MapResult(records, ColumnReport, CompiledMapping));
+                    using (IDataReader records = await databaseManager
+                        .ExecuteDataReaderAsync(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            cancellationToken,
+                            parameters)
+                        .ConfigureAwait(false))
+                    {
+                        results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
-                    ColumnReport = ((ListResult<TResult>) results).ColumnReport;
+                        ColumnReport = ((ListResult<TResult>)results).ColumnReport;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 if (ResultCachingEnabled)

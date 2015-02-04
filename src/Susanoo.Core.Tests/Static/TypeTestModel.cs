@@ -41,5 +41,7 @@ namespace Susanoo.Tests.Static
         public Guid Guid { get; set; }
 
         public string UnusedProperty { get; set; }
+
+        public TypeTestModel UnusedProperty2 { get; set; }
     }
 }

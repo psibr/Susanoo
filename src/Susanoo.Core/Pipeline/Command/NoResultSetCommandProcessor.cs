@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Data.Common;
 using System.Numerics;
 using System.Threading;
@@ -14,7 +15,7 @@ namespace Susanoo.Pipeline.Command
     /// A fully built and ready to be executed command expression with a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public partial class NoResultSetCommandProcessor<TFilter>: ICommandProcessor<TFilter>
+    public partial class NoResultSetCommandProcessor<TFilter> : ICommandProcessor<TFilter>
     {
         private readonly ICommandExpression<TFilter> _commandExpression;
 
@@ -56,10 +57,23 @@ namespace Susanoo.Pipeline.Command
         public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            return databaseManager.ExecuteScalar<TReturn>(
-                CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
+            var result = default(TReturn);
+            DbParameter[] parameters = null;
+            try
+            {
+                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                result = databaseManager.ExecuteScalar<TReturn>(
+                    CommandExpression.CommandText,
+                    CommandExpression.DbCommandType,
+                    parameters);
+            }
+            catch (Exception ex)
+            {
+                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+            }
+
+            return result;
+
         }
 
         /// <summary>
@@ -84,10 +98,22 @@ namespace Susanoo.Pipeline.Command
         public int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            return databaseManager.ExecuteNonQuery(
-                CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
+            var result = default(int);
+            DbParameter[] parameters = null;
+            try
+            {
+                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                result = databaseManager.ExecuteNonQuery(
+                    CommandExpression.CommandText,
+                    CommandExpression.DbCommandType,
+                    parameters);
+            }
+            catch (Exception ex)
+            {
+                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -121,11 +147,24 @@ namespace Susanoo.Pipeline.Command
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                cancellationToken,
-                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters))
-                .ConfigureAwait(false);
+            var result = default(TReturn);
+            DbParameter[] parameters = null;
+            try
+            {
+                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                result = await databaseManager.ExecuteScalarAsync<TReturn>(
+                    CommandExpression.CommandText,
+                    CommandExpression.DbCommandType,
+                    cancellationToken,
+                    parameters)
+                        .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -139,11 +178,24 @@ namespace Susanoo.Pipeline.Command
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, TFilter filter,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteNonQueryAsync(
-                CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                cancellationToken,
-                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
+            var result = default(int);
+            DbParameter[] parameters = null;
+            try
+            {
+                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                result = await databaseManager.ExecuteNonQueryAsync(
+                    CommandExpression.CommandText,
+                    CommandExpression.DbCommandType,
+                    cancellationToken,
+                    parameters)
+                        .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -156,11 +208,7 @@ namespace Susanoo.Pipeline.Command
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteNonQueryAsync(
-                CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                default(CancellationToken),
-                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters));
+            return await ExecuteNonQueryAsync(databaseManager, filter, default(CancellationToken), explicitParameters);
         }
 
         /// <summary>
@@ -173,11 +221,7 @@ namespace Susanoo.Pipeline.Command
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteNonQueryAsync(
-                CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                cancellationToken,
-                explicitParameters).ConfigureAwait(false);
+            return await ExecuteNonQueryAsync(databaseManager, default(TFilter), cancellationToken, explicitParameters);
         }
 
         /// <summary>
@@ -189,11 +233,7 @@ namespace Susanoo.Pipeline.Command
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteNonQueryAsync(
-                CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                default(CancellationToken),
-                explicitParameters).ConfigureAwait(false);
+            return await ExecuteNonQueryAsync(databaseManager, default(TFilter), default(CancellationToken), explicitParameters);
         }
 
         /// <summary>
@@ -207,11 +247,9 @@ namespace Susanoo.Pipeline.Command
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                cancellationToken,
-                explicitParameters)
-                .ConfigureAwait(false);
+            return
+                await
+                    ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), cancellationToken, explicitParameters);
         }
 
         /// <summary>
@@ -225,11 +263,9 @@ namespace Susanoo.Pipeline.Command
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                default(CancellationToken),
-                CommandExpression.BuildParameters(databaseManager, filter, explicitParameters))
-                .ConfigureAwait(false);
+            return
+                await
+                    ExecuteScalarAsync<TReturn>(databaseManager, filter, default(CancellationToken), explicitParameters);
         }
 
         /// <summary>
@@ -242,11 +278,9 @@ namespace Susanoo.Pipeline.Command
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters)
         {
-            return await databaseManager.ExecuteScalarAsync<TReturn>(CommandExpression.CommandText,
-                CommandExpression.DbCommandType,
-                default(CancellationToken),
-                explicitParameters)
-                .ConfigureAwait(false);
+            return
+                await
+                    ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), default(CancellationToken), explicitParameters);
         }
     }
 

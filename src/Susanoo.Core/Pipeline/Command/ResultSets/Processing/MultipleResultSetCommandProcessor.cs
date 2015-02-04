@@ -126,20 +126,27 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (var record = databaseManager
-                    .ExecuteDataReader(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        parameters))
+                try
                 {
-                    for (var i = 0; i < ResultCount; i++)
+                    using (var record = databaseManager
+                        .ExecuteDataReader(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            parameters))
                     {
-                        if (i > 0)
-                            if (!record.NextResult())
-                                break;
+                        for (var i = 0; i < ResultCount; i++)
+                        {
+                            if (i > 0)
+                                if (!record.NextResult())
+                                    break;
 
-                        results[i] = _mappers[i].MapResult(record);
+                            results[i] = _mappers[i].MapResult(record);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -305,20 +312,28 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (var record = databaseManager
-                    .ExecuteDataReader(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        parameters))
+                try
                 {
-                    for (var i = 0; i < ResultCount; i++)
-                    {
-                        if (i > 0)
-                            if (!record.NextResult())
-                                break;
 
-                        results[i] = _mappers[i].MapResult(record);
+                    using (var record = databaseManager
+                        .ExecuteDataReader(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            parameters))
+                    {
+                        for (var i = 0; i < ResultCount; i++)
+                        {
+                            if (i > 0)
+                                if (!record.NextResult())
+                                    break;
+
+                            results[i] = _mappers[i].MapResult(record);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -494,20 +509,27 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (var record = databaseManager
-                    .ExecuteDataReader(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        parameters))
+                try
                 {
-                    for (var i = 0; i < ResultCount; i++)
+                    using (var record = databaseManager
+                        .ExecuteDataReader(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            parameters))
                     {
-                        if (i > 0)
-                            if (!record.NextResult())
-                                break;
+                        for (var i = 0; i < ResultCount; i++)
+                        {
+                            if (i > 0)
+                                if (!record.NextResult())
+                                    break;
 
-                        results[i] = _mappers[i].MapResult(record);
+                            results[i] = _mappers[i].MapResult(record);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -693,20 +715,27 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (var record = databaseManager
-                    .ExecuteDataReader(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        parameters))
+                try
                 {
-                    for (var i = 0; i < ResultCount; i++)
+                    using (var record = databaseManager
+                        .ExecuteDataReader(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            parameters))
                     {
-                        if (i > 0)
-                            if (!record.NextResult())
-                                break;
+                        for (var i = 0; i < ResultCount; i++)
+                        {
+                            if (i > 0)
+                                if (!record.NextResult())
+                                    break;
 
-                        results[i] = _mappers[i].MapResult(record);
+                            results[i] = _mappers[i].MapResult(record);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -902,20 +931,27 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (var record = databaseManager
-                    .ExecuteDataReader(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        parameters))
+                try
                 {
-                    for (var i = 0; i < ResultCount; i++)
+                    using (var record = databaseManager
+                        .ExecuteDataReader(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            parameters))
                     {
-                        if (i > 0)
-                            if (!record.NextResult())
-                                break;
+                        for (var i = 0; i < ResultCount; i++)
+                        {
+                            if (i > 0)
+                                if (!record.NextResult())
+                                    break;
 
-                        results[i] = _mappers[i].MapResult(record);
+                            results[i] = _mappers[i].MapResult(record);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -1122,20 +1158,27 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             if (!cachedItemPresent)
             {
-                using (var record = databaseManager
-                    .ExecuteDataReader(
-                        commandExpression.CommandText,
-                        commandExpression.DbCommandType,
-                        parameters))
+                try
                 {
-                    for (var i = 0; i < ResultCount; i++)
+                    using (var record = databaseManager
+                        .ExecuteDataReader(
+                            commandExpression.CommandText,
+                            commandExpression.DbCommandType,
+                            parameters))
                     {
-                        if (i > 0)
-                            if (!record.NextResult())
-                                break;
+                        for (var i = 0; i < ResultCount; i++)
+                        {
+                            if (i > 0)
+                                if (!record.NextResult())
+                                    break;
 
-                        results[i] = _mappers[i].MapResult(record);
+                            results[i] = _mappers[i].MapResult(record);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,

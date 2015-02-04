@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -59,6 +60,47 @@ namespace Susanoo
                 {typeof (DateTime?), DbType.DateTime},
                 {typeof (DateTimeOffset?), DbType.DateTimeOffset}
             });
+
+        /// <summary>
+        /// Handles exceptions in execution.
+        /// </summary>
+        /// <param name="commandExpressionInfo">The command expression information.</param>
+        /// <param name="ex">The ex.</param>
+        /// <param name="parameters">The parameters.</param>
+        public static void HandleExecutionException(
+            ICommandExpressionInfo commandExpressionInfo,
+            Exception ex,
+            DbParameter[] parameters)
+        {
+
+            var applicable = RegisteredExceptionHandlers
+                .Where(handler => handler.ConditionFunc(commandExpressionInfo, ex, parameters))
+                .ToList();
+
+            if (applicable.Any())
+            {
+                foreach (var handler in applicable)
+                {
+                    handler.Handler(commandExpressionInfo, ex, parameters);
+                }
+            }
+            else
+            {
+                throw ex;
+            }
+
+        }
+
+        private static readonly IList<ExceptionHandler> RegisteredExceptionHandlers = new List<ExceptionHandler>();
+
+        /// <summary>
+        /// Registers the exception handler.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        public static void RegisterExecutionExceptionHandler(ExceptionHandler handler)
+        {
+            RegisteredExceptionHandlers.Add(handler);
+        }
 
         private static ICommandExpressionBuilder _commandBuilder = new CommandBuilder();
 
