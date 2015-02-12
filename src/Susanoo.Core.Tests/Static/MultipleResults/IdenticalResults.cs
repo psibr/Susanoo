@@ -231,7 +231,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         }
 
         [Test(Description = "Tests that attempting to get less results than available works fine.")]
-        public void LessResultsAreAvailableTest()
+        public void LessResultsThanAvailableTest()
         {
 
             var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
@@ -259,7 +259,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         }
 
         [Test(Description = "Tests that attempting to get more results than available provides null for the additional results.")]
-        public void MoreResultsAreAvailableTest()
+        public void MoreResultsThanAvailableTest()
         {
 
             var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +

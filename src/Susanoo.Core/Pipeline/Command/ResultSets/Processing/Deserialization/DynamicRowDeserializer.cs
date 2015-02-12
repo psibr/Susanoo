@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
@@ -16,7 +17,9 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         /// <returns>dynamic.</returns>
         public static IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
         {
-            var resultSet = new ListResult<object>();
+            IList resultSet = new ListResult<TResult>();
+
+
             checker = checker ?? new ColumnChecker();
 
             var fieldCount = reader.FieldCount;
@@ -46,9 +49,9 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
                 resultSet.Add(new DynamicRow(checker, values));
             }
 
-            resultSet.BuildReport(checker);
+            ((ListResult<TResult>)resultSet).BuildReport(checker);
 
-            return resultSet as IEnumerable<TResult>;
+            return (IEnumerable<TResult>) resultSet;
         }
     }
 }

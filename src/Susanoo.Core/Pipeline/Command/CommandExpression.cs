@@ -452,19 +452,20 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         private void ComputeHash()
         {
-            var hashText = new StringBuilder(CommandText);
+            //This is faster than string builder and less resource intensive
+            var strings =
+                string.Concat(_constantParameters.Select(c => c.Key)
+                    .Concat(_parameterInclusions.Select(c => c.Key))
+                    .Concat(_parameterExclusions)
+                    .Concat(new []
+                        {
+                            CommandText,
+                            DbCommandType.ToString(),
+                            _explicitInclusionMode.ToString(),
+                            _nullValueMode.ToString()
+                        }));
 
-            hashText.Append(DbCommandType);
-            hashText.Append(_explicitInclusionMode);
-            hashText.Append(_nullValueMode);
-            hashText.Append(_constantParameters.Aggregate(string.Empty, (p, c) => p + c.Key));
-            hashText.Append(_parameterInclusions.Aggregate(string.Empty, (p, c) => p + c.Key));
-            hashText.Append(_parameterExclusions.Aggregate(string.Empty, (p, c) => p + c));
-
-            //string resultBeforeHash = hashText.ToString();
-            //BigInteger hashCode = HashBuilder.Compute(resultBeforeHash);
-
-            _cacheHash = HashBuilder.Compute(hashText.ToString());
+            _cacheHash = HashBuilder.Compute(strings);
         }
 
         /// <summary>

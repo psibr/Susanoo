@@ -26,6 +26,15 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicRow"/> class.
+        /// </summary>
+        public DynamicRow()
+        {
+            _columns = new ColumnChecker();
+            _values = new object[_columns.Count];
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DynamicRow" /> class.
         /// </summary>
         /// <param name="columns">The columns Susanoo has discovered and will map to properties.</param>

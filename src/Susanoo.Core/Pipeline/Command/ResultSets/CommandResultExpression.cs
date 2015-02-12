@@ -121,7 +121,8 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return (base.CacheHash * 31) ^ typeof(TResult).AssemblyQualifiedName.GetHashCode(); }
+            get { return (base.CacheHash * 31) ^ typeof(TResult).AssemblyQualifiedName.GetHashCode() 
+                ^ this.GetType().AssemblyQualifiedName.GetHashCode(); }
         }
 
         /// <summary>
@@ -215,7 +216,8 @@ namespace Susanoo.Pipeline.Command.ResultSets
             {
                 return (base.CacheHash * 31)
                        ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode();
+                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
+                       ^ this.GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
 
@@ -285,9 +287,10 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName);
+                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
+                       ^ this.GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
 
@@ -359,10 +362,11 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName);
+                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
+                       ^ this.GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
 
@@ -438,11 +442,12 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName);
+                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult5).AssemblyQualifiedName.GetHashCode()
+                       ^ this.GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
 
@@ -524,12 +529,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult6).AssemblyQualifiedName);
+                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult5).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult6).AssemblyQualifiedName.GetHashCode()
+                       ^ this.GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
 
@@ -617,13 +623,14 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult6).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof(TResult7).AssemblyQualifiedName);
+                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult5).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult6).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult7).AssemblyQualifiedName.GetHashCode()
+                       ^ this.GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
 

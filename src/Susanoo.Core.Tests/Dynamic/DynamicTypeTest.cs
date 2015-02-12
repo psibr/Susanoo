@@ -4,6 +4,7 @@ using System;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
+using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 
 #endregion
 
@@ -18,12 +19,15 @@ namespace Susanoo.Tests.Dynamic
         [Test]
         public void DynamicRowPerformance()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<dynamic>()
-                .Realize("DynamicDataTypeTest")
-                .Execute(_databaseManager);
+            for (int i = 0; i < 500; i ++)
+            {
+                var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+                    .DefineResults<dynamic>()
+                    .Realize()
+                    .Execute(_databaseManager);
 
-            Assert.IsNotNull(results);
+                Assert.IsNotNull(results);
+            }
         }
 
         [Test(Description = "Tests that dynamic results correctly map data to CLR types.")]
@@ -31,7 +35,7 @@ namespace Susanoo.Tests.Dynamic
         {
             var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<dynamic>()
-                .Realize("DynamicDataTypeTest")
+                .Realize()
                 .Execute(_databaseManager);
 
             Assert.IsNotNull(results);

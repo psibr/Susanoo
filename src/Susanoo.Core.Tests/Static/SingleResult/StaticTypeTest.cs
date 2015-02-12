@@ -23,12 +23,15 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void StaticRowPerformance()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<TypeTestModel>()
-                .Realize("StaticDataTypeTest")
-                .Execute(_databaseManager);
+            for (int i = 0; i < 500; i ++)
+            {
+                var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+                    .DefineResults<TypeTestModel>()
+                    .Realize()
+                    .Execute(_databaseManager);
 
-            Assert.IsNotNull(results);
+                Assert.IsNotNull(results);
+            }
 
         }
 
@@ -37,7 +40,7 @@ namespace Susanoo.Tests.Static.SingleResult
         {
             var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel>()
-                .Realize("StaticDataTypeTest")
+                .Realize()
                 .Execute(_databaseManager);
 
             Assert.IsNotNull(results);

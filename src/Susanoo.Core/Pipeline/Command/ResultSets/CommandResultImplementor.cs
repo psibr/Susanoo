@@ -18,13 +18,14 @@ namespace Susanoo.Pipeline.Command.ResultSets
     public class CommandResultImplementor<TFilter> : ICommandResultImplementor<TFilter>
     {
         private readonly IDictionary<Type, IResultMappingExport> _mappingContainer;
-
+        private readonly IDictionary<Type, IResultMappingExport> _mappingContainerRuntime;
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultImplementor{TFilter}" /> class.
         /// </summary>
         public CommandResultImplementor()
         {
             _mappingContainer = new Dictionary<Type, IResultMappingExport>();
+            _mappingContainerRuntime = new Dictionary<Type, IResultMappingExport>();
         }
 
         /// <summary>
@@ -33,7 +34,11 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return _mappingContainer.Aggregate(default(BigInteger), (p, c) => (p * 31) ^ c.Value.CacheHash); }
+            get
+            {
+                return _mappingContainer.Aggregate(default(BigInteger),
+                    (p, c) => ((p * 31) ^ c.Value.CacheHash));
+            }
         }
 
         /// <summary>
@@ -48,11 +53,14 @@ namespace Susanoo.Pipeline.Command.ResultSets
             IResultMappingExport value;
             if (!_mappingContainer.TryGetValue(resultType, out value))
             {
-                result = new DefaultResultMapping(resultType);
-                _mappingContainer.Add(resultType, result);
+                if (!_mappingContainerRuntime.TryGetValue(resultType, out value))
+                {
+                    result = new DefaultResultMapping(resultType);
+                    _mappingContainerRuntime.Add(resultType, result);
+                }
             }
 
-            return result;
+            return result ?? value;
         }
 
         /// <summary>

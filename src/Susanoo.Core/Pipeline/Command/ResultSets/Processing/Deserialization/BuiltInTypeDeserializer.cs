@@ -17,7 +17,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         /// <returns>dynamic.</returns>
         public static IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
         {
-            var resultSet = new List<object>();
+            var resultSet = new ListResult<TResult>();
 
             var fieldCount = reader.FieldCount;
             if (fieldCount > 0)
@@ -25,11 +25,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
                 while (reader.Read())
                 {
 
-                    resultSet.Add(reader.GetValue(0));
+                    resultSet.Add((TResult)reader.GetValue(0));
                 }
             }
 
-            return resultSet.Cast<TResult>();
+            return resultSet;
         }
     }
 }

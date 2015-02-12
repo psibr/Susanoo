@@ -49,7 +49,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return _mappingActions.Aggregate(HashBuilder.Seed, (i, pair) => (i * 31) ^ pair.Value.CacheHash); }
+            get { return -1; }
         }
 
         /// <summary>

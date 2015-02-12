@@ -167,7 +167,10 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         {
             var result = Compile(mapping, resultType);
 
-            return (reader, columnMeta) => (IEnumerable<TResult>)(result(reader, columnMeta));
+            Func<IDataReader, ColumnChecker, IEnumerable<TResult>> typedResult =
+                (reader, columnMeta) => (IEnumerable<TResult>)(result.Invoke(reader, columnMeta));
+
+            return typedResult;
         }
     }
 }
