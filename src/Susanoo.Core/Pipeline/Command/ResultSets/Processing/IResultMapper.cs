@@ -7,7 +7,7 @@ using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
 
-namespace Susanoo.Pipeline.Command.ResultSets.Mapping
+namespace Susanoo.Pipeline.Command.ResultSets.Processing
 {
     /// <summary>
     /// Performs the actual map operation between an IDataRecord and a result type.
@@ -30,7 +30,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// </summary>
         /// <param name="record">The record.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        new IEnumerable<TResult> MapResult(IDataReader record);
+        new IEnumerable<TResult> MapResult(IDataReader record); //Choosing to hide the non typed method.
     }
 
     /// <summary>

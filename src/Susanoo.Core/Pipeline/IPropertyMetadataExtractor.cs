@@ -7,7 +7,7 @@ using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
 #endregion
 
-namespace Susanoo.Pipeline.Command.ResultSets.Mapping
+namespace Susanoo.Pipeline
 {
     /// <summary>
     /// Describes the required methods for determining if a property can be mapped using Susanoo.
@@ -23,7 +23,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// <param name="whitelist">The whitelist.</param>
         /// <param name="blacklist">The blacklist.</param>
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
-        Dictionary<PropertyInfo, PropertyMap> FindAllowedProperties(
+        Dictionary<PropertyInfo, PropertyMapping> FindAllowedProperties(
             Type objectType,
             DescriptorActions actions = DescriptorActions.Read
                                         | DescriptorActions.Update

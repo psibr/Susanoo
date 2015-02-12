@@ -30,6 +30,7 @@ namespace Susanoo.SqlServer
             if (sqlParam == null)
                 throw new NotSupportedException("databaseManager is not using SqlClient as provider.");
 
+            sqlParam.ParameterName = name;
             sqlParam.Direction = direction;
             sqlParam.ResetDbType();
             sqlParam.SqlDbType = SqlDbType.Structured;

@@ -5,7 +5,7 @@
 // Last Modified By : Donovan Crone
 // Last Modified On : 09-03-2014
 // Original Implementation By: Jasmin Muharemovic
-// Adjusted to C# 4.0 BigInteger by Donovan Crone
+// Adjusted to C# 4.0 BigInteger by Ovan Crone
 // ***********************************************************************
 // ***********************************************************************
 
@@ -15,7 +15,7 @@ using System;
 using System.Numerics;
 using System.Text;
 
-namespace Susanoo.Pipeline
+namespace Susanoo
 {
 
     #endregion
@@ -84,7 +84,7 @@ namespace Susanoo.Pipeline
         private const ulong ReadSize = 16;
         private const ulong C1 = 0x87c37b91114253d5L;
         private const ulong C2 = 0x4cf5ad432745937fL;
-        internal static uint Seed = 866398230;
+        internal const uint Seed = 866398230;
         private ulong _length;
         // if want to start with a seed, create a constructor
         private ulong _h1;

@@ -80,7 +80,8 @@ namespace Susanoo
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         public static ICommandExpression<TFilter> IncludePropertyAsStructured<TFilter>(
-            this ICommandExpression<TFilter> commandExpression, Expression<Func<TFilter, object>> property, string typeName, Action<DbParameter> parameterOptions)
+            this ICommandExpression<TFilter> commandExpression,
+            Expression<Func<TFilter, object>> property, string typeName, Action<DbParameter> parameterOptions)
         {
             return IncludePropertyAsStructured(commandExpression, property.Name, typeName, parameterOptions);
         }

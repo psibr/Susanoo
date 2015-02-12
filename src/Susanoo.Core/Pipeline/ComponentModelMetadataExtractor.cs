@@ -13,7 +13,7 @@ using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
 #endregion
 
-namespace Susanoo.Pipeline.Command.ResultSets.Mapping
+namespace Susanoo.Pipeline
 {
     /// <summary>
     /// Default implementation of IPropertyMetadataExtractor that uses Component Model ColumnAttributes to resolve
@@ -32,7 +32,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">filterType</exception>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-        public Dictionary<PropertyInfo, PropertyMap> FindAllowedProperties(
+        public Dictionary<PropertyInfo, PropertyMapping> FindAllowedProperties(
             Type objectType,
             DescriptorActions actions = DescriptorActions.Read
                                         | DescriptorActions.Update
@@ -43,14 +43,14 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
             if (objectType == null)
                 throw new ArgumentNullException("objectType");
 
-            var actionable = new Dictionary<PropertyInfo, PropertyMap>();
+            var actionable = new Dictionary<PropertyInfo, PropertyMapping>();
 
             foreach (PropertyInfo pi in objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 object[] attributes = pi.GetCustomAttributes(true);
 
                 if (pi.CanWrite && IsActionableProperty(pi, attributes, actions))
-                    actionable.Add(pi, new PropertyMap(pi, ResolveAlias(pi, attributes)));
+                    actionable.Add(pi, new PropertyMapping(pi, ResolveAlias(pi, attributes)));
             }
 
             return actionable;

@@ -1,13 +1,8 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Numerics;
-using Susanoo.Pipeline.Command.ResultSets.Mapping;
-
-#endregion
 
 namespace Susanoo.Pipeline.Command.ResultSets.Processing
 {
@@ -25,6 +20,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         where TResult1 : new()
         where TResult2 : new()
     {
+        private const int ResultCount = 2;
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         private readonly
@@ -32,8 +28,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _resultExpression;
 
         private readonly IResultMapper[] _mappers;
-
-        private const int ResultCount = 2;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -99,7 +93,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult2>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-
             var results = new object[ResultCount];
 
             var commandExpression = CommandExpression;
@@ -157,7 +150,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-
             }
             return finalResults as Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>>;
@@ -208,6 +200,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         where TResult2 : new()
         where TResult3 : new()
     {
+        private const int ResultCount = 3;
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         private readonly
@@ -215,8 +208,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _resultExpression;
 
         private readonly IResultMapper[] _mappers;
-
-        private const int ResultCount = 3;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -285,7 +276,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult3>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-
             var results = new object[ResultCount];
 
             var commandExpression = CommandExpression;
@@ -314,7 +304,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             {
                 try
                 {
-
                     using (var record = databaseManager
                         .ExecuteDataReader(
                             commandExpression.CommandText,
@@ -346,7 +335,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-
             }
             return finalResults as Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
@@ -402,6 +390,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         where TResult3 : new()
         where TResult4 : new()
     {
+        private const int ResultCount = 4;
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         private readonly
@@ -409,8 +398,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _resultExpression;
 
         private readonly IResultMapper[] _mappers;
-
-        private const int ResultCount = 4;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -482,7 +469,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult4>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-
             var results = new object[ResultCount];
 
             var commandExpression = CommandExpression;
@@ -544,7 +530,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-
             }
             return finalResults as Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
@@ -605,6 +590,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         where TResult4 : new()
         where TResult5 : new()
     {
+        private const int ResultCount = 5;
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         private readonly
@@ -612,8 +598,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _resultExpression;
 
         private readonly IResultMapper[] _mappers;
-
-        private const int ResultCount = 5;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -688,7 +672,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult5>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-
             var results = new object[ResultCount];
 
             var commandExpression = CommandExpression;
@@ -752,7 +735,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-
             }
             return finalResults as Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
@@ -818,6 +800,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         where TResult5 : new()
         where TResult6 : new()
     {
+        private const int ResultCount = 6;
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         private readonly
@@ -825,8 +808,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _resultExpression;
 
         private readonly IResultMapper[] _mappers;
-
-        private const int ResultCount = 6;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -904,7 +885,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult6>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-
             var results = new object[ResultCount];
 
             var commandExpression = CommandExpression;
@@ -970,7 +950,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
-
             }
             return finalResults as Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>,
@@ -1042,6 +1021,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         where TResult6 : new()
         where TResult7 : new()
     {
+        private const int ResultCount = 7;
         private readonly ICommandExpression<TFilter> _commandExpression;
 
         private readonly
@@ -1049,8 +1029,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _resultExpression;
 
         private readonly IResultMapper[] _mappers;
-
-        private const int ResultCount = 7;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -1131,7 +1109,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult7>>
             Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
-
             var results = new object[ResultCount];
 
             var commandExpression = CommandExpression;

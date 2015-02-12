@@ -1,11 +1,11 @@
 ﻿#region
 
+using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Numerics;
-using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
 #endregion
 
@@ -31,21 +31,21 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         }
 
         /// <summary>
-        /// Gets the implementor this is the Bridge design pattern.
-        /// </summary>
-        /// <value>The implementor.</value>
-        protected IResultMappingImplementor<TResult> Implementor
-        {
-            get { return _implementor; }
-        }
-
-        /// <summary>
         /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public virtual BigInteger CacheHash
         {
             get { return Implementor.CacheHash; }
+        }
+
+        /// <summary>
+        /// Gets the implementor this is the Bridge design pattern.
+        /// </summary>
+        /// <value>The implementor.</value>
+        protected IResultMappingImplementor<TResult> Implementor
+        {
+            get { return _implementor; }
         }
 
         /// <summary>

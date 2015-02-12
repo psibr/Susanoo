@@ -2,36 +2,17 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Susanoo.Exceptions;
-using Susanoo.Pipeline.Command.ResultSets.Mapping;
-using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
-namespace Susanoo.Pipeline.Command.ResultSets.Processing
+namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
 {
     /// <summary>
-    /// Provides compilation and type resolution functionality for processors.
+    /// Provides compilation and deserialization for complex types.
     /// </summary>
-    public class ResultSetCompiler
+    public static class ComplexTypeDeserializer
     {
-        private readonly IDictionary<string, IPropertyMapping> _mapping;
-        private readonly Type _resultType;
-        private readonly Type _actualType;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ResultSetCompiler"/> class.
-        /// </summary>
-        /// <param name="mapping">The mapping.</param>
-        /// <param name="resultType">Type of the result.</param>
-        public ResultSetCompiler(ICommandResultMappingExport mapping, Type resultType)
-        {
-            _mapping = mapping.Export(resultType);
-            _resultType = resultType;
-            _actualType = resultType;
-        }
-
         private static readonly MethodInfo ReadMethod = typeof(IDataReader)
             .GetMethod("Read", BindingFlags.Public | BindingFlags.Instance);
 
@@ -39,16 +20,16 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Compiles mappings.
         /// </summary>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;System.Object&gt;&gt;.</returns>
-        public Func<IDataReader, ColumnChecker, object> Compile()
+        public static Func<IDataReader, ColumnChecker, object> Compile(ICommandResultMappingExport mapping, Type resultType)
         {
-            var listType = typeof(List<>).MakeGenericType(_resultType);
-            var listResultType = typeof(ListResult<>).MakeGenericType(_resultType);
+            var listType = typeof(List<>).MakeGenericType(resultType);
+            var listResultType = typeof(ListResult<>).MakeGenericType(resultType);
             var enumerableType = typeof(object);
 
-            MethodInfo addLastMethod = listType.GetMethod("Add", new[] { _resultType });
+            MethodInfo addLastMethod = listType.GetMethod("Add", new[] { resultType });
 
             //Get the properties we care about.
-            var mappings = _mapping;
+            var mappings = mapping.Export(resultType);
 
             var outerStatements = new List<Expression>();
             var innerStatements = new List<Expression>();
@@ -73,7 +54,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             #region Loop Code
 
             // var descriptor;
-            ParameterExpression descriptor = Expression.Variable(_actualType, "descriptor");
+            ParameterExpression descriptor = Expression.Variable(resultType, "descriptor");
 
             // if(!reader.Read) { return resultSet; }
             innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, ReadMethod)),
@@ -86,7 +67,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             // descriptor = new TResult();
             innerStatements.Add(Expression.Assign(
-                descriptor, Expression.New(_actualType)));
+                descriptor, Expression.New(resultType)));
 
             foreach (var pair in mappings)
             {
@@ -163,7 +144,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
-                    _resultType.Name,
+                    resultType.Name,
                     Guid.NewGuid().ToString().Replace("-", string.Empty)),
                     TypeAttributes.Public);
 
@@ -181,10 +162,10 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// </summary>
         /// <typeparam name="TResult">The type of the t result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>()
+        public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>(ICommandResultMappingExport mapping, Type resultType)
             where TResult : new()
         {
-            var result = Compile();
+            var result = Compile(mapping, resultType);
 
             return (reader, columnMeta) => (IEnumerable<TResult>)(result(reader, columnMeta));
         }

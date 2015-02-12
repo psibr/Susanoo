@@ -1,18 +1,11 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Dynamic;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Susanoo.Pipeline.Command.ResultSets.Mapping;
-
-#endregion
 
 namespace Susanoo.Pipeline.Command.ResultSets.Processing
 {
@@ -27,7 +20,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         : CommandProcessorWithResults<TFilter>, ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>
         where TResult : new()
     {
-
         private ColumnChecker _columnChecker;
 
         private readonly ICommandExpression<TFilter> _commandExpression;
@@ -42,9 +34,9 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             CommandResultExpression = mappings;
             _commandExpression = mappings.CommandExpression;
 
-            CompiledMapping = typeof(TResult) != typeof(object)
-                ? new ResultSetCompiler(mappings, typeof(TResult)).Compile<TResult>()
-                : DynamicConversion;
+            CompiledMapping = CommandManager
+                .DeserializerResolver
+                .Resolve<TResult>(mappings);
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -187,12 +179,12 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
-                TryRetrieveCacheResult(hashCode, out value);
+                object value;
+                cachedItemPresent = TryRetrieveCacheResult(hashCode, out value);
 
                 results = value as IEnumerable<TResult>;
 
-                cachedItemPresent = results != null;
+                cachedItemPresent = cachedItemPresent && results != null;
             }
 
             if (!cachedItemPresent)
@@ -218,7 +210,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 if (ResultCachingEnabled)
                     ResultCacheContainer.TryAdd(hashCode,
                         new CacheItem(results, ResultCachingMode, ResultCachingInterval));
-
             }
 
             return results ?? new LinkedList<TResult>();
@@ -246,49 +237,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
         {
             return (this as IResultMapper<TResult>).MapResult(record, ColumnReport, CompiledMapping);
-        }
-
-        /// <summary>
-        /// Dumps all columns into an expando for simple use cases.
-        /// </summary>
-        /// <param name="reader">The reader.</param>
-        /// <param name="checker">The column checker.</param>
-        /// <returns>dynamic.</returns>
-        private static IEnumerable<TResult> DynamicConversion(IDataReader reader, ColumnChecker checker)
-        {
-            var resultSet = new ListResult<object>();
-            checker = checker ?? new ColumnChecker();
-
-            int fieldCount = reader.FieldCount;
-
-            bool needsFieldNames = fieldCount > checker.Count;
-
-            while (reader.Read())
-            {
-                object[] values;
-                if (needsFieldNames)
-                {
-                    List<object> obj = new List<object>();
-                    for (var i = 0; i < fieldCount; i++)
-                    {
-                        checker.HasColumn(reader, i);
-                        obj.Add(reader.GetValue(i));
-                    }
-
-                    values = obj.ToArray();
-                }
-                else
-                {
-                    values = new object[fieldCount];
-                    reader.GetValues(values);
-                }
-
-                resultSet.Add(new DynamicRow(checker, values));
-            }
-
-            resultSet.BuildReport(checker);
-
-            return resultSet as IEnumerable<TResult>;
         }
 
         /// <summary>
@@ -368,12 +316,12 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
 
-                object value = null;
-                TryRetrieveCacheResult(hashCode, out value);
+                object value;
+                cachedItemPresent = TryRetrieveCacheResult(hashCode, out value);
 
                 results = value as IEnumerable<TResult>;
 
-                cachedItemPresent = results != null;
+                cachedItemPresent = cachedItemPresent && results != null;
             }
 
             if (!cachedItemPresent)

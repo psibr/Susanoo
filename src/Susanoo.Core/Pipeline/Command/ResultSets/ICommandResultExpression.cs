@@ -1,10 +1,10 @@
 ﻿#region
 
-using System;
-using System.Collections.Generic;
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
 using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
+using System;
+using System.Collections.Generic;
 
 #endregion
 
@@ -24,14 +24,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         ICommandExpression<TFilter> CommandExpression { get; }
 
         /// <summary>
-        /// Exports a results mappings for processing.
-        /// </summary>
-        /// <typeparam name="TResultType">The type of the result type.</typeparam>
-        /// <returns>IDictionary&lt;System.String, IPropertyMapping&gt;.</returns>
-        IDictionary<string, IPropertyMapping> Export<TResultType>()
-            where TResultType : new();
-
-        /// <summary>
         /// Converts to a single result expression.
         /// </summary>
         /// <typeparam name="TSingle">The type of the single.</typeparam>
@@ -39,6 +31,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>()
             where TSingle : new();
     }
+
     /// <summary>
     /// Exposes property mapping export capabilities.
     /// </summary>
@@ -283,27 +276,4 @@ namespace Susanoo.Pipeline.Command.ResultSets
         ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> Realize(
             string name = null);
     }
-
-    /// <summary>
-    /// Extension methods for ICommandResultExpressions
-    /// </summary>
-    public static class CommandResultExtensions
-    {
-
-        /// <summary>
-        /// Gets a matching processor.
-        /// </summary>
-        /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="resultExpression">The result expression.</param>
-        /// <returns>IResultMapper&lt;TResult&gt;.</returns>
-        public static IResultMapper<TResult> GetProcessor<TFilter, TResult>(this
-            ICommandResultExpressionCore<TFilter> resultExpression)
-            where TResult : new()
-        {
-            return SingleResultSetCommandProcessor<TFilter, TResult>.BuildOrRegenResultMapper(
-                resultExpression.ToSingleResult<TResult>());
-        }
-    }
 }
-

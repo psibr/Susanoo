@@ -4,9 +4,8 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Susanoo.Pipeline.Command.ResultSets.Processing;
 
-namespace Susanoo
+namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
 {
     /// <summary>
     /// Represents values from an IDataRecord object.
@@ -22,7 +21,7 @@ namespace Susanoo
         /// <param name="columns">The columns Susanoo has discovered and will map to properties.</param>
         public DynamicRow(ColumnChecker columns)
         {
-            _columns = columns;
+            _columns = columns ?? new ColumnChecker();
             _values = new object[_columns.Count];
         }
 
@@ -36,7 +35,7 @@ namespace Susanoo
         /// </exception>
         public DynamicRow(ColumnChecker columns, object[] values)
         {
-            if(columns.Count != values.Length)
+            if (columns.Count != values.Length)
                 throw new IndexOutOfRangeException();
 
             _columns = columns;
@@ -98,6 +97,44 @@ namespace Susanoo
                 throw new KeyNotFoundException(columnName + " is not available.");
 
             _values[ordinal] = value;
+        }
+
+        /// <summary>
+        /// Gets the length of the values array.
+        /// </summary>
+        /// <value>The length.</value>
+        public int Length
+        {
+            get { return _values.Length; }
+        }
+
+        /// <summary>
+        /// Returns the array of values in the row.
+        /// </summary>
+        /// <returns>System.Object[].</returns>
+        public object[] ToArray()
+        {
+            return _values;
+        }
+
+        /// <summary>
+        /// Converts to a dictionary (Only named columns)
+        /// </summary>
+        /// <returns>Dictionary&lt;System.String, System.Object&gt;.</returns>
+        public Dictionary<string, object> ToDictionary()
+        {
+            var items = new List<KeyValuePair<string, object>>();
+
+            for (var i = 0; i < _values.Length; i++)
+            {
+                string columnName;
+                if (_columns.TryGetValue(i, out columnName))
+                    items.Add(new KeyValuePair<string, object>(columnName, _values[i]));
+            }
+
+            return items.ToDictionary(k => k.Key, v => v.Value);
+
+
         }
     }
 

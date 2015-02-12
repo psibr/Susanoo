@@ -18,7 +18,7 @@ namespace Susanoo
     /// <summary>
     /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    public partial class DatabaseManager
+    public partial class DatabaseManager : IDatabaseManager, IDisposable
     {
         private DbConnection _connection;
         private bool _explicitlyOpened;
@@ -418,7 +418,7 @@ namespace Susanoo
     /// <summary>
     /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    public partial class DatabaseManager : IDatabaseManager, IDisposable
+    public partial class DatabaseManager 
     {
         /// <summary>
         /// Executes the data reader asynchronously.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
@@ -22,6 +23,24 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         public DefaultResultMapping(Type resultType)
         {
             _resultType = resultType;
+            
+            MapDeclarativeProperties();
+        }
+
+        /// <summary>
+        /// Maps the declarative properties.
+        /// </summary>
+        public void MapDeclarativeProperties()
+        {
+            foreach (var item in new ComponentModelMetadataExtractor()
+                .FindAllowedProperties(_resultType, DescriptorActions.Read))
+            {
+                var configuration = new PropertyMappingConfiguration(item.Key);
+
+                configuration.UseAlias(item.Value.ActiveAlias);
+
+                _mappingActions.Add(item.Key.Name, configuration);
+            }
         }
 
         /// <summary>
@@ -30,7 +49,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return 0; }
+            get { return _mappingActions.Aggregate(HashBuilder.Seed, (i, pair) => (i * 31) ^ pair.Value.CacheHash); }
         }
 
         /// <summary>
@@ -39,18 +58,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         public IDictionary<string, IPropertyMapping> Export()
         {
-            foreach (var item in new ComponentModelMetadataExtractor()
-                .FindAllowedProperties(_resultType, DescriptorActions.Read))
-            {
-                var item1 = item;
-
-                var configuration = new PropertyMappingConfiguration(item1.Key);
-
-                configuration.UseAlias(item1.Value.ActiveAlias);
-
-                _mappingActions.Add(item.Key.Name, configuration);
-            }
-
             return _mappingActions;
         }
 

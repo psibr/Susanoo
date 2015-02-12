@@ -10,31 +10,21 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping.Properties
     /// <summary>
     /// Represents basic information about a property including its reflection information and alias.
     /// </summary>
-    public class PropertyMap
+    public class PropertyMapping
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyMap" /> class.
+        /// Initializes a new instance of the <see cref="PropertyMapping" /> class.
         /// </summary>
         /// <param name="property">The property.</param>
         /// <param name="alias">The alias.</param>
         /// <exception cref="System.ArgumentNullException">property</exception>
-        public PropertyMap(PropertyInfo property, string alias)
+        public PropertyMapping(PropertyInfo property, string alias = null)
         {
             if (property == null)
                 throw new ArgumentNullException("property");
 
             PropertyMetadata = property;
             ActiveAlias = (!string.IsNullOrWhiteSpace(alias)) ? alias : property.Name;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyMap" /> class.
-        /// </summary>
-        /// <param name="property">The property.</param>
-        /// <exception cref="System.ArgumentNullException">property</exception>
-        public PropertyMap(PropertyInfo property)
-            : this(property, null)
-        {
         }
 
         /// <summary>

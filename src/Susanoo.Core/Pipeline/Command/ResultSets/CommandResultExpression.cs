@@ -1,11 +1,11 @@
 ﻿#region
 
-using System;
-using System.Collections.Generic;
-using System.Numerics;
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
 using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
 
 #endregion
 
@@ -47,21 +47,21 @@ namespace Susanoo.Pipeline.Command.ResultSets
         public virtual ICommandExpression<TFilter> CommandExpression { get; private set; }
 
         /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public virtual BigInteger CacheHash
+        {
+            get { return _implementor.CacheHash ^ (CommandExpression.CacheHash * 31); }
+        }
+
+        /// <summary>
         /// Gets the implementor of the Commandresult functionality.
         /// </summary>
         /// <value>The implementor.</value>
         protected virtual ICommandResultImplementor<TFilter> Implementor
         {
             get { return _implementor; }
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash
-        {
-            get { return _implementor.CacheHash ^ (CommandExpression.CacheHash*31); }
         }
 
         /// <summary>
@@ -72,17 +72,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         public IDictionary<string, IPropertyMapping> Export(Type resultType)
         {
             return Implementor.Export(resultType);
-        }
-
-        /// <summary>
-        /// Exports this instance to property mappings.
-        /// </summary>
-        /// <typeparam name="TResultType">The type of the t result type.</typeparam>
-        /// <returns>IDictionary&lt;System.String, IPropertyMappingConfiguration&lt;System.Data.IDataRecord&gt;&gt;.</returns>
-        public virtual IDictionary<string, IPropertyMapping> Export<TResultType>()
-            where TResultType : new()
-        {
-            return Implementor.Export<TResultType>();
         }
 
         /// <summary>
@@ -127,6 +116,42 @@ namespace Susanoo.Pipeline.Command.ResultSets
         }
 
         /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get { return (base.CacheHash * 31) ^ typeof(TResult).AssemblyQualifiedName.GetHashCode(); }
+        }
+
+        /// <summary>
+        /// Builds the or regens a command processor from cache.
+        /// </summary>
+        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="name">The name.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        public static ICommandProcessor<TFilter, TResult> BuildOrRegenCommandProcessor(
+            ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
+        {
+            ICommandProcessorWithResults instance;
+            SingleResultSetCommandProcessor<TFilter, TResult> result = null;
+
+            if (name == null)
+            {
+                if (CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
+                    result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+            }
+            else
+            {
+                if (CommandManager.TryGetCommandProcessor(name, out instance))
+                    result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+            }
+
+            return result ??
+                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultExpression, name);
+        }
+
+        /// <summary>
         /// Provide mapping actions and options for a result set
         /// </summary>
         /// <param name="mappings">The mappings.</param>
@@ -137,15 +162,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
             Implementor.StoreMapping(mappings);
 
             return this;
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash
-        {
-            get { return (base.CacheHash*31) ^ typeof (TResult).AssemblyQualifiedName.GetHashCode(); }
         }
 
         /// <summary>
@@ -166,33 +182,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         public override ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>()
         {
             return new CommandResultExpression<TFilter, TSingle>(CommandExpression);
-        }
-
-        /// <summary>
-        /// Builds the or regens a command processor from cache.
-        /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
-        /// <param name="name">The name.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public static ICommandProcessor<TFilter, TResult> BuildOrRegenCommandProcessor(
-            ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
-        {
-            ICommandProcessorWithResults instance;
-            SingleResultSetCommandProcessor<TFilter, TResult> result = null;
-
-            if (name == null)
-            {
-                if (CommandManager.TryGetCommandProcessor(commandResultExpression.CacheHash, out instance))
-                    result = (SingleResultSetCommandProcessor<TFilter, TResult>) instance;
-            }
-            else
-            {
-                if (CommandManager.TryGetCommandProcessor(name, out instance))
-                    result = (SingleResultSetCommandProcessor<TFilter, TResult>) instance;
-            }
-
-            return result ??
-                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultExpression, name);
         }
     }
 
@@ -217,6 +206,20 @@ namespace Susanoo.Pipeline.Command.ResultSets
         }
 
         /// <summary>
+        /// Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public override BigInteger CacheHash
+        {
+            get
+            {
+                return (base.CacheHash * 31)
+                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
+                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode();
+            }
+        }
+
+        /// <summary>
         /// Provide mapping actions and options for a result set
         /// </summary>
         /// <typeparam name="TResultType">The type of the result.</typeparam>
@@ -232,20 +235,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         }
 
         /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash
-        {
-            get
-            {
-                return (base.CacheHash*31)
-                       ^ typeof (TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof (TResult2).AssemblyQualifiedName.GetHashCode();
-            }
-        }
-
-        /// <summary>
         /// Realizes the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
@@ -256,7 +245,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2> result;
 
             if (CommandManager.TryGetCommandProcessor(CacheHash, out instance))
-                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>) instance;
+                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>)instance;
             else
                 result = new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>(this, name);
 
@@ -295,10 +284,10 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             get
             {
-                return (base.CacheHash*31)
-                       ^ HashBuilder.Compute(typeof (TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult3).AssemblyQualifiedName);
+                return (base.CacheHash * 31)
+                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName);
             }
         }
 
@@ -328,7 +317,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3> result;
 
             if (CommandManager.TryGetCommandProcessor(CacheHash, out instance))
-                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>) instance;
+                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>)instance;
             else
                 result = new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>(this, name);
 
@@ -369,11 +358,11 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             get
             {
-                return (base.CacheHash*31)
-                       ^ HashBuilder.Compute(typeof (TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult4).AssemblyQualifiedName);
+                return (base.CacheHash * 31)
+                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName);
             }
         }
 
@@ -403,7 +392,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> result;
 
             if (CommandManager.TryGetCommandProcessor(CacheHash, out instance))
-                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>) instance;
+                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>)instance;
             else
                 result = new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>(this,
                     name);
@@ -448,12 +437,12 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             get
             {
-                return (base.CacheHash*31)
-                       ^ HashBuilder.Compute(typeof (TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult4).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult5).AssemblyQualifiedName);
+                return (base.CacheHash * 31)
+                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName);
             }
         }
 
@@ -534,13 +523,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             get
             {
-                return (base.CacheHash*31)
-                       ^ HashBuilder.Compute(typeof (TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult4).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult5).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult6).AssemblyQualifiedName);
+                return (base.CacheHash * 31)
+                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult6).AssemblyQualifiedName);
             }
         }
 
@@ -576,7 +565,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
                 result =
                     (
                         MultipleResultSetCommandProcessor
-                            <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>) instance;
+                            <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>)instance;
             else
                 result =
                     new MultipleResultSetCommandProcessor
@@ -627,14 +616,14 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             get
             {
-                return (base.CacheHash*31)
-                       ^ HashBuilder.Compute(typeof (TResult1).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult2).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult3).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult4).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult5).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult6).AssemblyQualifiedName)
-                       ^ HashBuilder.Compute(typeof (TResult7).AssemblyQualifiedName);
+                return (base.CacheHash * 31)
+                       ^ HashBuilder.Compute(typeof(TResult1).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult2).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult3).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult4).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult5).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult6).AssemblyQualifiedName)
+                       ^ HashBuilder.Compute(typeof(TResult7).AssemblyQualifiedName);
             }
         }
 
@@ -670,7 +659,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
                 result =
                     (
                         MultipleResultSetCommandProcessor
-                            <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>) instance;
+                            <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>)instance;
             else
                 result =
                     new MultipleResultSetCommandProcessor

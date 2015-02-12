@@ -13,7 +13,7 @@ namespace Susanoo.Tests.Scalar
     [TestFixture]
     public class ScalarTests
     {
-        private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
+        private readonly DatabaseManager DatabaseManager = Setup.DatabaseManager;
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -25,7 +25,7 @@ namespace Susanoo.Tests.Scalar
         {
             var result = CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize()
-                .ExecuteScalar<int?>(_databaseManager);
+                .ExecuteScalar<int?>(DatabaseManager);
 
             Assert.AreEqual(result, null);
         }
@@ -36,7 +36,7 @@ namespace Susanoo.Tests.Scalar
         {
             CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize()
-                .ExecuteScalar<int>(_databaseManager);
+                .ExecuteScalar<int>(DatabaseManager);
         }
     }
 }

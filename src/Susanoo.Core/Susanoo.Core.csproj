@@ -93,9 +93,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
-    <Compile Include="DynamicRow.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\BuiltInTypeDeserializer.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DynamicRow.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\CommandResultExtensions.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Mapping\IResultMappingExport.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Mapping\IResultMappingImplementor.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\IPropertyMapping.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\CacheItem.cs" />
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="Exceptions\ColumnBindingException.cs" />
@@ -107,16 +112,19 @@
     <Compile Include="Pipeline\Command\ResultSets\CommandResultExpression.cs" />
     <Compile Include="Pipeline\Command\ResultSets\CommandResultImplementor.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\DefaultResultMapping.cs" />
-    <Compile Include="Pipeline\Murmur3.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DeserializerResolver.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DynamicRowDeserializer.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\IDeserializerResolver.cs" />
+    <Compile Include="Murmur3.cs" />
     <Compile Include="Pipeline\Command\ResultSets\ICommandResultExpression.cs" />
     <Compile Include="Pipeline\Command\ResultSets\ICommandResultImplementor.cs" />
     <Compile Include="Pipeline\IFluentPipelineFragment.cs" />
-    <Compile Include="Pipeline\Command\ResultSets\Mapping\IResultMapper.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\IResultMapper.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\ListResult.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\MultipleResultSetCommandProcessor.cs" />
     <Compile Include="Pipeline\Command\NoResultSetCommandProcessor.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\ResultMappingImplementor.cs" />
-    <Compile Include="Pipeline\Command\ResultSets\Processing\ResultSetCompiler.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\ComplexTypeDeserializer.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\SingleResultSetCommandProcessor.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\ResultMappingExpression.cs" />
     <Compile Include="DatabaseManager.cs" />
@@ -128,11 +136,11 @@
     <Compile Include="Pipeline\Command\ICommandExpressionBuilder.cs" />
     <Compile Include="IDatabaseManager.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\IPropertyMappingConfiguration.cs" />
-    <Compile Include="Pipeline\Command\ResultSets\Mapping\IPropertyMetadataExtractor.cs" />
-    <Compile Include="Pipeline\Command\ResultSets\Mapping\ComponentModelMetadataExtractor.cs" />
+    <Compile Include="Pipeline\IPropertyMetadataExtractor.cs" />
+    <Compile Include="Pipeline\ComponentModelMetadataExtractor.cs" />
     <Compile Include="DescriptorActions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMap.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMapping.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMappingConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>

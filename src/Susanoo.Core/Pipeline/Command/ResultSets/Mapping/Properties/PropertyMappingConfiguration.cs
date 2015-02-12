@@ -84,11 +84,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping.Properties
         /// <summary>
         /// Uses the specified alias when mapping from the data call.
         /// </summary>
-        /// <param name="alias">The alias.</param>
+        /// <param name="columnNameAlias">The alias.</param>
         /// <returns>Susanoo.IResultMappingExpression&lt;TFilter,TResult&gt;.</returns>
-        public virtual IPropertyMappingConfiguration UseAlias(string alias)
+        public virtual IPropertyMappingConfiguration UseAlias(string columnNameAlias)
         {
-            ActiveAlias = alias;
+            ActiveAlias = columnNameAlias;
 
             return this;
         }

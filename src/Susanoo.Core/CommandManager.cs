@@ -1,5 +1,7 @@
 ﻿#region
 
+using Susanoo.Pipeline.Command;
+using Susanoo.Pipeline.Command.ResultSets.Processing;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,9 +11,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Transactions;
-using Susanoo.Pipeline.Command;
-using Susanoo.Pipeline.Command.ResultSets.Processing;
+using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 
 #endregion
 
@@ -20,7 +20,7 @@ namespace Susanoo
     /// <summary>
     /// This class is used as the single entry point when using with Susanoo.
     /// </summary>
-    public static class CommandManager
+    public static partial class CommandManager
     {
         private static readonly IDictionary<Type, DbType> BuiltinTypeConversions =
             new ConcurrentDictionary<Type, DbType>(new Dictionary<Type, DbType>
@@ -61,6 +61,34 @@ namespace Susanoo
                 {typeof (DateTimeOffset?), DbType.DateTimeOffset}
             });
 
+        private static readonly ConcurrentDictionary<BigInteger, ICommandProcessorWithResults> RegisteredCommandProcessors =
+                    new ConcurrentDictionary<BigInteger, ICommandProcessorWithResults>();
+
+        private static readonly ConcurrentDictionary<string, ICommandProcessorWithResults> NamedCommandProcessors =
+                    new ConcurrentDictionary<string, ICommandProcessorWithResults>();
+
+        /// <summary>
+        /// Gets the expression assembly that contains runtime compiled methods used for mappings.
+        /// </summary>
+        /// <value>The expression assembly.</value>
+        private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
+            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
+
+        /// <summary>
+        /// The module builder for the dynamic assembly.
+        /// </summary>
+        private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
+            .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
+
+        /// <summary>
+        /// Gets the dynamic namespace.
+        /// </summary>
+        /// <value>The dynamic namespace.</value>
+        internal static ModuleBuilder DynamicNamespace
+        {
+            get { return ModuleBuilder; }
+        }
+
         /// <summary>
         /// Handles exceptions in execution.
         /// </summary>
@@ -72,7 +100,6 @@ namespace Susanoo
             Exception ex,
             DbParameter[] parameters)
         {
-
             var applicable = RegisteredExceptionHandlers
                 .Where(handler => handler.ConditionFunc(commandExpressionInfo, ex, parameters))
                 .ToList();
@@ -88,78 +115,6 @@ namespace Susanoo
             {
                 throw ex;
             }
-
-        }
-
-        private static readonly IList<ExceptionHandler> RegisteredExceptionHandlers = new List<ExceptionHandler>();
-
-        /// <summary>
-        /// Registers the exception handler.
-        /// </summary>
-        /// <param name="handler">The handler.</param>
-        public static void RegisterExecutionExceptionHandler(ExceptionHandler handler)
-        {
-            RegisteredExceptionHandlers.Add(handler);
-        }
-
-        private static ICommandExpressionBuilder _commandBuilder = new CommandBuilder();
-
-        private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
-            new DatabaseManager(connectionStringName);
-
-        private static readonly ConcurrentDictionary<BigInteger, ICommandProcessorWithResults> RegisteredCommandProcessors =
-            new ConcurrentDictionary<BigInteger, ICommandProcessorWithResults>();
-
-        private static readonly ConcurrentDictionary<string, ICommandProcessorWithResults> NamedCommandProcessors =
-            new ConcurrentDictionary<string, ICommandProcessorWithResults>();
-
-        /// <summary>
-        /// Gets the commander.
-        /// </summary>
-        /// <value>The commander.</value>
-        public static ICommandExpressionBuilder Commander
-        {
-            get { return _commandBuilder; }
-        }
-
-        /// <summary>
-        /// Gets the dynamic namespace.
-        /// </summary>
-        /// <value>The dynamic namespace.</value>
-        internal static ModuleBuilder DynamicNamespace
-        {
-            get { return ModuleBuilder; }
-        }
-
-        /// <summary>
-        /// Gets the database manager.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        /// <returns>IDatabaseManager.</returns>
-        /// <value>The database manager.</value>
-        public static IDatabaseManager BuildDatabaseManager(string connectionString)
-        {
-            return _databaseManagerFactoryMethod(connectionString);
-        }
-
-        /// <summary>
-        /// Registers the database manager.
-        /// </summary>
-        /// <param name="databaseManagerFactoryMethod">The database manager factory method.</param>
-        public static void RegisterDatabaseManagerFactory(Func<string, IDatabaseManager> databaseManagerFactoryMethod)
-        {
-            if (databaseManagerFactoryMethod != null)
-                _databaseManagerFactoryMethod = databaseManagerFactoryMethod;
-        }
-
-        /// <summary>
-        /// Registers a command builder for the CommandManager to use when building commands.
-        /// This is an ideal extension point for providing default command options.
-        /// </summary>
-        /// <param name="builder">The builder.</param>
-        public static void RegisterCommandBuilder(ICommandExpressionBuilder builder)
-        {
-            _commandBuilder = builder;
         }
 
         /// <summary>
@@ -172,7 +127,7 @@ namespace Susanoo
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         public static ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
-            return Commander
+            return CommandBuilder
                 .DefineCommand<TFilter>(commandText, commandType);
         }
 
@@ -185,7 +140,7 @@ namespace Susanoo
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         public static ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
-            return Commander
+            return CommandBuilder
                 .DefineCommand(commandText, commandType);
         }
 
@@ -265,7 +220,7 @@ namespace Susanoo
         /// <exception cref="System.ArgumentNullException">processor</exception>
         public static void ClearColumnIndexInfo(ICommandProcessorWithResults processor)
         {
-            if(processor == null)
+            if (processor == null)
                 throw new ArgumentNullException("processor");
 
             processor.ClearColumnIndexInfo();
@@ -301,18 +256,88 @@ namespace Susanoo
         {
             ExpressionAssembly.Save(assemblyFileName);
         }
+    }
+
+    //IoC Methods
+    public static partial class CommandManager
+    {
+        private static readonly IList<ExceptionHandler> RegisteredExceptionHandlers = new List<ExceptionHandler>();
+
+        private static ICommandExpressionBuilder _commandBuilder = new CommandBuilder();
+
+        private  static IDeserializerResolver _deserializerResolver = new DeserializerResolver();
+
+        private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
+                    new DatabaseManager(connectionStringName);
 
         /// <summary>
-        /// Gets the expression assembly that contains runtime compiled methods used for mappings.
+        /// Gets the command builder.
         /// </summary>
-        /// <value>The expression assembly.</value>
-        private static readonly AssemblyBuilder ExpressionAssembly = AppDomain.CurrentDomain
-            .DefineDynamicAssembly(new AssemblyName("Susanoo.DynamicExpression"), AssemblyBuilderAccess.RunAndSave);
+        /// <value>The command builder.</value>
+        public static ICommandExpressionBuilder CommandBuilder
+        {
+            get { return _commandBuilder; }
+        }
 
         /// <summary>
-        /// The module builder for the dynamic assembly.
+        /// Gets the deserializer resolver.
         /// </summary>
-        private static readonly ModuleBuilder ModuleBuilder = ExpressionAssembly
-            .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
+        /// <value>The deserializer resolver.</value>
+        public static IDeserializerResolver DeserializerResolver
+        {
+            get { return _deserializerResolver; }
+        }
+
+        /// <summary>
+        /// Registers an exception handler.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        public static void RegisterExecutionExceptionHandler(ExceptionHandler handler)
+        {
+            RegisteredExceptionHandlers.Add(handler);
+        }
+
+        /// <summary>
+        /// Registers the database manager.
+        /// </summary>
+        /// <param name="databaseManagerFactoryMethod">The database manager factory method.</param>
+        [Obsolete("Build your own instance.", false)]
+        public static void RegisterDatabaseManagerFactory(Func<string, IDatabaseManager> databaseManagerFactoryMethod)
+        {
+            if (databaseManagerFactoryMethod != null)
+                _databaseManagerFactoryMethod = databaseManagerFactoryMethod;
+        }
+
+        /// <summary>
+        /// Registers a command builder for the CommandManager to use when building commands.
+        /// This is an ideal extension point for providing default command options.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
+        public static void RegisterCommandBuilder(ICommandExpressionBuilder builder)
+        {
+            _commandBuilder = builder;
+        }
+
+        /// <summary>
+        /// Registers a DeserializerResolver for the CommandManager to use when building commands.
+        /// This is an ideal extension point for extending or modifying deserialization rules.
+        /// </summary>
+        /// <param name="resolver">The resolver.</param>
+        public static void RegisterDeserializerResolver(IDeserializerResolver resolver)
+        {
+            _deserializerResolver = resolver;
+        }
+
+        /// <summary>
+        /// Gets the database manager.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <returns>IDatabaseManager.</returns>
+        /// <value>The database manager.</value>
+        [Obsolete("Build your own instance.", false)]
+        public static IDatabaseManager BuildDatabaseManager(string connectionString)
+        {
+            return _databaseManagerFactoryMethod(connectionString);
+        }
     }
 }
