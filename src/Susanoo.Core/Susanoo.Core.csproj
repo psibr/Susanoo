@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
+    <Compile Include="ISusanooBootstrapper.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\BuiltInTypeDeserializer.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DynamicRow.cs" />
     <Compile Include="ExceptionHandler.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMapping.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMappingConfiguration.cs" />
+    <Compile Include="SusanooBootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Key.snk" />

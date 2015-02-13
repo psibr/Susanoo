@@ -3,6 +3,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using NUnit.Framework;
 
 #endregion
@@ -37,6 +38,7 @@ namespace Susanoo.Tests.Scalar
             CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize()
                 .ExecuteScalar<int>(DatabaseManager);
+
         }
     }
 }

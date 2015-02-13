@@ -2,6 +2,7 @@
 
 using Susanoo.Pipeline.Command;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
+using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 
 #endregion
 
@@ -100,21 +100,7 @@ namespace Susanoo
             Exception ex,
             DbParameter[] parameters)
         {
-            var applicable = RegisteredExceptionHandlers
-                .Where(handler => handler.ConditionFunc(commandExpressionInfo, ex, parameters))
-                .ToList();
-
-            if (applicable.Any())
-            {
-                foreach (var handler in applicable)
-                {
-                    handler.Handler(commandExpressionInfo, ex, parameters);
-                }
-            }
-            else
-            {
-                throw ex;
-            }
+            _bootstrapper.OnExecutionException(commandExpressionInfo, ex, parameters);
         }
 
         /// <summary>
@@ -261,14 +247,7 @@ namespace Susanoo
     //IoC Methods
     public static partial class CommandManager
     {
-        private static readonly IList<ExceptionHandler> RegisteredExceptionHandlers = new List<ExceptionHandler>();
-
-        private static ICommandExpressionBuilder _commandBuilder = new CommandBuilder();
-
-        private  static IDeserializerResolver _deserializerResolver = new DeserializerResolver();
-
-        private static Func<string, IDatabaseManager> _databaseManagerFactoryMethod = connectionStringName =>
-                    new DatabaseManager(connectionStringName);
+        private static ISusanooBootstrapper _bootstrapper = new SusanooBootstrapper();
 
         /// <summary>
         /// Gets the command builder.
@@ -276,7 +255,7 @@ namespace Susanoo
         /// <value>The command builder.</value>
         public static ICommandExpressionBuilder CommandBuilder
         {
-            get { return _commandBuilder; }
+            get { return _bootstrapper.RetrieveCommandBuilder(); }
         }
 
         /// <summary>
@@ -285,59 +264,20 @@ namespace Susanoo
         /// <value>The deserializer resolver.</value>
         public static IDeserializerResolver DeserializerResolver
         {
-            get { return _deserializerResolver; }
+            get { return _bootstrapper.RetrieveDeserializerResolver(); }
         }
 
         /// <summary>
-        /// Registers an exception handler.
+        /// Registers a bootstrapper which provides extension points in susanoo.
         /// </summary>
-        /// <param name="handler">The handler.</param>
-        public static void RegisterExecutionExceptionHandler(ExceptionHandler handler)
+        /// <param name="bootstrapper">The bootstrapper.</param>
+        /// <exception cref="System.ArgumentNullException">bootstrapper</exception>
+        public static void RegisterBootstrapper(ISusanooBootstrapper bootstrapper)
         {
-            RegisteredExceptionHandlers.Add(handler);
-        }
+            if (bootstrapper == null)
+                throw new ArgumentNullException("bootstrapper");
 
-        /// <summary>
-        /// Registers the database manager.
-        /// </summary>
-        /// <param name="databaseManagerFactoryMethod">The database manager factory method.</param>
-        [Obsolete("Build your own instance.", false)]
-        public static void RegisterDatabaseManagerFactory(Func<string, IDatabaseManager> databaseManagerFactoryMethod)
-        {
-            if (databaseManagerFactoryMethod != null)
-                _databaseManagerFactoryMethod = databaseManagerFactoryMethod;
-        }
-
-        /// <summary>
-        /// Registers a command builder for the CommandManager to use when building commands.
-        /// This is an ideal extension point for providing default command options.
-        /// </summary>
-        /// <param name="builder">The builder.</param>
-        public static void RegisterCommandBuilder(ICommandExpressionBuilder builder)
-        {
-            _commandBuilder = builder;
-        }
-
-        /// <summary>
-        /// Registers a DeserializerResolver for the CommandManager to use when building commands.
-        /// This is an ideal extension point for extending or modifying deserialization rules.
-        /// </summary>
-        /// <param name="resolver">The resolver.</param>
-        public static void RegisterDeserializerResolver(IDeserializerResolver resolver)
-        {
-            _deserializerResolver = resolver;
-        }
-
-        /// <summary>
-        /// Gets the database manager.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        /// <returns>IDatabaseManager.</returns>
-        /// <value>The database manager.</value>
-        [Obsolete("Build your own instance.", false)]
-        public static IDatabaseManager BuildDatabaseManager(string connectionString)
-        {
-            return _databaseManagerFactoryMethod(connectionString);
+            _bootstrapper = bootstrapper;
         }
     }
 }
