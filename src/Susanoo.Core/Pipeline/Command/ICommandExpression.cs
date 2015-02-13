@@ -120,8 +120,7 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult> DefineResults<TResult>()
-            where TResult : new();
+        ICommandResultExpression<TFilter, TResult> DefineResults<TResult>();
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).
@@ -129,9 +128,7 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TResult1">The type of the result1.</typeparam>
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2> DefineResults<TResult1, TResult2>()
-            where TResult1 : new()
-            where TResult2 : new();
+        ICommandResultExpression<TFilter, TResult1, TResult2> DefineResults<TResult1, TResult2>();
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).
@@ -140,10 +137,7 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
         /// <typeparam name="TResult3">The type of the result3.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResults<TResult1, TResult2, TResult3>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new();
+        ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResults<TResult1, TResult2, TResult3>();
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).
@@ -154,11 +148,7 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TResult4">The type of the result4.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResults
-            <TResult1, TResult2, TResult3, TResult4>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new();
+            <TResult1, TResult2, TResult3, TResult4>();
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).
@@ -170,12 +160,7 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TResult5">The type of the result5.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResults
-            <TResult1, TResult2, TResult3, TResult4, TResult5>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new()
-            where TResult5 : new();
+            <TResult1, TResult2, TResult3, TResult4, TResult5>();
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).
@@ -188,13 +173,7 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TResult6">The type of the result6.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> DefineResults
-            <TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new()
-            where TResult5 : new()
-            where TResult6 : new();
+            <TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>();
 
         /// <summary>
         /// Defines the result mappings (Moves to next Step in Fluent API).
@@ -208,14 +187,7 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TResult7">The type of the result7.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-            DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new()
-            where TResult5 : new()
-            where TResult6 : new()
-            where TResult7 : new();
+            DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>();
     }
 
     /// <summary>

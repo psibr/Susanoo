@@ -10,7 +10,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface IResultMappingImplementor<TResult> : IResultMappingExport, IFluentPipelineFragment
-        where TResult : new()
     {
         /// <summary>
         /// Clears the result mappings.

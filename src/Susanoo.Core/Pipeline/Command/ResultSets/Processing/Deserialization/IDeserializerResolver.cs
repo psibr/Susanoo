@@ -15,7 +15,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         /// <typeparam name="TResult">The type of the t result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         Func<IDataReader, ColumnChecker, IEnumerable<TResult>>
-            Resolve<TResult>(ICommandResultMappingExport mappings)
-            where TResult : new();
+            Resolve<TResult>(ICommandResultMappingExport mappings);
     }
 }

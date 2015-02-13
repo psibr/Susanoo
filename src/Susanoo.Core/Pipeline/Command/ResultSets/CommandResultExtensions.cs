@@ -16,7 +16,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <returns>IResultMapper&lt;TResult&gt;.</returns>
         public static IResultMapper<TResult> GetProcessor<TFilter, TResult>(this
             ICommandResultExpressionCore<TFilter> resultExpression)
-            where TResult : new()
         {
             return SingleResultSetCommandProcessor<TFilter, TResult>.BuildOrRegenResultMapper(
                 resultExpression.ToSingleResult<TResult>());

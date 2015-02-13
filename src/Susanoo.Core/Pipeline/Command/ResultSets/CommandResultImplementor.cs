@@ -69,7 +69,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <typeparam name="TResult">The type of the t result.</typeparam>
         /// <param name="mapping">The mapping.</param>
         public virtual void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping)
-            where TResult : new()
         {
             if (_mappingContainer.ContainsKey(typeof(TResult)))
             {

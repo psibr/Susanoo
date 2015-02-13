@@ -15,7 +15,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public interface IResultMappingExpression<TFilter, TResult> : IResultMappingExport, IFluentPipelineFragment
-        where TResult : new()
     {
         /// <summary>
         /// Clears the result mappings.

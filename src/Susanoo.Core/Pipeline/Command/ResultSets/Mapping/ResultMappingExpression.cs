@@ -18,7 +18,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class ResultMappingExpression<TFilter, TResult>
         : IResultMappingExpression<TFilter, TResult>
-        where TResult : new()
     {
         private readonly IResultMappingImplementor<TResult> _implementor;
 

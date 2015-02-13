@@ -16,7 +16,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public virtual Func<IDataReader, ColumnChecker, IEnumerable<TResult>>
             Resolve<TResult>(ICommandResultMappingExport mappings)
-                where TResult : new()
         {
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> deserializer;
 

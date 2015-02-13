@@ -17,8 +17,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>
         : CommandProcessorWithResults<TFilter>,
             ICommandProcessor<TFilter, TResult1, TResult2>
-        where TResult1 : new()
-        where TResult2 : new()
     {
         private const int ResultCount = 2;
         private readonly ICommandExpression<TFilter> _commandExpression;
@@ -196,9 +194,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>
         : CommandProcessorWithResults<TFilter>,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
     {
         private const int ResultCount = 3;
         private readonly ICommandExpression<TFilter> _commandExpression;
@@ -385,10 +380,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
         : CommandProcessorWithResults<TFilter>,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
     {
         private const int ResultCount = 4;
         private readonly ICommandExpression<TFilter> _commandExpression;
@@ -584,11 +575,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
         : CommandProcessorWithResults<TFilter>,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
     {
         private const int ResultCount = 5;
         private readonly ICommandExpression<TFilter> _commandExpression;
@@ -793,12 +779,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
         : CommandProcessorWithResults<TFilter>,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
-        where TResult6 : new()
     {
         private const int ResultCount = 6;
         private readonly ICommandExpression<TFilter> _commandExpression;
@@ -1013,13 +993,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         TResult7>
         : CommandProcessorWithResults<TFilter>,
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
-        where TResult6 : new()
-        where TResult7 : new()
     {
         private const int ResultCount = 7;
         private readonly ICommandExpression<TFilter> _commandExpression;
