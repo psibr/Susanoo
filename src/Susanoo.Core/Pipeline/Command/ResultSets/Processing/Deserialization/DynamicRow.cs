@@ -162,9 +162,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         /// <param name="expression">
         /// The expression representing this <see cref="T:System.Dynamic.DynamicMetaObject" /> during the dynamic binding process.
         /// </param>
-        /// <param name="restrictions">
-        /// The set of binding restrictions under which the binding is valid.
-        /// </param>
+        /// <param name="restrictions">The set of binding restrictions under which the binding is valid.</param>
+        /// <param name="columns">The columns.</param>
         public DynamicRowMeta(Expression expression, BindingRestrictions restrictions, ColumnChecker columns)
             : base(expression, restrictions)
         {

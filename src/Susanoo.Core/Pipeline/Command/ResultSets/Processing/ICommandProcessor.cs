@@ -106,7 +106,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
     }
 
-    public interface ICommandProcessorAsync<in TFilter, TResult> where TResult : new()
+    public interface ICommandProcessorAsync<in TFilter, TResult>
     {
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -169,7 +169,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 #if !NETFX40
             , ICommandProcessorAsync<TFilter, TResult>
 #endif
-        where TResult : new()
     {
         /// <summary>
         /// Gets the command result expression.
@@ -230,8 +229,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult1, TResult2>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
-        where TResult1 : new()
-        where TResult2 : new()
     {
         /// <summary>
         /// Enables result caching.
@@ -283,9 +280,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
     {
         /// <summary>
         /// Enables result caching.
@@ -340,10 +334,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
     {
         /// <summary>
         /// Enables result caching.
@@ -401,11 +391,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
     {
         /// <summary>
         /// Enables result caching.
@@ -470,12 +455,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
-        where TResult6 : new()
     {
         /// <summary>
         /// Enables result caching.
@@ -543,13 +522,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
-        where TResult6 : new()
-        where TResult7 : new()
     {
         /// <summary>
         /// Enables result caching.

@@ -326,7 +326,7 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult> DefineResults<TResult>() where TResult : new()
+        public ICommandResultExpression<TFilter, TResult> DefineResults<TResult>()
         {
             return new CommandResultExpression<TFilter, TResult>(this);
         }
@@ -338,8 +338,6 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TResult2">The type of the result2.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2> DefineResults<TResult1, TResult2>()
-            where TResult1 : new()
-            where TResult2 : new()
         {
             return new CommandResultExpression<TFilter, TResult1, TResult2>(this);
         }
@@ -353,9 +351,6 @@ namespace Susanoo.Pipeline.Command
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResults
             <TResult1, TResult2, TResult3>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
         {
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3>(this);
         }
@@ -370,10 +365,6 @@ namespace Susanoo.Pipeline.Command
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResults
             <TResult1, TResult2, TResult3, TResult4>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new()
         {
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
         }
@@ -389,11 +380,6 @@ namespace Susanoo.Pipeline.Command
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResults
             <TResult1, TResult2, TResult3, TResult4, TResult5>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new()
-            where TResult5 : new()
         {
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
         }
@@ -410,12 +396,6 @@ namespace Susanoo.Pipeline.Command
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
             DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new()
-            where TResult5 : new()
-            where TResult6 : new()
         {
             return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
         }
@@ -434,13 +414,6 @@ namespace Susanoo.Pipeline.Command
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
             DefineResults
             <TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
-            where TResult1 : new()
-            where TResult2 : new()
-            where TResult3 : new()
-            where TResult4 : new()
-            where TResult5 : new()
-            where TResult6 : new()
-            where TResult7 : new()
         {
             return
                 new CommandResultExpression

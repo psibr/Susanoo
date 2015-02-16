@@ -27,8 +27,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mapping">The mapping.</param>
-        void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping)
-            where TResult : new();
+        void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping);
 
         /// <summary>
         /// Exports a results mappings for processing.

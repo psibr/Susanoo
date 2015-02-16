@@ -18,7 +18,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class ResultMappingImplementor<TResult>
         : IResultMappingImplementor<TResult>
-        where TResult : new()
     {
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();

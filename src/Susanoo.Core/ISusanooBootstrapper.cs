@@ -6,6 +6,9 @@ using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Exposure points for extending or overriding Susanoo's behavior.
+    /// </summary>
     public interface ISusanooBootstrapper
     {
         /// <summary>

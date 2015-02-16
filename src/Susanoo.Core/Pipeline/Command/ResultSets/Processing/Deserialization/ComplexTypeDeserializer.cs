@@ -163,7 +163,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         /// <typeparam name="TResult">The type of the t result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>(ICommandResultMappingExport mapping, Type resultType)
-            where TResult : new()
         {
             var result = Compile(mapping, resultType);
 

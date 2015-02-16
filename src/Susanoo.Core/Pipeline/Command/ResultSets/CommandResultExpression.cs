@@ -80,7 +80,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <typeparam name="TSingle">The type of the single.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TSingle&gt;.</returns>
         public virtual ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>()
-            where TSingle : new()
         {
             return new CommandResultExpression<TFilter, TSingle>(CommandExpression, Implementor);
         }
@@ -93,7 +92,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class CommandResultExpression<TFilter, TResult> : CommandResultCommon<TFilter>,
         ICommandResultExpression<TFilter, TResult>
-        where TResult : new()
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
@@ -194,8 +192,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
     /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
     public class CommandResultExpression<TFilter, TResult1, TResult2> : CommandResultCommon<TFilter>,
         ICommandResultExpression<TFilter, TResult1, TResult2>
-        where TResult1 : new()
-        where TResult2 : new()
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2}" /> class.
@@ -229,7 +225,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
-            where TResultType : new()
         {
             Implementor.StoreMapping(mappings);
 
@@ -264,9 +259,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
     /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
     public class CommandResultExpression<TFilter, TResult1, TResult2, TResult3> : CommandResultCommon<TFilter>,
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3}" />
@@ -302,7 +294,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
-            where TResultType : new()
         {
             Implementor.StoreMapping(mappings);
 
@@ -338,10 +329,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
     /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
     public class CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> : CommandResultCommon<TFilter>,
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
     {
         /// <summary>
         /// Initializes a new instance of the
@@ -378,7 +365,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
-            where TResultType : new()
         {
             Implementor.StoreMapping(mappings);
 
@@ -417,11 +403,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
     public class CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> :
         CommandResultCommon<TFilter>,
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
     {
         /// <summary>
         /// Initializes a new instance of the
@@ -460,7 +441,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> ForResultsOfType
             <TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
-            where TResultType : new()
         {
             Implementor.StoreMapping(mappings);
 
@@ -503,12 +483,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
     public class CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> :
         CommandResultCommon<TFilter>,
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
-        where TResult6 : new()
     {
         /// <summary>
         /// Initializes a new instance of the
@@ -548,7 +522,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
             ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
-            where TResultType : new()
         {
             Implementor.StoreMapping(mappings);
 
@@ -595,13 +568,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
     public class CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> :
         CommandResultCommon<TFilter>,
         ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-        where TResult1 : new()
-        where TResult2 : new()
-        where TResult3 : new()
-        where TResult4 : new()
-        where TResult5 : new()
-        where TResult6 : new()
-        where TResult7 : new()
     {
         /// <summary>
         /// Initializes a new instance of the
@@ -643,7 +609,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
         public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
             ForResultsOfType<TResultType>(
             Action<IResultMappingExpression<TFilter, TResultType>> mappings)
-            where TResultType : new()
         {
             Implementor.StoreMapping(mappings);
 

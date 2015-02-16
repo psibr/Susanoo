@@ -18,7 +18,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public sealed class SingleResultSetCommandProcessor<TFilter, TResult>
         : CommandProcessorWithResults<TFilter>, ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>
-        where TResult : new()
     {
         private ColumnChecker _columnChecker;
 
@@ -199,7 +198,9 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                     {
                         results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
-                        ColumnReport = ((ListResult<TResult>)results).ColumnReport;
+                        var result = results as ListResult<TResult>;
+                        if(result != null)
+                            ColumnReport = result.ColumnReport;
                     }
                 }
                 catch (Exception ex)

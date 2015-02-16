@@ -2,6 +2,11 @@
 
 namespace Susanoo
 {
+    /// <summary>
+    /// A simple bidirectional Dictionary that allows efficient lookup on either key or value.
+    /// </summary>
+    /// <typeparam name="T1">The type of the t1.</typeparam>
+    /// <typeparam name="T2">The type of the t2.</typeparam>
     internal class Map<T1, T2>
     {
         private readonly IDictionary<T1, T2> _forward;
