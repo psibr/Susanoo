@@ -10,7 +10,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
     public static class BuiltInTypeDeserializer
     {
         /// <summary>
-        /// Dumps all columns into an array for simple use cases.
+        /// Reads the first value only.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>

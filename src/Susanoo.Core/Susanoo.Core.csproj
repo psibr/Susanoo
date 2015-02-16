@@ -115,10 +115,12 @@
     <Compile Include="Pipeline\Command\ResultSets\Mapping\DefaultResultMapping.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DeserializerResolver.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DynamicRowDeserializer.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\IDeserializer.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\IDeserializerResolver.cs" />
     <Compile Include="Murmur3.cs" />
     <Compile Include="Pipeline\Command\ResultSets\ICommandResultExpression.cs" />
     <Compile Include="Pipeline\Command\ResultSets\ICommandResultImplementor.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\KeyValuePairDeserializer.cs" />
     <Compile Include="Pipeline\IFluentPipelineFragment.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\IResultMapper.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\ListResult.cs" />

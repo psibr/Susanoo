@@ -40,5 +40,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         IResultMappingExpression<TFilter, TResult> ForProperty(string propertyName,
             Action<IPropertyMappingConfiguration> options);
+
+
     }
 }

@@ -198,7 +198,9 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                     {
                         results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
-                        ColumnReport = ((ListResult<TResult>)results).ColumnReport;
+                        var result = results as ListResult<TResult>;
+                        if(result != null)
+                            ColumnReport = result.ColumnReport;
                     }
                 }
                 catch (Exception ex)
