@@ -11,7 +11,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         /// <summary>
         /// Deserializes into a complex object from a data reader.
         /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="reader">The data reader.</param>
         /// <param name="checker">The column object.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>

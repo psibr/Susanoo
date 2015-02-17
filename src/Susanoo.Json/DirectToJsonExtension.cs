@@ -21,7 +21,7 @@ namespace Susanoo
             {
                 var columnChecker = processor.RetrieveColumnIndexInfo();
 
-                var props = processor.CommandResultExpression.Export<TResult>();
+                var props = processor.CommandResultExpression.Export(typeof(TResult));
 
                 string results;
                 using (var writer = new StringWriter())
