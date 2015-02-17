@@ -24,7 +24,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValuePairMap()
         {
-            var results = CommandManager.DefineCommand("SELECT  Int, String FROM #DataTypeTable;", CommandType.Text)
+            var results = CommandManager.DefineCommand("SELECT Int, String FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<KeyValuePair<int, string>>()
                 .ForResults(expression =>
                 {
