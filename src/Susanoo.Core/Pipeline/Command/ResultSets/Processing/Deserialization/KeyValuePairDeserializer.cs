@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Xml.XPath;
 using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
 namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
@@ -41,15 +42,19 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
             if (_props.TryGetValue("Value", out valueMapping))
                 valueAlias = valueMapping.ActiveAlias;
 
+            var resultType = typeof(TResult);
+
+            var genericTypeArguments = resultType.GetGenericArguments();
+
             IList resultSet = new List<TResult>();
 
             checker = checker ?? new ColumnChecker();
 
             while (reader.Read())
             {
-                resultSet.Add(Activator.CreateInstance(typeof (TResult), 
-                    reader.GetValue(checker.HasColumn(reader, keyAlias)),
-                    reader.GetValue(checker.HasColumn(reader, valueAlias))));
+                resultSet.Add(Activator.CreateInstance(typeof(TResult),
+                    Convert.ChangeType(reader.GetValue(checker.HasColumn(reader, keyAlias)), genericTypeArguments[0]),
+                    Convert.ChangeType(reader.GetValue(checker.HasColumn(reader, valueAlias)), genericTypeArguments[1])));
 
             }
 
