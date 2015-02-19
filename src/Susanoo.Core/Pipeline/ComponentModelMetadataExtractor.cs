@@ -33,10 +33,7 @@ namespace Susanoo.Pipeline
         /// <exception cref="System.ArgumentNullException">filterType</exception>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public Dictionary<PropertyInfo, PropertyMapping> FindAllowedProperties(
-            Type objectType,
-            DescriptorActions actions = DescriptorActions.Read
-                                        | DescriptorActions.Update
-                                        | DescriptorActions.Insert,
+            Type objectType, DescriptorActions actions = DescriptorActions.Read,
             string[] whitelist = null,
             string[] blacklist = null)
         {
@@ -45,11 +42,13 @@ namespace Susanoo.Pipeline
 
             var actionable = new Dictionary<PropertyInfo, PropertyMapping>();
 
-            foreach (PropertyInfo pi in objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                object[] attributes = pi.GetCustomAttributes(true);
+            bool ignoreIsWritable = actions.HasFlag(DescriptorActions.Read);
 
-                if (pi.CanWrite && IsActionableProperty(pi, attributes, actions))
+            foreach (var pi in objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                var attributes = pi.GetCustomAttributes(true);
+
+                if ((ignoreIsWritable || pi.CanWrite) && IsActionableProperty(pi, attributes, actions))
                     actionable.Add(pi, new PropertyMapping(pi, ResolveAlias(pi, attributes)));
             }
 
@@ -68,7 +67,7 @@ namespace Susanoo.Pipeline
             if (propertyInfo == null)
                 throw new ArgumentNullException("propertyInfo");
 
-            ColumnAttribute column = customAttributes != null
+            var column = customAttributes != null
                 ? customAttributes
                     .OfType<ColumnAttribute>()
                     .FirstOrDefault()
@@ -119,12 +118,10 @@ namespace Susanoo.Pipeline
         /// <exception cref="System.ArgumentNullException">propertyInfo
         /// or
         /// customAttributes</exception>
-        public virtual bool IsActionableProperty(
+        protected virtual bool IsActionableProperty(
             PropertyInfo propertyInfo,
             object[] customAttributes,
-            DescriptorActions actions = DescriptorActions.Read
-                                        | DescriptorActions.Update
-                                        | DescriptorActions.Insert,
+            DescriptorActions actions = DescriptorActions.Read,
             string[] whitelist = null,
             string[] blacklist = null)
         {
@@ -133,13 +130,9 @@ namespace Susanoo.Pipeline
             if (customAttributes == null)
                 throw new ArgumentNullException("customAttributes");
 
-            var attribute = customAttributes
-                .OfType<AllowedActionsAttribute>()
-                .FirstOrDefault();
-
-            bool isActionable = IsWhitelisted(propertyInfo, whitelist)
+            var isActionable = IsWhitelisted(propertyInfo, whitelist)
                                 || (!(IsBlacklisted(propertyInfo, blacklist))
-                                    && IsAllowedByAttribute(propertyInfo, attribute, actions));
+                                    && IsAllowedByAttributes(propertyInfo, customAttributes, actions));
 
             return isActionable;
         }
@@ -148,17 +141,25 @@ namespace Susanoo.Pipeline
         /// Determines whether the specified property is restricted declaratively.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
-        /// <param name="attribute">The attribute.</param>
+        /// <param name="attributes">The attributes.</param>
         /// <param name="actions">The actions.</param>
         /// <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
-        public virtual bool IsAllowedByAttribute(
+        protected virtual bool IsAllowedByAttributes(
             PropertyInfo propertyInfo,
-            AllowedActionsAttribute attribute,
-            DescriptorActions actions = DescriptorActions.Read
-                                        | DescriptorActions.Update
-                                        | DescriptorActions.Insert)
+            object[] attributes,
+            DescriptorActions actions)
         {
-            return attribute == null || (attribute.Actions & actions) != 0;
+            var result = true;
+
+            if (attributes.Length > 0)
+            {
+                var allowedActions = attributes.OfType<AllowedActionsAttribute>().FirstOrDefault();
+                result = (allowedActions == null || (allowedActions.Actions & actions) != 0);
+
+                result = result && !attributes.Any(a => CommandManager.IgnoredAttributeTypes.Contains(a.GetType()));
+            }
+
+            return result;
         }
     }
 }

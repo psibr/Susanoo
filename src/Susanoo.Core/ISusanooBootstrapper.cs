@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using Susanoo.Pipeline;
 using Susanoo.Pipeline.Command;
@@ -25,10 +26,16 @@ namespace Susanoo
         IDeserializerResolver RetrieveDeserializerResolver();
 
         /// <summary>
-        /// Retrieves the property metadata extractor Default uses ComponentModel Attributes..
+        /// Retrieves the property metadata extractor Default uses ComponentModel Attributes.
         /// </summary>
         /// <returns>IPropertyMetadataExtractor.</returns>
         IPropertyMetadataExtractor RetrievePropertyMetadataExtractor();
+
+        /// <summary>
+        /// Retrieves a set of attributes to use to determine when to ignore a property unless explicitly included.
+        /// </summary>
+        /// <returns>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;.</returns>
+        IEnumerable<Type> RetrieveIgnoredPropertyAttributes();
 
         /// <summary>
         /// Called when an execution exception is encountered.

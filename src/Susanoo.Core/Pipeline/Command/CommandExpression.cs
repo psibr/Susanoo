@@ -497,10 +497,12 @@ namespace Susanoo.Pipeline.Command
                 }
                 else
                 {
-                    var implicitProperties = filter.GetType()
-                        .GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                    var implicitProperties =
+                        new ComponentModelMetadataExtractor().FindAllowedProperties(filter.GetType(),
+                            DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Delete,
+                            _parameterInclusions.Select(p => p.Key).ToArray(), _parameterExclusions.ToArray());
 
-                    foreach (var propInfo in implicitProperties)
+                    foreach (var propInfo in implicitProperties.Keys)
                     {
                         if (!_parameterExclusions.Contains(propInfo.Name))
                         {
@@ -508,7 +510,6 @@ namespace Susanoo.Pipeline.Command
 
                             param.ParameterName = propInfo.Name;
                             param.Direction = ParameterDirection.Input;
-
 #if !NETFX40
                             param.Value = propInfo.GetValue(filter);
 #else

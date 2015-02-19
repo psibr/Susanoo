@@ -38,7 +38,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypes()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+            var results = CommandManager.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel>()
                 .Realize()
                 .Execute(_databaseManager);
@@ -83,6 +83,27 @@ namespace Susanoo.Tests.Static.SingleResult
             Assert.AreEqual(first.Time, new TimeSpan(12, 00, 00));
 
             Assert.AreEqual(first.Guid, new Guid("E75B92A3-3299-4407-A913-C5CA196B3CAB"));
+
+            Assert.IsNull(first.IgnoredByComponentModel);
+
+            Assert.IsNull(first.IgnoredByDescriptorActionsNone);
+
+            Assert.IsNull(first.IgnoredByDescriptorActionsUpdate);
+        }
+
+        [Test(Description = "Tests that results correctly map data to CLR types.")]
+        public void StaticResultDataTypesInsert()
+        {
+            var result = CommandManager.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
+                .DefineResults<TypeTestModel>()
+                .Realize()
+                .Execute(_databaseManager).First();
+
+            result.IgnoredByDescriptorActionsUpdate = "ignored";
+
+            CommandManager.DefineCommand<TypeTestModel>("INSERT INTO #DataTypeTable VALUES(@Bit, @TinyInt, @SmallInt, @Int, @BigInt, @SmallMoney, @Money, @Numeric, @Decimal, @Character, @String, @Text, @Date, @SmallDateTime, @DateTime, @DateTime2, '12:00:00:00', @Guid, 'ignored','ignored', @IgnoredByDescriptorActionsUpdate);", CommandType.Text)
+                .Realize()
+                .ExecuteNonQuery(_databaseManager, result);
         }
     }
 }

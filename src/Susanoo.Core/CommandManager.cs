@@ -279,5 +279,14 @@ namespace Susanoo
 
             _bootstrapper = bootstrapper;
         }
+
+        /// <summary>
+        /// Gets the ignored attribute types.
+        /// </summary>
+        /// <value>The ignored attribute types.</value>
+        public static IEnumerable<Type> IgnoredAttributeTypes
+        {
+            get { return _bootstrapper.RetrieveIgnoredPropertyAttributes(); }
+        }
     }
 }

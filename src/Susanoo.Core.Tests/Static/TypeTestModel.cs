@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Susanoo.Tests.Static
 {
@@ -40,8 +41,19 @@ namespace Susanoo.Tests.Static
 
         public Guid Guid { get; set; }
 
+        [AllowedActions(DescriptorActions.Read)]
         public string UnusedProperty { get; set; }
 
+        [AllowedActions(DescriptorActions.Read)]
         public TypeTestModel UnusedProperty2 { get; set; }
+
+        [NotMapped]
+        public string IgnoredByComponentModel { get; set; }
+
+        [AllowedActions(DescriptorActions.None)]
+        public string IgnoredByDescriptorActionsNone { get; set; }
+
+        [AllowedActions(DescriptorActions.Update)]
+        public string IgnoredByDescriptorActionsUpdate { get; set; }
     }
 }

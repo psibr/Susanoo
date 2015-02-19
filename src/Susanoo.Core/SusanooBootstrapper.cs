@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using Susanoo.Pipeline;
 using Susanoo.Pipeline.Command;
@@ -38,6 +39,16 @@ namespace Susanoo
         {
             return new ComponentModelMetadataExtractor();
         }
+
+        /// <summary>
+        /// Retrieves a set of attributes to use to determine when to ignore a property unless explicitly included.
+        /// </summary>
+        /// <returns>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;.</returns>
+        public IEnumerable<Type> RetrieveIgnoredPropertyAttributes()
+        {
+            return new [] { typeof(System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute) };
+        }
+
 
         /// <summary>
         /// Called when an execution exception is encountered.

@@ -24,44 +24,9 @@ namespace Susanoo.Pipeline
         /// <param name="blacklist">The blacklist.</param>
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
         Dictionary<PropertyInfo, PropertyMapping> FindAllowedProperties(
-            Type objectType,
-            DescriptorActions actions = DescriptorActions.Read
-                                        | DescriptorActions.Update
-                                        | DescriptorActions.Insert,
+            Type objectType, DescriptorActions actions = DescriptorActions.Read,
             string[] whitelist = null,
             string[] blacklist = null);
-
-        /// <summary>
-        /// Determines whether the specified property is actionable.
-        /// </summary>
-        /// <param name="propertyInfo">The property information.</param>
-        /// <param name="customAttributes">The custom attributes.</param>
-        /// <param name="actions">The actions.</param>
-        /// <param name="whitelist">The whitelist.</param>
-        /// <param name="blacklist">The blacklist.</param>
-        /// <returns><c>true</c> if the property is actionable; otherwise, <c>false</c>.</returns>
-        bool IsActionableProperty(
-            PropertyInfo propertyInfo,
-            object[] customAttributes,
-            DescriptorActions actions = DescriptorActions.Read
-                                        | DescriptorActions.Update
-                                        | DescriptorActions.Insert,
-            string[] whitelist = null,
-            string[] blacklist = null);
-
-        /// <summary>
-        /// Determines whether the specified property is restricted declaratively.
-        /// </summary>
-        /// <param name="propertyInfo">The property information.</param>
-        /// <param name="attribute">The attribute.</param>
-        /// <param name="actions">The actions.</param>
-        /// <returns><c>true</c> if the property is not declaratively restricted; otherwise, <c>false</c>.</returns>
-        bool IsAllowedByAttribute(
-            PropertyInfo propertyInfo,
-            AllowedActionsAttribute attribute,
-            DescriptorActions actions = DescriptorActions.Read
-                                        | DescriptorActions.Update
-                                        | DescriptorActions.Insert);
 
         /// <summary>
         /// Determines whether the specified property is blacklisted.

@@ -51,8 +51,10 @@ namespace Susanoo.Tests
                     DateTime = CAST('12/25/2014 12:00:00' AS DateTime),
                     DateTime2 = CAST('12/25/2014 12:00:00' AS DateTime2(7)),
                     Time = CAST('12:00:00' AS Time),
-                    Guid = CAST('E75B92A3-3299-4407-A913-C5CA196B3CAB' AS uniqueidentifier)
-
+                    Guid = CAST('E75B92A3-3299-4407-A913-C5CA196B3CAB' AS uniqueidentifier),
+                    IgnoredByComponentModel = CAST('ignored' AS VARCHAR(7)),
+                    IgnoredByDescriptorActionsNone = CAST('ignored' AS VARCHAR(7)),
+                    IgnoredByDescriptorActionsUpdate = CAST('ignored' AS VARCHAR(7))
                 INTO #DataTypeTable;",
                 CommandType.Text)
                 .Realize()
