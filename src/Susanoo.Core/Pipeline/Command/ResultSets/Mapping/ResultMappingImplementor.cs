@@ -22,7 +22,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();
 
-        private IPropertyMetadataExtractor _propertyMetadataExtractor = new ComponentModelMetadataExtractor();
+        private IPropertyMetadataExtractor _propertyMetadataExtractor = CommandManager.Bootstrapper
+                        .RetrievePropertyMetadataExtractor();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResultMappingImplementor{TResult}" /> class.
@@ -106,7 +107,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         public void MapDeclarativeProperties()
         {
             foreach (var item in PropertyMetadataExtractor
-                .FindAllowedProperties(typeof(TResult), DescriptorActions.Read))
+                .FindAllowedProperties(typeof(TResult)))
             {
                 var configuration = new PropertyMappingConfiguration(item.Key);
 

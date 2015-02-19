@@ -156,7 +156,8 @@ namespace Susanoo.Pipeline
                 var allowedActions = attributes.OfType<AllowedActionsAttribute>().FirstOrDefault();
                 result = (allowedActions == null || (allowedActions.Actions & actions) != 0);
 
-                result = result && !attributes.Any(a => CommandManager.IgnoredAttributeTypes.Contains(a.GetType()));
+                result = result && !attributes.Any(a => CommandManager.Bootstrapper.RetrieveIgnoredPropertyAttributes()
+                    .Contains(a.GetType()));
             }
 
             return result;

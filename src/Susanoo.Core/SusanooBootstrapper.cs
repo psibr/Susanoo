@@ -49,7 +49,6 @@ namespace Susanoo
             return new [] { typeof(System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute) };
         }
 
-
         /// <summary>
         /// Called when an execution exception is encountered.
         /// </summary>

@@ -34,7 +34,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             _commandExpression = mappings.CommandExpression;
 
             CompiledMapping = CommandManager
-                .DeserializerResolver
+                .Bootstrapper
+                .RetrieveDeserializerResolver()
                 .Resolve<TResult>(mappings);
 
             CommandManager.RegisterCommandProcessor(this, name);

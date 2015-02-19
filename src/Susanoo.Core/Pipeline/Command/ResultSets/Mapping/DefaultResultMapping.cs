@@ -32,8 +32,9 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping
         /// </summary>
         public void MapDeclarativeProperties()
         {
-            foreach (var item in new ComponentModelMetadataExtractor()
-                .FindAllowedProperties(_resultType, DescriptorActions.Read))
+            foreach (var item in CommandManager.Bootstrapper
+                .RetrievePropertyMetadataExtractor()
+                .FindAllowedProperties(_resultType))
             {
                 var configuration = new PropertyMappingConfiguration(item.Key);
 

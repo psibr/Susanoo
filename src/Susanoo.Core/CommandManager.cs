@@ -259,15 +259,6 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Gets the deserializer resolver.
-        /// </summary>
-        /// <value>The deserializer resolver.</value>
-        public static IDeserializerResolver DeserializerResolver
-        {
-            get { return _bootstrapper.RetrieveDeserializerResolver(); }
-        }
-
-        /// <summary>
         /// Registers a bootstrapper which provides extension points in susanoo.
         /// </summary>
         /// <param name="bootstrapper">The bootstrapper.</param>
@@ -281,12 +272,11 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Gets the ignored attribute types.
+        /// Gets the bootstrapper.
         /// </summary>
-        /// <value>The ignored attribute types.</value>
-        public static IEnumerable<Type> IgnoredAttributeTypes
-        {
-            get { return _bootstrapper.RetrieveIgnoredPropertyAttributes(); }
+        /// <value>The bootstrapper.</value>
+        public static ISusanooBootstrapper Bootstrapper {
+            get { return _bootstrapper; }
         }
     }
 }

@@ -497,10 +497,13 @@ namespace Susanoo.Pipeline.Command
                 }
                 else
                 {
-                    var implicitProperties =
-                        new ComponentModelMetadataExtractor().FindAllowedProperties(filter.GetType(),
+                    var implicitProperties = CommandManager.Bootstrapper
+                        .RetrievePropertyMetadataExtractor()
+                        .FindAllowedProperties(
+                            filter.GetType(),
                             DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Delete,
-                            _parameterInclusions.Select(p => p.Key).ToArray(), _parameterExclusions.ToArray());
+                            _parameterInclusions.Select(p => p.Key).ToArray(),
+                            _parameterExclusions.ToArray());
 
                     foreach (var propInfo in implicitProperties.Keys)
                     {
