@@ -505,27 +505,27 @@ namespace Susanoo.Pipeline.Command
                             _parameterInclusions.Select(p => p.Key).ToArray(),
                             _parameterExclusions.ToArray());
 
-                    foreach (var propInfo in implicitProperties.Keys)
+                    foreach (var propInfo in implicitProperties)
                     {
-                        if (!_parameterExclusions.Contains(propInfo.Name))
+                        if (!_parameterExclusions.Contains(propInfo.Value.ActiveAlias))
                         {
                             var param = databaseManager.CreateParameter();
 
-                            param.ParameterName = propInfo.Name;
+                            param.ParameterName = propInfo.Value.ActiveAlias;
                             param.Direction = ParameterDirection.Input;
 #if !NETFX40
-                            param.Value = propInfo.GetValue(filter);
+                            param.Value = propInfo.Key.GetValue(filter);
 #else
                             param.Value = propInfo.GetValue(filter, null);
 #endif
 
-                            var type = CommandManager.GetDbType(propInfo.PropertyType);
+                            var type = CommandManager.GetDbType(propInfo.Key.PropertyType);
 
                             if (type.HasValue)
                                 param.DbType = type.Value;
 
                             Action<DbParameter> value;
-                            if (_parameterInclusions.TryGetValue(propInfo.Name, out value))
+                            if (_parameterInclusions.TryGetValue(propInfo.Value.ActiveAlias, out value))
                             {
                                 if (value != null)
                                 {
