@@ -105,5 +105,20 @@ namespace Susanoo.Tests.Static.SingleResult
                 .Realize()
                 .ExecuteNonQuery(_databaseManager, result);
         }
+
+        [Test(Description = "Tests that results correctly map data to CLR types.")]
+        public void StaticResultDataTypesInsertAnonymous()
+        {
+            var result = CommandManager.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
+                .DefineResults<TypeTestModel>()
+                .Realize()
+                .Execute(_databaseManager).First();
+
+            result.IgnoredByDescriptorActionsUpdate = "ignored";
+
+            CommandManager.DefineCommand<dynamic>("INSERT INTO #DataTypeTable VALUES(@Bit, @TinyInt, @SmallInt, @Int, @BigInt, @SmallMoney, @Money, @Numeric, @Decimal, @Character, @String, @Text, @Date, @SmallDateTime, @DateTime, @DateTime2, '12:00:00:00', @Guid, 'ignored','ignored', @IgnoredByDescriptorActionsUpdate);", CommandType.Text)
+                .Realize()
+                .ExecuteNonQuery(_databaseManager, new { Bit = true, TinyInt = 1, SmallInt = 1, Int = 1, BigInt = 1, SmallMoney = 1, Money = 1, Numeric = 1, Decimal = 1, Character = 'c', String = "string", Text = "yay", Date = DateTime.Now, SmallDateTime = DateTime.Now, DateTime = DateTime.Now, DateTime2 = DateTime.Now, Guid = Guid.NewGuid(), IgnoredByDescriptorActionsUpdate = "ignored"});
+        }
     }
 }
