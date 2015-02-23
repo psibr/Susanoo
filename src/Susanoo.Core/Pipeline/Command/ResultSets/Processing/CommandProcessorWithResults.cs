@@ -124,7 +124,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         public bool TryRetrieveCacheResult(BigInteger hashCode, out object value)
         {
             CacheItem cache;
-            bool result = false;
+            var result = false;
             if (_resultCacheContainer.TryGetValue(hashCode, out cache))
             {
                 if (cache.CachingMode == CacheMode.Permanent
@@ -150,6 +150,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public abstract ICommandExpression<TFilter> CommandExpression { get; }
+        public abstract ICommandExpressionInfo<TFilter> CommandExpression { get; }
     }
 }

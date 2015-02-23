@@ -21,7 +21,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     {
         private ColumnChecker _columnChecker;
 
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
@@ -83,7 +83,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public override ICommandExpression<TFilter> CommandExpression
+        public override ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }
@@ -163,12 +163,12 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            bool cachedItemPresent = false;
-            BigInteger hashCode = BigInteger.Zero;
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
 
             IEnumerable<TResult> results = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandResultExpression.CommandExpression;
+            var commandExpression = CommandResultExpression.CommandExpression;
 
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
@@ -191,7 +191,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             {
                 try
                 {
-                    using (IDataReader records = databaseManager
+                    using (var records = databaseManager
                         .ExecuteDataReader(
                             commandExpression.CommandText,
                             commandExpression.DbCommandType,
@@ -302,12 +302,12 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            bool cachedItemPresent = false;
+            var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
 
             IEnumerable<TResult> results = null;
 
-            ICommandExpression<TFilter> commandExpression = CommandResultExpression.CommandExpression;
+            var commandExpression = CommandResultExpression.CommandExpression;
 
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
@@ -330,7 +330,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             {
                 try
                 {
-                    using (IDataReader records = await databaseManager
+                    using (var records = await databaseManager
                         .ExecuteDataReaderAsync(
                             commandExpression.CommandText,
                             commandExpression.DbCommandType,

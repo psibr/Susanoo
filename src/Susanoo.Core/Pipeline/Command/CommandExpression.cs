@@ -79,7 +79,7 @@ namespace Susanoo.Pipeline.Command
         /// Gets the command text.
         /// </summary>
         /// <value>The command text.</value>
-        public virtual string CommandText { get; private set; }
+        public string CommandText { get; set; }
 
         /// <summary>
         /// Gets the type of the database command.
@@ -166,7 +166,7 @@ namespace Susanoo.Pipeline.Command
 
             var parameters = new DbParameter[parameterCount];
 
-            int i = 0;
+            var i = 0;
 
             if (dbParameters != null)
             {
@@ -475,7 +475,7 @@ namespace Susanoo.Pipeline.Command
                         if (type.HasValue)
                             param.DbType = type.Value;
 
-                        Action<DbParameter> value = item.Value;
+                        var value = item.Value;
                         if (value != null)
                         {
                             value.Invoke(param);

@@ -19,7 +19,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2>
     {
         private const int ResultCount = 2;
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         private readonly
             ICommandResultExpression<TFilter, TResult1, TResult2>
@@ -63,7 +63,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public override ICommandExpression<TFilter> CommandExpression
+        public override ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }
@@ -196,7 +196,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
     {
         private const int ResultCount = 3;
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         private readonly
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
@@ -241,7 +241,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public override ICommandExpression<TFilter> CommandExpression
+        public override ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }
@@ -382,7 +382,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
     {
         private const int ResultCount = 4;
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         private readonly
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
@@ -428,7 +428,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public override ICommandExpression<TFilter> CommandExpression
+        public override ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }
@@ -577,7 +577,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
     {
         private const int ResultCount = 5;
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         private readonly
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
@@ -624,7 +624,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public override ICommandExpression<TFilter> CommandExpression
+        public override ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }
@@ -781,7 +781,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
     {
         private const int ResultCount = 6;
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         private readonly
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
@@ -829,7 +829,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public override ICommandExpression<TFilter> CommandExpression
+        public override ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }
@@ -995,7 +995,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
     {
         private const int ResultCount = 7;
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         private readonly
             ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
@@ -1044,7 +1044,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public override ICommandExpression<TFilter> CommandExpression
+        public override ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }

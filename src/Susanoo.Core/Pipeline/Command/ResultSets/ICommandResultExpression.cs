@@ -21,7 +21,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        ICommandExpression<TFilter> CommandExpression { get; }
+        ICommandExpressionInfo<TFilter> CommandExpression { get; }
 
         /// <summary>
         /// Converts to a single result expression.

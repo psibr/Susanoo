@@ -158,14 +158,14 @@ namespace Susanoo
         {
             _h1 = Seed;
             _length = 0L;
-            int pos = 0;
-            ulong remaining = (ulong) bb.Length;
+            var pos = 0;
+            var remaining = (ulong) bb.Length;
             // read 128 bits, 16 bytes, 2 longs in eacy cycle
             while (remaining >= ReadSize)
             {
-                ulong k1 = bb.GetUInt64(pos);
+                var k1 = bb.GetUInt64(pos);
                 pos += 8;
-                ulong k2 = bb.GetUInt64(pos);
+                var k2 = bb.GetUInt64(pos);
                 pos += 8;
                 _length += ReadSize;
                 remaining -= ReadSize;

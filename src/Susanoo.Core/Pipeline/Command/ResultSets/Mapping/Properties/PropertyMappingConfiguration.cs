@@ -55,8 +55,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Mapping.Properties
         /// <returns>Expression&lt;Action&lt;IDataRecord&gt;&gt;.</returns>
         public virtual Expression<Action<IDataRecord, int>> AssembleMappingExpression(MemberExpression property)
         {
-            ParameterExpression record = Expression.Parameter(typeof (IDataRecord), "record");
-            ParameterExpression ordinal = Expression.Parameter(typeof (int), "ordinal");
+            var record = Expression.Parameter(typeof (IDataRecord), "record");
+            var ordinal = Expression.Parameter(typeof (int), "ordinal");
 
             Expression body = AssembleAssignment(property, record, ordinal);
 

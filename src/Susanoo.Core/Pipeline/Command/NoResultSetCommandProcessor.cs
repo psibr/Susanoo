@@ -17,13 +17,13 @@ namespace Susanoo.Pipeline.Command
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public partial class NoResultSetCommandProcessor<TFilter> : ICommandProcessor<TFilter>
     {
-        private readonly ICommandExpression<TFilter> _commandExpression;
+        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public NoResultSetCommandProcessor(ICommandExpression<TFilter> command)
+        public NoResultSetCommandProcessor(ICommandExpressionInfo<TFilter> command)
         {
             _commandExpression = command;
         }
@@ -32,7 +32,7 @@ namespace Susanoo.Pipeline.Command
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public ICommandExpression<TFilter> CommandExpression
+        public ICommandExpressionInfo<TFilter> CommandExpression
         {
             get { return _commandExpression; }
         }

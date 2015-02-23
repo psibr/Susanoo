@@ -26,7 +26,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
             var listResultType = typeof(ListResult<>).MakeGenericType(resultType);
             var enumerableType = typeof(object);
 
-            MethodInfo addLastMethod = listType.GetMethod("Add", new[] { resultType });
+            var addLastMethod = listType.GetMethod("Add", new[] { resultType });
 
             //Get the properties we care about.
             var mappings = mapping.Export(resultType);
@@ -34,13 +34,13 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
             var outerStatements = new List<Expression>();
             var innerStatements = new List<Expression>();
 
-            ParameterExpression reader = Expression.Parameter(typeof(IDataReader), "reader");
-            ParameterExpression columnReport = Expression.Parameter(typeof(ColumnChecker), "columnReport");
+            var reader = Expression.Parameter(typeof(IDataReader), "reader");
+            var columnReport = Expression.Parameter(typeof(ColumnChecker), "columnReport");
 
-            ParameterExpression columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
-            ParameterExpression resultSet = Expression.Variable(listResultType, "resultSet");
+            var columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
+            var resultSet = Expression.Variable(listResultType, "resultSet");
 
-            LabelTarget returnStatement = Expression.Label(enumerableType, "return");
+            var returnStatement = Expression.Label(enumerableType, "return");
 
             // resultSet = new LinkedListResult<TResult>();
             outerStatements.Add(Expression.Assign(resultSet, Expression.New(listResultType)));
@@ -54,7 +54,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
             #region Loop Code
 
             // var descriptor;
-            ParameterExpression descriptor = Expression.Variable(resultType, "descriptor");
+            var descriptor = Expression.Variable(resultType, "descriptor");
 
             // if(!reader.Read) { return resultSet; }
             innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, ReadMethod)),
@@ -150,7 +150,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
 
             lambda.CompileToMethod(type.DefineMethod("Map", MethodAttributes.Public | MethodAttributes.Static));
 
-            Type dynamicType = type.CreateType();
+            var dynamicType = type.CreateType();
 
             return (Func<IDataReader, ColumnChecker, object>)Delegate
                 .CreateDelegate(typeof(Func<IDataReader, ColumnChecker, object>),

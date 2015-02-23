@@ -24,7 +24,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="implementor">The implementor.</param>
-        internal CommandResultCommon(ICommandExpression<TFilter> command, ICommandResultImplementor<TFilter> implementor)
+        internal CommandResultCommon(ICommandExpressionInfo<TFilter> command, ICommandResultImplementor<TFilter> implementor)
         {
             _implementor = implementor;
 
@@ -35,7 +35,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        protected CommandResultCommon(ICommandExpression<TFilter> command)
+        protected CommandResultCommon(ICommandExpressionInfo<TFilter> command)
             : this(command, new CommandResultImplementor<TFilter>())
         {
         }
@@ -44,7 +44,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public virtual ICommandExpression<TFilter> CommandExpression { get; private set; }
+        public virtual ICommandExpressionInfo<TFilter> CommandExpression { get; private set; }
 
         /// <summary>
         /// Gets the hash code used for caching result mapping compilations.
@@ -97,7 +97,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommandExpression<TFilter> command)
+        public CommandResultExpression(ICommandExpressionInfo<TFilter> command)
             : base(command)
         {
         }
@@ -107,7 +107,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="implementor">The implementor.</param>
-        internal CommandResultExpression(ICommandExpression<TFilter> command,
+        internal CommandResultExpression(ICommandExpressionInfo<TFilter> command,
             ICommandResultImplementor<TFilter> implementor)
             : base(command, implementor)
         {
@@ -197,7 +197,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommandExpression<TFilter> command)
+        public CommandResultExpression(ICommandExpressionInfo<TFilter> command)
             : base(command)
         {
         }
@@ -265,7 +265,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommandExpression<TFilter> command)
+        public CommandResultExpression(ICommandExpressionInfo<TFilter> command)
             : base(command)
         {
         }
@@ -335,7 +335,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommandExpression<TFilter> command)
+        public CommandResultExpression(ICommandExpressionInfo<TFilter> command)
             : base(command)
         {
         }
@@ -409,7 +409,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommandExpression<TFilter> command)
+        public CommandResultExpression(ICommandExpressionInfo<TFilter> command)
             : base(command)
         {
         }
@@ -489,7 +489,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommandExpression<TFilter> command)
+        public CommandResultExpression(ICommandExpressionInfo<TFilter> command)
             : base(command)
         {
         }
@@ -575,7 +575,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommandExpression<TFilter> command)
+        public CommandResultExpression(ICommandExpressionInfo<TFilter> command)
             : base(command)
         {
         }

@@ -42,7 +42,7 @@ namespace Susanoo.Pipeline
 
             var actionable = new Dictionary<PropertyInfo, PropertyMapping>();
 
-            bool ignoreIsWritable = !actions.HasFlag(DescriptorActions.Read);
+            var ignoreIsWritable = !actions.HasFlag(DescriptorActions.Read);
 
             foreach (var pi in objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {

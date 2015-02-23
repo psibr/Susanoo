@@ -14,13 +14,13 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// Shared members for all command processors.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandProcessorInterop<TFilter> : IFluentPipelineFragment
+    public interface ICommandProcessorInterop<in TFilter> : IFluentPipelineFragment
     {
         /// <summary>
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        ICommandExpression<TFilter> CommandExpression { get; }
+        ICommandExpressionInfo<TFilter> CommandExpression { get; }
     }
 
 
@@ -46,7 +46,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandProcessor<TFilter> : ICommandProcessorInterop<TFilter>
+    public interface ICommandProcessor<in TFilter> : ICommandProcessorInterop<TFilter>
 #if !NETFX40
         , ICommandProcessorAsync<TFilter>
 #endif
@@ -227,7 +227,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult1">The type of the 1st result.</typeparam>
     /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<TFilter, TResult1, TResult2>
+    public interface ICommandProcessor<in TFilter, TResult1, TResult2>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
     {
         /// <summary>
@@ -278,7 +278,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
     /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
+    public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
     {
         /// <summary>
@@ -332,7 +332,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
     /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
+    public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
     {
         /// <summary>
@@ -389,7 +389,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
     /// <typeparam name="TResult5">The type of the 5th result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
+    public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
     {
         /// <summary>
@@ -453,7 +453,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult5">The type of the 5th result.</typeparam>
     /// <typeparam name="TResult6">The type of the 6th result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
+    public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
     {
         /// <summary>
@@ -520,7 +520,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult6">The type of the 6th result.</typeparam>
     /// <typeparam name="TResult7">The type of the 7th result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
+    public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
         : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
     {
         /// <summary>
