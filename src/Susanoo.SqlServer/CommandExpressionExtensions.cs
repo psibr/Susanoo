@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq.Expressions;
 using Susanoo.Pipeline.Command;
 using Susanoo.SqlServer;
@@ -98,6 +100,37 @@ namespace Susanoo
             return arg0 + arg1;
         }
 
+        /// <summary>
+        /// Makes the query a paged query suing OFFSET/FETCH. REQUIRES Sql Server 2012.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <param name="commandExpression">The command expression.</param>
+        /// <param name="rowCountParameterName">Name of the row count parameter.</param>
+        /// <param name="pageNumberParameterName">Name of the page number parameter.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="System.ArgumentException">
+        /// Only CommandType.Text Command Expressions can be dynamically paged.
+        /// or
+        /// CommandText must contain an Order By clause to be paged.
+        /// </exception>
+        public static ICommandExpression<TFilter> MakePagedQuery<TFilter>(
+            this ICommandExpression<TFilter> commandExpression,
+            string rowCountParameterName = "RowCount", string pageNumberParameterName = "PageNumber")
+        {
+            if(commandExpression.DbCommandType != CommandType.Text)
+                throw new ArgumentException("Only CommandType.Text Command Expressions can be dynamically paged.");
+            if(CultureInfo.InvariantCulture.CompareInfo.IndexOf(commandExpression.CommandText, "ORDER BY", CompareOptions.OrdinalIgnoreCase ) < 0)
+                throw new ArgumentException("Command Text must contain an Order By clause to be paged.");
 
+
+            commandExpression.CommandText =  string.Concat(commandExpression.CommandText, 
+                string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName));
+
+            return commandExpression;
+        }
+
+        private const string PagingFormat = 
+@"OFFSET (@{0} - 1) * @{1} ROWS
+FETCH NEXT @{1} ROWS ONLY";
     }
 }
