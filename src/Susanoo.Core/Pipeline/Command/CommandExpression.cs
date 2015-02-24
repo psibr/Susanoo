@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
@@ -22,7 +24,7 @@ namespace Susanoo.Pipeline.Command
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public class CommandExpression<TFilter>
-        : ICommandExpression<TFilter>
+        : ICommandExpression<TFilter>, ICommandExpressionInfo<TFilter>
     {
         private BigInteger _cacheHash = BigInteger.MinusOne;
 
@@ -110,6 +112,55 @@ namespace Susanoo.Pipeline.Command
         {
             get { return !_doNotStoreColumnInfo; }
         }
+
+        /// <summary>
+        /// Builds the where filter.
+        /// </summary>
+        /// <param name="optionsObject">The options object.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        public ICommandExpression<TFilter> BuildWhereFilter(object optionsObject)
+        {
+            _optionsObject = optionsObject.ToExpando();
+
+            const string format = 
+@"SELECT *
+FROM (
+    {0}
+) susanoo_query_wrapper
+WHERE 1=1";
+
+            if(typeof(TFilter) != typeof(object))
+                _optionsObject.Add("", null); //place holder, add normal property discovery here.
+
+            CommandText = string.Format(format, CommandText) + string.Concat( _optionsObject.Select(o =>
+            {
+                var compareFormat = string.Empty;
+                if (o.Value is CompareMethod)
+                    compareFormat = Comparison.GetComparisonFormat((CompareMethod) o.Value);
+
+                var value = o.Value as Comparison.ComparisonOverride;
+                compareFormat = value != null ? value.OverrideText : compareFormat;
+
+                if (compareFormat.Contains('{'))
+                    compareFormat = string.Format(compareFormat, o.Key);
+
+                return compareFormat;
+            }));
+
+            return this;
+        }
+
+        private IDictionary<string, object> _optionsObject;
+
+        /// <summary>
+        /// Retrieves the where filter options.
+        /// </summary>
+        /// <returns>IDictionary&lt;System.String, System.Object&gt;.</returns>
+        public IDictionary<string, object> RetrieveWhereFilterOptions()
+        {
+            return _optionsObject;
+        }
+
 
         /// <summary>
         /// Realizes the pipeline with no result mappings.
@@ -430,7 +481,7 @@ namespace Susanoo.Pipeline.Command
                 string.Concat(_constantParameters.Select(c => c.Key)
                     .Concat(_parameterInclusions.Select(c => c.Key))
                     .Concat(_parameterExclusions)
-                    .Concat(new []
+                    .Concat(new[]
                         {
                             CommandText,
                             DbCommandType.ToString(),

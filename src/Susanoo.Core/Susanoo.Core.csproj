@@ -93,7 +93,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
+    <Compile Include="CompareMethod.cs" />
+    <Compile Include="Comparison.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
+    <Compile Include="ObjectExtensions.cs" />
+    <Compile Include="Pipeline\Command\CommandExpressionInfo.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\BuiltInTypeDeserializer.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DynamicRow.cs" />
     <Compile Include="ExceptionHandler.cs" />
