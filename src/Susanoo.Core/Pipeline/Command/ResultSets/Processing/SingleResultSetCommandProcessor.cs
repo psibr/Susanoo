@@ -16,27 +16,25 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public sealed class SingleResultSetCommandProcessor<TFilter, TResult>
-        : CommandProcessorWithResults<TFilter>, ICommandProcessor<TFilter, TResult>, IResultMapper<TResult>
+    public sealed class SingleResultSetCommandProcessor<TFilter, TResult> :
+        CommandProcessorWithResults<TFilter>,
+        ICommandProcessor<TFilter, TResult>,
+        IResultMapper<TResult>
     {
         private ColumnChecker _columnChecker;
-
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
-        public SingleResultSetCommandProcessor(ICommandResultExpression<TFilter, TResult> mappings, string name)
+        public SingleResultSetCommandProcessor(ICommandResultInfo<TFilter> mappings, string name)
+            : base(mappings)
         {
-            CommandResultExpression = mappings;
-            _commandExpression = mappings.CommandExpression;
-
             CompiledMapping = CommandManager
                 .Bootstrapper
                 .RetrieveDeserializerResolver()
-                .Resolve<TResult>(mappings);
+                .Resolve<TResult>(mappings.GetExporter());
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -53,7 +51,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <value>The column report.</value>
         private ColumnChecker ColumnReport
         {
-            get { return CommandExpression.AllowStoringColumnInfo ? _columnChecker : null; }
+            get { return CommandInfo.AllowStoringColumnInfo ? _columnChecker : null; }
             set
             {
                 if (value != null)
@@ -77,15 +75,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ActivateResultCaching(mode, interval);
 
             return this;
-        }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public override ICommandExpressionInfo<TFilter> CommandExpression
-        {
-            get { return _commandExpression; }
         }
 
         /// <summary>
@@ -121,7 +110,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return CommandResultExpression.CacheHash; }
+            get { return CommandResultInfo.CacheHash; }
         }
 
         /// <summary>
@@ -134,11 +123,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             return ((IResultMapper<TResult>)this).MapResult(record);
         }
 
-        /// <summary>
-        /// Gets the mapping expressions.
-        /// </summary>
-        /// <value>The mapping expressions.</value>
-        public ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; private set; }
+
 
         /// <summary>
         /// Assembles a data command for an ADO.NET provider,
@@ -168,9 +153,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             IEnumerable<TResult> results = null;
 
-            var commandExpression = CommandResultExpression.CommandExpression;
-
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
 
             if (ResultCachingEnabled)
             {
@@ -193,8 +176,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var records = databaseManager
                         .ExecuteDataReader(
-                            commandExpression.CommandText,
-                            commandExpression.DbCommandType,
+                            CommandInfo.CommandText,
+                            CommandInfo.DbCommandType,
                             parameters))
                     {
                         results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
@@ -206,7 +189,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 if (ResultCachingEnabled)
@@ -244,15 +227,15 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <summary>
         /// Builds the or regen result mapper from cache.
         /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
         /// <returns>IResultMapper&lt;TResult&gt;.</returns>
         public static IResultMapper<TResult> BuildOrRegenResultMapper(
-            ICommandResultExpression<TFilter, TResult> commandResultExpression, string name = null)
+            ICommandResultInfo<TFilter> commandResultInfo, string name = null)
         {
             return
                 (IResultMapper<TResult>)
-                    CommandResultExpression<TFilter, TResult>.BuildOrRegenCommandProcessor(commandResultExpression, name);
+                    CommandResultExpression<TFilter, TResult>.BuildOrRegenCommandProcessor(commandResultInfo, name);
         }
 
 #if !NETFX40
@@ -307,9 +290,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             IEnumerable<TResult> results = null;
 
-            var commandExpression = CommandResultExpression.CommandExpression;
-
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
 
             if (ResultCachingEnabled)
             {
@@ -332,8 +313,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var records = await databaseManager
                         .ExecuteDataReaderAsync(
-                            commandExpression.CommandText,
-                            commandExpression.DbCommandType,
+                            CommandInfo.CommandText,
+                            CommandInfo.DbCommandType,
                             cancellationToken,
                             parameters)
                         .ConfigureAwait(false))
@@ -345,7 +326,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 if (ResultCachingEnabled)

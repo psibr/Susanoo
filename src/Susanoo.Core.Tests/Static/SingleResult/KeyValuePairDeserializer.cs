@@ -93,16 +93,16 @@ namespace Susanoo.Tests.Static.SingleResult
             var results = CommandManager.DefineCommand<KeyValuePair<string, string>>("SELECT Int, String FROM #DataTypeTable", CommandType.Text)
                 .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
                 .ExcludeProperty(o => o.Value)
-                .BuildWhereFilter(new
-                {
-                    Int = Comparison.StartsWith,
-                    Value = Comparison.Ignore
-                })
                 .DefineResults<KeyValuePair<string, string>>()
                 .ForResults(expression =>
                 {
                     expression.ForProperty(pair => pair.Key, configuration => configuration.UseAlias("Int"));
                     expression.ForProperty(pair => pair.Value, configuration => configuration.UseAlias("String"));
+                })
+                .BuildWhereFilter(new
+                {
+                    Key = Comparison.StartsWith,
+                    Value = Comparison.Ignore
                 })
                 .Realize()
                 .Execute(_databaseManager, new KeyValuePair<string, string>("1", null));

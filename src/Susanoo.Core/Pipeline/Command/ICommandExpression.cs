@@ -29,13 +29,6 @@ namespace Susanoo.Pipeline.Command
         string CommandText { get; set; }
 
         /// <summary>
-        /// Builds a where filter.
-        /// </summary>
-        /// <param name="options">The options.</param>
-        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-        ICommandExpression<TFilter> BuildWhereFilter(object options);
-
-        /// <summary>
         /// Realizes the pipeline with no result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
@@ -196,7 +189,7 @@ namespace Susanoo.Pipeline.Command
     }
 
     /// <summary>
-    /// Opt-in levels for sending null values in commands.
+    /// Opt-in levels for sending null values in parameters.
     /// </summary>
     public enum NullValueMode
     {

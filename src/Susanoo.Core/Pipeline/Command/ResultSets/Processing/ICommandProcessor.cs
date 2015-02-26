@@ -17,13 +17,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     public interface ICommandProcessorInterop<in TFilter> : IFluentPipelineFragment
     {
         /// <summary>
-        /// Gets the command expression.
+        /// Gets the command information.
         /// </summary>
-        /// <value>The command expression.</value>
-        ICommandExpressionInfo<TFilter> CommandExpression { get; }
+        /// <value>The command information.</value>
+        ICommandInfo<TFilter> CommandInfo { get; }
     }
-
-
 
     /// <summary>
     /// Shared members for all command processors that have ResultSets.
@@ -39,6 +37,19 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// Flushes the result cache.
         /// </summary>
         void FlushCache();
+    }
+
+    /// <summary>
+    /// Shared members for all command processors that have ResultSets.
+    /// </summary>
+    public interface ICommandProcessorWithResults<in TFilter> :
+        ICommandProcessorWithResults
+    {
+        /// <summary>
+        /// Gets the command result information.
+        /// </summary>
+        /// <value>The command result information.</value>
+        ICommandResultInfo<TFilter> CommandResultInfo { get; }
     }
 
     /// <summary>
@@ -170,12 +181,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             , ICommandProcessorAsync<TFilter, TResult>
 #endif
     {
-        /// <summary>
-        /// Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        ICommandResultExpression<TFilter, TResult> CommandResultExpression { get; }
-
         /// <summary>
         /// Updates the column index information.
         /// </summary>

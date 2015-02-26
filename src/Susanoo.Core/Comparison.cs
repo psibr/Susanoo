@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Susanoo
+﻿namespace Susanoo
 {
     /// <summary>
     /// Comparison options
@@ -112,31 +106,31 @@ namespace Susanoo
             switch (compare)
             {
                 case CompareMethod.Equal:
-                    comparisonString = " AND (@{0} IS NULL OR {0} = @{0})";
+                    comparisonString = " AND (@{0} IS NULL OR {1} = @{0})";
                     break;
                 case CompareMethod.NotEqual:
-                    comparisonString = " AND (@{0} IS NULL OR {0} <> @{0})";
+                    comparisonString = " AND (@{0} IS NULL OR {1} <> @{0})";
                     break;
                 case CompareMethod.LessThan:
-                    comparisonString = " AND (@{0} IS NULL OR {0} < @{0})";
+                    comparisonString = " AND (@{0} IS NULL OR {1} < @{0})";
                     break;
                 case CompareMethod.LessThanOrEqual:
-                    comparisonString = " AND (@{0} IS NULL OR {0} <= @{0})";
+                    comparisonString = " AND (@{0} IS NULL OR {1} <= @{0})";
                     break;
                 case CompareMethod.GreaterThan:
-                    comparisonString = " AND (@{0} IS NULL OR {0} > @{0})";
+                    comparisonString = " AND (@{0} IS NULL OR {1} > @{0})";
                     break;
                 case CompareMethod.GreaterThanOrEqual:
-                    comparisonString = " AND (@{0} IS NULL OR {0} >= @{0})";
+                    comparisonString = " AND (@{0} IS NULL OR {1} >= @{0})";
                     break;
                 case CompareMethod.StartsWith:
-                    comparisonString = " AND (@{0} IS NULL OR {0} LIKE  @{0} + '%')";
+                    comparisonString = " AND (@{0} IS NULL OR {1} LIKE  @{0} + '%')";
                     break;
                 case CompareMethod.EndsWith:
-                    comparisonString = " AND (@{0} IS NULL OR {0} LIKE  '%' + @{0})";
+                    comparisonString = " AND (@{0} IS NULL OR {1} LIKE  '%' + @{0})";
                     break;
                 case CompareMethod.Contains:
-                    comparisonString = " AND (@{0} IS NULL OR {0} LIKE  '%' + @{0} + '%')";
+                    comparisonString = " AND (@{0} IS NULL OR {1} LIKE  '%' + @{0} + '%')";
                     break;
             }
 
@@ -163,6 +157,9 @@ namespace Susanoo
                 OverrideText = overrideText;
             }
 
+            /// <summary>
+            /// Override Text.
+            /// </summary>
             public override string ToString()
             {
                 return OverrideText;

@@ -5,9 +5,9 @@ using System.Data.Common;
 namespace Susanoo.Pipeline.Command
 {
     /// <summary>
-    /// Basic details about a Command Expression
+    /// Basic details about a Command as defined by a command expression
     /// </summary>
-    public interface ICommandExpressionInfo : IFluentPipelineFragment
+    public interface ICommandInfo : IFluentPipelineFragment
     {
         /// <summary>
         /// Gets the command text.
@@ -26,19 +26,13 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
         bool AllowStoringColumnInfo { get; }
-
-        /// <summary>
-        /// Retrieves the where filter options.
-        /// </summary>
-        /// <returns>IDictionary&lt;System.String, System.Object&gt;.</returns>
-        IDictionary<string, object> RetrieveWhereFilterOptions();
     }
 
     /// <summary>
-    /// Basic details about a Command Expression and parameter building.
+    /// Basic details about a Command and parameter building.
     /// </summary>
-    public interface ICommandExpressionInfo<in TFilter>
-        : ICommandExpressionInfo
+    public interface ICommandInfo<in TFilter>
+        : ICommandInfo
     {
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).

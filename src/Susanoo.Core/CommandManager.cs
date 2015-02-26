@@ -1,8 +1,5 @@
 ﻿#region
 
-using Susanoo.Pipeline.Command;
-using Susanoo.Pipeline.Command.ResultSets.Processing;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,6 +9,9 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using Susanoo.Pipeline;
+using Susanoo.Pipeline.Command;
+using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
 
@@ -92,15 +92,15 @@ namespace Susanoo
         /// <summary>
         /// Handles exceptions in execution.
         /// </summary>
-        /// <param name="commandExpressionInfo">The command expression information.</param>
+        /// <param name="commandInfo">The command expression information.</param>
         /// <param name="ex">The ex.</param>
         /// <param name="parameters">The parameters.</param>
         public static void HandleExecutionException(
-            ICommandExpressionInfo commandExpressionInfo,
+            ICommandInfo commandInfo,
             Exception ex,
             DbParameter[] parameters)
         {
-            _bootstrapper.OnExecutionException(commandExpressionInfo, ex, parameters);
+            _bootstrapper.OnExecutionException(commandInfo, ex, parameters);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Susanoo
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         public static ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
-            return CommandBuilder
+            return Bootstrapper.RetrieveCommandBuilder()
                 .DefineCommand<TFilter>(commandText, commandType);
         }
 
@@ -126,7 +126,7 @@ namespace Susanoo
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         public static ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
-            return CommandBuilder
+            return Bootstrapper.RetrieveCommandBuilder()
                 .DefineCommand(commandText, commandType);
         }
 
@@ -253,6 +253,7 @@ namespace Susanoo
         /// Gets the command builder.
         /// </summary>
         /// <value>The command builder.</value>
+        [Obsolete("Access CommandBuilder via Bootstrapper directly", false)]
         public static ICommandExpressionBuilder CommandBuilder
         {
             get { return _bootstrapper.RetrieveCommandBuilder(); }

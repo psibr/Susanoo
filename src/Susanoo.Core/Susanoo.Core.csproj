@@ -97,7 +97,12 @@
     <Compile Include="Comparison.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
     <Compile Include="ObjectExtensions.cs" />
-    <Compile Include="Pipeline\Command\CommandExpressionInfo.cs" />
+    <Compile Include="Pipeline\Command\ICommand.cs" />
+    <Compile Include="Pipeline\Command\ICommandInfo.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\CommandResultCommon.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\ICommandResultExpressionCore.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\ICommandResultInfo.cs" />
+    <Compile Include="Pipeline\Command\ResultSets\ICommandResultMappingExport.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\BuiltInTypeDeserializer.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DynamicRow.cs" />
     <Compile Include="ExceptionHandler.cs" />
@@ -110,7 +115,7 @@
     <Compile Include="ColumnAttribute.cs" />
     <Compile Include="Exceptions\ColumnBindingException.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\ColumnChecker.cs" />
-    <Compile Include="Pipeline\Command\CommandBuilder.cs" />
+    <Compile Include="Pipeline\CommandBuilder.cs" />
     <Compile Include="Pipeline\Command\CommandExpression.cs" />
     <Compile Include="CommandManager.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\CommandProcessorWithResults.cs" />
@@ -135,12 +140,12 @@
     <Compile Include="Pipeline\Command\ResultSets\Processing\SingleResultSetCommandProcessor.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\ResultMappingExpression.cs" />
     <Compile Include="DatabaseManager.cs" />
-    <Compile Include="Pipeline\Command\ExpressionExtensions.cs" />
+    <Compile Include="ExpressionExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\IResultMappingExpression.cs" />
     <Compile Include="Pipeline\Command\ICommandExpression.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\ICommandProcessor.cs" />
-    <Compile Include="Pipeline\Command\ICommandExpressionBuilder.cs" />
+    <Compile Include="Pipeline\ICommandExpressionBuilder.cs" />
     <Compile Include="IDatabaseManager.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\IPropertyMappingConfiguration.cs" />
     <Compile Include="Pipeline\IPropertyMetadataExtractor.cs" />
