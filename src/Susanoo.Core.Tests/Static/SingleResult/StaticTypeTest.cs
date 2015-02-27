@@ -32,7 +32,6 @@ namespace Susanoo.Tests.Static.SingleResult
 
                 Assert.IsNotNull(results);
             }
-
         }
 
         [Test(Description = "Tests that results correctly map data to CLR types.")]

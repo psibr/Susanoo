@@ -2,11 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using System.Numerics;
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
-using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
@@ -56,7 +56,11 @@ namespace Susanoo.Pipeline.Command.ResultSets
             }
         }
 
-        private IDictionary<string, object> _optionsObject = null;
+        /// <summary>
+        /// Gets the where filter options. Null if no where filter.
+        /// </summary>
+        /// <value>The where filter options.</value>
+        public IDictionary<string, object> WhereFilterOptions { get; private set; }
 
         /// <summary>
         /// Builds the where filter.
@@ -65,7 +69,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         public ICommandResultExpression<TFilter, TResult> BuildWhereFilter(object optionsObject = null)
         {
-            _optionsObject = optionsObject != null ? optionsObject.ToExpando() : new ExpandoObject();
+            WhereFilterOptions = optionsObject != null ? optionsObject.ToExpando() : new ExpandoObject();
 
             return this;
         }
@@ -73,9 +77,14 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <summary>
         /// Builds the where filter implementation.
         /// </summary>
-        /// <param name="optionsObject">The options object.</param>
+        /// <param name="commandInfo">The command information.</param>
+        /// <param name="resultMappings">The result mappings.</param>
+        /// <param name="parameters">The parameters.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        protected virtual void BuildWhereFilterImplementation(IDictionary<string, object> optionsObject)
+        protected virtual string BuildWhereFilterImplementation(
+            ICommandInfo commandInfo,
+            ICommandResultMappingExport resultMappings,
+            IEnumerable<DbParameter> parameters)
         {
             const string format =
                 @"SELECT *
@@ -84,32 +93,39 @@ FROM (
 ) susanoo_query_wrapper
 WHERE 1=1";
 
-            var mappings = Export(typeof(TFilter));
-            object compareOption;
-            var options = mappings.ToDictionary(
-                propertyMapping =>
-                    new KeyValuePair<string, string>(propertyMapping.Key, propertyMapping.Value.ActiveAlias),
-                propertyMapping => _optionsObject.TryGetValue(propertyMapping.Key, out compareOption)
-                    ? compareOption
-                    : GetDefaultCompareMethod(propertyMapping.Value.PropertyMetadata.PropertyType));
+            var mappings = parameters
+                .Join(Export(typeof(TFilter)), parameter => parameter.SourceColumn, pair => pair.Key,
+                    (parameter, pair) =>
+                        new Tuple<string, Type, string, string>(
+                            pair.Key,                                 //Property Name
+                            pair.Value.PropertyMetadata.PropertyType, //Property Type
+                            parameter.ParameterName,                  //Parameter Name
+                            pair.Value.ActiveAlias                    //Result Column Name
+                            ))
+                .GroupJoin(WhereFilterOptions, tuple => tuple.Item1, pair => pair.Key,
+                    (tuple, pairs) => new {tuple, comparer = pairs.Select(kvp => kvp.Value).FirstOrDefault()})
+                .Select(o => new Tuple<string, Type, string, string, object>(
+                    o.tuple.Item1,                                          //Property Name
+                    o.tuple.Item2,                                          //Property Type
+                    o.tuple.Item3,                                          //Parameter Name
+                    o.tuple.Item4,                                          //Result Column Name
+                    o.comparer ?? GetDefaultCompareMethod(o.tuple.Item2)    //Comparer
+                    ));
 
-            Command.CommandText = string.Format(format, Command.CommandText) + string.Concat(options.Select(o =>
+            return string.Format(format, Command.CommandText) + string.Concat(mappings.Select(o =>
             {
                 var compareFormat = string.Empty;
-                if (o.Value is CompareMethod)
-                    compareFormat = Comparison.GetComparisonFormat((CompareMethod)o.Value);
+                if (o.Item5 is CompareMethod)
+                    compareFormat = Comparison.GetComparisonFormat((CompareMethod)o.Item5);
 
-                var value = o.Value as Comparison.ComparisonOverride;
+                var value = o.Item5 as Comparison.ComparisonOverride;
                 compareFormat = value != null ? value.OverrideText : compareFormat;
 
                 if (compareFormat.Contains('{'))
-                    compareFormat = string.Format(compareFormat, o.Key.Value,o.Key.Value);
+                    compareFormat = string.Format(compareFormat, o.Item3, o.Item4);
 
                 return compareFormat;
             }));
-
-            //Hash will have changed since we modified command text.
-            Command.RecomputeCacheHash();
         }
 
         /// <summary>
@@ -148,8 +164,8 @@ WHERE 1=1";
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public ICommandProcessor<TFilter, TResult> Realize(string name = null)
         {
-            if(_optionsObject != null)
-                BuildWhereFilterImplementation(_optionsObject);
+            if (WhereFilterOptions != null)
+                Command.CommandText = BuildWhereFilterImplementation(this);
 
             return BuildOrRegenCommandProcessor(this, name);
         }

@@ -92,23 +92,26 @@ namespace Susanoo.Tests.Static.SingleResult
         {
             var results = CommandManager.DefineCommand<KeyValuePair<string, string>>("SELECT Int, String FROM #DataTypeTable", CommandType.Text)
                 .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
-                .ExcludeProperty(o => o.Value)
+                .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
+                .SendNullValues(NullValueMode.FilterOnlyFull)
                 .DefineResults<KeyValuePair<string, string>>()
                 .ForResults(expression =>
                 {
-                    expression.ForProperty(pair => pair.Key, configuration => configuration.UseAlias("Int"));
-                    expression.ForProperty(pair => pair.Value, configuration => configuration.UseAlias("String"));
+                    expression.ForProperty(pair => pair.Key, 
+                        configuration => configuration.UseAlias("Int"));
+                    expression.ForProperty(pair => pair.Value,
+                        configuration => configuration.UseAlias("String"));
                 })
                 .BuildWhereFilter(new
                 {
                     Key = Comparison.StartsWith,
-                    Value = Comparison.Ignore
+                    Value = Comparison.Contains
                 })
                 .Realize()
-                .Execute(_databaseManager, new KeyValuePair<string, string>("1", null));
+                .Execute(_databaseManager, new KeyValuePair<string, string>(null, "c"));
 
             Assert.IsNotNull(results);
-            Assert.AreEqual(results.Count(), 1);
+            Assert.AreEqual(1, results.Count());
 
             var first = results.First();
 
