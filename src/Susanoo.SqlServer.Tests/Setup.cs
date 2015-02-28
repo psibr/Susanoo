@@ -10,11 +10,15 @@ namespace Susanoo.SqlServer.Tests
     [SetUpFixture]
     public class Setup
     {
-        public static readonly DatabaseManager DatabaseManager = new DatabaseManager("Susanoo");
+        public static DatabaseManager DatabaseManager;
     
         [SetUp]
         public void Configure()
         {
+            CommandManager.RegisterBootstrapper(new TestBootstrapper());
+
+            DatabaseManager = new DatabaseManager("Susanoo");
+
             //By explicitly opening the connection, it becomes a shared connection.
             DatabaseManager.OpenConnection();
         }

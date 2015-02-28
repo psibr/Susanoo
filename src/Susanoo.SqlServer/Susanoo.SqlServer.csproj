@@ -37,13 +37,15 @@
     <AssemblyOriginatorKeyFile>Properties\Key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Susanoo.Core">
-      <HintPath>..\packages\Susanoo.Core.0.7.2.22\lib\net45\Susanoo.Core.dll</HintPath>
+    <Reference Include="Susanoo.Core, Version=0.8.2.0, Culture=neutral, PublicKeyToken=0a505ce04f8a59d5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Susanoo.Core.0.8.2.25\lib\net45\Susanoo.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>

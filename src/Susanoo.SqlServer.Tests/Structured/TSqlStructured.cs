@@ -68,9 +68,11 @@ namespace Susanoo.SqlServer.Tests.Structured
 
         [Test]
         [ExpectedException(typeof(NotSupportedException))]
-        public void MakeTVPThrowsIfParamIsNull()
+        public void MakeTvpThrowsIfParamIsNull()
         {
             DbParameterExtensions.MakeTableValuedParameter(null, string.Empty, string.Empty);
         }
+
+
     }
 }

@@ -52,8 +52,9 @@
       <HintPath>..\packages\NUnitTestAdapter.1.2\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Susanoo.Core">
-      <HintPath>..\packages\Susanoo.Core.0.7.2.22\lib\net45\Susanoo.Core.dll</HintPath>
+    <Reference Include="Susanoo.Core, Version=0.8.2.0, Culture=neutral, PublicKeyToken=0a505ce04f8a59d5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Susanoo.Core.0.8.2.25\lib\net45\Susanoo.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -64,9 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FetchOffset.cs" />
     <Compile Include="Structured\TSqlStructured.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setup.cs" />
+    <Compile Include="TestBootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

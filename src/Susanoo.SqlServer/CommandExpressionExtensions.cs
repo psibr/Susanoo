@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Linq.Expressions;
+using System.Numerics;
 using Susanoo.Pipeline.Command;
 using Susanoo.Pipeline.Command.ResultSets;
 using Susanoo.SqlServer;
@@ -113,23 +114,33 @@ namespace Susanoo
         /// <exception cref="System.ArgumentException">Only CommandType.Text Command Expressions can be dynamically paged.
         /// or
         /// CommandText must contain an Order By clause to be paged.</exception>
-        public static ICommandResultExpression<TFilter, TResult> MakePagedQuery<TFilter, TResult>(
+        public static ICommandResultExpression<TFilter, TResult> OffsetFetch<TFilter, TResult>(
             this ICommandResultExpression<TFilter, TResult> commandResultExpression,
             string rowCountParameterName = "RowCount", string pageNumberParameterName = "PageNumber")
         {
-            var commandInfo = commandResultExpression.CommandExpression;
+            var commandInfo = commandResultExpression.Command;
 
             if (commandInfo.DbCommandType != CommandType.Text)
                 throw new ArgumentException("Only CommandType.Text Command Expressions can be dynamically paged.");
 
-            string.Concat(commandInfo.CommandText, 
-                string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName));
+            commandResultExpression.TryAddCommandModifier(new CommandModifier
+            {
+                Description = "OFFSET/FETCH",
+                Priority = 1000,
+                ModifierFunc = info => new ExecutableCommandInfo
+                {
+                    CommandText = string.Concat(info.CommandText, string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName)),
+                    DbCommandType = info.DbCommandType,
+                    Parameters = info.Parameters
+                },
+                CacheHash = new BigInteger(1000)
+            });
 
             return commandResultExpression;
         }
 
         private const string PagingFormat = 
-@"OFFSET (@{0} - 1) * @{1} ROWS
-FETCH NEXT @{1} ROWS ONLY";
+            "\r\nOFFSET (@{0} - 1) * @{1} ROWS" +
+            "\r\nFETCH NEXT @{1} ROWS ONLY";
     }
 }
