@@ -7,7 +7,7 @@ namespace Susanoo.Pipeline.Command
     /// <summary>
     /// Basic details about a Command as defined by a command expression
     /// </summary>
-    public interface ICommandInfo : IFluentPipelineFragment
+    public interface ICommandInfo
     {
         /// <summary>
         /// Gets the command text.
@@ -21,18 +21,14 @@ namespace Susanoo.Pipeline.Command
         /// <value>The type of the database command.</value>
         CommandType DbCommandType { get; }
 
-        /// <summary>
-        /// Gets a value indicating whether storing column information is allowed.
-        /// </summary>
-        /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
-        bool AllowStoringColumnInfo { get; }
+
     }
 
     /// <summary>
     /// Basic details about a Command and parameter building.
     /// </summary>
     public interface ICommandInfo<in TFilter>
-        : ICommandInfo
+        : ICommandInfo, IFluentPipelineFragment
     {
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).
@@ -43,5 +39,11 @@ namespace Susanoo.Pipeline.Command
         /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
         DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Gets a value indicating whether storing column information is allowed.
+        /// </summary>
+        /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
+        bool AllowStoringColumnInfo { get; }
     }
 }

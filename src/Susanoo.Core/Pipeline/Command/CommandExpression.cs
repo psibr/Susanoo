@@ -9,7 +9,6 @@ using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
 using Susanoo.Pipeline.Command.ResultSets;
-using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
 
@@ -22,7 +21,7 @@ namespace Susanoo.Pipeline.Command
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public class CommandExpression<TFilter> :
         ICommandExpression<TFilter>,
-        ICommand<TFilter>
+        ICommandInfo<TFilter>
     {
         /// <summary>
         ///     The constant parameters
@@ -168,16 +167,6 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <value>The command text.</value>
         public string CommandText { get; set; }
-
-        /// <summary>
-        /// Recomputes the cache hash.
-        /// </summary>
-        /// <returns>BigInteger.</returns>
-        public BigInteger RecomputeCacheHash()
-        {
-            ComputeHash();
-            return CacheHash;
-        }
 
         /// <summary>
         ///     Gets the hash code used for caching result mapping compilations.
@@ -475,6 +464,7 @@ namespace Susanoo.Pipeline.Command
                             .GetProperty(item.Key, BindingFlags.Instance | BindingFlags.Public);
                         var param = databaseManager.CreateParameter();
 
+                        param.SourceColumn = propInfo.Name;
                         param.ParameterName = item.Key;
                         param.Direction = ParameterDirection.Input;
 
@@ -525,6 +515,7 @@ namespace Susanoo.Pipeline.Command
                         {
                             var param = databaseManager.CreateParameter();
 
+                            param.SourceColumn = propInfo.Key.Name;
                             param.ParameterName = propInfo.Value.ActiveAlias;
                             param.Direction = ParameterDirection.Input;
 #if !NETFX40

@@ -104,11 +104,11 @@ namespace Susanoo.Tests.Static.SingleResult
                 })
                 .BuildWhereFilter(new
                 {
-                    Key = Comparison.StartsWith,
-                    Value = Comparison.Contains
+                    Key = Comparison.Ignore//,
+                    //Value = Comparison.Override("({0} IS NULL OR UPPER({1}) LIKE '%' + UPPER({0}))")
                 })
                 .Realize()
-                .Execute(_databaseManager, new KeyValuePair<string, string>(null, "c"));
+                .Execute(_databaseManager, new KeyValuePair<string, string>(null, "C"));
 
             Assert.IsNotNull(results);
             Assert.AreEqual(1, results.Count());

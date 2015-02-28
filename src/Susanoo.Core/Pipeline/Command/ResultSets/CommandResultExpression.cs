@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.Remoting.Messaging;
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
 
@@ -20,14 +21,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class CommandResultExpression<TFilter, TResult> :
         CommandResultCommon<TFilter>,
-        ICommandResultExpression<TFilter, TResult>,
-        ICommandResultInfo<TFilter>
+        ICommandResultExpression<TFilter, TResult>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommand<TFilter> command)
+        public CommandResultExpression(ICommandInfo<TFilter> command)
             : base(command)
         {
         }
@@ -37,11 +37,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="implementor">The implementor.</param>
-        internal CommandResultExpression(ICommand<TFilter> command,
+        internal CommandResultExpression(ICommandInfo<TFilter> command,
             ICommandResultImplementor<TFilter> implementor)
             : base(command, implementor)
         {
         }
+
+
 
         /// <summary>
         ///     Gets the hash code used for caching result mapping compilations.
@@ -71,29 +73,35 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             WhereFilterOptions = optionsObject != null ? optionsObject.ToExpando() : new ExpandoObject();
 
+            //Make sure the command is wrapped in a new SELECT for simplicity.
+            AddQueryWrapper();
+
+            var whereFilterModifier = new CommandModifier
+            {
+                Description = "WhereFilter",
+                Priority = 200,
+                ModifierFunc = BuildWhereFilterImplementation
+            };
+
+            whereFilterModifier.CacheHash =
+                HashBuilder.Compute(whereFilterModifier.Description + WhereFilterOptions.Aggregate(string.Empty,
+                    (s, pair) => s + pair.Key + pair.Value));
+
+            if (!TryAddCommandModifier(whereFilterModifier))
+                throw new Exception("Confilcting priorities for command modifiers");
+
             return this;
         }
 
         /// <summary>
         /// Builds the where filter implementation.
         /// </summary>
-        /// <param name="commandInfo">The command information.</param>
-        /// <param name="resultMappings">The result mappings.</param>
-        /// <param name="parameters">The parameters.</param>
+        /// <param name="info">The information.</param>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        protected virtual string BuildWhereFilterImplementation(
-            ICommandInfo commandInfo,
-            ICommandResultMappingExport resultMappings,
-            IEnumerable<DbParameter> parameters)
+        protected virtual IExecutableCommandInfo BuildWhereFilterImplementation(
+            IExecutableCommandInfo info)
         {
-            const string format =
-                @"SELECT *
-FROM (
-    {0}
-) susanoo_query_wrapper
-WHERE 1=1";
-
-            var mappings = parameters
+            var mappings = info.Parameters
                 .Join(Export(typeof(TFilter)), parameter => parameter.SourceColumn, pair => pair.Key,
                     (parameter, pair) =>
                         new Tuple<string, Type, string, string>(
@@ -103,7 +111,7 @@ WHERE 1=1";
                             pair.Value.ActiveAlias                    //Result Column Name
                             ))
                 .GroupJoin(WhereFilterOptions, tuple => tuple.Item1, pair => pair.Key,
-                    (tuple, pairs) => new {tuple, comparer = pairs.Select(kvp => kvp.Value).FirstOrDefault()})
+                    (tuple, pairs) => new { tuple, comparer = pairs.Select(kvp => kvp.Value).FirstOrDefault() })
                 .Select(o => new Tuple<string, Type, string, string, object>(
                     o.tuple.Item1,                                          //Property Name
                     o.tuple.Item2,                                          //Property Type
@@ -112,20 +120,25 @@ WHERE 1=1";
                     o.comparer ?? GetDefaultCompareMethod(o.tuple.Item2)    //Comparer
                     ));
 
-            return string.Format(format, Command.CommandText) + string.Concat(mappings.Select(o =>
+            return new ExecutableCommandInfo
             {
-                var compareFormat = string.Empty;
-                if (o.Item5 is CompareMethod)
-                    compareFormat = Comparison.GetComparisonFormat((CompareMethod)o.Item5);
+                CommandText = info.CommandText + string.Concat(mappings.Select(o =>
+                {
+                    var compareFormat = string.Empty;
+                    if (o.Item5 is CompareMethod)
+                        compareFormat = Comparison.GetComparisonFormat((CompareMethod)o.Item5);
 
-                var value = o.Item5 as Comparison.ComparisonOverride;
-                compareFormat = value != null ? value.OverrideText : compareFormat;
+                    var value = o.Item5 as ComparisonOverride;
+                    compareFormat = value != null ? value.OverrideText : compareFormat;
 
-                if (compareFormat.Contains('{'))
-                    compareFormat = string.Format(compareFormat, o.Item3, o.Item4);
+                    if (compareFormat.Contains('{'))
+                        compareFormat = string.Format(compareFormat, o.Item3, o.Item4);
 
-                return compareFormat;
-            }));
+                    return compareFormat;
+                })),
+                DbCommandType = info.DbCommandType,
+                Parameters = info.Parameters
+            };
         }
 
         /// <summary>
@@ -164,28 +177,9 @@ WHERE 1=1";
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public ICommandProcessor<TFilter, TResult> Realize(string name = null)
         {
-            if (WhereFilterOptions != null)
-                Command.CommandText = BuildWhereFilterImplementation(this);
+            var processor = BuildOrRegenCommandProcessor(this, name);
 
-            return BuildOrRegenCommandProcessor(this, name);
-        }
-
-        /// <summary>
-        ///     Gets the command information.
-        /// </summary>
-        /// <returns>ICommandInfo&lt;TFilter&gt;.</returns>
-        public ICommandInfo<TFilter> GetCommandInfo()
-        {
-            return Command;
-        }
-
-        /// <summary>
-        ///     Gets the mappings exporter.
-        /// </summary>
-        /// <returns>ICommandResultMappingExport.</returns>
-        public ICommandResultMappingExport GetExporter()
-        {
-            return this;
+            return processor;
         }
 
         /// <summary>
@@ -212,7 +206,7 @@ WHERE 1=1";
             }
 
             return result ??
-                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultInfo, name);
+                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultInfo, commandResultInfo.CommandModifiers, name);
         }
 
         /// <summary>
@@ -241,7 +235,7 @@ WHERE 1=1";
         ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommand<TFilter> command)
+        public CommandResultExpression(ICommandInfo<TFilter> command)
             : base(command)
         {
         }
@@ -292,24 +286,6 @@ WHERE 1=1";
 
             return result;
         }
-
-        /// <summary>
-        ///     Gets the command information.
-        /// </summary>
-        /// <returns>ICommandInfo&lt;TFilter&gt;.</returns>
-        public ICommandInfo<TFilter> GetCommandInfo()
-        {
-            return Command;
-        }
-
-        /// <summary>
-        ///     Gets the exporter.
-        /// </summary>
-        /// <returns>ICommandResultMappingExport.</returns>
-        public ICommandResultMappingExport GetExporter()
-        {
-            return this;
-        }
     }
 
     /// <summary>
@@ -329,7 +305,7 @@ WHERE 1=1";
         ///     class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommand<TFilter> command)
+        public CommandResultExpression(ICommandInfo<TFilter> command)
             : base(command)
         {
         }
@@ -381,24 +357,6 @@ WHERE 1=1";
 
             return result;
         }
-
-        /// <summary>
-        ///     Gets the command information.
-        /// </summary>
-        /// <returns>ICommandInfo&lt;TFilter&gt;.</returns>
-        public ICommandInfo<TFilter> GetCommandInfo()
-        {
-            return Command;
-        }
-
-        /// <summary>
-        ///     Gets the exporter.
-        /// </summary>
-        /// <returns>ICommandResultMappingExport.</returns>
-        public ICommandResultMappingExport GetExporter()
-        {
-            return this;
-        }
     }
 
     /// <summary>
@@ -419,7 +377,7 @@ WHERE 1=1";
         ///     <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommand<TFilter> command)
+        public CommandResultExpression(ICommandInfo<TFilter> command)
             : base(command)
         {
         }
@@ -473,24 +431,6 @@ WHERE 1=1";
 
             return result;
         }
-
-        /// <summary>
-        ///     Gets the command information.
-        /// </summary>
-        /// <returns>ICommandInfo&lt;TFilter&gt;.</returns>
-        public ICommandInfo<TFilter> GetCommandInfo()
-        {
-            return Command;
-        }
-
-        /// <summary>
-        ///     Gets the exporter.
-        /// </summary>
-        /// <returns>ICommandResultMappingExport.</returns>
-        public ICommandResultMappingExport GetExporter()
-        {
-            return this;
-        }
     }
 
     /// <summary>
@@ -512,7 +452,7 @@ WHERE 1=1";
         ///     <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommand<TFilter> command)
+        public CommandResultExpression(ICommandInfo<TFilter> command)
             : base(command)
         {
         }
@@ -571,24 +511,6 @@ WHERE 1=1";
 
             return result;
         }
-
-        /// <summary>
-        ///     Gets the command information.
-        /// </summary>
-        /// <returns>ICommandInfo&lt;TFilter&gt;.</returns>
-        public ICommandInfo<TFilter> GetCommandInfo()
-        {
-            return Command;
-        }
-
-        /// <summary>
-        ///     Gets the exporter.
-        /// </summary>
-        /// <returns>ICommandResultMappingExport.</returns>
-        public ICommandResultMappingExport GetExporter()
-        {
-            return this;
-        }
     }
 
     /// <summary>
@@ -611,7 +533,7 @@ WHERE 1=1";
         ///     <see cref="CommandResultExpression{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommand<TFilter> command)
+        public CommandResultExpression(ICommandInfo<TFilter> command)
             : base(command)
         {
         }
@@ -674,24 +596,6 @@ WHERE 1=1";
 
             return result;
         }
-
-        /// <summary>
-        ///     Gets the command information.
-        /// </summary>
-        /// <returns>ICommandInfo&lt;TFilter&gt;.</returns>
-        public ICommandInfo<TFilter> GetCommandInfo()
-        {
-            return Command;
-        }
-
-        /// <summary>
-        ///     Gets the exporter.
-        /// </summary>
-        /// <returns>ICommandResultMappingExport.</returns>
-        public ICommandResultMappingExport GetExporter()
-        {
-            return this;
-        }
     }
 
     /// <summary>
@@ -716,7 +620,7 @@ WHERE 1=1";
         ///     class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public CommandResultExpression(ICommand<TFilter> command)
+        public CommandResultExpression(ICommandInfo<TFilter> command)
             : base(command)
         {
         }
@@ -779,24 +683,6 @@ WHERE 1=1";
                         <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this, name);
 
             return result;
-        }
-
-        /// <summary>
-        ///     Gets the command information.
-        /// </summary>
-        /// <returns>ICommandInfo&lt;TFilter&gt;.</returns>
-        public ICommandInfo<TFilter> GetCommandInfo()
-        {
-            return Command;
-        }
-
-        /// <summary>
-        ///     Gets the exporter.
-        /// </summary>
-        /// <returns>ICommandResultMappingExport.</returns>
-        public ICommandResultMappingExport GetExporter()
-        {
-            return this;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Globalization;
 using System.Linq.Expressions;
 using Susanoo.Pipeline.Command;
+using Susanoo.Pipeline.Command.ResultSets;
 using Susanoo.SqlServer;
 
 namespace Susanoo
@@ -101,32 +102,30 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Makes the query a paged query suing OFFSET/FETCH. REQUIRES Sql Server 2012.
+        /// Makes the query a paged query using OFFSET/FETCH. REQUIRES Sql Server 2012.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <param name="commandExpression">The command expression.</param>
+        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <param name="commandResultExpression">The command result expression.</param>
         /// <param name="rowCountParameterName">Name of the row count parameter.</param>
         /// <param name="pageNumberParameterName">Name of the page number parameter.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-        /// <exception cref="System.ArgumentException">
-        /// Only CommandType.Text Command Expressions can be dynamically paged.
+        /// <exception cref="System.ArgumentException">Only CommandType.Text Command Expressions can be dynamically paged.
         /// or
-        /// CommandText must contain an Order By clause to be paged.
-        /// </exception>
-        public static ICommandExpression<TFilter> MakePagedQuery<TFilter>(
-            this ICommandExpression<TFilter> commandExpression,
+        /// CommandText must contain an Order By clause to be paged.</exception>
+        public static ICommandResultExpression<TFilter, TResult> MakePagedQuery<TFilter, TResult>(
+            this ICommandResultExpression<TFilter, TResult> commandResultExpression,
             string rowCountParameterName = "RowCount", string pageNumberParameterName = "PageNumber")
         {
-            if(commandExpression.DbCommandType != CommandType.Text)
+            var commandInfo = commandResultExpression.CommandExpression;
+
+            if (commandInfo.DbCommandType != CommandType.Text)
                 throw new ArgumentException("Only CommandType.Text Command Expressions can be dynamically paged.");
-            if(CultureInfo.InvariantCulture.CompareInfo.IndexOf(commandExpression.CommandText, "ORDER BY", CompareOptions.OrdinalIgnoreCase ) < 0)
-                throw new ArgumentException("Command Text must contain an Order By clause to be paged.");
 
-
-            commandExpression.CommandText =  string.Concat(commandExpression.CommandText, 
+            commandInfo.CommandText = string.Concat(commandInfo.CommandText, 
                 string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName));
 
-            return commandExpression;
+            return commandResultExpression;
         }
 
         private const string PagingFormat = 

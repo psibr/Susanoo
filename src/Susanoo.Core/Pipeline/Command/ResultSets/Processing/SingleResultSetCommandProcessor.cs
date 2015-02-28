@@ -22,19 +22,27 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         IResultMapper<TResult>
     {
         private ColumnChecker _columnChecker;
+        private readonly IDictionary<int, CommandModifier> _commandModifiers = new Dictionary<int, CommandModifier>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
+        /// <param name="commandModifiers">The command modifiers.</param>
         /// <param name="name">The name.</param>
-        public SingleResultSetCommandProcessor(ICommandResultInfo<TFilter> mappings, string name)
+        public SingleResultSetCommandProcessor(ICommandResultInfo<TFilter> mappings, IEnumerable<CommandModifier> commandModifiers = null, string name = null)
             : base(mappings)
         {
             CompiledMapping = CommandManager
                 .Bootstrapper
                 .RetrieveDeserializerResolver()
                 .Resolve<TResult>(mappings.GetExporter());
+
+            if(commandModifiers != null)
+                foreach (var commandModifier in commandModifiers)
+                {
+                    _commandModifiers.Add(commandModifier.Priority, commandModifier);
+                }
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
@@ -84,6 +92,20 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         public override void ClearColumnIndexInfo()
         {
             _columnChecker = new ColumnChecker();
+        }
+
+        /// <summary>
+        /// Gets the command modifiers.
+        /// </summary>
+        /// <value>The command modifiers.</value>
+        public IOrderedEnumerable<CommandModifier> CommandModifiers
+        {
+            get
+            {
+                return _commandModifiers
+                    .Select(pair => pair.Value)
+                    .OrderBy(modifier => modifier.Priority);
+            }
         }
 
         /// <summary>
@@ -153,11 +175,18 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             IEnumerable<TResult> results = null;
 
-            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+            IExecutableCommandInfo executableCommandInfo = new ExecutableCommandInfo
+            {
+                CommandText = CommandInfo.CommandText,
+                DbCommandType = CommandInfo.DbCommandType,
+                Parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters)
+            };
+
+            executableCommandInfo = CommandModifiers.Aggregate(executableCommandInfo, (info, modifier) => modifier.ModifierFunc(info));
 
             if (ResultCachingEnabled)
             {
-                var parameterAggregate = parameters.Aggregate(string.Empty,
+                var parameterAggregate = executableCommandInfo.Parameters.Aggregate(string.Empty,
                     (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
 
                 hashCode = HashBuilder.Compute(parameterAggregate);
@@ -176,20 +205,20 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var records = databaseManager
                         .ExecuteDataReader(
-                            CommandInfo.CommandText,
-                            CommandInfo.DbCommandType,
-                            parameters))
+                            executableCommandInfo.CommandText,
+                            executableCommandInfo.DbCommandType,
+                            executableCommandInfo.Parameters))
                     {
                         results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
                         var result = results as ListResult<TResult>;
-                        if(result != null)
+                        if (result != null)
                             ColumnReport = result.ColumnReport;
                     }
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
+                    CommandManager.HandleExecutionException(executableCommandInfo, ex, executableCommandInfo.Parameters);
                 }
 
                 if (ResultCachingEnabled)

@@ -3,6 +3,8 @@
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
@@ -36,7 +38,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <param name="optionsObject">The options object.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-        ICommandResultExpression<TFilter, TResult> BuildWhereFilter(object optionsObject);
+        ICommandResultExpression<TFilter, TResult> BuildWhereFilter(object optionsObject = null);
     }
 
     /// <summary>

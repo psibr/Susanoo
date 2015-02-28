@@ -95,14 +95,16 @@
     <Compile Include="AllowedActionsAttribute.cs" />
     <Compile Include="CompareMethod.cs" />
     <Compile Include="Comparison.cs" />
+    <Compile Include="ComparisonOverride.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
     <Compile Include="ObjectExtensions.cs" />
-    <Compile Include="Pipeline\Command\ICommand.cs" />
     <Compile Include="Pipeline\Command\ICommandInfo.cs" />
+    <Compile Include="Pipeline\Command\IExecutableCommandInfo.cs" />
     <Compile Include="Pipeline\Command\ResultSets\CommandResultCommon.cs" />
     <Compile Include="Pipeline\Command\ResultSets\ICommandResultExpressionCore.cs" />
     <Compile Include="Pipeline\Command\ResultSets\ICommandResultInfo.cs" />
     <Compile Include="Pipeline\Command\ResultSets\ICommandResultMappingExport.cs" />
+    <Compile Include="Pipeline\Command\CommandModifier.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\BuiltInTypeDeserializer.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Processing\Deserialization\DynamicRow.cs" />
     <Compile Include="ExceptionHandler.cs" />
