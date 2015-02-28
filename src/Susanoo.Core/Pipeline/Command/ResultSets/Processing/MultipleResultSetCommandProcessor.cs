@@ -14,16 +14,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult1">The type of the result1.</typeparam>
     /// <typeparam name="TResult2">The type of the result2.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>
-        : CommandProcessorWithResults<TFilter>,
-            ICommandProcessor<TFilter, TResult1, TResult2>
+    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2> :
+        CommandProcessorWithResults<TFilter>,
+        ICommandProcessor<TFilter, TResult1, TResult2>
     {
         private const int ResultCount = 2;
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
-
-        private readonly
-            ICommandResultExpression<TFilter, TResult1, TResult2>
-            _resultExpression;
 
         private readonly IResultMapper[] _mappers;
 
@@ -32,40 +27,18 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2}" />
         /// class.
         /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
-        public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2>
-                commandResultExpression, string name)
+        public MultipleResultSetCommandProcessor(ICommandResultInfo<TFilter> commandResultInfo, string name)
+            : base(commandResultInfo)
         {
-            _commandExpression = commandResultExpression.CommandExpression;
-            _resultExpression = commandResultExpression;
 
             _mappers = new IResultMapper[ResultCount];
 
-            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
-            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
+            _mappers[0] = CommandResultInfo.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = CommandResultInfo.GetProcessor<TFilter, TResult2>();
 
             CommandManager.RegisterCommandProcessor(this, name);
-        }
-
-        /// <summary>
-        /// Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2>
-            CommandResultExpression
-        {
-            get { return _resultExpression; }
-        }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public override ICommandExpressionInfo<TFilter> CommandExpression
-        {
-            get { return _commandExpression; }
         }
 
         /// <summary>
@@ -74,7 +47,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <value>The cache hash.</value>
         public override BigInteger CacheHash
         {
-            get { return CommandResultExpression.CacheHash; }
+            get { return CommandResultInfo.CacheHash; }
         }
 
         /// <summary>
@@ -93,8 +66,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         {
             var results = new object[ResultCount];
 
-            var commandExpression = CommandExpression;
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -121,8 +93,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var record = databaseManager
                         .ExecuteDataReader(
-                            commandExpression.CommandText,
-                            commandExpression.DbCommandType,
+                            CommandInfo.CommandText,
+                            CommandInfo.DbCommandType,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -137,7 +109,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -196,11 +168,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
     {
         private const int ResultCount = 3;
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
-
-        private readonly
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
-            _resultExpression;
 
         private readonly IResultMapper[] _mappers;
 
@@ -209,50 +176,18 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3}" />
         /// class.
         /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
-        public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
-                commandResultExpression, string name)
+        public MultipleResultSetCommandProcessor(ICommandResultInfo<TFilter> commandResultInfo, string name)
+            : base(commandResultInfo)
         {
-            _commandExpression = commandResultExpression.CommandExpression;
-            _resultExpression = commandResultExpression;
-
             _mappers = new IResultMapper[ResultCount];
 
-            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
-            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
-            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
+            _mappers[0] = CommandResultInfo.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = CommandResultInfo.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = CommandResultInfo.GetProcessor<TFilter, TResult3>();
 
             CommandManager.RegisterCommandProcessor(this, name);
-        }
-
-        /// <summary>
-        /// Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3>
-            CommandResultExpression
-        {
-            get { return _resultExpression; }
-        }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public override ICommandExpressionInfo<TFilter> CommandExpression
-        {
-            get { return _commandExpression; }
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash
-        {
-            get { return CommandResultExpression.CacheHash; }
         }
 
         /// <summary>
@@ -273,7 +208,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         {
             var results = new object[ResultCount];
 
-            var commandExpression = CommandExpression;
+            var commandExpression = CommandInfo;
             var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
 
             var cachedItemPresent = false;
@@ -317,7 +252,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -377,16 +312,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult3">The type of the result3.</typeparam>
     /// <typeparam name="TResult4">The type of the result4.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
-        : CommandProcessorWithResults<TFilter>,
-            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
+    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> :
+        CommandProcessorWithResults<TFilter>,
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
     {
         private const int ResultCount = 4;
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
-
-        private readonly
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
-            _resultExpression;
 
         private readonly IResultMapper[] _mappers;
 
@@ -395,52 +325,21 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4}" />
         /// class.
         /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
-        public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
-                commandResultExpression, string name)
+        public MultipleResultSetCommandProcessor(ICommandResultInfo<TFilter> commandResultInfo, string name)
+            : base(commandResultInfo)
         {
-            _commandExpression = commandResultExpression.CommandExpression;
-            _resultExpression = commandResultExpression;
-
             _mappers = new IResultMapper[ResultCount];
 
-            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
-            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
-            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
-            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
+            _mappers[0] = CommandResultInfo.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = CommandResultInfo.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = CommandResultInfo.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = CommandResultInfo.GetProcessor<TFilter, TResult4>();
 
             CommandManager.RegisterCommandProcessor(this, name);
         }
 
-        /// <summary>
-        /// Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>
-            CommandResultExpression
-        {
-            get { return _resultExpression; }
-        }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public override ICommandExpressionInfo<TFilter> CommandExpression
-        {
-            get { return _commandExpression; }
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash
-        {
-            get { return CommandResultExpression.CacheHash; }
-        }
 
         /// <summary>
         /// Executes the command using a provided database manager and optionally a filter to read parameters from and explicit
@@ -462,8 +361,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         {
             var results = new object[ResultCount];
 
-            var commandExpression = CommandExpression;
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -490,8 +388,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var record = databaseManager
                         .ExecuteDataReader(
-                            commandExpression.CommandText,
-                            commandExpression.DbCommandType,
+                            CommandInfo.CommandText,
+                            CommandInfo.DbCommandType,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -506,7 +404,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -572,16 +470,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult4">The type of the result4.</typeparam>
     /// <typeparam name="TResult5">The type of the result5.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-        : CommandProcessorWithResults<TFilter>,
-            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
+    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> :
+        CommandProcessorWithResults<TFilter>,
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
     {
         private const int ResultCount = 5;
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
-
-        private readonly
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-            _resultExpression;
 
         private readonly IResultMapper[] _mappers;
 
@@ -590,52 +483,20 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5}" />
         /// class.
         /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
-        public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-                commandResultExpression, string name)
+        public MultipleResultSetCommandProcessor(ICommandResultInfo<TFilter> commandResultInfo, string name)
+            : base(commandResultInfo)
         {
-            _commandExpression = commandResultExpression.CommandExpression;
-            _resultExpression = commandResultExpression;
-
             _mappers = new IResultMapper[ResultCount];
 
-            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
-            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
-            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
-            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
-            _mappers[4] = _resultExpression.GetProcessor<TFilter, TResult5>();
+            _mappers[0] = CommandResultInfo.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = CommandResultInfo.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = CommandResultInfo.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = CommandResultInfo.GetProcessor<TFilter, TResult4>();
+            _mappers[4] = CommandResultInfo.GetProcessor<TFilter, TResult5>();
 
             CommandManager.RegisterCommandProcessor(this, name);
-        }
-
-        /// <summary>
-        /// Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-            CommandResultExpression
-        {
-            get { return _resultExpression; }
-        }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public override ICommandExpressionInfo<TFilter> CommandExpression
-        {
-            get { return _commandExpression; }
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash
-        {
-            get { return CommandResultExpression.CacheHash; }
         }
 
         /// <summary>
@@ -660,8 +521,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         {
             var results = new object[ResultCount];
 
-            var commandExpression = CommandExpression;
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -688,8 +548,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var record = databaseManager
                         .ExecuteDataReader(
-                            commandExpression.CommandText,
-                            commandExpression.DbCommandType,
+                            CommandInfo.CommandText,
+                            CommandInfo.DbCommandType,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -704,7 +564,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -776,16 +636,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
     /// <typeparam name="TResult5">The type of the result5.</typeparam>
     /// <typeparam name="TResult6">The type of the result6.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-        : CommandProcessorWithResults<TFilter>,
-            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
+    public class MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6> :
+        CommandProcessorWithResults<TFilter>,
+        ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
     {
         private const int ResultCount = 6;
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
-
-        private readonly
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-            _resultExpression;
 
         private readonly IResultMapper[] _mappers;
 
@@ -794,53 +649,21 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6}" />
         /// class.
         /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
-        public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-                commandResultExpression, string name)
+        public MultipleResultSetCommandProcessor(ICommandResultInfo<TFilter> commandResultInfo, string name)
+            : base(commandResultInfo)
         {
-            _commandExpression = commandResultExpression.CommandExpression;
-            _resultExpression = commandResultExpression;
-
             _mappers = new IResultMapper[ResultCount];
 
-            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
-            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
-            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
-            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
-            _mappers[4] = _resultExpression.GetProcessor<TFilter, TResult5>();
-            _mappers[5] = _resultExpression.GetProcessor<TFilter, TResult6>();
+            _mappers[0] = CommandResultInfo.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = CommandResultInfo.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = CommandResultInfo.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = CommandResultInfo.GetProcessor<TFilter, TResult4>();
+            _mappers[4] = CommandResultInfo.GetProcessor<TFilter, TResult5>();
+            _mappers[5] = CommandResultInfo.GetProcessor<TFilter, TResult6>();
 
             CommandManager.RegisterCommandProcessor(this, name);
-        }
-
-        /// <summary>
-        /// Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-            CommandResultExpression
-        {
-            get { return _resultExpression; }
-        }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public override ICommandExpressionInfo<TFilter> CommandExpression
-        {
-            get { return _commandExpression; }
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash
-        {
-            get { return CommandResultExpression.CacheHash; }
         }
 
         /// <summary>
@@ -867,8 +690,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         {
             var results = new object[ResultCount];
 
-            var commandExpression = CommandExpression;
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -895,8 +717,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var record = databaseManager
                         .ExecuteDataReader(
-                            commandExpression.CommandText,
-                            commandExpression.DbCommandType,
+                            CommandInfo.CommandText,
+                            CommandInfo.DbCommandType,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -911,7 +733,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -995,11 +817,6 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
     {
         private const int ResultCount = 7;
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
-
-        private readonly
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-            _resultExpression;
 
         private readonly IResultMapper[] _mappers;
 
@@ -1008,54 +825,22 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <see cref="MultipleResultSetCommandProcessor{TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7}" />
         /// class.
         /// </summary>
-        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
-        public MultipleResultSetCommandProcessor(
-            ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-                commandResultExpression, string name)
+        public MultipleResultSetCommandProcessor(ICommandResultInfo<TFilter> commandResultInfo, string name)
+            : base(commandResultInfo)
         {
-            _commandExpression = commandResultExpression.CommandExpression;
-            _resultExpression = commandResultExpression;
-
             _mappers = new IResultMapper[ResultCount];
 
-            _mappers[0] = _resultExpression.GetProcessor<TFilter, TResult1>();
-            _mappers[1] = _resultExpression.GetProcessor<TFilter, TResult2>();
-            _mappers[2] = _resultExpression.GetProcessor<TFilter, TResult3>();
-            _mappers[3] = _resultExpression.GetProcessor<TFilter, TResult4>();
-            _mappers[4] = _resultExpression.GetProcessor<TFilter, TResult5>();
-            _mappers[5] = _resultExpression.GetProcessor<TFilter, TResult6>();
-            _mappers[6] = _resultExpression.GetProcessor<TFilter, TResult7>();
+            _mappers[0] = CommandResultInfo.GetProcessor<TFilter, TResult1>();
+            _mappers[1] = CommandResultInfo.GetProcessor<TFilter, TResult2>();
+            _mappers[2] = CommandResultInfo.GetProcessor<TFilter, TResult3>();
+            _mappers[3] = CommandResultInfo.GetProcessor<TFilter, TResult4>();
+            _mappers[4] = CommandResultInfo.GetProcessor<TFilter, TResult5>();
+            _mappers[5] = CommandResultInfo.GetProcessor<TFilter, TResult6>();
+            _mappers[6] = CommandResultInfo.GetProcessor<TFilter, TResult7>();
 
             CommandManager.RegisterCommandProcessor(this, name);
-        }
-
-        /// <summary>
-        /// Gets the command result expression.
-        /// </summary>
-        /// <value>The command result expression.</value>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-            CommandResultExpression
-        {
-            get { return _resultExpression; }
-        }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public override ICommandExpressionInfo<TFilter> CommandExpression
-        {
-            get { return _commandExpression; }
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash
-        {
-            get { return CommandResultExpression.CacheHash; }
         }
 
         /// <summary>
@@ -1084,8 +869,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         {
             var results = new object[ResultCount];
 
-            var commandExpression = CommandExpression;
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -1112,8 +896,8 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 {
                     using (var record = databaseManager
                         .ExecuteDataReader(
-                            commandExpression.CommandText,
-                            commandExpression.DbCommandType,
+                            CommandInfo.CommandText,
+                            CommandInfo.DbCommandType,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -1128,7 +912,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                    CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,

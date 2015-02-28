@@ -43,7 +43,7 @@ namespace Susanoo
         /// <param name="info">The information.</param>
         /// <param name="exception">The exception.</param>
         /// <param name="parameters">The parameters.</param>
-        void OnExecutionException(ICommandExpressionInfo info, Exception exception,
+        void OnExecutionException(ICommandInfo info, Exception exception,
             DbParameter[] parameters);
     }
 }

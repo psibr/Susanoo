@@ -15,26 +15,27 @@ namespace Susanoo.Pipeline.Command
     /// A fully built and ready to be executed command expression with a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public partial class NoResultSetCommandProcessor<TFilter> : ICommandProcessor<TFilter>
+    public partial class NoResultSetCommandProcessor<TFilter> : 
+        ICommandProcessor<TFilter>
     {
-        private readonly ICommandExpressionInfo<TFilter> _commandExpression;
+        private readonly ICommandInfo<TFilter> _commandInfo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The command.</param>
-        public NoResultSetCommandProcessor(ICommandExpressionInfo<TFilter> command)
+        public NoResultSetCommandProcessor(ICommandInfo<TFilter> command)
         {
-            _commandExpression = command;
+            _commandInfo = command;
         }
 
         /// <summary>
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>
-        public ICommandExpressionInfo<TFilter> CommandExpression
+        public ICommandInfo<TFilter> CommandInfo
         {
-            get { return _commandExpression; }
+            get { return _commandInfo; }
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace Susanoo.Pipeline.Command
         /// <value>The cache hash.</value>
         public BigInteger CacheHash
         {
-            get { return _commandExpression.CacheHash; }
+            get { return _commandInfo.CacheHash; }
         }
 
         /// <summary>
@@ -61,15 +62,15 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
                 result = databaseManager.ExecuteScalar<TReturn>(
-                    CommandExpression.CommandText,
-                    CommandExpression.DbCommandType,
+                    CommandInfo.CommandText,
+                    CommandInfo.DbCommandType,
                     parameters);
             }
             catch (Exception ex)
             {
-                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
             }
 
             return result;
@@ -102,15 +103,15 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
                 result = databaseManager.ExecuteNonQuery(
-                    CommandExpression.CommandText,
-                    CommandExpression.DbCommandType,
+                    CommandInfo.CommandText,
+                    CommandInfo.DbCommandType,
                     parameters);
             }
             catch (Exception ex)
             {
-                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
             }
 
             return result;
@@ -151,17 +152,17 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
                 result = await databaseManager.ExecuteScalarAsync<TReturn>(
-                    CommandExpression.CommandText,
-                    CommandExpression.DbCommandType,
+                    CommandInfo.CommandText,
+                    CommandInfo.DbCommandType,
                     cancellationToken,
                     parameters)
                         .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
             }
 
             return result;
@@ -182,17 +183,17 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
                 result = await databaseManager.ExecuteNonQueryAsync(
-                    CommandExpression.CommandText,
-                    CommandExpression.DbCommandType,
+                    CommandInfo.CommandText,
+                    CommandInfo.DbCommandType,
                     cancellationToken,
                     parameters)
                         .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                CommandManager.HandleExecutionException(CommandExpression, ex, parameters);
+                CommandManager.HandleExecutionException(CommandInfo, ex, parameters);
             }
 
             return result;

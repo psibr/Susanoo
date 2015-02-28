@@ -9,25 +9,34 @@ using System.Numerics;
 namespace Susanoo.Pipeline.Command.ResultSets.Processing
 {
     /// <summary>
-    /// Common components between CommandProcessors with ResultSets
+    ///     Common components between CommandProcessors with ResultSets
     /// </summary>
     /// <typeparam name="TFilter">The type of the t filter.</typeparam>
-    public abstract class CommandProcessorWithResults<TFilter> : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    public abstract class CommandProcessorWithResults<TFilter> :
+        ICommandProcessorWithResults<TFilter>,
+        ICommandProcessorInterop<TFilter>
     {
-        private CacheMode _resultCachingMode = CacheMode.None;
-        private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
-
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandProcessorWithResults{TFilter}"/> class.
+        /// Initializes pipeline components of the result processor
         /// </summary>
-        protected CommandProcessorWithResults()
+        /// <param name="commandResultInfo">The command result information.</param>
+        protected CommandProcessorWithResults(ICommandResultInfo<TFilter> commandResultInfo)
+            : this()
         {
-            _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>();
+            CommandInfo = commandResultInfo.GetCommandInfo();
+            CommandResultInfo = commandResultInfo;
         }
 
         /// <summary>
-        /// Gets the result cache container.
+        /// Prevents a default instance of the <see cref="CommandProcessorWithResults{TFilter}"/> class from being created.
+        /// </summary>
+        private CommandProcessorWithResults() { _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>(); }
+
+        private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
+        private CacheMode _resultCachingMode = CacheMode.None;
+
+        /// <summary>
+        ///     Gets the result cache container.
         /// </summary>
         /// <value>The result cache container.</value>
         protected ConcurrentDictionary<BigInteger, CacheItem> ResultCacheContainer
@@ -36,45 +45,19 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
-        /// Gets a value indicating whether [result caching enabled].
+        ///     Gets a value indicating whether [result caching enabled].
         /// </summary>
         /// <value><c>true</c> if [result caching enabled]; otherwise, <c>false</c>.</value>
         protected bool ResultCachingEnabled { get; private set; }
 
         /// <summary>
-        /// Clears any column index information that may have been cached.
-        /// </summary>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public virtual void ClearColumnIndexInfo()
-        {
-        }
-
-        /// <summary>
-        /// Updates the column index information.
-        /// </summary>
-        /// <param name="info">The information.</param>
-        public virtual void UpdateColumnIndexInfo(ColumnChecker info)
-        {
-
-        }
-
-        /// <summary>
-        /// Retrieves a copy of the column index information.
-        /// </summary>
-        /// <returns>ColumnChecker.</returns>
-        public virtual ColumnChecker RetrieveColumnIndexInfo()
-        {
-            return new ColumnChecker();
-        }
-
-        /// <summary>
-        /// Gets the result caching interval.
+        ///     Gets the result caching interval.
         /// </summary>
         /// <value>The result caching interval.</value>
         protected double ResultCachingInterval { get; private set; }
 
         /// <summary>
-        /// Gets the result caching mode.
+        ///     Gets the result caching mode.
         /// </summary>
         /// <value>The result caching mode.</value>
         protected CacheMode ResultCachingMode
@@ -83,13 +66,36 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
+        ///     Gets the command expression.
         /// </summary>
-        /// <value>The cache hash.</value>
-        public abstract BigInteger CacheHash { get; }
+        /// <value>The command expression.</value>
+        public ICommandInfo<TFilter> CommandInfo { get; protected set; }
 
         /// <summary>
-        /// Flushes the cache.
+        ///     Gets the mapping expressions.
+        /// </summary>
+        /// <value>The mapping expressions.</value>
+        public ICommandResultInfo<TFilter> CommandResultInfo { get; protected set; }
+
+        /// <summary>
+        ///     Clears any column index information that may have been cached.
+        /// </summary>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public virtual void ClearColumnIndexInfo()
+        {
+        }
+
+        /// <summary>
+        ///     Gets the hash code used for caching result mapping compilations.
+        /// </summary>
+        /// <value>The cache hash.</value>
+        public virtual BigInteger CacheHash
+        {
+            get { return CommandResultInfo.CacheHash; }
+        }
+
+        /// <summary>
+        ///     Flushes the cache.
         /// </summary>
         public void FlushCache()
         {
@@ -97,12 +103,31 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
-        /// Activates the result caching.
+        ///     Updates the column index information.
+        /// </summary>
+        /// <param name="info">The information.</param>
+        public virtual void UpdateColumnIndexInfo(ColumnChecker info)
+        {
+        }
+
+        /// <summary>
+        ///     Retrieves a copy of the column index information.
+        /// </summary>
+        /// <returns>ColumnChecker.</returns>
+        public virtual ColumnChecker RetrieveColumnIndexInfo()
+        {
+            return new ColumnChecker();
+        }
+
+        /// <summary>
+        ///     Activates the result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
-        /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
-        /// this is confusing and therefor is not allowed.;mode</exception>
+        /// <exception cref="System.ArgumentException">
+        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        ///     this is confusing and therefor is not allowed.;mode
+        /// </exception>
         protected void ActivateResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             if (mode == CacheMode.None)
@@ -116,7 +141,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
-        /// Retrieves a cached result.
+        ///     Retrieves a cached result.
         /// </summary>
         /// <param name="hashCode">The hash code.</param>
         /// <param name="value">The value.</param>
@@ -145,11 +170,5 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
 
             return result;
         }
-
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        public abstract ICommandExpressionInfo<TFilter> CommandExpression { get; }
     }
 }

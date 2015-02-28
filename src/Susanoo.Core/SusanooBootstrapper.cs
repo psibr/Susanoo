@@ -55,7 +55,7 @@ namespace Susanoo
         /// <param name="info">The information.</param>
         /// <param name="exception">The exception.</param>
         /// <param name="parameters">The parameters.</param>
-        public virtual void OnExecutionException(ICommandExpressionInfo info, Exception exception,
+        public virtual void OnExecutionException(ICommandInfo info, Exception exception,
             DbParameter[] parameters)
         {
             throw exception;

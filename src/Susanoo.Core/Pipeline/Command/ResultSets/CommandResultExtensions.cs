@@ -12,13 +12,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="resultExpression">The result expression.</param>
+        /// <param name="resultInfo">The result information.</param>
         /// <returns>IResultMapper&lt;TResult&gt;.</returns>
         public static IResultMapper<TResult> GetProcessor<TFilter, TResult>(this
-            ICommandResultExpressionCore<TFilter> resultExpression)
+            ICommandResultInfo<TFilter> resultInfo)
         {
             return SingleResultSetCommandProcessor<TFilter, TResult>.BuildOrRegenResultMapper(
-                resultExpression.ToSingleResult<TResult>());
+                resultInfo);
         }
     }
 }

@@ -1,56 +1,22 @@
 ﻿#region
 
 using Susanoo.Pipeline.Command.ResultSets.Mapping;
-using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
 namespace Susanoo.Pipeline.Command.ResultSets
 {
     /// <summary>
-    /// Shared components for Command Result Expressions.
-    /// </summary>
-    /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandResultExpressionCore<TFilter>
-        : ICommandResultMappingExport, IFluentPipelineFragment
-    {
-        /// <summary>
-        /// Gets the command expression.
-        /// </summary>
-        /// <value>The command expression.</value>
-        ICommandExpressionInfo<TFilter> CommandExpression { get; }
-
-        /// <summary>
-        /// Converts to a single result expression.
-        /// </summary>
-        /// <typeparam name="TSingle">The type of the single.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultExpression<TFilter, TSingle> ToSingleResult<TSingle>();
-    }
-
-    /// <summary>
-    /// Exposes property mapping export capabilities.
-    /// </summary>
-    public interface ICommandResultMappingExport : IFluentPipelineFragment
-    {
-        /// <summary>
-        /// Exports a results mappings for processing.
-        /// </summary>
-        /// <param name="resultType">Type of the result.</param>
-        /// <returns>IDictionary&lt;System.String, IPropertyMapping&gt;.</returns>
-        IDictionary<string, IPropertyMapping> Export(Type resultType);
-    }
-
-    /// <summary>
     /// Provides methods for customizing how results are handled and compiling result mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface ICommandResultExpression<TFilter, TResult> 
-        : ICommandResultExpressionCore<TFilter>
+    public interface ICommandResultExpression<TFilter, TResult> :
+        ICommandResultExpressionCore<TFilter>
     {
         /// <summary>
         /// Allows customization of result set.
@@ -66,6 +32,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <param name="name">The name.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         ICommandProcessor<TFilter, TResult> Realize(string name = null);
+
+        /// <summary>
+        /// Builds the where filter.
+        /// </summary>
+        /// <param name="optionsObject">The options object.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult> BuildWhereFilter(object optionsObject = null);
     }
 
     /// <summary>
