@@ -122,7 +122,7 @@ namespace Susanoo
             if (commandInfo.DbCommandType != CommandType.Text)
                 throw new ArgumentException("Only CommandType.Text Command Expressions can be dynamically paged.");
 
-            commandInfo.CommandText = string.Concat(commandInfo.CommandText, 
+            string.Concat(commandInfo.CommandText, 
                 string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName));
 
             return commandResultExpression;
