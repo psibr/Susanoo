@@ -123,17 +123,19 @@ namespace Susanoo
             if (commandInfo.DbCommandType != CommandType.Text)
                 throw new ArgumentException("Only CommandType.Text Command Expressions can be dynamically paged.");
 
+            var offsetFetchStatement = string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName);
+
             commandResultExpression.TryAddCommandModifier(new CommandModifier
             {
                 Description = "OFFSET/FETCH",
-                Priority = 1000,
+                Priority = 100,
                 ModifierFunc = info => new ExecutableCommandInfo
                 {
-                    CommandText = string.Concat(info.CommandText, string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName)),
+                    CommandText = string.Concat(info.CommandText, offsetFetchStatement),
                     DbCommandType = info.DbCommandType,
                     Parameters = info.Parameters
                 },
-                CacheHash = new BigInteger(1000)
+                CacheHash = HashBuilder.Compute(offsetFetchStatement)
             });
 
             return commandResultExpression;

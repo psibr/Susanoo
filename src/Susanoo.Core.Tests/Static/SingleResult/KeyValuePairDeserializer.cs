@@ -24,7 +24,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValuePairMap()
         {
-            var results = CommandManager.DefineCommand("SELECT  Int, String FROM #DataTypeTable;", CommandType.Text)
+            var results = CommandManager.DefineCommand("SELECT Int, String FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<KeyValuePair<int, string>>()
                 .ForResults(expression =>
                 {
@@ -104,11 +104,11 @@ namespace Susanoo.Tests.Static.SingleResult
                 })
                 .BuildWhereFilter(new
                 {
-                    Key = Comparison.Ignore//,
-                    //Value = Comparison.Override("({0} IS NULL OR UPPER({1}) LIKE '%' + UPPER({0}))")
+                    Key = Comparison.Ignore,
+                    Value = Comparison.Equal
                 })
                 .Realize()
-                .Execute(_databaseManager, new KeyValuePair<string, string>(null, "C"));
+                .Execute(_databaseManager, new KeyValuePair<string, string>(null, "varchar"));
 
             Assert.IsNotNull(results);
             Assert.AreEqual(1, results.Count());
@@ -117,6 +117,39 @@ namespace Susanoo.Tests.Static.SingleResult
 
             Assert.AreEqual(first.Key, "1");
             Assert.AreEqual(first.Value, "varchar");
+        }
+
+
+        [Test(Description = "Tests that results correctly map data to CLR types.")]
+        public void KeyValueWithWhereFilterAndOrderBy()
+        {
+            var results = CommandManager.DefineCommand<KeyValuePair<string, string>>(
+                @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
+                .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
+                .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
+                .SendNullValues(NullValueMode.FilterOnlyFull)
+                .DefineResults<KeyValuePair<string, string>>()
+                .ForResults(expression =>
+                {
+                    expression.ForProperty(pair => pair.Key,
+                        configuration => configuration.UseAlias("Int"));
+                    expression.ForProperty(pair => pair.Value,
+                        configuration => configuration.UseAlias("String"));
+                })
+                .BuildWhereFilter()
+                .AddOrderByExpression()
+                .Realize()
+                .Execute(Setup.DatabaseManager, 
+                    new KeyValuePair<string, string>(null, "o"),
+                    new { OrderBy = "Int DESC" });
+
+            Assert.IsNotNull(results);
+            Assert.AreEqual(3, results.Count());
+
+            var first = results.First();
+
+            Assert.AreEqual("4", first.Key);
+            Assert.AreEqual("Four", first.Value);
         }
     }
 }

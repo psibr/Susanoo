@@ -20,8 +20,8 @@ namespace Susanoo.SqlServer.Tests
                 SELECT Int, String
                 FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)
                 ORDER BY Int", CommandType.Text)
-                .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
-                .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
+                .ExcludeProperty(o => o.Key)
+                .ExcludeProperty(o => o.Value)
                 .SendNullValues(NullValueMode.FilterOnlyFull)
                 .DefineResults<KeyValuePair<string, string>>()
                 .ForResults(expression =>
@@ -33,9 +33,7 @@ namespace Susanoo.SqlServer.Tests
                 })
                 .OffsetFetch()
                 .Realize()
-                .Execute(Setup.DatabaseManager, 
-                    Setup.DatabaseManager.CreateInputParameter("RowCount", DbType.Int32, 2),
-                    Setup.DatabaseManager.CreateInputParameter("PageNumber", DbType.Int32, 2));
+                .Execute(Setup.DatabaseManager, default(KeyValuePair<string, string>), new { RowCount = 2, PageNumber = 2 });
 
             Assert.IsNotNull(results);
             Assert.AreEqual(2, results.Count());
@@ -67,19 +65,20 @@ namespace Susanoo.SqlServer.Tests
                         configuration => configuration.UseAlias("String"));
                 })
                 .BuildWhereFilter()
+                .AddOrderByExpression()
                 .OffsetFetch()
                 .Realize()
-                .Execute(Setup.DatabaseManager, new KeyValuePair<string, string>("3", null),
-                    Setup.DatabaseManager.CreateInputParameter("RowCount", DbType.Int32, 2),
-                    Setup.DatabaseManager.CreateInputParameter("PageNumber", DbType.Int32, 2));
+                .Execute(Setup.DatabaseManager,
+                    new KeyValuePair<string, string>(null, "o"),
+                    new { OrderBy = "Int DESC", RowCount = 2, PageNumber = 2 });
 
             Assert.IsNotNull(results);
             Assert.AreEqual(1, results.Count());
 
             var first = results.First();
 
-            Assert.AreEqual("3", first.Key);
-            Assert.AreEqual("Three", first.Value);
+            Assert.AreEqual("1", first.Key);
+            Assert.AreEqual("One", first.Value);
         }
     }
 }
