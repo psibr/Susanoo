@@ -79,7 +79,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             var whereFilterModifier = new CommandModifier
             {
                 Description = "WhereFilter",
-                Priority = 200,
+                Priority = 900,
                 ModifierFunc = BuildWhereFilterImplementation
             };
 
@@ -88,6 +88,41 @@ namespace Susanoo.Pipeline.Command.ResultSets
                     (s, pair) => s + pair.Key + pair.Value));
 
             if (!TryAddCommandModifier(whereFilterModifier))
+                throw new Exception("Confilcting priorities for command modifiers");
+
+            return this;
+        }
+
+        /// <summary>
+        /// Builds the where filter.
+        /// </summary>
+        /// <param name="parameterName">Name of the parameter.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="Exception">Confilcting priorities for command modifiers</exception>
+        public ICommandResultExpression<TFilter, TResult> AddOrderByExpression(string parameterName = "OrderBy")
+        {
+            if(parameterName == null)
+                throw new ArgumentNullException("parameterName");
+
+            var orderByModifier = new CommandModifier
+            {
+                Description = "OrderByExpression",
+                Priority = 800,
+                ModifierFunc = info =>
+                {
+                    var orderByParameter = info.Parameters.First(p => p.ParameterName == parameterName);
+
+                    return new ExecutableCommandInfo
+                    {
+                        CommandText = info.CommandText + "\r\nORDER BY " + orderByParameter.Value,
+                        Parameters = info.Parameters.Where(p => p.ParameterName != parameterName).ToArray(),
+                        DbCommandType = info.DbCommandType
+                    };
+                },
+                CacheHash = HashBuilder.Compute("ORDER BY @"+parameterName)
+            };
+
+            if (!TryAddCommandModifier(orderByModifier))
                 throw new Exception("Confilcting priorities for command modifiers");
 
             return this;

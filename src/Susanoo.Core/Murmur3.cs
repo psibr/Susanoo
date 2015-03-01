@@ -20,18 +20,28 @@ namespace Susanoo
 
     #endregion
 
-    internal static class HashBuilder
+    /// <summary>
+    /// Common hashing method for Susanoo.
+    /// </summary>
+    public static class HashBuilder
     {
+        /// <summary>
+        /// Gets the seed of hashes.
+        /// </summary>
+        /// <value>The seed.</value>
         public static BigInteger Seed
         {
             get { return Murmur3.Seed; }
-            //get { return 866398230; }
         }
 
+        /// <summary>
+        /// Computes the specified value into a hash.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>BigInteger.</returns>
         public static BigInteger Compute(string value)
         {
             return new BigInteger(new Murmur3().ComputeHash(Encoding.UTF8.GetBytes(value)));
-            //return FnvHash.GetHash32(value);
         }
     }
 

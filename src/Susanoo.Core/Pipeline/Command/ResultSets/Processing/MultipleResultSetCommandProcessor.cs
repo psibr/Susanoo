@@ -56,17 +56,18 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
         /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
             var results = new object[ResultCount];
 
-            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, parameterObject, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -140,6 +141,21 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return Execute(databaseManager, filter, null, explicitParameters);
+        }
+
+        /// <summary>
         /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
@@ -196,6 +212,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
@@ -204,12 +221,12 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
             var results = new object[ResultCount];
 
             var commandExpression = CommandInfo;
-            var parameters = commandExpression.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = commandExpression.BuildParameters(databaseManager, filter, parameterObject, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -288,6 +305,23 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return Execute(databaseManager, filter, null, explicitParameters);
+        }
+
+        /// <summary>
         /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
@@ -347,6 +381,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
@@ -357,11 +392,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult2>,
             IEnumerable<TResult3>,
             IEnumerable<TResult4>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
             var results = new object[ResultCount];
 
-            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, parameterObject, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -445,6 +480,25 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return Execute(databaseManager, filter, null, explicitParameters);
+        }
+
+        /// <summary>
         /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
@@ -505,6 +559,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
@@ -517,11 +572,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult3>,
             IEnumerable<TResult4>,
             IEnumerable<TResult5>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
             var results = new object[ResultCount];
 
-            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, parameterObject, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -610,6 +665,27 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>,
+            IEnumerable<TResult5>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return Execute(databaseManager, filter, null, explicitParameters);
+        }
+
+        /// <summary>
         /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
@@ -672,6 +748,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
@@ -686,11 +763,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult4>,
             IEnumerable<TResult5>,
             IEnumerable<TResult6>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
             var results = new object[ResultCount];
 
-            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, parameterObject, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -784,6 +861,29 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>,
+            IEnumerable<TResult5>,
+            IEnumerable<TResult6>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return Execute(databaseManager, filter, null, explicitParameters);
+        }
+
+        /// <summary>
         /// Enables result caching.
         /// </summary>
         /// <param name="mode">The mode.</param>
@@ -849,6 +949,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
@@ -865,11 +966,11 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult5>,
             IEnumerable<TResult6>,
             IEnumerable<TResult7>>
-            Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+            Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
             var results = new object[ResultCount];
 
-            var parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+            var parameters = CommandInfo.BuildParameters(databaseManager, filter, parameterObject, explicitParameters);
 
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -966,6 +1067,31 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             IEnumerable<TResult7>> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        /// <summary>
+        /// Executes the command using a provided database manager and optionally parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Tuple&lt;
+        /// IEnumerable&lt;TResult1&gt;,
+        /// IEnumerable&lt;TResult2&gt;,
+        /// IEnumerable&lt;TResult3&gt;,
+        /// IEnumerable&lt;TResult4&gt;,
+        /// IEnumerable&lt;TResult5&gt;,
+        /// IEnumerable&lt;TResult6&gt;,
+        /// IEnumerable&lt;TResult7&gt;&gt;.</returns>
+        public Tuple<IEnumerable<TResult1>,
+            IEnumerable<TResult2>,
+            IEnumerable<TResult3>,
+            IEnumerable<TResult4>,
+            IEnumerable<TResult5>,
+            IEnumerable<TResult6>,
+            IEnumerable<TResult7>> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return Execute(databaseManager, filter, null, explicitParameters);
         }
 
         /// <summary>

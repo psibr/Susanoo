@@ -39,6 +39,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <param name="optionsObject">The options object.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         ICommandResultExpression<TFilter, TResult> BuildWhereFilter(object optionsObject = null);
+
+        /// <summary>
+        /// Adds the order by expression.
+        /// </summary>
+        /// <param name="parameterName">Name of the parameter.</param>
+        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
+        ICommandResultExpression<TFilter, TResult> AddOrderByExpression(string parameterName = "OrderBy");
     }
 
     /// <summary>

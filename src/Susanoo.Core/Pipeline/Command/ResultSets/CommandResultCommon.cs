@@ -41,7 +41,7 @@ WHERE 1=1";
             TryAddCommandModifier(new CommandModifier
             {
                 Description = "SusanooWrapper",
-                Priority = 100,
+                Priority = 1000,
                 ModifierFunc = info => new ExecutableCommandInfo
                 {
                     CommandText = string.Format(format, info.CommandText),

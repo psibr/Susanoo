@@ -95,7 +95,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         }
 
         /// <summary>
-        /// Gets the command modifiers.
+        /// Gets the command modifiers ordered by priority (Higher is executed sooner).
         /// </summary>
         /// <value>The command modifiers.</value>
         public IOrderedEnumerable<CommandModifier> CommandModifiers
@@ -104,7 +104,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
             {
                 return _commandModifiers
                     .Select(pair => pair.Value)
-                    .OrderBy(modifier => modifier.Priority);
+                    .OrderByDescending(modifier => modifier.Priority);
             }
         }
 
@@ -167,19 +167,32 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter,
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
+        {
+            return Execute(databaseManager, filter, null, explicitParameters);
+        }
+
+        /// <summary>
+        /// Assembles a data command for an ADO.NET provider,
+        /// executes the command and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
             params DbParameter[] explicitParameters)
         {
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
 
             IEnumerable<TResult> results = null;
-
             IExecutableCommandInfo executableCommandInfo = new ExecutableCommandInfo
             {
                 CommandText = CommandInfo.CommandText,
                 DbCommandType = CommandInfo.DbCommandType,
-                Parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters)
+                Parameters = CommandInfo.BuildParameters(databaseManager, filter, parameterObject, explicitParameters)
             };
 
             executableCommandInfo = CommandModifiers.Aggregate(executableCommandInfo, (info, modifier) => modifier.ModifierFunc(info));

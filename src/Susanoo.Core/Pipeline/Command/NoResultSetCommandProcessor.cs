@@ -62,7 +62,7 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, null, explicitParameters);
                 result = databaseManager.ExecuteScalar<TReturn>(
                     CommandInfo.CommandText,
                     CommandInfo.DbCommandType,
@@ -103,7 +103,7 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, null, explicitParameters);
                 result = databaseManager.ExecuteNonQuery(
                     CommandInfo.CommandText,
                     CommandInfo.DbCommandType,
@@ -152,7 +152,7 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, null, explicitParameters);
                 result = await databaseManager.ExecuteScalarAsync<TReturn>(
                     CommandInfo.CommandText,
                     CommandInfo.DbCommandType,
@@ -183,7 +183,7 @@ namespace Susanoo.Pipeline.Command
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandInfo.BuildParameters(databaseManager, filter, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, null, explicitParameters);
                 result = await databaseManager.ExecuteNonQueryAsync(
                     CommandInfo.CommandText,
                     CommandInfo.DbCommandType,

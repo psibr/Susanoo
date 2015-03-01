@@ -35,9 +35,10 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">Additional parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
-        DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter,
+        DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
             params DbParameter[] explicitParameters);
 
         /// <summary>

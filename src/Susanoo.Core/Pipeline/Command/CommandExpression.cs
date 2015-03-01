@@ -93,25 +93,28 @@ namespace Susanoo.Pipeline.Command
         }
 
         /// <summary>
-        ///     Builds the parameters (Not part of Fluent API).
+        /// Builds the parameters (Not part of Fluent API).
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">Additional parameters.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
-        public virtual DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter,
+        public virtual DbParameter[] BuildParameters(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
             params DbParameter[] explicitParameters)
         {
-            if (filter == null && _constantParameters.Count == 0 && explicitParameters == null)
+            if (filter == null && parameterObject == null && _constantParameters.Count == 0 && explicitParameters == new DbParameter[0])
                 return new DbParameter[0];
 
-            var propertyParameters = filter != null ? BuildPropertyParameters(databaseManager, filter) : null;
+            var propertyParameters = filter != null ? BuildPropertyParameters(databaseManager, filter).ToArray() :  new DbParameter[0];
+            var additionalParameters = parameterObject != null ? BuildPropertyParameters(databaseManager, parameterObject).ToArray() : new DbParameter[0];
+
             int parameterCount;
             DbParameter[] dbParameters = null;
 
-            if (propertyParameters != null)
+            if (propertyParameters.Count() + additionalParameters.Count() > 0)
             {
-                dbParameters = propertyParameters as DbParameter[] ?? propertyParameters.ToArray();
+                dbParameters =  propertyParameters.Concat(additionalParameters).ToArray();
                 parameterCount = (dbParameters.Count() + _constantParameters.Count) +
                                  ((explicitParameters != null) ? explicitParameters.Count() : 0);
             }
@@ -134,7 +137,6 @@ namespace Susanoo.Pipeline.Command
                     i++;
                 }
             }
-
 
             foreach (var item in _constantParameters)
             {
@@ -450,11 +452,11 @@ namespace Susanoo.Pipeline.Command
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
-        public virtual IEnumerable<DbParameter> BuildPropertyParameters(IDatabaseManager databaseManager, TFilter filter)
+        public virtual IEnumerable<DbParameter> BuildPropertyParameters(IDatabaseManager databaseManager, object filter)
         {
             var parameters = new List<DbParameter>();
 
-            if (typeof (TFilter).IsValueType || filter != null)
+            if (typeof(TFilter).IsValueType || filter != null)
             {
                 if (_explicitInclusionMode)
                 {
@@ -586,7 +588,7 @@ namespace Susanoo.Pipeline.Command
         }
 
         /// <summary>
-        ///     Builds the parameters.
+        /// Builds the parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
@@ -595,6 +597,19 @@ namespace Susanoo.Pipeline.Command
             params DbParameter[] explicitParameters)
         {
             return BuildParameters(databaseManager, default(TFilter), explicitParameters);
+        }
+
+        /// <summary>
+        /// Builds the parameters.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>IEnumerable&lt;DbParameter&gt;.</returns>
+        public IEnumerable<DbParameter> BuildParameters(IDatabaseManager databaseManager, TFilter filter,
+            params DbParameter[] explicitParameters)
+        {
+            return BuildParameters(databaseManager, filter, null, explicitParameters);
         }
     }
 }

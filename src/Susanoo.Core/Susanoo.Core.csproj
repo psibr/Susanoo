@@ -156,6 +156,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMapping.cs" />
     <Compile Include="Pipeline\Command\ResultSets\Mapping\Properties\PropertyMappingConfiguration.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="SusanooBootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
