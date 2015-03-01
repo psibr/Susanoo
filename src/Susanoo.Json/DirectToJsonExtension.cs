@@ -1,6 +1,5 @@
 ﻿using System.Data.Common;
 using System.IO;
-using Susanoo.Pipeline.Command.ResultSets.Processing;
 using JSON = Newtonsoft.Json;
 
 namespace Susanoo
@@ -11,7 +10,7 @@ namespace Susanoo
             IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
             where TResult : new()
         {
-            var commandExpression = processor.CommandExpression;
+            var commandExpression = processor.CommandInfo;
 
             using (var record = databaseManager
                 .ExecuteDataReader(
@@ -21,7 +20,7 @@ namespace Susanoo
             {
                 var columnChecker = processor.RetrieveColumnIndexInfo();
 
-                var props = processor.CommandResultExpression.Export(typeof(TResult));
+                var fieldCount = record.FieldCount;
 
                 string results;
                 using (var writer = new StringWriter())
@@ -33,13 +32,12 @@ namespace Susanoo
                     {
                         json.WriteStartObject();
 
-                        foreach (var pair in props)
+                        for (var i = 0; i < fieldCount; i++)
                         {
-                            var ordinal = columnChecker.HasColumn(record, pair.Value.ActiveAlias);
-                            if (ordinal < 0) continue;
+                            var name = columnChecker.HasColumn(record, i);
 
-                            json.WritePropertyName(pair.Key);
-                            json.WriteValue(JSON.JsonConvert.ToString(record[ordinal]));
+                            json.WritePropertyName(name);
+                            json.WriteValue(JSON.JsonConvert.ToString(record[i]));
                         }
 
                         json.WriteEndObject();

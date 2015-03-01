@@ -184,7 +184,7 @@ public interface ICommandProcessorAsync<in TFilter, TResult>
 /// <typeparam name="TResult">The type of the result.</typeparam>
 /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
 public interface ICommandProcessor<in TFilter, TResult>
-    : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 #if !NETFX40
 , ICommandProcessorAsync<TFilter, TResult>
 #endif
@@ -259,7 +259,7 @@ public interface ICommandProcessor<in TFilter, TResult>
 /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
 /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
 public interface ICommandProcessor<in TFilter, TResult1, TResult2>
-    : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 {
     /// <summary>
     /// Enables result caching.
@@ -323,7 +323,7 @@ public interface ICommandProcessor<in TFilter, TResult1, TResult2>
 /// <typeparam name="TResult3">The type of the 3rd result.</typeparam>
 /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
 public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3>
-    : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 {
     /// <summary>
     /// Enables result caching.
@@ -390,7 +390,7 @@ public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3>
 /// <typeparam name="TResult4">The type of the 4th result.</typeparam>
 /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
 public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4>
-    : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 {
     /// <summary>
     /// Enables result caching.
@@ -460,7 +460,7 @@ public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TRe
 /// <typeparam name="TResult5">The type of the 5th result.</typeparam>
 /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
 public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>
-    : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 {
     /// <summary>
     /// Enables result caching.
@@ -535,7 +535,7 @@ public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TRe
 /// <typeparam name="TResult6">The type of the 6th result.</typeparam>
 /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
 public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-    : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 {
     /// <summary>
     /// Enables result caching.
@@ -617,7 +617,7 @@ public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TRe
 /// <typeparam name="TResult7">The type of the 7th result.</typeparam>
 /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
 public interface ICommandProcessor<in TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-    : ICommandProcessorWithResults, ICommandProcessorInterop<TFilter>
+    : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 {
     /// <summary>
     /// Enables result caching.
