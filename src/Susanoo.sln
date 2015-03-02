@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Core", "Susanoo.Core\Susanoo.Core.csproj", "{3F241CBD-FFF8-45AB-AD2A-F4780BB5FA59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Core.Tests", "Susanoo.Core.Tests\Susanoo.Core.Tests.csproj", "{0FFF8566-3DAC-4424-9FF9-C5E4685CDC7C}"
@@ -10,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.SqlServer", "Susanoo.SqlServer\Susanoo.SqlServer.csproj", "{9858CE1E-AB22-49A0-8139-BE61829C5111}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.SqlServer.Tests", "Susanoo.SqlServer.Tests\Susanoo.SqlServer.Tests.csproj", "{D4511C80-A760-4291-9015-426A24CCCCB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Json.Tests", "Susanoo.Json.Tests\Susanoo.Json.Tests.csproj", "{3B76BC78-BAB6-443E-91B0-60E987ABF468}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,12 @@ Global
 		{D4511C80-A760-4291-9015-426A24CCCCB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4511C80-A760-4291-9015-426A24CCCCB6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D4511C80-A760-4291-9015-426A24CCCCB6}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B76BC78-BAB6-443E-91B0-60E987ABF468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B76BC78-BAB6-443E-91B0-60E987ABF468}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B76BC78-BAB6-443E-91B0-60E987ABF468}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B76BC78-BAB6-443E-91B0-60E987ABF468}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B76BC78-BAB6-443E-91B0-60E987ABF468}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B76BC78-BAB6-443E-91B0-60E987ABF468}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

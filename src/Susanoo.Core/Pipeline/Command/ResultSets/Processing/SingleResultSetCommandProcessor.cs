@@ -38,7 +38,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                 .RetrieveDeserializerResolver()
                 .Resolve<TResult>(mappings.GetExporter());
 
-            if(commandModifiers != null)
+            if (commandModifiers != null)
                 foreach (var commandModifier in commandModifiers)
                 {
                     _commandModifiers.Add(commandModifier.Priority, commandModifier);
@@ -123,7 +123,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
         /// <returns>ColumnChecker.</returns>
         public override ColumnChecker RetrieveColumnIndexInfo()
         {
-            return ColumnReport.Copy();
+            return ColumnReport != null ? ColumnReport.Copy() : null;
         }
 
         /// <summary>
