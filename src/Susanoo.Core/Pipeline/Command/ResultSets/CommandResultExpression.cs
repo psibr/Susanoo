@@ -167,7 +167,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
                     compareFormat = value != null ? value.OverrideText : compareFormat;
 
                     if (compareFormat.Contains('{'))
-                        compareFormat = string.Format(compareFormat, o.Item3, o.Item4);
+                        compareFormat = string.Format(compareFormat, o.Item3, "[" + o.Item4 + "]");
 
                     return compareFormat;
                 })),
