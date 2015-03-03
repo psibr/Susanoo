@@ -180,9 +180,12 @@ namespace Susanoo
         /// </summary>
         /// <param name="processor">The processor.</param>
         /// <param name="name">The name.</param>
-        public static void RegisterCommandProcessor(ICommandProcessorWithResults processor, string name)
+        /// <param name="hashCodeOverride">The hash code override.</param>
+        public static void RegisterCommandProcessor(ICommandProcessorWithResults processor, string name = null, BigInteger hashCodeOverride = default(BigInteger))
         {
-            RegisteredCommandProcessors.TryAdd(processor.CacheHash, processor);
+            var hash = hashCodeOverride != default(BigInteger) ? hashCodeOverride : processor.CacheHash;
+
+            RegisteredCommandProcessors.TryAdd(hash, processor);
 
             if (!string.IsNullOrWhiteSpace(name))
                 NamedCommandProcessors.TryAdd(name, processor);

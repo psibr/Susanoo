@@ -62,6 +62,18 @@ WHERE 1=1";
         }
 
         /// <summary>
+        /// Gets the type argument hash code.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>BigInteger.</returns>
+        internal static BigInteger GetTypeArgumentHashCode(Type type)
+        {
+            return type
+                .GetGenericArguments()
+                .Aggregate(new BigInteger(0), (p, arg) => (p * 31) ^ arg.AssemblyQualifiedName.GetHashCode());
+        }
+
+        /// <summary>
         /// Gets the command expression.
         /// </summary>
         /// <value>The command expression.</value>

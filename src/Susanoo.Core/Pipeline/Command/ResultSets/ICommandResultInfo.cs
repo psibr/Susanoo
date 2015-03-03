@@ -26,17 +26,5 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <value>The command modifiers.</value>
         IEnumerable<CommandModifier> CommandModifiers { get; }
-
-
     }
-
-    //public interface ICommandSingleResultInfo<in TFilter> :
-    //    ICommandResultInfo<TFilter>
-    //{
-    //    /// <summary>
-    //    /// Gets the where filter options. Null if no where filter.
-    //    /// </summary>
-    //    /// <value>The where filter options.</value>
-    //    IDictionary<string, object> WhereFilterOptions { get; }
-    //}
 }

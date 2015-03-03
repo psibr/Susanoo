@@ -53,7 +53,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             get
             {
-                return (base.CacheHash * 31) ^ typeof(TResult).AssemblyQualifiedName.GetHashCode()
+                return (base.CacheHash * 31) ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                        ^ GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
@@ -88,7 +88,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
                     (s, pair) => s + pair.Key + pair.Value));
 
             if (!TryAddCommandModifier(whereFilterModifier))
-                throw new Exception("Confilcting priorities for command modifiers");
+                throw new Exception("Conflicting priorities for command modifiers");
 
             return this;
         }
@@ -98,10 +98,10 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-        /// <exception cref="Exception">Confilcting priorities for command modifiers</exception>
+        /// <exception cref="Exception">Conflicting priorities for command modifiers</exception>
         public ICommandResultExpression<TFilter, TResult> AddOrderByExpression(string parameterName = "OrderBy")
         {
-            if(parameterName == null)
+            if (parameterName == null)
                 throw new ArgumentNullException("parameterName");
 
             var orderByModifier = new CommandModifier
@@ -119,11 +119,11 @@ namespace Susanoo.Pipeline.Command.ResultSets
                         DbCommandType = info.DbCommandType
                     };
                 },
-                CacheHash = HashBuilder.Compute("ORDER BY @"+parameterName)
+                CacheHash = HashBuilder.Compute("ORDER BY @" + parameterName)
             };
 
             if (!TryAddCommandModifier(orderByModifier))
-                throw new Exception("Confilcting priorities for command modifiers");
+                throw new Exception("Conflicting priorities for command modifiers");
 
             return this;
         }
@@ -218,7 +218,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         }
 
         /// <summary>
-        ///     Builds the or regens a command processor from cache.
+        ///     Builds the or regenerates a command processor from cache.
         /// </summary>
         /// <param name="commandResultInfo">The command result information.</param>
         /// <param name="name">The name.</param>
@@ -231,7 +231,10 @@ namespace Susanoo.Pipeline.Command.ResultSets
 
             if (name == null)
             {
-                if (CommandManager.TryGetCommandProcessor(commandResultInfo.CacheHash, out instance))
+                var hash = (commandResultInfo.CacheHash * 31) ^
+                           GetTypeArgumentHashCode(typeof(SingleResultSetCommandProcessor<TFilter, TResult>));
+
+                if (CommandManager.TryGetCommandProcessor(hash, out instance))
                     result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
             }
             else
@@ -284,8 +287,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
+                       ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                        ^ GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
@@ -354,9 +356,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
+                       ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                        ^ GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
@@ -426,10 +426,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
+                       ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                        ^ GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
@@ -501,11 +498,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult5).AssemblyQualifiedName.GetHashCode()
+                       ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                        ^ GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
@@ -582,12 +575,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult5).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult6).AssemblyQualifiedName.GetHashCode()
+                       ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                        ^ GetType().AssemblyQualifiedName.GetHashCode();
             }
         }
@@ -669,13 +657,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             get
             {
                 return (base.CacheHash * 31)
-                       ^ typeof(TResult1).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult2).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult3).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult4).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult5).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult6).AssemblyQualifiedName.GetHashCode()
-                       ^ typeof(TResult7).AssemblyQualifiedName.GetHashCode()
+                       ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                        ^ GetType().AssemblyQualifiedName.GetHashCode();
             }
         }

@@ -44,7 +44,10 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing
                     _commandModifiers.Add(commandModifier.Priority, commandModifier);
                 }
 
-            CommandManager.RegisterCommandProcessor(this, name);
+            var hash = (CacheHash * 31) ^ CommandResultCommon<TFilter>
+                .GetTypeArgumentHashCode(typeof(SingleResultSetCommandProcessor<TFilter, TResult>));
+
+            CommandManager.RegisterCommandProcessor(this, name, hash);
         }
 
         /// <summary>
