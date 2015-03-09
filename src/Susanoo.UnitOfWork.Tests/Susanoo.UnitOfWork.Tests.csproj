@@ -87,7 +87,7 @@
     <Compile Include="TestingUnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Susanoo.Contexts\Susanoo.UnitOfWork.csproj">
+    <ProjectReference Include="..\Susanoo.UnitOfWork\Susanoo.UnitOfWork.csproj">
       <Project>{b9cf366b-b5e9-4257-9d7c-aafdeb2933ab}</Project>
       <Name>Susanoo.UnitOfWork</Name>
     </ProjectReference>

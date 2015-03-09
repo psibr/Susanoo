@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.SqlServer.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Json.Tests", "Susanoo.Json.Tests\Susanoo.Json.Tests.csproj", "{3B76BC78-BAB6-443E-91B0-60E987ABF468}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.UnitOfWork", "Susanoo.Contexts\Susanoo.UnitOfWork.csproj", "{B9CF366B-B5E9-4257-9D7C-AAFDEB2933AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.UnitOfWork", "Susanoo.UnitOfWork\Susanoo.UnitOfWork.csproj", "{B9CF366B-B5E9-4257-9D7C-AAFDEB2933AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.UnitOfWork.Tests", "Susanoo.Context.Tests\Susanoo.UnitOfWork.Tests.csproj", "{AF4B0DE4-284F-436B-8A15-8A8D995A6F44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.UnitOfWork.Tests", "Susanoo.UnitOfWork.Tests\Susanoo.UnitOfWork.Tests.csproj", "{AF4B0DE4-284F-436B-8A15-8A8D995A6F44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
