@@ -21,13 +21,13 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
         {
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> deserializer;
 
-            if (typeof(TResult) == typeof(DynamicRow) || typeof(TResult) == typeof(object))
+            if (typeof(TResult) == typeof(DynamicRow) || typeof(TResult) == typeof(object)) //Dynamic
                 deserializer = DynamicRowDeserializer.Deserialize<TResult>;
-            else if (CommandManager.GetDbType(typeof (TResult)) != null)
+            else if (CommandManager.GetDbType(typeof (TResult)) != null) //Primitive Built in type
                 deserializer = BuiltInTypeDeserializer.Deserialize<TResult>;
             else
             {
-                deserializer = ResolveCustomDeserializer<TResult>(mappings) 
+                deserializer = ResolveCustomDeserializer<TResult>(mappings)  //Custom deserializers
                     ?? ComplexTypeDeserializer.Compile<TResult>(mappings, typeof (TResult));
             }
 

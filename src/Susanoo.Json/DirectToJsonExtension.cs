@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using System.IO;
+using Susanoo.Pipeline.Command.ResultSets.Processing;
 using JSON = Newtonsoft.Json;
 
 namespace Susanoo
@@ -18,7 +19,7 @@ namespace Susanoo
                     commandExpression.DbCommandType,
                     commandExpression.BuildParameters(databaseManager, filter, explicitParameters)))
             {
-                var columnChecker = processor.RetrieveColumnIndexInfo();
+                var columnChecker = processor.RetrieveColumnIndexInfo() ?? new ColumnChecker();
 
                 var fieldCount = record.FieldCount;
 

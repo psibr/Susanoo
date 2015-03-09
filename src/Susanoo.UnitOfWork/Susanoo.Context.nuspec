@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <copyright>Psibernetic Solutions, LLC 2014</copyright>
-    <tags>ADO.NET microORM orm C# .net MSSQL SqlClient MicrosoftSqlServer</tags>
+    <tags>ADO.NET microORM orm C# .net UnitOfWork repository context</tags>
     <dependencies>
       <group>
         <dependency id="Susanoo.Core" version="0.8.3" />

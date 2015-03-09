@@ -88,6 +88,7 @@
     <Compile Include="Dynamic\DynamicTypeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Static\MultipleResults\IdenticalResults.cs" />
+    <Compile Include="Static\SingleResult\BuiltInTypes.cs" />
     <Compile Include="Static\SingleResult\KeyValuePairDeserializer.cs" />
     <Compile Include="Static\SingleResult\StaticTypeTest.cs" />
     <Compile Include="Static\TypeTestModel.cs" />

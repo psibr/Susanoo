@@ -112,6 +112,11 @@ namespace Susanoo.Pipeline.Command.ResultSets
                 {
                     var orderByParameter = info.Parameters.First(p => p.ParameterName == parameterName);
 
+                    if (orderByParameter.Value == null
+                        || !CommandManager.Bootstrapper.RetrieveOrderByRegex()
+                            .IsMatch(orderByParameter.Value.ToString()))
+                        throw new FormatException("Order By paramter either contains unsafe characters or a bad format");
+
                     return new ExecutableCommandInfo
                     {
                         CommandText = info.CommandText + "\r\nORDER BY " + orderByParameter.Value,
