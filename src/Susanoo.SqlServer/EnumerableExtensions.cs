@@ -26,8 +26,15 @@ namespace Susanoo.SqlServer
         /// <returns>IEnumerable&lt;SqlDataRecord&gt;.</returns>
         public static IEnumerable<SqlDataRecord> ToDataRecords(this IEnumerable items)
         {
-            if (items == null) yield break;
+            if (items == null)
+                return null;
 
+            var enumerable = (items as IEnumerable<object> ?? items.Cast<object>());
+            return !enumerable.Any() ? null : ToDataRecordsInternal(enumerable);
+        }
+
+        private static IEnumerable<SqlDataRecord> ToDataRecordsInternal(IEnumerable<object> items)
+        {
             var enumerator = items.GetEnumerator();
 
             enumerator.MoveNext();
@@ -39,14 +46,12 @@ namespace Susanoo.SqlServer
                 AddCompilationInfo(itemType);
             }
 
-            DelegateInfo info = CompiledFuncs[itemType.AssemblyQualifiedName];
+            var info = CompiledFuncs[itemType.AssemblyQualifiedName];
 
-            Func<SqlMetaData[], object, SqlDataRecord> buildSqlDataRecord = info.Func;
-            
-            foreach (var item in items)
-            {
-                yield return buildSqlDataRecord(info.MetaData, item);
-            }
+            var buildSqlDataRecord = info.Func;
+
+            return items
+                .Select(item => buildSqlDataRecord(info.MetaData, item));
         }
 
         private static void AddCompilationInfo(Type itemType)

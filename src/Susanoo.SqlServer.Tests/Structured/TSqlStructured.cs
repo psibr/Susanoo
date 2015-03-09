@@ -66,6 +66,21 @@ namespace Susanoo.SqlServer.Tests.Structured
             Assert.AreEqual(enumerable.First().Id, 2);
         }
 
+        [Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]
+        public void StructuredViaIncludeNoRecords()
+        {
+            var list = new List<KeyValuePair<int, string>>();
+
+            var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
+                .IncludePropertyAsStructured("ReferenceTable", "ReferenceTable")
+                .DefineResults<dynamic>()
+                .Realize("StructuredViaInclude")
+                .Execute(_databaseManager, new { ReferenceTable = list.Select(o => new { Id = o.Key }) });
+
+            var enumerable = results as IList<dynamic> ?? results.ToList();
+            Assert.AreEqual(false, enumerable.Any());
+        }
+
         [Test]
         [ExpectedException(typeof(NotSupportedException))]
         public void MakeTvpThrowsIfParamIsNull()

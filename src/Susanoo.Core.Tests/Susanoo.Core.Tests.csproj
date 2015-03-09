@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbManager\ConnectionTests.cs" />
+    <Compile Include="MT2.cs" />
     <Compile Include="Scalar\DBNullCheck.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Dynamic\DynamicTypeTest.cs" />
