@@ -7,6 +7,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Susanoo.Pipeline.Command;
 using Susanoo.Pipeline.Command.ResultSets.Processing;
@@ -150,6 +151,31 @@ namespace Susanoo.Tests.Static.SingleResult
 
             Assert.AreEqual("4", first.Key);
             Assert.AreEqual("Four", first.Value);
+        }
+
+        [Test]
+        [ExpectedException(typeof(FormatException))]
+        public void OrderByThrowsIfUnsafe()
+        {
+            CommandManager.DefineCommand<KeyValuePair<string, string>>(
+                @"SELECT Int, String FROM ( VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
+                .IncludeProperty(o => o.Key, parameter => parameter.ParameterName = "Int")
+                .IncludeProperty(o => o.Value, parameter => parameter.ParameterName = "String")
+                .SendNullValues(NullValueMode.FilterOnlyFull)
+                .DefineResults<KeyValuePair<string, string>>()
+                .ForResults(expression =>
+                {
+                    expression.ForProperty(pair => pair.Key,
+                        configuration => configuration.UseAlias("Int"));
+                    expression.ForProperty(pair => pair.Value,
+                        configuration => configuration.UseAlias("String"));
+                })
+                .BuildWhereFilter()
+                .AddOrderByExpression()
+                .Realize()
+                .Execute(Setup.DatabaseManager,
+                    new KeyValuePair<string, string>(null, "o"),
+                    new { OrderBy = "Int DESC'" });
         }
     }
 }

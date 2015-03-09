@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Text.RegularExpressions;
 using Susanoo.Pipeline;
 using Susanoo.Pipeline.Command;
 using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
@@ -45,5 +46,11 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         void OnExecutionException(ICommandInfo info, Exception exception,
             DbParameter[] parameters);
+
+        /// <summary>
+        /// Retrieves the order by regex used for whitelisting allowed cahracters.
+        /// </summary>
+        /// <returns>Regex.</returns>
+        Regex RetrieveOrderByRegex();
     }
 }
