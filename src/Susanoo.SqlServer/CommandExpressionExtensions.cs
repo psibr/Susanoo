@@ -172,7 +172,7 @@ namespace Susanoo
 
             wrapper.CacheHash = (wrapper.CacheHash*31) ^ HashBuilder.Compute(totalText);
 
-            ((CommandResultExpression<TFilter, TResult>)commandResultExpression)
+            commandResultExpression
                 .AddOrReplaceCommandModifier(wrapper);
 
             return commandResultExpression;
