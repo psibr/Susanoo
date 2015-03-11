@@ -80,5 +80,34 @@ namespace Susanoo.SqlServer.Tests
             Assert.AreEqual("1", first.Key);
             Assert.AreEqual("One", first.Value);
         }
+
+        [Test(Description = "Tests that results correctly map data to CLR types.")]
+        public void OffsetFetchAndTotalRowCount()
+        {
+            var results = CommandManager.DefineCommand<dynamic>(@"
+                SELECT Int, String
+                FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
+                .SendNullValues(NullValueMode.FilterOnlyFull)
+                .DefineResults<dynamic>()
+                .AddOrderByExpression()
+                .OffsetFetch()
+                .AddTotalRowCount()
+                .Realize()
+                .Execute(Setup.DatabaseManager, null, new { RowCount = 2, PageNumber = 2, OrderBy = "Int" });
+
+            Assert.IsNotNull(results);
+            Assert.AreEqual(2, results.Count());
+
+            var first = results.First();
+            var last = results.Last();
+
+            Assert.AreEqual(4, first.TotalRows);
+
+            Assert.AreEqual("3", first.Int);
+            Assert.AreEqual("Three", first.String);
+
+            Assert.AreEqual("4", last.Int);
+            Assert.AreEqual("Four", last.String);
+        }
     }
 }

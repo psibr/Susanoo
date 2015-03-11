@@ -145,5 +145,38 @@ namespace Susanoo
             "\r\nOFFSET (@{0} - 1) * @{1} ROWS" +
             "\r\nFETCH NEXT @{1} ROWS ONLY";
 
+        /// <summary>
+        /// Adds a total row count to the query wrapper.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="commandResultExpression">The command result expression.</param>
+        /// <param name="totalRowsColumnName">Total name of the total row count column.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="ArgumentException">Only CommandType.Text Command Expressions can be dynamically built.</exception>
+        public static ICommandResultExpression<TFilter, TResult> AddTotalRowCount<TFilter, TResult>(
+            this ICommandResultExpression<TFilter, TResult> commandResultExpression,
+            string totalRowsColumnName = "TotalRows")
+        {
+            var commandInfo = commandResultExpression.Command;
+
+            if (commandInfo.DbCommandType != CommandType.Text)
+                throw new ArgumentException("Only CommandType.Text Command Expressions can be dynamically built.");
+
+            const string totalsFormat = "{0} = COUNT(*) OVER ()";
+
+            var totalText = string.Format(totalsFormat, totalRowsColumnName);
+
+            var wrapper =
+                CommandManager.Bootstrapper.BuildQueryWrapper(totalText);
+
+            wrapper.CacheHash = (wrapper.CacheHash*31) ^ HashBuilder.Compute(totalText);
+
+            ((CommandResultExpression<TFilter, TResult>)commandResultExpression)
+                .AddOrReplaceCommandModifier(wrapper);
+
+            return commandResultExpression;
+        }
+
     }
 }

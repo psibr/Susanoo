@@ -125,7 +125,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// Adds or overwrites a command modifier.
         /// </summary>
         /// <param name="modifier">The modifier.</param>
-        public bool AddOrReplaceCommandModifier(CommandModifier modifier)
+        public void AddOrReplaceCommandModifier(CommandModifier modifier)
         {
             var result = !_commandModifiers.ContainsKey(modifier.Priority);
 
@@ -133,8 +133,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
                 _commandModifiers.Add(modifier.Priority, modifier);
             else
                 _commandModifiers[modifier.Priority] = modifier;
-
-            return result;
         }
 
         /// <summary>
