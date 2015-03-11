@@ -88,5 +88,51 @@ namespace Susanoo
 		            \z",
                 RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace));
         }
+
+        /// <summary>
+        /// Retrieves the query wrapper format.
+        /// </summary>
+        /// <returns>System.String.</returns>
+        public virtual string RetrieveQueryWrapperFormat()
+        {
+            return 
+@"SELECT *{1}
+FROM (
+    {0}
+) susanoo_query_wrapper
+WHERE 1=1";
+        }
+
+        /// <summary>
+        /// Builds a query wrapper.
+        /// </summary>
+        public virtual CommandModifier BuildQueryWrapper(string additionalColumns = null)
+        {
+            if (additionalColumns != null)
+            {
+                additionalColumns = additionalColumns.Trim();
+
+                if (!additionalColumns.StartsWith(","))
+                    additionalColumns = ", " + additionalColumns;
+            }
+
+            var format = CommandManager.Bootstrapper
+                    .RetrieveQueryWrapperFormat();
+
+            return new CommandModifier
+            {
+                Description = "SusanooWrapper",
+                Priority = 1000,
+                ModifierFunc = info => new ExecutableCommandInfo
+                {
+
+                    CommandText = string.Format(format, info.CommandText, additionalColumns ?? string.Empty),
+                    DbCommandType = info.DbCommandType,
+                    Parameters = info.Parameters
+                },
+                CacheHash = HashBuilder.Compute(format)
+            };
+
+        }
     }
 }

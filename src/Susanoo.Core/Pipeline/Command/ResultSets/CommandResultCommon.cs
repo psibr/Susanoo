@@ -29,28 +29,13 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// <summary>
         /// Adds a query wrapper.
         /// </summary>
-        protected void AddQueryWrapper()
+        protected void AddQueryWrapper(string additionalColumns = null)
         {
-            const string format =
-@"SELECT *
-FROM (
-    {0}
-) susanoo_query_wrapper
-WHERE 1=1";
-
-            TryAddCommandModifier(new CommandModifier
-            {
-                Description = "SusanooWrapper",
-                Priority = 1000,
-                ModifierFunc = info => new ExecutableCommandInfo
-                {
-                    CommandText = string.Format(format, info.CommandText),
-                    DbCommandType = info.DbCommandType,
-                    Parameters = info.Parameters
-                },
-                CacheHash = HashBuilder.Compute(format)
-            });
+            TryAddCommandModifier(CommandManager.Bootstrapper
+                .BuildQueryWrapper(additionalColumns));
         }
+
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
@@ -128,14 +113,28 @@ WHERE 1=1";
         /// <returns><c>true</c> if no other modifier exists with the same priority, <c>false</c> otherwise.</returns>
         public bool TryAddCommandModifier(CommandModifier modifier)
         {
-
             var result = !_commandModifiers.ContainsKey(modifier.Priority);
 
             if (result)
                 _commandModifiers.Add(modifier.Priority, modifier);
 
             return result;
+        }
 
+        /// <summary>
+        /// Adds or overwrites a command modifier.
+        /// </summary>
+        /// <param name="modifier">The modifier.</param>
+        public bool AddOrReplaceCommandModifier(CommandModifier modifier)
+        {
+            var result = !_commandModifiers.ContainsKey(modifier.Priority);
+
+            if (result)
+                _commandModifiers.Add(modifier.Priority, modifier);
+            else
+                _commandModifiers[modifier.Priority] = modifier;
+
+            return result;
         }
 
         /// <summary>

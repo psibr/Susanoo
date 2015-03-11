@@ -144,5 +144,6 @@ namespace Susanoo
         private const string PagingFormat = 
             "\r\nOFFSET (@{0} - 1) * @{1} ROWS" +
             "\r\nFETCH NEXT @{1} ROWS ONLY";
+
     }
 }

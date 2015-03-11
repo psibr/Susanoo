@@ -52,5 +52,18 @@ namespace Susanoo
         /// </summary>
         /// <returns>Regex.</returns>
         Regex RetrieveOrderByRegex();
+
+        /// <summary>
+        /// Retrieves the query wrapper format.
+        /// </summary>
+        /// <returns>System.String.</returns>
+        string RetrieveQueryWrapperFormat();
+
+        /// <summary>
+        /// Builds a query wrapper.
+        /// </summary>
+        /// <param name="additionalColumns">The additional columns.</param>
+        /// <returns>CommandModifier.</returns>
+        CommandModifier BuildQueryWrapper(string additionalColumns = null);
     }
 }
