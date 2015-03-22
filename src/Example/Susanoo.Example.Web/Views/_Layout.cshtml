@@ -1,0 +1,21 @@
+﻿@using System.Web.Optimization
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Html.Raw(Styles.Render("~/css").ToString())
+</head>
+<body>
+<div>
+    @RenderBody()
+</div>
+
+        @Html.Raw(Scripts.Render("~/js/libs").ToString())
+
+        @RenderSection("scripts", false)
+</body>
+</html>

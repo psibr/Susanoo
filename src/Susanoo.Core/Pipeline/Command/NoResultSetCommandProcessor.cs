@@ -53,16 +53,17 @@ namespace Susanoo.Pipeline.Command
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>TReturn.</returns>
-        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter,
+        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
             params DbParameter[] explicitParameters)
         {
             var result = default(TReturn);
             DbParameter[] parameters = null;
             try
             {
-                parameters = CommandInfo.BuildParameters(databaseManager, filter, null, explicitParameters);
+                parameters = CommandInfo.BuildParameters(databaseManager, filter, parameterObject, explicitParameters);
                 result = databaseManager.ExecuteScalar<TReturn>(
                     CommandInfo.CommandText,
                     CommandInfo.DbCommandType,
@@ -82,6 +83,20 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <typeparam name="TReturn">The type of the return.</typeparam>
         /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>TReturn.</returns>
+        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter,
+            params DbParameter[] explicitParameters)
+        {
+            return ExecuteScalar<TReturn>(databaseManager, filter, null, explicitParameters);
+        }
+
+        /// <summary>
+        /// Executes the scalar.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>TReturn.</returns>
         public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
@@ -94,9 +109,10 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>System.Int32.</returns>
-        public int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter,
+        public int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
             params DbParameter[] explicitParameters)
         {
             var result = default(int);
@@ -115,6 +131,19 @@ namespace Susanoo.Pipeline.Command
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Executes the non query.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>System.Int32.</returns>
+        public int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter,
+            params DbParameter[] explicitParameters)
+        {
+            return ExecuteNonQuery(databaseManager, filter, null, explicitParameters);
         }
 
         /// <summary>

@@ -76,6 +76,18 @@ public interface ICommandProcessor<in TFilter> : ICommandProcessorInterop<TFilte
     /// <typeparam name="TReturn">The type of the return.</typeparam>
     /// <param name="databaseManager">The database manager.</param>
     /// <param name="filter">The filter.</param>
+    /// <param name="parameterObject">The parameter object.</param>
+    /// <param name="explicitParameters">The explicit parameters.</param>
+    /// <returns>TReturn.</returns>
+    TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
+        params DbParameter[] explicitParameters);
+
+    /// <summary>
+    /// Executes the command and retrieves a single value.
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the return.</typeparam>
+    /// <param name="databaseManager">The database manager.</param>
+    /// <param name="filter">The filter.</param>
     /// <param name="explicitParameters">The explicit parameters.</param>
     /// <returns>TReturn.</returns>
     TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, TFilter filter,
@@ -89,6 +101,16 @@ public interface ICommandProcessor<in TFilter> : ICommandProcessorInterop<TFilte
     /// <param name="explicitParameters">The explicit parameters.</param>
     /// <returns>TReturn.</returns>
     TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
+
+    /// <summary>
+    /// Executes the command and returns a return code.
+    /// </summary>
+    /// <param name="databaseManager">The database manager.</param>
+    /// <param name="filter">The filter.</param>
+    /// <param name="parameterObject">The parameter object.</param>
+    /// <param name="explicitParameters">The explicit parameters.</param>
+    /// <returns>System.Int32.</returns>
+    int ExecuteNonQuery(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters);
 
     /// <summary>
     /// Executes the command and returns a return code.

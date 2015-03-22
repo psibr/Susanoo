@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.UnitOfWork", "Susan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.UnitOfWork.Tests", "Susanoo.UnitOfWork.Tests\Susanoo.UnitOfWork.Tests.csproj", "{AF4B0DE4-284F-436B-8A15-8A8D995A6F44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Example.Web", "Example\Susanoo.Example.Web\Susanoo.Example.Web.csproj", "{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,14 @@ Global
 		{AF4B0DE4-284F-436B-8A15-8A8D995A6F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF4B0DE4-284F-436B-8A15-8A8D995A6F44}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AF4B0DE4-284F-436B-8A15-8A8D995A6F44}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Debug|x64.ActiveCfg = Debug|x64
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Debug|x64.Build.0 = Debug|x64
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Release|x64.ActiveCfg = Release|x64
+		{E0C8C6A9-007C-4E50-B673-ADB33DD4A353}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

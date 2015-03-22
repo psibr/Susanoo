@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandExpressionExtensions.cs" />
+    <Compile Include="CommandResultExpressionExtensions.cs" />
     <Compile Include="DbParameterExtensions.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

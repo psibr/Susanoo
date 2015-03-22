@@ -28,7 +28,7 @@ namespace Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization
                 {
                     while (reader.Read())
                     {
-                        var result = reader.GetValue(0);
+                        var result = reader.GetValue(0); //Boxing is unavoidable :[
 
                         result = result == DBNull.Value ? null : result;
 
