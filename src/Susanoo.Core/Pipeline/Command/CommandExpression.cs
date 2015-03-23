@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
 using Susanoo.Pipeline.Command.ResultSets;
+using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
 

@@ -9,6 +9,9 @@ using Susanoo.Pipeline.Command.ResultSets;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// Extends Result expressions to add SQL Server specific funtionality
+    /// </summary>
     public static class CommandResultExpressionExtensions
     {
 
