@@ -4,7 +4,7 @@ A simple, fast, fluently structured library that takes the pain out of writing A
 
 [![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
 
-Support for .NET 4.0+
+Support for .NET 4.0+, nuget packages reference 4.5
 
 #####Usage
 ```csharp
