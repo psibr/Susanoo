@@ -25,7 +25,7 @@ using (var databaseManager =
 ```
 
 #####Project Updates
-[Susanoo's Blog is here](blog.susanoo.net)
+[Susanoo's Blog is here](http://blog.susanoo.net)
 
 #####How does it work?
 Susanoo uses Linq expression trees to dynamically write and compile code to map your objects before the command ever executes, leaving your SQL calls unaffected. It does this all while avoiding slow reflection code and nasty reflection.emit IL.
