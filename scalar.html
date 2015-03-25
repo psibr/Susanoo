@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scalar</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><h1 id="scalar-commands">Scalar commands</h1>
+
+<p>Scalar<a href="#fn:msdn-scalar" id="fnref:msdn-scalar" title="See footnote" class="footnote">1</a> commands return a single value. These most commonly source from <code>SELECT</code> statements with only one row or results of User-Defined Functions and may be wrapped in a Stored Procedure.</p>
+
+<blockquote>
+  <p>A <a href="#complete-example">complete example</a> is available at the bottom of this page.</p>
+</blockquote>
+
+
+
+<h2 id="prerequisite-steps">Prerequisite Steps</h2>
+
+
+
+<h3 id="database-manager">Database Manager</h3>
+
+<p>The first step is to build a database manager.</p>
+
+
+
+<pre class="prettyprint"><code class="language-csharp hljs cs"><span class="hljs-keyword">using</span>(<span class="hljs-keyword">var</span> databaseManager = <span class="hljs-keyword">new</span> DatabaseManager(<span class="hljs-string">"ConnectionString"</span>))
+{
+}</code></pre>
+
+<blockquote>
+  <p><strong>Important:</strong> Remember when building a new <code>DatabaseManager</code> to always use the <code>using</code> keyword so that resources are cleaned up when you are done with it.</p>
+</blockquote>
+
+
+
+<h2 id="usage">Usage</h2>
+
+
+
+<h3 id="define-command">Define Command</h3>
+
+<p>Next we need to tell Susanoo what SQL command to execute. We do this be build a <code>CommandExpression</code> using the <code>CommandManager.DefineCommand</code> method which takes 2 parameters, the first is the <code>CommandText</code> and the second is the <code>System.Data.CommandType</code> enum which controls how ADO.NET sends the command to your SQL environment (Text or StoredProcedure, Table is not supported in Susanoo). </p>
+
+<p>The command here will insert a new row into the <code>SomeTable</code> table and retrieve the primary key value using SQL Servers <code>@@Identity</code> macro.</p>
+
+
+
+<pre class="prettyprint"><code class="language-csharp hljs sql">var insertCommand = 
+    CommandManager
+        .DefineCommand(
+              @"<span class="hljs-operator"><span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> dbo.SomeTable ( SomeColumn )
+              <span class="hljs-keyword">VALUES</span>( <span class="hljs-string">'New Value'</span> );</span>
+              <span class="hljs-operator"><span class="hljs-keyword">SELECT</span> @@<span class="hljs-keyword">Identity</span><span class="hljs-string">", CommandType.Text);</span></span></code></pre>
+
+<p>At this point we could also change how Susanoo treats the command in a few different ways, but for now we are just going to wrap the command up into something we can execute, what Susanoo calls a <code>CommandProcessor</code>. <br>
+We do this by calling <code>.Realize</code> on our <code>CommandExpression</code>.</p>
+
+
+
+<pre class="prettyprint"><code class="language-csharp hljs sql">var insertCommand = 
+    CommandManager
+        .DefineCommand(
+              @"<span class="hljs-operator"><span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> dbo.SomeTable ( SomeColumn )
+              <span class="hljs-keyword">VALUES</span>( <span class="hljs-string">'New Value'</span> );</span>
+              <span class="hljs-operator"><span class="hljs-keyword">SELECT</span> @@<span class="hljs-keyword">Identity</span><span class="hljs-string">", CommandType.Text)
+        .Realize();</span></span></code></pre>
+
+<p>We now have an executable ADO.NET command that we have saved to a variable named <code>insertCommand</code> and use elsewhere or use it immediately, the latter which is what we will do now.</p>
+
+
+
+<h3 id="execute">Execute</h3>
+
+<p>To execute a command we need to call one of the available Execute methods on our <code>CommandProcessor</code> we just built, for this example we will use <code>ExecuteScalar&lt;TResult&gt;</code>, where <code>TResult</code> is the simple type of the result.</p>
+
+<p>Which has at most the following parameters.</p>
+
+<ul>
+<li><strong>databaseManager</strong> - An instance of the <code>DatabaseManager</code> class</li>
+<li>[Optional] <strong>filter</strong> - An anonymous OR strongly typed object with properties matching DbParameters needed for executing</li>
+<li>[Optional] <strong>parameterObject</strong> - An anonymous object with properties matching DbParameters needed for executing</li>
+<li>[Optional] <strong>explicitParameters</strong> - An array of DbParameters you want to include for the command. (Useful for output parameters.)</li>
+</ul>
+
+
+
+<h3 id="filter-parameters">Filter Parameters</h3>
+
+<p>Every execute method in Susanoo has a filter parameter. Most of the time this parameter is <code>dynamic</code>, but can be set to any <code>Type</code>. Each property of this object is gathered by Susanoo at execution and turned into <code>DbParameter</code> along with the value. The most common way to use this parameter is with anonymous objects. </p>
+
+<p>This feature is what we will use to pass parameters in this example.</p>
+
+
+
+<h2 id="complete-example">Complete Example</h2>
+
+
+
+<pre class="prettyprint"><code class="language-csharp hljs cs"><span class="hljs-keyword">using</span>(<span class="hljs-keyword">var</span> databaseManager =
+    CommandManager.BuildDatabaseManager(<span class="hljs-string">"ConnectionString"</span>))
+{
+    <span class="hljs-keyword">var</span> insertCommand = 
+        CommandManager
+            .DefineCommand(
+                  <span class="hljs-string">@"INSERT INTO dbo.SomeTable ( SomeColumn )
+                  VALUES( @SomeColumn );
+                  SELECT @@Identity"</span>, CommandType.Text)
+            .Realize();
+
+    <span class="hljs-keyword">var</span> newRowId = 
+        insertCommand 
+            .ExecuteScalar&lt;<span class="hljs-keyword">int</span>&gt;(databaseManager, <span class="hljs-keyword">new</span> 
+            {
+                SomeColumn = <span class="hljs-string">"New Value"</span>
+            });
+}</code></pre>
+
+<hr>
+
+<blockquote>
+  <p><strong>Warning:</strong> Parameters with a value of null are NOT sent to the database by default in ADO.NET. See <a href="#sendnullvalues">SendNullValues</a> to change this behavior or send <code>DBNull.Value</code> instead.</p>
+</blockquote>
+
+<div class="footnotes"><hr><ol><li id="fn:msdn-scalar"><a href="https://msdn.microsoft.com/en-us/library/system.data.common.dbcommand.executescalar%28v=vs.110%29.aspx">MSDN: DbCommand.ExecuteScalar Method</a> <a href="#fnref:msdn-scalar" title="Return to article" class="reversefootnote">↩</a></li></ol></div></div></body>
+</html>
