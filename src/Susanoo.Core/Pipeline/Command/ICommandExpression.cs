@@ -28,7 +28,7 @@ namespace Susanoo.Pipeline.Command
         /// <value>The command text.</value>
         string CommandText { get; set; }
 
-        /// <summary>
+            /// <summary>
         /// Realizes the pipeline with no result mappings.
         /// </summary>
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>

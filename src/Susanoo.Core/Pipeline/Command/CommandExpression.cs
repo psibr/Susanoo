@@ -426,8 +426,10 @@ namespace Susanoo.Pipeline.Command
                     <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
         }
 
+        private BigInteger stringHash;
+
         /// <summary>
-        ///     Computes the hash.
+        /// Computes the hash.
         /// </summary>
         private void ComputeHash()
         {
@@ -444,7 +446,15 @@ namespace Susanoo.Pipeline.Command
                         _nullValueMode.ToString()
                     }));
 
-            _cacheHash = HashBuilder.Compute(strings);
+            stringHash = HashBuilder.Compute(strings);
+
+            RefreshModifierHash();
+        }
+
+        private void RefreshModifierHash()
+        {
+            _cacheHash = stringHash ^
+                         CommandModifiers.Aggregate(new BigInteger(0), (i, modifier) => (i*31) ^ modifier.CacheHash);
         }
 
         /// <summary>
@@ -524,7 +534,7 @@ namespace Susanoo.Pipeline.Command
 #if !NETFX40
                             param.Value = propInfo.Key.GetValue(filter);
 #else
-                            param.Value = propInfo.GetValue(filter, null);
+                            param.Value = propInfo.Key.GetValue(filter, null);
 #endif
 
                             var type = CommandManager.GetDbType(propInfo.Key.PropertyType);
@@ -612,5 +622,58 @@ namespace Susanoo.Pipeline.Command
         {
             return BuildParameters(databaseManager, filter, null, explicitParameters);
         }
+
+        /// <summary>
+        /// Adds a query wrapper.
+        /// </summary>
+        public void AddQueryWrapper(string additionalColumns = null)
+        {
+            TryAddCommandModifier(CommandManager.Bootstrapper
+                .BuildQueryWrapper(additionalColumns));
+        }
+
+        /// <summary>
+        /// Tries to add command modifier.
+        /// </summary>
+        /// <param name="modifier">The modifier.</param>
+        /// <returns><c>true</c> if no other modifier exists with the same priority, <c>false</c> otherwise.</returns>
+        public bool TryAddCommandModifier(CommandModifier modifier)
+        {
+            var result = !_commandModifiers.ContainsKey(modifier.Priority);
+
+            if (result)
+                _commandModifiers.Add(modifier.Priority, modifier);
+
+            RefreshModifierHash();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Adds or overwrites a command modifier.
+        /// </summary>
+        /// <param name="modifier">The modifier.</param>
+        public void AddOrReplaceCommandModifier(CommandModifier modifier)
+        {
+            var result = !_commandModifiers.ContainsKey(modifier.Priority);
+
+            if (result)
+                _commandModifiers.Add(modifier.Priority, modifier);
+            else
+                _commandModifiers[modifier.Priority] = modifier;
+
+            RefreshModifierHash();
+        }
+
+        /// <summary>
+        /// Gets the command modifiers.
+        /// </summary>
+        /// <value>The command modifiers.</value>
+        public IEnumerable<CommandModifier> CommandModifiers
+        {
+            get { return _commandModifiers.Values; }
+        }
+
+        private readonly IDictionary<int, CommandModifier> _commandModifiers = new Dictionary<int, CommandModifier>();
     }
 }

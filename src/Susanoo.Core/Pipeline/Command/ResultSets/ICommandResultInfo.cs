@@ -20,11 +20,5 @@ namespace Susanoo.Pipeline.Command.ResultSets
         /// </summary>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
         ICommandResultMappingExport GetExporter();
-
-        /// <summary>
-        /// Gets the command modifiers.
-        /// </summary>
-        /// <value>The command modifiers.</value>
-        IEnumerable<CommandModifier> CommandModifiers { get; }
     }
 }

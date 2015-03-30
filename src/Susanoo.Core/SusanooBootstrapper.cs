@@ -1,5 +1,10 @@
 using System;
 using System.Collections.Generic;
+
+#if !NETFX40
+using System.ComponentModel.DataAnnotations.Schema;
+#endif
+
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using Susanoo.Pipeline;
@@ -47,7 +52,7 @@ namespace Susanoo
         /// <returns>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;.</returns>
         public virtual IEnumerable<Type> RetrieveIgnoredPropertyAttributes()
         {
-            return new [] { typeof(System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute) };
+            return new [] { typeof(NotMappedAttribute) };
         }
 
         /// <summary>

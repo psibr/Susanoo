@@ -1,5 +1,8 @@
 ﻿using System;
+
+#if !NETFX40
 using System.ComponentModel.DataAnnotations.Schema;
+#endif
 
 namespace Susanoo.Tests.Static
 {

@@ -2,9 +2,11 @@ Susanoo
 ====
 A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! 
 
+[Docs are available here.](https://susanoo.torchpad.com/)
+
 [![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
 
-Support for .NET 4.0+
+Support for .NET 4.0+, nuget packages reference 4.5
 
 #####Usage
 ```csharp
@@ -23,6 +25,9 @@ using (var databaseManager =
         command.Execute(databaseManager, new { HasStoreCard = true });
 }
 ```
+
+#####Project Updates
+[Susanoo's Blog is here](http://blog.susanoo.net)
 
 #####How does it work?
 Susanoo uses Linq expression trees to dynamically write and compile code to map your objects before the command ever executes, leaving your SQL calls unaffected. It does this all while avoiding slow reflection code and nasty reflection.emit IL.

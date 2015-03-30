@@ -26,14 +26,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             Command = command;
         }
 
-        /// <summary>
-        /// Adds a query wrapper.
-        /// </summary>
-        protected void AddQueryWrapper(string additionalColumns = null)
-        {
-            TryAddCommandModifier(CommandManager.Bootstrapper
-                .BuildQueryWrapper(additionalColumns));
-        }
+
 
 
 
@@ -72,8 +65,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
         {
             get
             {
-                return (_implementor.CacheHash ^ (Command.CacheHash * 31)) ^
-                       CommandModifiers.Aggregate(new BigInteger(0), (i, modifier) => (i * 31) ^ modifier.CacheHash);
+                return (_implementor.CacheHash ^ (Command.CacheHash * 31));
             }
         }
 
@@ -106,34 +98,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             return new CommandResultExpression<TFilter, TSingle>(Command, Implementor);
         }
 
-        /// <summary>
-        /// Tries to add command modifier.
-        /// </summary>
-        /// <param name="modifier">The modifier.</param>
-        /// <returns><c>true</c> if no other modifier exists with the same priority, <c>false</c> otherwise.</returns>
-        public bool TryAddCommandModifier(CommandModifier modifier)
-        {
-            var result = !_commandModifiers.ContainsKey(modifier.Priority);
 
-            if (result)
-                _commandModifiers.Add(modifier.Priority, modifier);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Adds or overwrites a command modifier.
-        /// </summary>
-        /// <param name="modifier">The modifier.</param>
-        public void AddOrReplaceCommandModifier(CommandModifier modifier)
-        {
-            var result = !_commandModifiers.ContainsKey(modifier.Priority);
-
-            if (result)
-                _commandModifiers.Add(modifier.Priority, modifier);
-            else
-                _commandModifiers[modifier.Priority] = modifier;
-        }
 
         /// <summary>
         /// Gets or sets the command information.
@@ -154,15 +119,6 @@ namespace Susanoo.Pipeline.Command.ResultSets
             return this;
         }
 
-        /// <summary>
-        /// Gets the command modifiers.
-        /// </summary>
-        /// <value>The command modifiers.</value>
-        public IEnumerable<CommandModifier> CommandModifiers
-        {
-            get { return _commandModifiers.Values; }
-        }
 
-        private readonly IDictionary<int, CommandModifier> _commandModifiers = new Dictionary<int, CommandModifier>();
     }
 }

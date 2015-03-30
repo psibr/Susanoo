@@ -93,7 +93,7 @@ namespace Susanoo
         /// Handles exceptions in execution.
         /// </summary>
         /// <param name="commandInfo">The command expression information.</param>
-        /// <param name="ex">The ex.</param>
+        /// <param name="ex">The exception.</param>
         /// <param name="parameters">The parameters.</param>
         public static void HandleExecutionException(
             ICommandInfo commandInfo,
@@ -104,8 +104,7 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
-        /// the result of this call.
+        /// Begins the command definition process using a Fluent API implementation.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandText">The command text.</param>
@@ -118,8 +117,24 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineMappings on
-        /// the result of this call.
+        /// Builds a computed insert statement.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
+        public static ICommandProcessor<TFilter> DefineInsert<TFilter>(Func<ICommandExpression<TFilter>, ICommandExpression<TFilter>> modifierFunc)
+        {
+            var command = 
+                Bootstrapper.RetrieveCommandBuilder()
+                    .DefineCommand<TFilter>(string.Empty, CommandType.Text);
+
+            command = modifierFunc(command);
+            
+            return command
+                .Realize();
+        }
+
+        /// <summary>
+        /// Begins the command definition process using a Fluent API implementation.
         /// </summary>
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
@@ -220,10 +235,9 @@ namespace Susanoo
         /// </summary>
         public static void ClearColumnIndexInfo()
         {
-            RegisteredCommandProcessors
-                .Select(kvp => kvp.Value)
-                .ToList()
-                .ForEach(processor => processor.ClearColumnIndexInfo());
+            foreach (var processor in RegisteredCommandProcessors
+                .Select(kvp => kvp.Value))
+                processor.ClearColumnIndexInfo();
         }
 
         /// <summary>
@@ -240,10 +254,9 @@ namespace Susanoo
         /// <summary>
         /// Saves the dynamic assembly to disk.
         /// </summary>
-        /// <param name="assemblyFileName">Name of the assembly file.</param>
-        public static void SaveDynamicAssemblyToDisk(string assemblyFileName)
+        public static void SaveDynamicAssemblyToDisk()
         {
-            ExpressionAssembly.Save(assemblyFileName);
+            ExpressionAssembly.Save("Susanoo.DynamicExpression.Loader");
         }
     }
 
@@ -256,10 +269,10 @@ namespace Susanoo
         /// Gets the command builder.
         /// </summary>
         /// <value>The command builder.</value>
-        [Obsolete("Access CommandBuilder via Bootstrapper directly", false)]
+        [Obsolete("Access CommandBuilder via Bootstrapper directly", true)]
         public static ICommandExpressionBuilder CommandBuilder
         {
-            get { return _bootstrapper.RetrieveCommandBuilder(); }
+            get { throw new NotSupportedException(); }
         }
 
         /// <summary>

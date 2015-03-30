@@ -74,7 +74,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             WhereFilterOptions = optionsObject != null ? optionsObject.ToExpando() : new ExpandoObject();
 
             //Make sure the command is wrapped in a new SELECT for simplicity.
-            AddQueryWrapper();
+            Command.AddQueryWrapper();
 
             var whereFilterModifier = new CommandModifier
             {
@@ -87,7 +87,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
                 HashBuilder.Compute(whereFilterModifier.Description + WhereFilterOptions.Aggregate(string.Empty,
                     (s, pair) => s + pair.Key + pair.Value));
 
-            if (!TryAddCommandModifier(whereFilterModifier))
+            if (!Command.TryAddCommandModifier(whereFilterModifier))
                 throw new Exception("Conflicting priorities for command modifiers");
 
             return this;
@@ -127,7 +127,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
                 CacheHash = HashBuilder.Compute("ORDER BY @" + parameterName)
             };
 
-            if (!TryAddCommandModifier(orderByModifier))
+            if (!Command.TryAddCommandModifier(orderByModifier))
                 throw new Exception("Conflicting priorities for command modifiers");
 
             return this;
@@ -249,7 +249,7 @@ namespace Susanoo.Pipeline.Command.ResultSets
             }
 
             return result ??
-                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultInfo, commandResultInfo.CommandModifiers, name);
+                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultInfo, commandResultInfo.GetCommandInfo().CommandModifiers, name);
         }
 
         /// <summary>
