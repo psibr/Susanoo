@@ -38,7 +38,7 @@ namespace Susanoo
 
             var offsetFetchStatement = string.Format(PagingFormat, pageNumberParameterName, rowCountParameterName);
 
-            commandResultExpression.TryAddCommandModifier(new CommandModifier
+            commandResultExpression.Command.TryAddCommandModifier(new CommandModifier
             {
                 Description = "OFFSET/FETCH",
                 Priority = 100,
@@ -85,7 +85,7 @@ namespace Susanoo
 
             wrapper.CacheHash = (wrapper.CacheHash * 31) ^ HashBuilder.Compute(totalText);
 
-            commandResultExpression
+            commandResultExpression.Command
                 .AddOrReplaceCommandModifier(wrapper);
 
             return commandResultExpression;

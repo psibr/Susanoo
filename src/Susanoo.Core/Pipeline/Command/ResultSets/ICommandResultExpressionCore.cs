@@ -13,18 +13,5 @@
         /// </summary>
         /// <value>The command.</value>
         ICommandInfo<TFilter> Command { get; }
-
-        /// <summary>
-        /// Tries to add a command modifier.
-        /// </summary>
-        /// <param name="modifier">The modifier.</param>
-        /// <returns><c>true</c> if no other modifier exists with the same priority, <c>false</c> otherwise.</returns>
-        bool TryAddCommandModifier(CommandModifier modifier);
-
-        /// <summary>
-        /// Adds or replaces a command modifier.
-        /// </summary>
-        /// <param name="modifier">The modifier.</param>
-        void AddOrReplaceCommandModifier(CommandModifier modifier);
     }
 }

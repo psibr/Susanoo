@@ -81,5 +81,14 @@ namespace Susanoo
             }
         }
     }
+
+    /// <summary>
+    /// Specifies a property is not mapped to a dataset.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public class NotMappedAttribute : Attribute
+    {
+
+    }
 }
 #endif

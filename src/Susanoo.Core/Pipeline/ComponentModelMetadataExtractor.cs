@@ -2,13 +2,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+
+
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
 
 #if !NETFX40
+using System.ComponentModel.DataAnnotations.Schema;
 #endif
 
 #endregion

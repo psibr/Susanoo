@@ -20,8 +20,6 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <value>The type of the database command.</value>
         CommandType DbCommandType { get; }
-
-
     }
 
     /// <summary>
@@ -46,5 +44,30 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
         bool AllowStoringColumnInfo { get; }
+
+        /// <summary>
+        /// Tries to add a command modifier.
+        /// </summary>
+        /// <param name="modifier">The modifier.</param>
+        /// <returns><c>true</c> if no other modifier exists with the same priority, <c>false</c> otherwise.</returns>
+        bool TryAddCommandModifier(CommandModifier modifier);
+
+        /// <summary>
+        /// Adds or replaces a command modifier.
+        /// </summary>
+        /// <param name="modifier">The modifier.</param>
+        void AddOrReplaceCommandModifier(CommandModifier modifier);
+
+        /// <summary>
+        /// Gets the command modifiers.
+        /// </summary>
+        /// <value>The command modifiers.</value>
+        IEnumerable<CommandModifier> CommandModifiers { get; }
+
+        /// <summary>
+        /// Adds the query wrapper.
+        /// </summary>
+        /// <param name="additionalColumns">The additional columns.</param>
+        void AddQueryWrapper(string additionalColumns = null);
     }
 }
