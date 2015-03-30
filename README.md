@@ -16,8 +16,7 @@ var command = CommandManager
                      WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
     .DefineResults<Customer>()
     .Realize();
-```
-```csharp
+    
 using (var databaseManager =
     new DatabaseManager("DepartmentStoreConnectionString"))
 {
