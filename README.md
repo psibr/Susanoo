@@ -4,6 +4,8 @@ A simple, fast, fluently structured library that takes the pain out of writing A
 
 [Docs are available here.](https://susanoo.torchpad.com/)
 
+[Susanoo has a gitter.im chatroom](https://gitter.im/psibernetic/Susanoo).
+
 [![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
 
 Support for .NET 4.0+, nuget packages reference 4.5
@@ -16,8 +18,7 @@ var command = CommandManager
                      WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
     .DefineResults<Customer>()
     .Realize();
-```
-```csharp
+    
 using (var databaseManager =
     new DatabaseManager("DepartmentStoreConnectionString"))
 {
