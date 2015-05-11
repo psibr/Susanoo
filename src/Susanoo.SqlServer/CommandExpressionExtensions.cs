@@ -62,7 +62,7 @@ namespace Susanoo
             if (parameterOptions != null)
             {
                 commandExpression.IncludeProperty(propertyName,
-                    CombineActions(parameter => parameter.MakeTableValuedParameter(propertyName, typeName), parameterOptions));
+                    parameterOptions.AppendToAction(parameter => parameter.MakeTableValuedParameter(propertyName, typeName)));
             }
             else
             {
@@ -92,14 +92,14 @@ namespace Susanoo
 
 
         /// <summary>
-        /// Combines two actions.
+        /// Appends an action to another.
         /// </summary>
         /// <param name="arg0">The arg0.</param>
         /// <param name="arg1">The arg1.</param>
         /// <returns>Action&lt;DbParameter&gt;.</returns>
-        internal static Action<DbParameter> CombineActions(Action<DbParameter> arg0, Action<DbParameter> arg1)
+        internal static Action<DbParameter> AppendToAction(this Action<DbParameter> arg0, Action<DbParameter> arg1)
         {
-            return arg0 + arg1;
+            return arg1 + arg0;
         }
 
 

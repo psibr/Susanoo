@@ -29,7 +29,7 @@ namespace Susanoo.Pipeline.Command
         : ICommandInfo, IFluentPipelineFragment
     {
         /// <summary>
-        /// Builds the parameters (Not part of Fluent API).
+        /// Builds the parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
@@ -69,5 +69,17 @@ namespace Susanoo.Pipeline.Command
         /// </summary>
         /// <param name="additionalColumns">The additional columns.</param>
         void AddQueryWrapper(string additionalColumns = null);
+
+        /// <summary>
+        /// Gets the property whitelist.
+        /// </summary>
+        /// <value>The whitelist.</value>
+        IEnumerable<string> PropertyWhitelist { get; }
+
+        /// <summary>
+        /// Gets the property blacklist.
+        /// </summary>
+        /// <value>The blacklist.</value>
+        IEnumerable<string> PropertyBlacklist { get; }
     }
 }

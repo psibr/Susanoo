@@ -121,16 +121,42 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public static ICommandProcessor<TFilter> DefineInsert<TFilter>(Func<ICommandExpression<TFilter>, ICommandExpression<TFilter>> modifierFunc)
+        public static ICommandProcessor<TFilter> DefineInsert<TFilter>(string tableName, Func<ICommandExpression<TFilter>, ICommandExpression<TFilter>> commandFunc = null)
         {
-            var command = 
+            var command =
                 Bootstrapper.RetrieveCommandBuilder()
                     .DefineCommand<TFilter>(string.Empty, CommandType.Text);
 
-            command = modifierFunc(command);
-            
-            return command
-                .Realize();
+            if (commandFunc != null)
+                command = commandFunc(command);
+
+            var commandInfo = (ICommandInfo<TFilter>)command;
+
+                var columnNames = Bootstrapper.RetrievePropertyMetadataExtractor()
+                    .FindAllowedProperties(
+                        typeof (TFilter),
+                        DescriptorActions.Insert,
+                        commandInfo.PropertyWhitelist.ToArray(),
+                        commandInfo.PropertyBlacklist.ToArray())
+                    .Select(p => p.Value.ActiveAlias)
+                    .Aggregate(string.Empty, (p, c) => p.Length == 0 ? c : p + ", " + c);
+
+                var insertReadyFormat = string.Format("INSERT INTO {0} ( {1} ) VALUES {{0}}", tableName, columnNames);
+
+            commandInfo.TryAddCommandModifier(new CommandModifier
+                {
+                    Priority = 1,
+                    Description = "Insert Builder",
+                    ModifierFunc = info => new ExecutableCommandInfo
+                    {
+                        CommandText = String.Format(insertReadyFormat, null), //
+                        DbCommandType = CommandType.Text,
+                        Parameters = info.Parameters
+                    },
+                    CacheHash = HashBuilder.Compute(typeof(TFilter).AssemblyQualifiedName + "_Susanoo_Insert")
+                });
+
+            return command.Realize();
         }
 
         /// <summary>
@@ -292,7 +318,8 @@ namespace Susanoo
         /// Gets the bootstrapper.
         /// </summary>
         /// <value>The bootstrapper.</value>
-        public static ISusanooBootstrapper Bootstrapper {
+        public static ISusanooBootstrapper Bootstrapper
+        {
             get { return _bootstrapper; }
         }
     }

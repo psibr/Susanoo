@@ -106,31 +106,31 @@
             switch (compare)
             {
                 case CompareMethod.Equal:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} = @{0})";
+                    comparisonString = "\r\n    AND {1} = @{0}";
                     break;
                 case CompareMethod.NotEqual:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} <> @{0})";
+                    comparisonString = "\r\n    AND {1} <> @{0}";
                     break;
                 case CompareMethod.LessThan:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} < @{0})";
+                    comparisonString = "\r\n    AND {1} < @{0}";
                     break;
                 case CompareMethod.LessThanOrEqual:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} <= @{0})";
+                    comparisonString = "\r\n    AND {1} <= @{0}";
                     break;
                 case CompareMethod.GreaterThan:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} > @{0})";
+                    comparisonString = "\r\n    AND {1} > @{0}";
                     break;
                 case CompareMethod.GreaterThanOrEqual:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} >= @{0})";
+                    comparisonString = "\r\n    AND {1} >= @{0}";
                     break;
                 case CompareMethod.StartsWith:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} LIKE  @{0} + '%')";
+                    comparisonString = "\r\n    AND {1} LIKE @{0} + '%'";
                     break;
                 case CompareMethod.EndsWith:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} LIKE  '%' + @{0})";
+                    comparisonString = "\r\n    AND {1} LIKE '%' + @{0}";
                     break;
                 case CompareMethod.Contains:
-                    comparisonString = "\r\n    AND (@{0} IS NULL OR {1} LIKE  '%' + @{0} + '%')";
+                    comparisonString = "\r\n    AND {1} LIKE '%' + @{0} + '%'";
                     break;
             }
 

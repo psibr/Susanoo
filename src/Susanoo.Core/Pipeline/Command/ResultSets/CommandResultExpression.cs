@@ -164,9 +164,15 @@ namespace Susanoo.Pipeline.Command.ResultSets
             {
                 CommandText = info.CommandText + string.Concat(mappings.Select(o =>
                 {
+                    var parameter = info.Parameters.SingleOrDefault(param => param.ParameterName == o.Item3);
+
                     var compareFormat = string.Empty;
-                    if (o.Item5 is CompareMethod)
-                        compareFormat = Comparison.GetComparisonFormat((CompareMethod)o.Item5);
+                    //If no matching parameter or value is null or DBNull, don't add a comaparison.
+                    if (parameter != null && parameter.Value != null && parameter.Value != DBNull.Value)
+                    {
+                        if (o.Item5 is CompareMethod)
+                            compareFormat = Comparison.GetComparisonFormat((CompareMethod) o.Item5);
+                    }
 
                     var value = o.Item5 as ComparisonOverride;
                     compareFormat = value != null ? value.OverrideText : compareFormat;

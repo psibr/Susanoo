@@ -85,6 +85,23 @@ namespace Susanoo.Pipeline.Command
         public virtual CommandType DbCommandType { get; private set; }
 
         /// <summary>
+        /// Gets the property whitelist.
+        /// </summary>
+        /// <value>The whitelist.</value>
+        public IEnumerable<string> PropertyWhitelist
+        {
+            get { return _parameterInclusions.Keys; }
+        }
+        /// <summary>
+        /// Gets the property blacklist.
+        /// </summary>
+        /// <value>The blacklist.</value>
+        public IEnumerable<string> PropertyBlacklist
+        {
+            get { return _parameterExclusions; }
+        }
+
+        /// <summary>
         ///     Gets a value indicating whether storing column information is allowed.
         /// </summary>
         /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
