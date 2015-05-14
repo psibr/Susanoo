@@ -22,7 +22,7 @@ namespace Susanoo
     {
         private DbConnection _connection;
         private bool _explicitlyOpened;
-        private readonly string _connectionString;
+        private string _connectionString;
         private readonly Action<DbCommand> _providerSpecificCommandSettings;
 
         /// <summary>
@@ -69,6 +69,70 @@ namespace Susanoo
             if (Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
                     "connectionStringName");
+        }
+        
+                protected DatabaseManager()
+        {
+
+        }
+
+        public static DatabaseManager CreateFromConnectionStringName(string connectionStringName)
+        {
+            var manager = new DatabaseManager();
+
+            manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+
+            manager.Provider =
+                DbProviderFactories.GetFactory(ConfigurationManager.ConnectionStrings[connectionStringName].ProviderName);
+
+            if (manager.Provider == null)
+                throw new ArgumentException("Provider is a required component of the connection string.",
+                    "connectionStringName");
+
+            return manager;
+        }
+
+        public static DatabaseManager CreateFromConnectionStringName(DbProviderFactory provider, string connectionStringName)
+        {
+            var manager = new DatabaseManager();
+            manager.Provider = provider;
+
+            manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+                .ConnectionString;
+
+            return manager;
+        }
+
+        public static DatabaseManager CreateFromConnectionStringName(string connectionStringName, string providerName)
+        {
+            var manager = new DatabaseManager();
+            manager.Provider =
+                DbProviderFactories.GetFactory(providerName);
+
+            if (manager.Provider == null)
+                throw new ArgumentException("Provider is a required component of the connection string.",
+                    "providerName");
+
+            manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+                .ConnectionString;
+
+            return manager;
+        }
+
+        public static DatabaseManager CreateFromConnectionString(string connectionString, string providerName)
+        {
+            var manager = new DatabaseManager();
+
+            manager._connectionString = connectionString;
+            
+            manager.Provider =
+                DbProviderFactories.GetFactory(providerName);
+
+            if (manager.Provider == null)
+                throw new ArgumentException("Provider is a required component of the connection string.",
+                    "providerName");
+
+            return manager;
         }
 
         /// <summary>
