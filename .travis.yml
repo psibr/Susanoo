@@ -1,2 +1,2 @@
 language: csharp
-solution: Susanoo.sln
+solution: src/Susanoo.sln
