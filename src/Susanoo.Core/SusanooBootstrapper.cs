@@ -7,9 +7,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using Susanoo.Command;
+using Susanoo.Deserialization;
 using Susanoo.Pipeline;
-using Susanoo.Pipeline.Command;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 
 namespace Susanoo
 {
@@ -19,9 +19,9 @@ namespace Susanoo
     public class SusanooBootstrapper : ISusanooBootstrapper
     {
         /// <summary>
-        /// Gets or sets the command builder.
+        /// Gets or sets the CommandBuilder builder.
         /// </summary>
-        /// <value>The command builder.</value>
+        /// <value>The CommandBuilder builder.</value>
         /// <exception cref="System.ArgumentNullException">value</exception>
         public virtual ICommandExpressionBuilder RetrieveCommandBuilder()
         {
@@ -94,50 +94,6 @@ namespace Susanoo
                 RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace));
         }
 
-        /// <summary>
-        /// Retrieves the query wrapper format.
-        /// </summary>
-        /// <returns>System.String.</returns>
-        public virtual string RetrieveQueryWrapperFormat()
-        {
-            return 
-@"SELECT *{1}
-FROM (
-    {0}
-) susanoo_query_wrapper
-WHERE 1=1";
-        }
 
-        /// <summary>
-        /// Builds a query wrapper.
-        /// </summary>
-        public virtual CommandModifier BuildQueryWrapper(string additionalColumns = null)
-        {
-            if (additionalColumns != null)
-            {
-                additionalColumns = additionalColumns.Trim();
-
-                if (!additionalColumns.StartsWith(","))
-                    additionalColumns = ", " + additionalColumns;
-            }
-
-            var format = CommandManager.Bootstrapper
-                    .RetrieveQueryWrapperFormat();
-
-            return new CommandModifier
-            {
-                Description = "SusanooWrapper",
-                Priority = 1000,
-                ModifierFunc = info => new ExecutableCommandInfo
-                {
-
-                    CommandText = string.Format(format, info.CommandText, additionalColumns ?? string.Empty),
-                    DbCommandType = info.DbCommandType,
-                    Parameters = info.Parameters
-                },
-                CacheHash = HashBuilder.Compute(format)
-            };
-
-        }
     }
 }

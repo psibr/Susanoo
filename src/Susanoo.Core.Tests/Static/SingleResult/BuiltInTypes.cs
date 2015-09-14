@@ -15,7 +15,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void StringResultTest()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM (VALUES ('test')) AS MyValues(string)", CommandType.Text)
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES ('test')) AS MyValues(string)", CommandType.Text)
                 .DefineResults<string>()
                 .Realize()
                 .Execute(Setup.DatabaseManager);
@@ -27,7 +27,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void StringResultNullTest()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(string)", CommandType.Text)
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(string)", CommandType.Text)
                 .DefineResults<string>()
                 .Realize()
                 .Execute(Setup.DatabaseManager);
@@ -39,7 +39,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void IntNullableTest()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM (VALUES (null), (5)) AS MyValues(int)", CommandType.Text)
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null), (5)) AS MyValues(int)", CommandType.Text)
                 .DefineResults<int?>()
                 .Realize()
                 .Execute(Setup.DatabaseManager);
@@ -53,7 +53,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [ExpectedException(typeof(InvalidCastException))]
         public void IntNullTest()
         {
-            CommandManager.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(int)", CommandType.Text)
+            CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(int)", CommandType.Text)
                 .DefineResults<int>()
                 .Realize()
                 .Execute(Setup.DatabaseManager);
@@ -62,7 +62,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test]
         public void IntTest()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM (VALUES (5)) AS MyValues(int)", CommandType.Text)
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (5)) AS MyValues(int)", CommandType.Text)
                 .DefineResults<int>()
                 .Realize()
                 .Execute(Setup.DatabaseManager);

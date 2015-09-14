@@ -14,7 +14,7 @@ namespace Susanoo.Tests.Scalar
     [TestFixture]
     public class ScalarTests
     {
-        private readonly DatabaseManager DatabaseManager = Setup.DatabaseManager;
+        private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -24,9 +24,9 @@ namespace Susanoo.Tests.Scalar
         [Test]
         public void NullableScalarAcceptsNull()
         {
-            var result = CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
+            var result = CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize()
-                .ExecuteScalar<int?>(DatabaseManager);
+                .ExecuteScalar<int?>(_databaseManager);
 
             Assert.AreEqual(result, null);
         }
@@ -35,9 +35,9 @@ namespace Susanoo.Tests.Scalar
         [ExpectedException(typeof(NullReferenceException))]
         public void NonNullableScalarThrowsIfNull()
         {
-            CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
+            CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize()
-                .ExecuteScalar<int>(DatabaseManager);
+                .ExecuteScalar<int>(_databaseManager);
 
         }
     }

@@ -29,10 +29,7 @@ namespace Susanoo
         /// Gets the seed of hashes.
         /// </summary>
         /// <value>The seed.</value>
-        public static BigInteger Seed
-        {
-            get { return Murmur3.Seed; }
-        }
+        public static BigInteger Seed => Murmur3.Seed;
 
         /// <summary>
         /// Computes the specified value into a hash.

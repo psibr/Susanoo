@@ -1,7 +1,7 @@
 ﻿#region
 
 using System.Data;
-using Susanoo.Pipeline.Command;
+using Susanoo.Command;
 
 #endregion
 
@@ -13,15 +13,15 @@ namespace Susanoo.Pipeline
     public class CommandBuilder : ICommandExpressionBuilder
     {
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on
+        /// Begins the CommandBuilder definition process using a Fluent API implementation, move to next step with DefineResults on
         /// the result of this call.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandText">The CommandBuilder text.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        /// <exception cref="System.ArgumentException">No command text provided.;commandText
+        /// <exception cref="System.ArgumentException">No CommandBuilder text provided.;commandText
         /// or
         /// TableDirect is not supported.;commandType</exception>
         public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
@@ -30,14 +30,14 @@ namespace Susanoo.Pipeline
         }
 
         /// <summary>
-        /// Begins the command definition process using a Fluent API implementation, move to next step with DefineResults on
+        /// Begins the CommandBuilder definition process using a Fluent API implementation, move to next step with DefineResults on
         /// the result of this call.
         /// </summary>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandText">The CommandBuilder text.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
-        /// <exception cref="System.ArgumentException">No command text provided.;commandText
+        /// <exception cref="System.ArgumentException">No CommandBuilder text provided.;commandText
         /// or
         /// TableDirect is not supported.;commandType</exception>
         public virtual ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)

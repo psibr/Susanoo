@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Susanoo.Pipeline.Command;
+using Susanoo.Command;
 
 namespace Susanoo.SqlServer.Tests
 {

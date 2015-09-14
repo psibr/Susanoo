@@ -24,7 +24,7 @@ namespace Susanoo
         /// Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
         IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
@@ -34,7 +34,7 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>A single value of type T.</returns>
         T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters);
@@ -43,7 +43,7 @@ namespace Susanoo
         /// Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
         int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
@@ -90,7 +90,7 @@ namespace Susanoo
         /// Executes the data reader asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;IDataReader&gt;.</returns>
@@ -101,8 +101,8 @@ namespace Susanoo
         /// Executes the scalar action asynchronously.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandText">The CommandBuilder text.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
@@ -113,7 +113,7 @@ namespace Susanoo
         /// Executes the stored procedure asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;System.Int32&gt;.</returns>

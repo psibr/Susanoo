@@ -15,7 +15,7 @@ namespace Susanoo.SqlServer.Tests.Structured
         [SetUp]
         public void DefineReferenceTypeIfNeeded()
         {
-            CommandManager.DefineCommand(@"
+            CommandManager.Instance.DefineCommand(@"
                 IF not EXISTS (SELECT * FROM sys.types WHERE is_user_defined = 1 AND name = 'ReferenceTable')
 	                CREATE TYPE [dbo].[ReferenceTable] AS TABLE(
 		                [ReferenceId] [int] NOT NULL
@@ -33,7 +33,7 @@ namespace Susanoo.SqlServer.Tests.Structured
                 .Realize()
                 .ExecuteNonQuery(_databaseManager);
 
-            CommandManager.DefineCommand(@"
+            CommandManager.Instance.DefineCommand(@"
 	            CREATE PROCEDURE [dbo].[uspStructuredParameterTest]
 		            @ReferenceTable dbo.ReferenceTable READONLY
 	            AS
@@ -55,7 +55,7 @@ namespace Susanoo.SqlServer.Tests.Structured
             for (var i = 2; i < 501; i++)
                 list.Add(new KeyValuePair<int, string>(i, null));
 
-            var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
+            var results = CommandManager.Instance.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
                 .IncludePropertyAsStructured("ReferenceTable", "ReferenceTable")
                 .DefineResults<dynamic>()
                 .Realize("StructuredViaInclude")
@@ -71,7 +71,7 @@ namespace Susanoo.SqlServer.Tests.Structured
         {
             var list = new List<KeyValuePair<int, string>>();
 
-            var results = CommandManager.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
+            var results = CommandManager.Instance.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
                 .IncludePropertyAsStructured("ReferenceTable", "ReferenceTable")
                 .DefineResults<dynamic>()
                 .Realize("StructuredViaInclude")

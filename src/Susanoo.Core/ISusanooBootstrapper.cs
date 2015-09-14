@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text.RegularExpressions;
+using Susanoo.Command;
+using Susanoo.Deserialization;
 using Susanoo.Pipeline;
-using Susanoo.Pipeline.Command;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 
 namespace Susanoo
 {
@@ -14,9 +14,9 @@ namespace Susanoo
     public interface ISusanooBootstrapper
     {
         /// <summary>
-        /// Gets or sets the command builder.
+        /// Gets or sets the CommandBuilder builder.
         /// </summary>
-        /// <value>The command builder.</value>
+        /// <value>The CommandBuilder builder.</value>
         /// <exception cref="System.ArgumentNullException">value</exception>
         ICommandExpressionBuilder RetrieveCommandBuilder();
 
@@ -46,24 +46,5 @@ namespace Susanoo
         /// <param name="parameters">The parameters.</param>
         void OnExecutionException(ICommandInfo info, Exception exception,
             DbParameter[] parameters);
-
-        /// <summary>
-        /// Retrieves the order by regex used for whitelisting allowed cahracters.
-        /// </summary>
-        /// <returns>Regex.</returns>
-        Regex RetrieveOrderByRegex();
-
-        /// <summary>
-        /// Retrieves the query wrapper format.
-        /// </summary>
-        /// <returns>System.String.</returns>
-        string RetrieveQueryWrapperFormat();
-
-        /// <summary>
-        /// Builds a query wrapper.
-        /// </summary>
-        /// <param name="additionalColumns">The additional columns.</param>
-        /// <returns>CommandModifier.</returns>
-        CommandModifier BuildQueryWrapper(string additionalColumns = null);
     }
 }

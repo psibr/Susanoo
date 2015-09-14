@@ -30,7 +30,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
+        /// <param name="providerSpecificCommandSettings">The provider specific CommandBuilder settings.</param>
         /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName,
             Action<DbCommand> providerSpecificCommandSettings)
@@ -68,10 +68,10 @@ namespace Susanoo
 
             if (Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "connectionStringName");
+                    nameof(connectionStringName));
         }
-        
-                protected DatabaseManager()
+
+        protected DatabaseManager()
         {
 
         }
@@ -87,31 +87,31 @@ namespace Susanoo
 
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "connectionStringName");
+                    nameof(connectionStringName));
 
             return manager;
         }
 
         public static DatabaseManager CreateFromConnectionStringName(DbProviderFactory provider, string connectionStringName)
         {
-            var manager = new DatabaseManager();
-            manager.Provider = provider;
+            var manager = new DatabaseManager
+            {
+                Provider = provider,
+                _connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+                    .ConnectionString
+            };
 
-            manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
-                .ConnectionString;
 
             return manager;
         }
 
         public static DatabaseManager CreateFromConnectionStringName(string connectionStringName, string providerName)
         {
-            var manager = new DatabaseManager();
-            manager.Provider =
-                DbProviderFactories.GetFactory(providerName);
+            var manager = new DatabaseManager {Provider = DbProviderFactories.GetFactory(providerName)};
 
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "providerName");
+                    nameof(providerName));
 
             manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
                 .ConnectionString;
@@ -121,16 +121,15 @@ namespace Susanoo
 
         public static DatabaseManager CreateFromConnectionString(string connectionString, string providerName)
         {
-            var manager = new DatabaseManager();
-
-            manager._connectionString = connectionString;
-            
-            manager.Provider =
-                DbProviderFactories.GetFactory(providerName);
+            var manager = new DatabaseManager
+            {
+                _connectionString = connectionString,
+                Provider = DbProviderFactories.GetFactory(providerName)
+            };
 
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "providerName");
+                    nameof(providerName));
 
             return manager;
         }
@@ -163,7 +162,7 @@ namespace Susanoo
         /// Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
@@ -172,7 +171,7 @@ namespace Susanoo
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             IDataReader results = null;
 
@@ -203,7 +202,7 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>A single value of type T.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
@@ -211,7 +210,7 @@ namespace Susanoo
         public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = _explicitlyOpened;
 
@@ -237,7 +236,7 @@ namespace Susanoo
         /// Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
@@ -245,7 +244,7 @@ namespace Susanoo
         public virtual int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = (Connection.State != ConnectionState.Closed);
 
@@ -334,10 +333,8 @@ namespace Susanoo
         /// Gets the state of the connection.
         /// </summary>
         /// <value>The state.</value>
-        public ConnectionState State
-        {
-            get { return Connection.State; }
-        }
+        public ConnectionState State => 
+            Connection.State;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -410,11 +407,11 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Preps the command.
+        /// Preps the CommandBuilder.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandText">The CommandBuilder text.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>DbCommand.</returns>
         protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType,
@@ -440,13 +437,12 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Adjusts the command by provider.
+        /// Adjusts the CommandBuilder by provider.
         /// </summary>
-        /// <param name="command">The command.</param>
+        /// <param name="command">The CommandBuilder.</param>
         protected virtual void CallProviderSpecificCommandSettings(DbCommand command)
         {
-            if (_providerSpecificCommandSettings != null)
-                _providerSpecificCommandSettings(command);
+            _providerSpecificCommandSettings?.Invoke(command);
         }
 
         /// <summary>
@@ -482,13 +478,13 @@ namespace Susanoo
     /// <summary>
     /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    public partial class DatabaseManager 
+    public partial class DatabaseManager
     {
         /// <summary>
         /// Executes the data reader asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
@@ -500,7 +496,7 @@ namespace Susanoo
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             IDataReader results = null;
             var open = _explicitlyOpened;
@@ -532,7 +528,7 @@ namespace Susanoo
         /// Executes the stored procedure asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
@@ -544,7 +540,7 @@ namespace Susanoo
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = _explicitlyOpened;
 
@@ -568,8 +564,8 @@ namespace Susanoo
         /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandText">The CommandBuilder text.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
@@ -580,7 +576,7 @@ namespace Susanoo
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = _explicitlyOpened;
 

@@ -20,7 +20,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void IdenticalResults2Test()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel, TypeTestModel>()
                 .Realize("IdenticalResults2Test")
@@ -41,7 +41,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void IdenticalResults3Test()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel, TypeTestModel, TypeTestModel>()
@@ -70,7 +70,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void IdenticalResults4Test()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;", CommandType.Text)
@@ -103,7 +103,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void IdenticalResults5Test()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
@@ -142,7 +142,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void IdenticalResults6Test()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
@@ -186,7 +186,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void IdenticalResults7Test()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
@@ -234,7 +234,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void LessResultsThanAvailableTest()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;" +
@@ -262,7 +262,7 @@ namespace Susanoo.Tests.Static.MultipleResults
         public void MoreResultsThanAvailableTest()
         {
 
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;" +
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel, TypeTestModel, TypeTestModel, TypeTestModel, TypeTestModel, TypeTestModel, TypeTestModel>()
                 .Realize("MoreResultsAreAvailableTest")

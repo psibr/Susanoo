@@ -24,7 +24,7 @@
 //        [Test]
 //        public void NullableScalarAcceptsNull()
 //        {
-//            var result = CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
+//            var result = CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
 //                .Realize()
 //                .ExecuteScalar<int?>(DatabaseManager);
 
@@ -35,7 +35,7 @@
 //        [ExpectedException(typeof(NullReferenceException))]
 //        public void NonNullableScalarThrowsIfNull()
 //        {
-//            CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
+//            CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
 //                .Realize()
 //                .ExecuteScalar<int>(DatabaseManager);
 
