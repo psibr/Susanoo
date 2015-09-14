@@ -6,10 +6,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 #endif
 
 using System.Data.Common;
-using System.Text.RegularExpressions;
 using Susanoo.Command;
 using Susanoo.Deserialization;
 using Susanoo.Pipeline;
+using Susanoo.TinyIoC;
 
 namespace Susanoo
 {
@@ -18,6 +18,14 @@ namespace Susanoo
     /// </summary>
     public class SusanooBootstrapper : ISusanooBootstrapper
     {
+        private readonly TinyIoCContainer DIContainer = TinyIoCContainer.Current;
+
+        public virtual TDependency Resolve<TDependency>()
+            where TDependency : class 
+        {
+            return DIContainer.Resolve<TDependency>();
+        }
+
         /// <summary>
         /// Gets or sets the CommandBuilder builder.
         /// </summary>
@@ -66,34 +74,5 @@ namespace Susanoo
         {
             throw exception;
         }
-
-        private Regex _orderByRegex;
-
-        /// <summary>
-        /// Retrieves the order by regex used for whitelisting allowed cahracters.
-        /// </summary>
-        /// <returns>Regex.</returns>
-        public virtual Regex RetrieveOrderByRegex()
-        {
-            return _orderByRegex ?? (_orderByRegex = new Regex(
-                @"\A
-		            # 1. Match all of these conditions
-		            (?:
-		              # 2. Leading Whitespace
-		              \ *
-		              # 3. ColumnName: a-z, A-Z, 0-9, _
-		              (?<ColumnName>[0-9_a-z]*)
-		              # 4. Whitespace
-		              \ *
-		              # 5. SortDirection: ASC or DESC case-insensitive
-		              (?<SortDirection>ASC|DESC)?
-		              # 6. Optional Comma
-		              ,?
-		            )*
-		            \z",
-                RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace));
-        }
-
-
     }
 }

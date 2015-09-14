@@ -30,7 +30,7 @@ namespace Susanoo.Processing
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
-        public SingleResultSetCommandProcessor(
+        internal SingleResultSetCommandProcessor(
             ICommandResultInfo<TFilter> mappings,
             string name = null)
             : base(mappings)

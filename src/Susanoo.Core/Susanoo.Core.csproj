@@ -26,7 +26,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">NETFX40</CustomConstants>
     <DefineConstants Condition=" '$(DefineConstants)' != '' And '$(CustomConstants)' != '' ">$(DefineConstants);</DefineConstants>
-    <DefineConstants>$(DefineConstants)$(CustomConstants)</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -99,6 +99,8 @@
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Command\ICommandBuilderInfo.cs" />
     <Compile Include="Command\IExecutableCommandInfo.cs" />
+    <Compile Include="Processing\ISingleResultSetCommandProcessorFactory.cs" />
+    <Compile Include="Processing\SingleResultSetCommandProcessorFactory.cs" />
     <Compile Include="ResultSets\CommandResultCommon.cs" />
     <Compile Include="ResultSets\ICommandResultExpressionCore.cs" />
     <Compile Include="ResultSets\ICommandResultInfo.cs" />
@@ -156,8 +158,10 @@
     <Compile Include="Mapping\Properties\PropertyMappingConfiguration.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="SusanooBootstrapper.cs" />
+    <Compile Include="TinyIoC.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\Key.snk" />
     <None Include="Susanoo.Core.nuspec" />
   </ItemGroup>

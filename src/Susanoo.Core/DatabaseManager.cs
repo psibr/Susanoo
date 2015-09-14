@@ -71,7 +71,7 @@ namespace Susanoo
                     nameof(connectionStringName));
         }
 
-        protected DatabaseManager()
+        private DatabaseManager()
         {
 
         }
