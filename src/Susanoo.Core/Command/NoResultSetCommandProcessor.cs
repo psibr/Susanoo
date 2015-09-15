@@ -18,28 +18,26 @@ namespace Susanoo.Command
     public partial class NoResultSetCommandProcessor<TFilter> : 
         ICommandProcessor<TFilter>
     {
-        private readonly ICommandBuilderInfo<TFilter> _commandBuilderInfo;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The CommandBuilder.</param>
         public NoResultSetCommandProcessor(ICommandBuilderInfo<TFilter> command)
         {
-            _commandBuilderInfo = command;
+            CommandBuilderInfo = command;
         }
 
         /// <summary>
         /// Gets the CommandBuilder expression.
         /// </summary>
         /// <value>The CommandBuilder expression.</value>
-        public ICommandBuilderInfo<TFilter> CommandBuilderInfo => _commandBuilderInfo;
+        public ICommandBuilderInfo<TFilter> CommandBuilderInfo { get; }
 
         /// <summary>
         /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash => _commandBuilderInfo.CacheHash;
+        public BigInteger CacheHash => CommandBuilderInfo.CacheHash;
 
         /// <summary>
         /// Executes the scalar.
@@ -232,7 +230,8 @@ namespace Susanoo.Command
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, TFilter filter,
             params DbParameter[] explicitParameters)
         {
-            return await ExecuteNonQueryAsync(databaseManager, filter, default(CancellationToken), explicitParameters);
+            return await ExecuteNonQueryAsync(databaseManager, filter, default(CancellationToken), explicitParameters)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -245,7 +244,9 @@ namespace Susanoo.Command
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return await ExecuteNonQueryAsync(databaseManager, default(TFilter), cancellationToken, explicitParameters);
+            return
+                await ExecuteNonQueryAsync(databaseManager, default(TFilter), cancellationToken, explicitParameters)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -257,7 +258,9 @@ namespace Susanoo.Command
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters)
         {
-            return await ExecuteNonQueryAsync(databaseManager, default(TFilter), default(CancellationToken), explicitParameters);
+            return
+                await ExecuteNonQueryAsync(databaseManager, default(TFilter), default(CancellationToken), explicitParameters)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -272,8 +275,8 @@ namespace Susanoo.Command
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
             return
-                await
-                    ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), cancellationToken, explicitParameters);
+                await ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), cancellationToken, explicitParameters)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -288,8 +291,8 @@ namespace Susanoo.Command
             TFilter filter, params DbParameter[] explicitParameters)
         {
             return
-                await
-                    ExecuteScalarAsync<TReturn>(databaseManager, filter, default(CancellationToken), explicitParameters);
+                await ExecuteScalarAsync<TReturn>(databaseManager, filter, default(CancellationToken), explicitParameters)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -303,8 +306,8 @@ namespace Susanoo.Command
             params DbParameter[] explicitParameters)
         {
             return
-                await
-                    ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), default(CancellationToken), explicitParameters);
+                await ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), default(CancellationToken), explicitParameters)
+                    .ConfigureAwait(false);
         }
     }
 
