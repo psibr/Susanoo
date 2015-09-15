@@ -62,8 +62,8 @@ namespace Susanoo.SqlServer.Tests.Structured
                 .Execute(_databaseManager, new { ReferenceTable = list.Select(o => new { Id = o.Key }) });
 
             var enumerable = results as IList<dynamic> ?? results.ToList();
-            Assert.AreEqual(enumerable.Count(), 1);
-            Assert.AreEqual(enumerable.First().Id, 2);
+            Assert.AreEqual(1, enumerable.Count());
+            Assert.AreEqual(2, enumerable.First().Id);
         }
 
         [Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]

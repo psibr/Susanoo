@@ -50,13 +50,23 @@ namespace Susanoo.Tests.Static.SingleResult
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidCastException))]
         public void IntNullTest()
         {
-            CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(int)", CommandType.Text)
-                .DefineResults<int>()
-                .Realize()
-                .Execute(Setup.DatabaseManager);
+            try
+            {
+                CommandManager.Instance.DefineCommand("SELECT * FROM (VALUES (null)) AS MyValues(int)", CommandType.Text)
+                    .DefineResults<int>()
+                    .Realize()
+                    .Execute(Setup.DatabaseManager);
+            }
+            catch (Exception ex) 
+                when (ex.GetType() == typeof (InvalidCastException) 
+                    || ((ex as AggregateException)?.InnerExceptions.Count == 1 
+                        && ((AggregateException) ex).InnerExceptions.Any(iex =>
+                            iex.GetType() == typeof(InvalidCastException))))
+            {
+                //Valid exceptions
+            }
         }
 
         [Test]

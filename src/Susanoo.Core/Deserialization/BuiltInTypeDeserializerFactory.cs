@@ -2,14 +2,38 @@
 using System.Collections.Generic;
 using System.Data;
 using Susanoo.Processing;
+using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {
     /// <summary>
     /// Provides deserialization for built in types
     /// </summary>
-    public static class BuiltInTypeDeserializer
+    public class BuiltInTypeDeserializerFactory 
+        : IDeserializerFactory
     {
+        /// <summary>
+        /// Determines whether this deserializer applies to the type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
+        public bool CanDeserialize(Type type)
+        {
+            return CommandManager.GetDbType(type) != null;
+        }
+
+        /// <summary>
+        /// Builds a deserializer.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mappings">The mappings.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public Func<IDataReader, ColumnChecker, IEnumerable<TResult>> BuildDeserializer<TResult>(ICommandResultMappingExport mappings)
+        {
+            return Deserialize<TResult>;
+        }
+
         /// <summary>
         /// Reads the first value only and casts to built in type.
         /// </summary>
@@ -18,7 +42,7 @@ namespace Susanoo.Deserialization
         /// <param name="checker">The column checker.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         /// <exception cref="System.InvalidCastException">Value types cannot cast null.</exception>
-        public static IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
+        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
         {
             var resultSet = new ListResult<TResult>();
             try

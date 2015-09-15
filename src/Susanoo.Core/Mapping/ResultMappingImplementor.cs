@@ -23,8 +23,9 @@ namespace Susanoo.Mapping
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();
 
-        private IPropertyMetadataExtractor _propertyMetadataExtractor = CommandManager.Instance.Bootstrapper
-                        .RetrievePropertyMetadataExtractor();
+        private IPropertyMetadataExtractor _propertyMetadataExtractor = 
+            CommandManager.Instance.Bootstrapper
+                .ResolveDependency<IPropertyMetadataExtractor>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResultMappingImplementor{TResult}" /> class.

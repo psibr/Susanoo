@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using Susanoo.Mapping.Properties;
+using Susanoo.Pipeline;
 
 namespace Susanoo.Mapping
 {
@@ -32,7 +33,7 @@ namespace Susanoo.Mapping
         public void MapDeclarativeProperties()
         {
             foreach (var item in CommandManager.Instance.Bootstrapper
-                .RetrievePropertyMetadataExtractor()
+                .ResolveDependency<IPropertyMetadataExtractor>()
                 .FindAllowedProperties(_resultType))
             {
                 var configuration = new PropertyMappingConfiguration(item.Key);

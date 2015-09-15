@@ -45,8 +45,8 @@ namespace Susanoo.ResultSets
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public override BigInteger CacheHash => 
-            (base.CacheHash * 31) 
+        public override BigInteger CacheHash =>
+            (base.CacheHash * 31)
                 ^ (GetTypeArgumentHashCode(this.GetType()) * 31)
                 ^ GetType().AssemblyQualifiedName.GetHashCode();
 
@@ -85,28 +85,30 @@ namespace Susanoo.ResultSets
             ICommandResultInfo<TFilter> commandResultInfo, string name = null)
         {
             ICommandProcessorWithResults instance;
-            SingleResultSetCommandProcessor<TFilter, TResult> result = null;
+            ICommandProcessor<TFilter, TResult> result = null;
 
             if (name == null)
             {
                 var hash = (commandResultInfo.CacheHash * 31) ^
-                           GetTypeArgumentHashCode(typeof(SingleResultSetCommandProcessor<TFilter, TResult>));
+                           GetTypeArgumentHashCode(typeof(ICommandProcessor<TFilter, TResult>));
 
                 if (CommandManager.Instance.TryGetCommandProcessor(hash, out instance))
-                    result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+                    result = (ICommandProcessor<TFilter, TResult>)instance;
             }
             else
             {
                 if (CommandManager.Instance.TryGetCommandProcessor(name, out instance))
-                    result = (SingleResultSetCommandProcessor<TFilter, TResult>)instance;
+                    result = (ICommandProcessor<TFilter, TResult>)instance;
             }
 
             return result ??
-                   new SingleResultSetCommandProcessor<TFilter, TResult>(commandResultInfo, name);
+                    CommandManager.Instance.Bootstrapper
+                        .ResolveDependency<ISingleResultSetCommandProcessorFactory>()
+                        .BuildCommandProcessor<TFilter, TResult>(commandResultInfo, name);
         }
 
         /// <summary>
-        ///     To the single result.
+        ///     To a single result.
         /// </summary>
         /// <typeparam name="TSingle">The type of the single.</typeparam>
         /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
@@ -124,8 +126,7 @@ namespace Susanoo.ResultSets
     /// <typeparam name="TResult2">The type of the 2nd result.</typeparam>
     public class CommandResultExpression<TFilter, TResult1, TResult2> :
         CommandResultCommon<TFilter>,
-        ICommandResultExpression<TFilter, TResult1, TResult2>,
-        ICommandResultInfo<TFilter>
+        ICommandResultExpression<TFilter, TResult1, TResult2>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="CommandResultExpression{TFilter, TResult1, TResult2}" /> class.
@@ -172,10 +173,10 @@ namespace Susanoo.ResultSets
         public ICommandProcessor<TFilter, TResult1, TResult2> Realize(string name = null)
         {
             ICommandProcessorWithResults instance;
-            MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2> result;
+            ICommandProcessor<TFilter, TResult1, TResult2> result;
 
             if (CommandManager.Instance.TryGetCommandProcessor(CacheHash, out instance))
-                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>)instance;
+                result = (ICommandProcessor<TFilter, TResult1, TResult2>)instance;
             else
                 result = new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2>(this, name);
 
@@ -241,10 +242,10 @@ namespace Susanoo.ResultSets
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3> Realize(string name = null)
         {
             ICommandProcessorWithResults instance;
-            MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3> result;
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3> result;
 
             if (CommandManager.Instance.TryGetCommandProcessor(CacheHash, out instance))
-                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>)instance;
+                result = (ICommandProcessor<TFilter, TResult1, TResult2, TResult3>)instance;
             else
                 result = new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3>(this, name);
 
@@ -311,10 +312,10 @@ namespace Susanoo.ResultSets
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> Realize(string name = null)
         {
             ICommandProcessorWithResults instance;
-            MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> result;
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4> result;
 
             if (CommandManager.Instance.TryGetCommandProcessor(CacheHash, out instance))
-                result = (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>)instance;
+                result = (ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>)instance;
             else
                 result = new MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>(this,
                     name);
@@ -384,11 +385,11 @@ namespace Susanoo.ResultSets
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> Realize(string name = null)
         {
             ICommandProcessorWithResults instance;
-            MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> result;
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> result;
 
             if (CommandManager.Instance.TryGetCommandProcessor(CacheHash, out instance))
                 result =
-                    (MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>)
+                    (ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>)
                         instance;
             else
                 result =
@@ -462,13 +463,13 @@ namespace Susanoo.ResultSets
             string name = null)
         {
             ICommandProcessorWithResults instance;
-            MultipleResultSetCommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
+            ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
                 result;
 
             if (CommandManager.Instance.TryGetCommandProcessor(CacheHash, out instance))
                 result =
                     (
-                        MultipleResultSetCommandProcessor
+                        ICommandProcessor
                             <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>)instance;
             else
                 result =
@@ -544,13 +545,13 @@ namespace Susanoo.ResultSets
             string name = null)
         {
             ICommandProcessorWithResults instance;
-            MultipleResultSetCommandProcessor
+            ICommandProcessor
                 <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7> result;
 
             if (CommandManager.Instance.TryGetCommandProcessor(CacheHash, out instance))
                 result =
                     (
-                        MultipleResultSetCommandProcessor
+                        ICommandProcessor
                             <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>)instance;
             else
                 result =

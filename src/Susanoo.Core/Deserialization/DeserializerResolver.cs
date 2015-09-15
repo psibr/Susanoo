@@ -14,21 +14,28 @@ namespace Susanoo.Deserialization
         /// <summary>
         /// Retrieves and compiles, if necessary, an appropriate type deserializer.
         /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mappings">The mappings.</param>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public virtual Func<IDataReader, ColumnChecker, IEnumerable<TResult>>
-            Resolve<TResult>(ICommandResultMappingExport mappings)
+            ResolveDeserializer<TResult>(ICommandResultMappingExport mappings)
         {
+            var type = typeof (TResult);
+
+            IDeserializerFactory dynamicRowDeserializer = new DynamicRowDeserializerFactory(); //singleton
+            IDeserializerFactory builtInDeserializer = new BuiltInTypeDeserializerFactory(); //singleton
+            IDeserializerFactory complexTypeDeserializer = new ComplexTypeDeserializerFactory(); //singleton
+
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> deserializer;
 
-            if (typeof(TResult) == typeof(DynamicRow) || typeof(TResult) == typeof(object)) //Dynamic
-                deserializer = DynamicRowDeserializer.Deserialize<TResult>;
-            else if (CommandManager.GetDbType(typeof (TResult)) != null) //Primitive Built in type
-                deserializer = BuiltInTypeDeserializer.Deserialize<TResult>;
+            if (dynamicRowDeserializer.CanDeserialize(type))
+                deserializer = dynamicRowDeserializer.BuildDeserializer<TResult>(mappings);
+            else if (builtInDeserializer.CanDeserialize(type))
+                deserializer = builtInDeserializer.BuildDeserializer<TResult>(mappings);
             else
             {
-                deserializer = ResolveCustomDeserializer<TResult>(mappings)  //Custom deserializers
-                    ?? ComplexTypeDeserializer.Compile<TResult>(mappings, typeof (TResult));
+                deserializer = ResolveCustomDeserializer<TResult>(mappings) //Custom deserializers
+                    ?? complexTypeDeserializer.BuildDeserializer<TResult>(mappings);
             }
 
             return deserializer;
@@ -37,17 +44,20 @@ namespace Susanoo.Deserialization
         /// <summary>
         /// Resolves any custom deserializers.
         /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public virtual Func<IDataReader, ColumnChecker, IEnumerable<TResult>> ResolveCustomDeserializer<TResult>(
             ICommandResultMappingExport mappings)
         {
+            var type = typeof(TResult);
+
+            var kvpDeserializer = new KeyValuePairDeserializerFactory();
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> customDeserializer = null;
 
-            if (typeof (TResult).IsGenericType && typeof (TResult).GetGenericTypeDefinition() == typeof (KeyValuePair<,>))
+            if (kvpDeserializer.CanDeserialize(type))
             {
-                customDeserializer = new KeyValuePairDeserializer<TResult>(mappings).Deserialize;
+                customDeserializer = kvpDeserializer.BuildDeserializer<TResult>(mappings);
             }
 
             return customDeserializer;

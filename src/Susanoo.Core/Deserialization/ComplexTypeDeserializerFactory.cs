@@ -13,7 +13,8 @@ namespace Susanoo.Deserialization
     /// <summary>
     /// Provides compilation and deserialization for complex types.
     /// </summary>
-    public static class ComplexTypeDeserializer
+    public class ComplexTypeDeserializerFactory
+        : IDeserializerFactory
     {
         private static readonly MethodInfo ReadMethod = typeof(IDataReader)
             .GetMethod("Read", BindingFlags.Public | BindingFlags.Instance);
@@ -103,7 +104,7 @@ namespace Susanoo.Deserialization
                                     Expression.GreaterThanOrEqual(ordinal, Expression.Constant(0))),
                                 Expression.IsFalse(
                                     Expression.Call(reader, typeof(IDataRecord).GetMethod("IsDBNull"), ordinal))),
-                    // try
+                            // try
                             Expression.TryCatch(
                                 Expression.Block(typeof(void),
 
@@ -112,7 +113,7 @@ namespace Susanoo.Deserialization
                                         pair.Value.AssembleMappingExpression(
                                             Expression.Property(descriptor, pair.Value.PropertyMetadata)),
                                         reader, ordinal)),
-                    // catch
+                                // catch
                                 Expression.Catch(
                     /* Exception being caught is assigned to ex */ ex,
                                     Expression.Block(typeof(void),
@@ -173,6 +174,27 @@ namespace Susanoo.Deserialization
                 (reader, columnMeta) => (IEnumerable<TResult>)(result.Invoke(reader, columnMeta));
 
             return typedResult;
+        }
+
+        /// <summary>
+        /// Determines whether this deserializer applies to the type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
+        public bool CanDeserialize(Type type)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Builds a deserializer.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mappings">The mappings.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public Func<IDataReader, ColumnChecker, IEnumerable<TResult>> BuildDeserializer<TResult>(ICommandResultMappingExport mappings)
+        {
+            return Compile<TResult>(mappings, typeof(TResult));
         }
     }
 }

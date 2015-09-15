@@ -14,9 +14,9 @@ namespace Susanoo.Deserialization
         /// <summary>
         /// Retrieves and compiles, if necessary, an appropriate type deserializer.
         /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         Func<IDataReader, ColumnChecker, IEnumerable<TResult>>
-            Resolve<TResult>(ICommandResultMappingExport mappings);
+            ResolveDeserializer<TResult>(ICommandResultMappingExport mappings);
     }
 }

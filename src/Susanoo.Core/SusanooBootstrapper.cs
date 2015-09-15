@@ -9,6 +9,7 @@ using System.Data.Common;
 using Susanoo.Command;
 using Susanoo.Deserialization;
 using Susanoo.Pipeline;
+using Susanoo.Processing;
 using Susanoo.TinyIoC;
 
 namespace Susanoo
@@ -18,40 +19,40 @@ namespace Susanoo
     /// </summary>
     public class SusanooBootstrapper : ISusanooBootstrapper
     {
-        private readonly TinyIoCContainer DIContainer = TinyIoCContainer.Current;
+        /// <summary>
+        /// The TinyIoC container used by default for building components.
+        /// </summary>
+        protected readonly TinyIoCContainer DIContainer = TinyIoCContainer.Current;
 
-        public virtual TDependency Resolve<TDependency>()
-            where TDependency : class 
+        /// <summary>
+        /// Instantiates the bootstrapper and wires all dependencies to the resolve method.
+        /// </summary>
+        public SusanooBootstrapper()
+        {
+            #region Factory Registrations
+
+            DIContainer.Register<ISingleResultSetCommandProcessorFactory>(new SingleResultSetCommandProcessorFactory());
+
+            #endregion Factory Registrations
+
+            #region Service Registrations
+
+            DIContainer.Register<IDeserializerResolver>(new DeserializerResolver());
+            DIContainer.Register<ICommandExpressionBuilder>(new CommandBuilder());
+            DIContainer.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
+
+            #endregion Service Registrations
+        }
+
+        /// <summary>
+        /// Resolves a type to a concrete implementation.
+        /// </summary>
+        /// <typeparam name="TDependency">The type of the  dependency.</typeparam>
+        /// <returns>Dependency.</returns>
+        public virtual TDependency ResolveDependency<TDependency>()
+            where TDependency : class
         {
             return DIContainer.Resolve<TDependency>();
-        }
-
-        /// <summary>
-        /// Gets or sets the CommandBuilder builder.
-        /// </summary>
-        /// <value>The CommandBuilder builder.</value>
-        /// <exception cref="System.ArgumentNullException">value</exception>
-        public virtual ICommandExpressionBuilder RetrieveCommandBuilder()
-        {
-            return new CommandBuilder();
-        }
-
-        /// <summary>
-        /// Retrieves the deserializer resolver.
-        /// </summary>
-        /// <returns>IDeserializerResolver.</returns>
-        public virtual IDeserializerResolver RetrieveDeserializerResolver()
-        {
-            return new DeserializerResolver();
-        }
-
-        /// <summary>
-        /// Retrieves the property metadata extractor Default uses ComponentModel Attributes..
-        /// </summary>
-        /// <returns>IPropertyMetadataExtractor.</returns>
-        public virtual IPropertyMetadataExtractor RetrievePropertyMetadataExtractor()
-        {
-            return new ComponentModelMetadataExtractor();
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Susanoo
         /// <returns>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;.</returns>
         public virtual IEnumerable<Type> RetrieveIgnoredPropertyAttributes()
         {
-            return new [] { typeof(NotMappedAttribute) };
+            return new[] { typeof(NotMappedAttribute) };
         }
 
         /// <summary>

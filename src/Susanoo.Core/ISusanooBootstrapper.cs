@@ -14,23 +14,12 @@ namespace Susanoo
     public interface ISusanooBootstrapper
     {
         /// <summary>
-        /// Gets or sets the CommandBuilder builder.
+        /// Resolves a type to a concrete implementation.
         /// </summary>
-        /// <value>The CommandBuilder builder.</value>
-        /// <exception cref="System.ArgumentNullException">value</exception>
-        ICommandExpressionBuilder RetrieveCommandBuilder();
-
-        /// <summary>
-        /// Retrieves the deserializer resolver.
-        /// </summary>
-        /// <returns>IDeserializerResolver.</returns>
-        IDeserializerResolver RetrieveDeserializerResolver();
-
-        /// <summary>
-        /// Retrieves the property metadata extractor Default uses ComponentModel Attributes.
-        /// </summary>
-        /// <returns>IPropertyMetadataExtractor.</returns>
-        IPropertyMetadataExtractor RetrievePropertyMetadataExtractor();
+        /// <typeparam name="TDependency">The type of the  dependency.</typeparam>
+        /// <returns>Dependency.</returns>
+        TDependency ResolveDependency<TDependency>()
+            where TDependency : class;
 
         /// <summary>
         /// Retrieves a set of attributes to use to determine when to ignore a property unless explicitly included.

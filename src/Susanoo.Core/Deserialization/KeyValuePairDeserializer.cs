@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -9,29 +9,30 @@ using Susanoo.ResultSets;
 namespace Susanoo.Deserialization
 {
     /// <summary>
-    /// Maps properties to a KeyValuePair using Activator
+    /// Performs deserialization of KeyValuePairs
     /// </summary>
-    /// <typeparam name="TResult">The type of the t result.</typeparam>
-    public class KeyValuePairDeserializer<TResult> : ICustomDeserializer<TResult>
+    public class KeyValuePairDeserializer
     {
         private readonly IDictionary<string, IPropertyMapping> _props;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeyValuePairDeserializer{TResult}"/> class.
+        /// Initializes a new instance of the <see cref="KeyValuePairDeserializer" /> class.
         /// </summary>
         /// <param name="mappings">The mappings.</param>
-        public KeyValuePairDeserializer(ICommandResultMappingExport mappings)
+        /// <param name="type">The type.</param>
+        public KeyValuePairDeserializer(ICommandResultMappingExport mappings, Type type)
         {
-            _props = mappings.Export(typeof(TResult));
+            _props = mappings.Export(type);
         }
 
         /// <summary>
         /// Deserializes into a KeyValuePair from a data reader.
         /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="reader">The data reader.</param>
         /// <param name="checker">The column object.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Deserialize(IDataReader reader, ColumnChecker checker)
+        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
         {
             var keyAlias = "Key";
             IPropertyMapping keyMapping;

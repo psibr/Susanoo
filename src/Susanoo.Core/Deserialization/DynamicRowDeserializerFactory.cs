@@ -1,22 +1,46 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using Susanoo.Processing;
+using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {
     /// <summary>
     /// Provides deserialization for dynamic and a way to geta Key-Value-Pair.
     /// </summary>
-    public static class DynamicRowDeserializer
+    public class DynamicRowDeserializerFactory
+        : IDeserializerFactory
     {
+        /// <summary>
+        /// Determines whether this deserializer applies to the type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
+        public bool CanDeserialize(Type type)
+        {
+            return type == typeof(DynamicRow) || type == typeof(object);
+        }
+
+        /// <summary>
+        /// Builds a deserializer.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mappings">The mappings.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public Func<IDataReader, ColumnChecker, IEnumerable<TResult>> BuildDeserializer<TResult>(ICommandResultMappingExport mappings)
+        {
+            return Deserialize<TResult>;
+        }
+
         /// <summary>
         /// Dumps all columns into an array for simple use cases.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>
         /// <returns>dynamic.</returns>
-        public static IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
+        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
         {
             IList resultSet = new ListResult<TResult>();
 
@@ -52,7 +76,7 @@ namespace Susanoo.Deserialization
 
             ((ListResult<TResult>)resultSet).BuildReport(checker);
 
-            return (IEnumerable<TResult>) resultSet;
+            return (IEnumerable<TResult>)resultSet;
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
+using Susanoo.Pipeline;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 
@@ -509,7 +510,7 @@ namespace Susanoo.Command
                 else
                 {
                     var implicitProperties = CommandManager.Instance.Bootstrapper
-                        .RetrievePropertyMetadataExtractor()
+                        .ResolveDependency<IPropertyMetadataExtractor>()
                         .FindAllowedProperties(
                             filter.GetType(),
                             DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Delete,

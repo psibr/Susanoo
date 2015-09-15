@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Susanoo.Command;
+using Susanoo.Deserialization;
 using Susanoo.ResultSets;
 
 namespace Susanoo.Processing
@@ -35,11 +36,9 @@ namespace Susanoo.Processing
             string name = null)
             : base(mappings)
         {
-            CompiledMapping = CommandManager
-                .Instance
-                .Bootstrapper
-                .RetrieveDeserializerResolver()
-                .Resolve<TResult>(mappings.GetExporter());
+            CompiledMapping = CommandManager.Instance.Bootstrapper
+                .ResolveDependency<IDeserializerResolver>()
+                .ResolveDeserializer<TResult>(mappings.GetExporter());
 
             var hash = (CacheHash * 31) ^ CommandResultCommon<TFilter>
                 .GetTypeArgumentHashCode(typeof(SingleResultSetCommandProcessor<TFilter, TResult>));
@@ -226,14 +225,14 @@ namespace Susanoo.Processing
                             CommandBuilderInfo.CommandText,
                             CommandBuilderInfo.DbCommandType,
                             cancellationToken,
-                            explicitParameters)
+                            executableCommandInfo.Parameters)
                         .ConfigureAwait(false))
 #else
                     using (var records = databaseManager
                         .ExecuteDataReader(
                             CommandBuilderInfo.CommandText,
                             CommandBuilderInfo.DbCommandType,
-                            explicitParameters))
+                            executableCommandInfo.Parameters))
 #endif
                     {
                         results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
