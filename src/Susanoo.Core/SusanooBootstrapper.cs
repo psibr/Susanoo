@@ -37,7 +37,11 @@ namespace Susanoo
 
             #region Service Registrations
 
-            DIContainer.Register<IDeserializerResolver>(new DeserializerResolver());
+            DIContainer.Register<IDeserializerResolver>(new DeserializerResolver(new IDeserializerFactory[]
+            {
+                new KeyValuePairDeserializerFactory()
+            }));
+
             DIContainer.Register<ICommandExpressionBuilder>(new CommandBuilder());
             DIContainer.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
 
