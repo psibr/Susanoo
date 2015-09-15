@@ -100,6 +100,8 @@
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Command\ICommandBuilderInfo.cs" />
     <Compile Include="Command\IExecutableCommandInfo.cs" />
+    <Compile Include="Processing\ICommandProcessorInterop.cs" />
+    <Compile Include="Processing\ICommandProcessorWithResults.cs" />
     <Compile Include="Processing\ISingleResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\SingleResultSetCommandProcessorFactory.cs" />
     <Compile Include="ResultSets\CommandResultCommon.cs" />
@@ -137,7 +139,7 @@
     <Compile Include="Processing\IResultMapper.cs" />
     <Compile Include="Processing\ListResult.cs" />
     <Compile Include="Processing\MultipleResultSetCommandProcessor.cs" />
-    <Compile Include="Command\NoResultSetCommandProcessor.cs" />
+    <Compile Include="Processing\NoResultSetCommandProcessor.cs" />
     <Compile Include="Mapping\ResultMappingImplementor.cs" />
     <Compile Include="Deserialization\ComplexTypeDeserializerFactory.cs" />
     <Compile Include="Processing\SingleResultSetCommandProcessor.cs" />
@@ -148,7 +150,7 @@
     <Compile Include="Mapping\IResultMappingExpression.cs" />
     <Compile Include="Command\ICommandExpression.cs" />
     <Compile Include="Processing\ICommandProcessor.cs" />
-    <Compile Include="Pipeline\ICommandExpressionBuilder.cs" />
+    <Compile Include="Pipeline\ICommandBuilder.cs" />
     <Compile Include="IDatabaseManager.cs" />
     <Compile Include="Mapping\Properties\IPropertyMappingConfiguration.cs" />
     <Compile Include="Pipeline\IPropertyMetadataExtractor.cs" />

@@ -106,7 +106,7 @@ namespace Susanoo
         public ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
             return Bootstrapper
-                .ResolveDependency<ICommandExpressionBuilder>()
+                .ResolveDependency<ICommandBuilder>()
                 .DefineCommand<TFilter>(commandText, commandType);
         }
 
@@ -119,7 +119,7 @@ namespace Susanoo
         public ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
             return Bootstrapper
-                .ResolveDependency<ICommandExpressionBuilder>()
+                .ResolveDependency<ICommandBuilder>()
                 .DefineCommand(commandText, commandType);
         }
 

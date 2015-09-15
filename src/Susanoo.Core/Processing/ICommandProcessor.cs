@@ -13,50 +13,6 @@ using Susanoo.ResultSets;
 
 namespace Susanoo.Processing
 {
-
-
-    /// <summary>
-    /// Shared members for all CommandBuilder processors.
-    /// </summary>
-    /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandProcessorInterop<in TFilter> : IFluentPipelineFragment
-    {
-        /// <summary>
-        /// Gets the CommandBuilder information.
-        /// </summary>
-        /// <value>The CommandBuilder information.</value>
-        ICommandBuilderInfo<TFilter> CommandBuilderInfo { get; }
-    }
-
-    /// <summary>
-    /// Shared members for all CommandBuilder processors that have ResultSets.
-    /// </summary>
-    public interface ICommandProcessorWithResults : IFluentPipelineFragment
-    {
-        /// <summary>
-        /// Clears any column index information that may have been cached.
-        /// </summary>
-        void ClearColumnIndexInfo();
-
-        /// <summary>
-        /// Flushes the result cache.
-        /// </summary>
-        void FlushCache();
-    }
-
-    /// <summary>
-    /// Shared members for all CommandBuilder processors that have ResultSets.
-    /// </summary>
-    public interface ICommandProcessorWithResults<in TFilter> :
-        ICommandProcessorWithResults
-    {
-        /// <summary>
-        /// Gets the CommandBuilder result information.
-        /// </summary>
-        /// <value>The CommandBuilder result information.</value>
-        ICommandResultInfo<TFilter> CommandResultInfo { get; }
-    }
-
     /// <summary>
     /// Represents a fully built and ready to be executed CommandBuilder expression with no mapping expressions and a filter
     /// parameter.

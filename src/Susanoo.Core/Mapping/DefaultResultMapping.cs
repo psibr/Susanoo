@@ -48,10 +48,7 @@ namespace Susanoo.Mapping
         /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public BigInteger CacheHash
-        {
-            get { return -1; }
-        }
+        public BigInteger CacheHash => -1;
 
         /// <summary>
         /// Exports this instance.

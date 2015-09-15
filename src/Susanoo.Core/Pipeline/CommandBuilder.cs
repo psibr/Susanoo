@@ -10,7 +10,7 @@ namespace Susanoo.Pipeline
     /// <summary>
     /// Provides an entry point to defining commands and therein entering the Susanoo command Fluent API.
     /// </summary>
-    public class CommandBuilder : ICommandExpressionBuilder
+    public class CommandBuilder : ICommandBuilder
     {
         /// <summary>
         /// Begins the CommandBuilder definition process using a Fluent API implementation, move to next step with DefineResults on

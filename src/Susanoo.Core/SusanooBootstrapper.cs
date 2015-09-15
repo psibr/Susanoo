@@ -42,7 +42,7 @@ namespace Susanoo
                 new KeyValuePairDeserializerFactory()
             }));
 
-            DIContainer.Register<ICommandExpressionBuilder>(new CommandBuilder());
+            DIContainer.Register<ICommandBuilder>(new CommandBuilder());
             DIContainer.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
 
             #endregion Service Registrations

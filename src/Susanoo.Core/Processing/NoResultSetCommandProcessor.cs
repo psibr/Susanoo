@@ -5,11 +5,11 @@ using System.Data.Common;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using Susanoo.Processing;
+using Susanoo.Command;
 
 #endregion
 
-namespace Susanoo.Command
+namespace Susanoo.Processing
 {
     /// <summary>
     /// A fully built and ready to be executed CommandBuilder expression with a filter parameter.
@@ -188,6 +188,8 @@ namespace Susanoo.Command
 
             return result;
         }
+
+
 
         /// <summary>
         /// Executes the non query async.

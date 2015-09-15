@@ -152,7 +152,7 @@ namespace Susanoo.Processing
         {
             return Execute(databaseManager, filter, null, explicitParameters);
         }
-#if !NETFX40
+
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
         /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -168,7 +168,99 @@ namespace Susanoo.Processing
             return ExecuteAsync(databaseManager, filter, parameterObject, explicitParameters)
                 .Result;
         }
+
+#if !NETFX40
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="executableCommandInfo">The executable command information.</param>
+        /// <returns>System.Collections.Generic.IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo)
+        {
+            return ExecuteAsync(databaseManager, executableCommandInfo, CancellationToken.None).Result;
+        }
 #endif
+
+
+#if !NETFX40
+        /// <summary>
+        /// Executes the asynchronous.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="executableCommandInfo">The executable command information.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken)
+#else
+    /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
+#endif
+        {
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+
+            IEnumerable<TResult> results = null;
+
+            if (ResultCachingEnabled)
+            {
+                var parameterAggregate = executableCommandInfo.Parameters.Aggregate(string.Empty,
+                    (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
+
+                hashCode = HashBuilder.Compute(parameterAggregate);
+
+                object value;
+                cachedItemPresent = TryRetrieveCacheResult(hashCode, out value);
+
+                results = value as IEnumerable<TResult>;
+
+                cachedItemPresent = cachedItemPresent && results != null;
+            }
+
+            if (!cachedItemPresent)
+            {
+                try
+                {
+#if !NETFX40
+                    using (var records = await databaseManager
+                        .ExecuteDataReaderAsync(
+                            CommandBuilderInfo.CommandText,
+                            CommandBuilderInfo.DbCommandType,
+                            cancellationToken,
+                            executableCommandInfo.Parameters)
+                        .ConfigureAwait(false))
+#else
+                    using (var records = databaseManager
+                        .ExecuteDataReader(
+                            CommandBuilderInfo.CommandText,
+                            CommandBuilderInfo.DbCommandType,
+                            executableCommandInfo.Parameters))
+#endif
+                    {
+                        results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
+
+                        var result = results as ListResult<TResult>;
+                        if (result != null)
+                            ColumnReport = result.ColumnReport;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CommandManager.Instance.HandleExecutionException(executableCommandInfo, ex, executableCommandInfo.Parameters);
+                }
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode,
+                        new CacheItem(results, ResultCachingMode, ResultCachingInterval));
+            }
+
+            return results ?? new LinkedList<TResult>();
+        }
+
+#pragma warning disable CS1587 // XML comment is not placed on a valid language element
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
@@ -182,6 +274,7 @@ namespace Susanoo.Processing
 #if !NETFX40
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+#pragma warning restore CS1587 // XML comment is not placed on a valid language element
             TFilter filter, object parameterObject, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
 #else
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
