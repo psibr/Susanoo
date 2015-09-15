@@ -147,6 +147,36 @@ namespace Susanoo.Processing
         /// <returns>Task&lt;TReturn&gt;.</returns>
         Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Executes the scalar action asynchronously.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;TReturn&gt;.</returns>
+        Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
+            TFilter filter, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Executes the scalar action asynchronously.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;TReturn&gt;.</returns>
+        Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Executes the scalar action asynchronously.
+        /// </summary>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;TReturn&gt;.</returns>
+        Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
     }
 
     /// <summary>
@@ -164,10 +194,8 @@ namespace Susanoo.Processing
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager, CancellationToken cancellationToken,
-            params DbParameter[] explicitParameters);
-
-
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            CancellationToken cancellationToken, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
@@ -178,6 +206,42 @@ namespace Susanoo.Processing
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
         Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, object parameterObject, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, object parameterObject, params DbParameter[] explicitParameters);
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
@@ -190,17 +254,6 @@ namespace Susanoo.Processing
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
         Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
-
-        /// <summary>
-        /// Assembles a data CommandBuilder for an ADO.NET provider,
-        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        /// <param name="filter">The filter.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
-            TFilter filter, params DbParameter[] explicitParameters);
     }
 
 #endif
@@ -234,20 +287,19 @@ namespace Susanoo.Processing
         /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
-        /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter,
-            params DbParameter[] explicitParameters);
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
         /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,

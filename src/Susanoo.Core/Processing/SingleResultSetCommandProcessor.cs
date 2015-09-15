@@ -23,7 +23,7 @@ namespace Susanoo.Processing
         ICommandProcessor<TFilter, TResult>,
         IResultMapper<TResult>
     {
-        private ColumnChecker _columnChecker;
+        private ColumnChecker _ColumnChecker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
@@ -59,12 +59,12 @@ namespace Susanoo.Processing
         /// <value>The column report.</value>
         private ColumnChecker ColumnReport
         {
-            get { return CommandBuilderInfo.AllowStoringColumnInfo ? _columnChecker : null; }
+            get { return CommandBuilderInfo.AllowStoringColumnInfo ? _ColumnChecker : null; }
             set
             {
                 if (value != null)
                 {
-                    _columnChecker = value;
+                    _ColumnChecker = value;
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace Susanoo.Processing
         /// <exception cref="System.NotImplementedException"></exception>
         public override void ClearColumnIndexInfo()
         {
-            _columnChecker = new ColumnChecker();
+            _ColumnChecker = new ColumnChecker();
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace Susanoo.Processing
         {
             return Execute(databaseManager, filter, null, explicitParameters);
         }
-
+#if !NETFX40
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
         /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -165,6 +165,30 @@ namespace Susanoo.Processing
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
             params DbParameter[] explicitParameters)
+        {
+            return ExecuteAsync(databaseManager, filter, parameterObject, explicitParameters)
+                .Result;
+        }
+#endif
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="parameterObject">The parameter object.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+#if !NETFX40
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, object parameterObject, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+#else
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
+            params DbParameter[] explicitParameters)
+#endif
         {
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -196,11 +220,21 @@ namespace Susanoo.Processing
             {
                 try
                 {
+#if !NETFX40
+                    using (var records = await databaseManager
+                        .ExecuteDataReaderAsync(
+                            CommandBuilderInfo.CommandText,
+                            CommandBuilderInfo.DbCommandType,
+                            cancellationToken,
+                            explicitParameters)
+                        .ConfigureAwait(false))
+#else
                     using (var records = databaseManager
                         .ExecuteDataReader(
-                            executableCommandInfo.CommandText,
-                            executableCommandInfo.DbCommandType,
-                            executableCommandInfo.Parameters))
+                            CommandBuilderInfo.CommandText,
+                            CommandBuilderInfo.DbCommandType,
+                            explicitParameters))
+#endif
                     {
                         results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
@@ -275,7 +309,7 @@ namespace Susanoo.Processing
         {
             return
                 await
-                    ExecuteAsync(databaseManager, default(TFilter), cancellationToken, explicitParameters)
+                    ExecuteAsync(databaseManager, default(TFilter), null, cancellationToken, explicitParameters)
                         .ConfigureAwait(false);
         }
 
@@ -291,7 +325,7 @@ namespace Susanoo.Processing
         {
             return
                 await
-                    ExecuteAsync(databaseManager, default(TFilter), default(CancellationToken), explicitParameters)
+                    ExecuteAsync(databaseManager, default(TFilter), null, default(CancellationToken), explicitParameters)
                         .ConfigureAwait(false);
         }
 
@@ -301,62 +335,16 @@ namespace Susanoo.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
-            TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+            TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
-            var cachedItemPresent = false;
-            var hashCode = BigInteger.Zero;
-
-            IEnumerable<TResult> results = null;
-
-            var parameters = CommandBuilderInfo.BuildParameters(databaseManager, filter, explicitParameters);
-
-            if (ResultCachingEnabled)
-            {
-                var parameterAggregate = parameters.Aggregate(string.Empty,
-                    (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
-
-                hashCode = HashBuilder.Compute(parameterAggregate);
-
-                object value;
-                cachedItemPresent = TryRetrieveCacheResult(hashCode, out value);
-
-                results = value as IEnumerable<TResult>;
-
-                cachedItemPresent = cachedItemPresent && results != null;
-            }
-
-            if (!cachedItemPresent)
-            {
-                try
-                {
-                    using (var records = await databaseManager
-                        .ExecuteDataReaderAsync(
-                            CommandBuilderInfo.CommandText,
-                            CommandBuilderInfo.DbCommandType,
-                            cancellationToken,
-                            parameters)
-                        .ConfigureAwait(false))
-                    {
-                        results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
-
-                        ColumnReport = ((ListResult<TResult>)results).ColumnReport;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex, parameters);
-                }
-
-                if (ResultCachingEnabled)
-                    ResultCacheContainer.TryAdd(hashCode,
-                        new CacheItem(results, ResultCachingMode, ResultCachingInterval));
-            }
-
-            return results ?? new LinkedList<TResult>();
+            return
+                await
+                    ExecuteAsync(databaseManager, filter, parameterObject, default(CancellationToken), explicitParameters)
+                        .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -372,7 +360,25 @@ namespace Susanoo.Processing
         {
             return
                 await
-                    ExecuteAsync(databaseManager, filter, default(CancellationToken), explicitParameters)
+                    ExecuteAsync(databaseManager, filter, null, default(CancellationToken), explicitParameters)
+                        .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="filter">The filter.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
+        {
+            return
+                await
+                    ExecuteAsync(databaseManager, filter, null, default(CancellationToken), explicitParameters)
                         .ConfigureAwait(false);
         }
 
