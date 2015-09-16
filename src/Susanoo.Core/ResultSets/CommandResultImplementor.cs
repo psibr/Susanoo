@@ -61,7 +61,7 @@ namespace Susanoo.ResultSets
         /// <summary>
         /// Stores the mapping.
         /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mapping">The mapping.</param>
         public virtual void StoreMapping<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mapping)
         {

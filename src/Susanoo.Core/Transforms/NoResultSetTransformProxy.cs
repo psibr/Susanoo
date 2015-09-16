@@ -1,46 +1,58 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Data.Common;
+using System.Linq;
 using System.Numerics;
-#if !NETFX40
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 using Susanoo.Command;
+using Susanoo.Processing;
 
-#endregion
-
-namespace Susanoo.Processing
+namespace Susanoo.Transforms
 {
     /// <summary>
-    ///     A fully built and ready to be executed CommandBuilder expression with a filter parameter.
+    /// A proxy for no result set command processors that allows transforms to be applied prior to execution.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public partial class NoResultSetCommandProcessor<TFilter> :
-        ICommandProcessor<TFilter>
+    public class NoResultSetTransformProxy<TFilter>
+        : ICommandProcessor<TFilter>
     {
+        private readonly ICommandProcessor<TFilter> _source;
+        private readonly CommandTransform[] _transforms;
+
         /// <summary>
-        ///     Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="NoResultSetTransformProxy{TFilter}"/> class.
         /// </summary>
-        /// <param name="command">The CommandBuilder.</param>
-        public NoResultSetCommandProcessor(ICommandBuilderInfo<TFilter> command)
+        /// <param name="source">The source.</param>
+        /// <param name="transforms">The transforms.</param>
+        public NoResultSetTransformProxy(ICommandProcessor<TFilter> source, params CommandTransform[] transforms)
         {
-            CommandBuilderInfo = command;
+            _source = source;
+            _transforms = transforms;
         }
 
         /// <summary>
-        ///     Gets the CommandBuilder expression.
-        /// </summary>
-        /// <value>The CommandBuilder expression.</value>
-        public ICommandBuilderInfo<TFilter> CommandBuilderInfo { get; }
-
-        /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
+        /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
         public BigInteger CacheHash =>
-            CommandBuilderInfo.CacheHash;
+            _source.CacheHash;
+
+        /// <summary>
+        /// Gets the CommandBuilder information.
+        /// </summary>
+        /// <value>The CommandBuilder information.</value>
+        public ICommandBuilderInfo<TFilter> CommandBuilderInfo =>
+            _source.CommandBuilderInfo;
+
+        /// <summary>
+        /// Allows a hook in an instance of a processor
+        /// </summary>
+        /// <param name="interceptOrProxy">The intercept or proxy.</param>
+        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
+        public ICommandProcessor<TFilter> InterceptOrProxyWith(Func<ICommandProcessor<TFilter>, ICommandProcessor<TFilter>> interceptOrProxy)
+        {
+            return interceptOrProxy(this);
+        }
 
         /// <summary>
         ///     Executes the non query.
@@ -50,22 +62,10 @@ namespace Susanoo.Processing
         /// <returns>System.Int32.</returns>
         public int ExecuteNonQuery(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
         {
-            var result = 0;
+            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
+                commandTransform.Transform(current));
 
-            try
-            {
-                result = databaseManager.ExecuteNonQuery(
-                    executableCommandInfo.CommandText,
-                    executableCommandInfo.DbCommandType,
-                    executableCommandInfo.Parameters);
-            }
-            catch (Exception ex)
-            {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
-            }
-
-            return result;
+            return _source.ExecuteNonQuery(databaseManager, transformed);
         }
 
         /// <summary>
@@ -78,33 +78,10 @@ namespace Susanoo.Processing
         public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager,
             IExecutableCommandInfo executableCommandInfo)
         {
-            var result = default(TReturn);
+            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
+                commandTransform.Transform(current));
 
-            try
-            {
-                result = databaseManager.ExecuteScalar<TReturn>(
-                    executableCommandInfo.CommandText,
-                    executableCommandInfo.DbCommandType,
-                    executableCommandInfo.Parameters);
-            }
-            catch (Exception ex)
-            {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        ///     Allows a hook in an instance of a processor
-        /// </summary>
-        /// <param name="interceptOrProxy">The intercept or proxy.</param>
-        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
-        public ICommandProcessor<TFilter> InterceptOrProxyWith(
-            Func<ICommandProcessor<TFilter>, ICommandProcessor<TFilter>> interceptOrProxy)
-        {
-            return interceptOrProxy(this);
+            return _source.ExecuteScalar<TReturn>(databaseManager, transformed);
         }
 
         /// <summary>
@@ -201,15 +178,9 @@ namespace Susanoo.Processing
         {
             return ExecuteNonQuery(databaseManager, default(TFilter), explicitParameters);
         }
-    }
 
 #if !NETFX40
 
-    /// <summary>
-    ///     A fully built and ready to be executed CommandBuilder expression with a filter parameter.
-    /// </summary>
-    public partial class NoResultSetCommandProcessor<TFilter>
-    {
         /// <summary>
         ///     Executes the non query asynchronously.
         /// </summary>
@@ -220,23 +191,11 @@ namespace Susanoo.Processing
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
             IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken)
         {
-            var result = 0;
+            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
+                commandTransform.Transform(current));
 
-            try
-            {
-                result = await databaseManager.ExecuteNonQueryAsync(
-                    executableCommandInfo.CommandText,
-                    executableCommandInfo.DbCommandType,
-                    cancellationToken,
-                    executableCommandInfo.Parameters).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
-            }
-
-            return result;
+            return await _source.ExecuteNonQueryAsync(databaseManager, transformed, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -250,23 +209,11 @@ namespace Susanoo.Processing
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken)
         {
-            var result = default(TReturn);
+            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
+                commandTransform.Transform(current));
 
-            try
-            {
-                result = await databaseManager.ExecuteScalarAsync<TReturn>(
-                    executableCommandInfo.CommandText,
-                    executableCommandInfo.DbCommandType,
-                    cancellationToken,
-                    executableCommandInfo.Parameters).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
-            }
-
-            return result;
+            return await _source.ExecuteScalarAsync<TReturn>(databaseManager, transformed, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -470,7 +417,8 @@ namespace Susanoo.Processing
                         explicitParameters)
                         .ConfigureAwait(false);
         }
-    }
 
 #endif
+
+    }
 }

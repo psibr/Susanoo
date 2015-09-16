@@ -237,7 +237,7 @@ namespace Susanoo
             ExpressionAssembly.Save("Susanoo.DynamicExpression.Loader");
         }
 
-        private static CommandManager _Instance;
+        private static CommandManager _instance;
 
         private static readonly object SyncRoot = new object();
 
@@ -249,24 +249,18 @@ namespace Susanoo
         {
             get
             {
-                if (_Instance == null)
+                if (_instance == null)
                 {
                     lock (SyncRoot)
                     {
-                        if (_Instance == null)
-                            _Instance = new CommandManager();
+                        if (_instance == null)
+                            _instance = new CommandManager();
                     }
                 }
 
-                return _Instance;
+                return _instance;
             }
         }
-    }
-
-    //IoC Methods
-    public partial class CommandManager
-    {
-
 
         /// <summary>
         /// Registers a bootstrapper which provides extension points in susanoo.

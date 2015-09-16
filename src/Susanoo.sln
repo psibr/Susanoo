@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.SqlServer.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Transforms", "Susanoo.Transforms\Susanoo.Transforms.csproj", "{67743E9F-D066-4E67-9AE2-D0F740DEFBFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Transforms.Tests", "Susanoo.Transforms.Tests\Susanoo.Transforms.Tests.csproj", "{D6D97FE8-501A-430E-85D8-8F6729B96FED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,14 @@ Global
 		{67743E9F-D066-4E67-9AE2-D0F740DEFBFC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67743E9F-D066-4E67-9AE2-D0F740DEFBFC}.Release|x64.ActiveCfg = Release|Any CPU
 		{67743E9F-D066-4E67-9AE2-D0F740DEFBFC}.Release|x64.Build.0 = Release|Any CPU
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Debug|x64.ActiveCfg = Debug|x64
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Debug|x64.Build.0 = Debug|x64
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Release|x64.ActiveCfg = Release|x64
+		{D6D97FE8-501A-430E-85D8-8F6729B96FED}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0FFF8566-3DAC-4424-9FF9-C5E4685CDC7C}</ProjectGuid>
+    <ProjectGuid>{D6D97FE8-501A-430E-85D8-8F6729B96FED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Susanoo.Tests</RootNamespace>
-    <AssemblyName>Susanoo.Core.Tests</AssemblyName>
+    <RootNamespace>Susanoo.Transforms.Tests</RootNamespace>
+    <AssemblyName>Susanoo.Transforms.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -83,17 +83,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DbManager\ConnectionTests.cs" />
-    <Compile Include="Inserts\DBNullCheck.cs" />
-    <Compile Include="Scalar\DBNullCheck.cs" />
     <Compile Include="Setup.cs" />
-    <Compile Include="Dynamic\DynamicTypeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Static\MultipleResults\IdenticalResults.cs" />
-    <Compile Include="Static\SingleResult\BuiltInTypes.cs" />
-    <Compile Include="Static\SingleResult\KeyValuePairDeserializer.cs" />
-    <Compile Include="Static\SingleResult\StaticTypeTest.cs" />
-    <Compile Include="Static\TypeTestModel.cs" />
+    <Compile Include="KeyValuePairDeserializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -106,6 +98,10 @@
     <ProjectReference Include="..\Susanoo.Core\Susanoo.Core.csproj">
       <Project>{3f241cbd-fff8-45ab-ad2a-f4780bb5fa59}</Project>
       <Name>Susanoo.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Susanoo.Transforms\Susanoo.Transforms.csproj">
+      <Project>{67743e9f-d066-4e67-9ae2-d0f740defbfc}</Project>
+      <Name>Susanoo.Transforms</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Susanoo
+namespace Susanoo.Transforms
 {
     /// <summary>
     /// Comparison options
@@ -10,82 +10,52 @@ namespace Susanoo
         /// <summary>
         /// Remove the property from the comparison.
         /// </summary>
-        public static CompareMethod Ignore
-        {
-            get { return CompareMethod.Ignore; }
-        }
+        public static CompareMethod Ignore => CompareMethod.Ignore;
 
         /// <summary>
         /// Values must equal.
         /// </summary>
-        public static CompareMethod Equal
-        {
-            get { return CompareMethod.Equal; }
-        }
+        public static CompareMethod Equal => CompareMethod.Equal;
 
         /// <summary>
         /// Column value must be less than parameter value.
         /// </summary>
-        public static CompareMethod LessThan
-        {
-            get { return CompareMethod.LessThan; }
-        }
+        public static CompareMethod LessThan => CompareMethod.LessThan;
 
         /// <summary>
         /// Column value must be less than or equal parameter value.
         /// </summary>
-        public static CompareMethod LessThanOrEqual
-        {
-            get { return CompareMethod.LessThanOrEqual; }
-        }
+        public static CompareMethod LessThanOrEqual => CompareMethod.LessThanOrEqual;
 
         /// <summary>
         /// Column value must be greater than parameter value.
         /// </summary>
-        public static CompareMethod GreaterThan
-        {
-            get { return CompareMethod.GreaterThan; }
-        }
+        public static CompareMethod GreaterThan => CompareMethod.GreaterThan;
 
         /// <summary>
         /// Column value must be greater than or equal parameter value.
         /// </summary>
-        public static CompareMethod GreaterThanOrEqual
-        {
-            get { return CompareMethod.GreaterThanOrEqual; }
-        }
+        public static CompareMethod GreaterThanOrEqual => CompareMethod.GreaterThanOrEqual;
 
         /// <summary>
         /// Values must NOT equal.
         /// </summary>
-        public static CompareMethod NotEqual
-        {
-            get { return CompareMethod.NotEqual; }
-        }
+        public static CompareMethod NotEqual => CompareMethod.NotEqual;
 
         /// <summary>
         /// Column value must start with parameter value.
         /// </summary>
-        public static CompareMethod StartsWith
-        {
-            get { return CompareMethod.StartsWith; }
-        }
+        public static CompareMethod StartsWith => CompareMethod.StartsWith;
 
         /// <summary>
         /// Column value must end with parameter value.
         /// </summary>
-        public static CompareMethod EndsWith
-        {
-            get { return CompareMethod.EndsWith; }
-        }
+        public static CompareMethod EndsWith => CompareMethod.EndsWith;
 
         /// <summary>
         /// Column value must contain parameter value.
         /// </summary>
-        public static CompareMethod Contains
-        {
-            get { return CompareMethod.Contains; }
-        }
+        public static CompareMethod Contains => CompareMethod.Contains;
 
         /// <summary>
         /// Overrides the comparison with a provided comparison string.

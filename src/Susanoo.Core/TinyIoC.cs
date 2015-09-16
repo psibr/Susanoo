@@ -1,4 +1,8 @@
-﻿//===============================================================================
+﻿#pragma warning disable 1574
+#pragma warning disable 1591
+#pragma warning disable 1711
+#pragma warning disable 1712
+//===============================================================================
 // TinyIoC
 //
 // An easy to use, hassle free, Inversion of Control Container for small projects
@@ -300,6 +304,11 @@ namespace Susanoo.TinyIoC
 #endif
     static class AssemblyExtensions
     {
+        /// <summary>
+        /// Safes the get types.
+        /// </summary>
+        /// <param name="assembly">The assembly.</param>
+        /// <returns>Type[].</returns>
         public static Type[] SafeGetTypes(this Assembly assembly)
         {
             Type[] assemblies;
@@ -3244,14 +3253,14 @@ namespace Susanoo.TinyIoC
         {
             // TODO - find a better way to remove "system" types from the auto registration
             var ignoreChecks = new List<Func<Type, bool>>()
-            {
-                t => t.FullName.StartsWith("System.", StringComparison.Ordinal),
-                t => t.FullName.StartsWith("Microsoft.", StringComparison.Ordinal),
-                t => t.IsPrimitive(),
+            { 
+              t  => t.FullName.StartsWith("System.", StringComparison.Ordinal),
+              t  => t.FullName.StartsWith("Microsoft.", StringComparison.Ordinal),
+              t  => t.IsPrimitive(),
 #if !UNBOUND_GENERICS_GETCONSTRUCTORS
-                t => t.IsGenericTypeDefinition(),
+             t   => t.IsGenericTypeDefinition(),
 #endif
-                t => (t.GetConstructors(BindingFlags.Instance | BindingFlags.Public).Length == 0) && !(t.IsInterface() || t.IsAbstract()),
+             t => (t.GetConstructors(BindingFlags.Instance | BindingFlags.Public).Length == 0) && !(t.IsInterface() || t.IsAbstract()),
             };
 
             if (registrationPredicate != null)
@@ -4003,3 +4012,7 @@ namespace System.Reflection
     }
 }
 #endif
+#pragma warning restore 1574
+#pragma warning restore 1591
+#pragma warning restore 1711
+#pragma warning restore 1712

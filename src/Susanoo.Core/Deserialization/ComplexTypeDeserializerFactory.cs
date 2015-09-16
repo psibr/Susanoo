@@ -164,7 +164,7 @@ namespace Susanoo.Deserialization
         /// <summary>
         /// Makes the compiled expression represent the correct type.
         /// </summary>
-        /// <typeparam name="TResult">The type of the t result.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>(ICommandResultMappingExport mapping, Type resultType)
         {

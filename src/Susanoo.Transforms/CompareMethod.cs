@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Susanoo
+namespace Susanoo.Transforms
 {
     /// <summary>
     /// All possible compare methods for dynamic where clauses.

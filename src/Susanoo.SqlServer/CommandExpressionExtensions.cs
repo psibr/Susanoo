@@ -17,7 +17,7 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandExpression">The command expression.</param>
         /// <param name="property">The property.</param>
         /// <param name="typeName">Name of the type.</param>
@@ -31,7 +31,7 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandExpression">The CommandBuilder expression.</param>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="typeName">Name of the type.</param>
@@ -48,7 +48,7 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandExpression">The CommandBuilder expression.</param>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="typeName">Name of the type.</param>
@@ -76,7 +76,7 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandExpression">The CommandBuilder expression.</param>
         /// <param name="property">The property.</param>
         /// <param name="typeName">Name of the type.</param>

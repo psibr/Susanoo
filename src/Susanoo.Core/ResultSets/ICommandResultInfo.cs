@@ -6,7 +6,7 @@ namespace Susanoo.ResultSets
     /// <summary>
     /// Exposes information to CommandBuilder Processors for result mapping.
     /// </summary>
-    /// <typeparam name="TFilter">The type of the t filter.</typeparam>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandResultInfo<in TFilter> :
         IFluentPipelineFragment
     {

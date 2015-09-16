@@ -44,7 +44,6 @@ namespace Susanoo.Deserialization
         {
             IList resultSet = new ListResult<TResult>();
 
-
             checker = checker ?? new ColumnChecker();
 
             var fieldCount = reader.FieldCount;

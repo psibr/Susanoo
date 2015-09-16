@@ -1,40 +1,7 @@
 
 
 
-///// <summary>
-///// Gets the where filter options. Null if no where filter.
-///// </summary>
-///// <value>The where filter options.</value>
-//public IDictionary<string, object> WhereFilterOptions { get; private set; }
 
-///// <summary>
-///// Builds the where filter.
-///// </summary>
-///// <param name="optionsObject">The options object.</param>
-///// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
-//public ICommandResultExpression<TFilter, TResult> BuildWhereFilter(object optionsObject = null)
-//{
-//    WhereFilterOptions = optionsObject != null ? optionsObject.ToExpando() : new ExpandoObject();
-
-//    //Make sure the CommandBuilder is wrapped in a new SELECT for simplicity.
-//    Command.AddQueryWrapper();
-
-//    var whereFilterModifier = new CommandTransform
-//    {
-//        Description = "WhereFilter",
-//        Priority = 900,
-//        Transform = BuildWhereFilterImplementation
-//    };
-
-//    whereFilterModifier.CacheHash =
-//        HashBuilder.Compute(whereFilterModifier.Description + WhereFilterOptions.Aggregate(string.Empty,
-//            (s, pair) => s + pair.Key + pair.Value));
-
-//    if (!Command.TryAddCommandModifier(whereFilterModifier))
-//        throw new Exception("Conflicting priorities for CommandBuilder modifiers");
-
-//    return this;
-//}
 
 
 
@@ -68,7 +35,7 @@
 ///// Makes the query a paged query using OFFSET/FETCH. REQUIRES Sql Server 2012.
 ///// </summary>
 ///// <typeparam name="TFilter">The type of the filter.</typeparam>
-///// <typeparam name="TResult">The type of the t result.</typeparam>
+///// <typeparam name="TResult">The type of the result.</typeparam>
 ///// <param name="commandResultExpression">The CommandBuilder result expression.</param>
 ///// <param name="rowCountParameterName">Name of the row count parameter.</param>
 ///// <param name="pageNumberParameterName">Name of the page number parameter.</param>
@@ -108,7 +75,7 @@
 ///// Makes the query a paged query using OFFSET/FETCH. REQUIRES Sql Server 2012.
 ///// </summary>
 ///// <typeparam name="TFilter">The type of the filter.</typeparam>
-///// <typeparam name="TResult">The type of the t result.</typeparam>
+///// <typeparam name="TResult">The type of the result.</typeparam>
 ///// <param name="commandResultExpression">The CommandBuilder result expression.</param>
 ///// <param name="rowCountParameterName">Name of the row count parameter.</param>
 ///// <param name="pageNumberParameterName">Name of the page number parameter.</param>
@@ -175,29 +142,4 @@
 
 
 
-//private Regex _orderByRegex;
 
-///// <summary>
-///// Retrieves the order by regex used for whitelisting allowed cahracters.
-///// </summary>
-///// <returns>Regex.</returns>
-//public virtual Regex RetrieveOrderByRegex()
-//{
-//    return _orderByRegex ?? (_orderByRegex = new Regex(
-//        @"\A
-//		            # 1. Match all of these conditions
-//		            (?:
-//		              # 2. Leading Whitespace
-//		              \ *
-//		              # 3. ColumnName: a-z, A-Z, 0-9, _
-//		              (?<ColumnName>[0-9_a-z]*)
-//		              # 4. Whitespace
-//		              \ *
-//		              # 5. SortDirection: ASC or DESC case-insensitive
-//		              (?<SortDirection>ASC|DESC)?
-//		              # 6. Optional Comma
-//		              ,?
-//		            )*
-//		            \z",
-//        RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace));
-//}

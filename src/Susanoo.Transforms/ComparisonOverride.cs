@@ -1,4 +1,4 @@
-namespace Susanoo
+namespace Susanoo.Transforms
 {
     /// <summary>
     /// Replacement comparison for override
@@ -9,7 +9,7 @@ namespace Susanoo
         /// Gets the override text.
         /// </summary>
         /// <value>The override text.</value>
-        public string OverrideText { get; private set; }
+        public string OverrideText { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ComparisonOverride"/> class.

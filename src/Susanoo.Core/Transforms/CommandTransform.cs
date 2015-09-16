@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Numerics;
 using Susanoo.Command;
-using Susanoo.Pipeline;
 
 namespace Susanoo.Transforms
 {
     /// <summary>
-    /// Describes and places a priority ranking on a modification of a CommandBuilder.
+    /// Describes and contains a transform operation for IExecutableCommandInfo.
     /// </summary>
     public class CommandTransform
     {

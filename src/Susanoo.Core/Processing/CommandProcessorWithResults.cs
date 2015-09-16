@@ -13,7 +13,7 @@ namespace Susanoo.Processing
     /// <summary>
     ///     Common components between CommandProcessors with ResultSets
     /// </summary>
-    /// <typeparam name="TFilter">The type of the t filter.</typeparam>
+    /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public abstract class CommandProcessorWithResults<TFilter> :
         ICommandProcessorWithResults<TFilter>,
         ICommandProcessorInterop<TFilter>

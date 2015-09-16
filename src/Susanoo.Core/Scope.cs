@@ -8,7 +8,7 @@ namespace Susanoo
     /// Example of Thread static scoping. May use this in the future for CommandBuilder batching.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal sealed class Scope<T> : IDisposable where T : class
+    internal sealed class Scope<T> : IDisposable where T: class
     {
         private bool _disposed;
         private readonly bool _ownsInstance;

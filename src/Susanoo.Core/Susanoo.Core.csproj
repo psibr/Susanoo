@@ -95,7 +95,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
+    <Compile Include="Command\NullValueMode.cs" />
+    <Compile Include="DbConnectionExtensions.cs" />
     <Compile Include="Deserialization\KeyValuePairDeserializer.cs" />
+    <Compile Include="IDatabaseManagerFactory.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Command\ICommandBuilderInfo.cs" />
@@ -163,8 +166,10 @@
     <Compile Include="SusanooBootstrapper.cs" />
     <Compile Include="TinyIoC.cs" />
     <Compile Include="Transforms\CommandTransform.cs" />
-    <Compile Include="Transforms\SingleResultTransformExtensions.cs" />
-    <Compile Include="Transforms\SingleResultTransformProxy.cs" />
+    <Compile Include="Transforms\NoResultSetTransformExtensions.cs" />
+    <Compile Include="Transforms\NoResultSetTransformProxy.cs" />
+    <Compile Include="Transforms\SingleResultSetTransformExtensions.cs" />
+    <Compile Include="Transforms\SingleResultSetTransformProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

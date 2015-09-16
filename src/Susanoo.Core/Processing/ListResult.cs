@@ -9,7 +9,7 @@ namespace Susanoo.Processing
     /// <summary>
     /// A list that implements IResultSet
     /// </summary>
-    /// <typeparam name="TResult">The type of the t result.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     public class ListResult<TResult> : List<TResult>, IResultSet
     {
         private Dictionary<string, int> _queryResultColumnInfo;

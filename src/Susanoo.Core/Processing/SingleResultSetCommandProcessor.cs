@@ -24,7 +24,7 @@ namespace Susanoo.Processing
         ICommandProcessor<TFilter, TResult>,
         IResultMapper<TResult>
     {
-        private ColumnChecker _ColumnChecker;
+        private ColumnChecker _columnChecker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
@@ -58,12 +58,12 @@ namespace Susanoo.Processing
         /// <value>The column report.</value>
         private ColumnChecker ColumnReport
         {
-            get { return CommandBuilderInfo.AllowStoringColumnInfo ? _ColumnChecker : null; }
+            get { return CommandBuilderInfo.AllowStoringColumnInfo ? _columnChecker : null; }
             set
             {
                 if (value != null)
                 {
-                    _ColumnChecker = value;
+                    _columnChecker = value;
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace Susanoo.Processing
         /// <exception cref="System.NotImplementedException"></exception>
         public override void ClearColumnIndexInfo()
         {
-            _ColumnChecker = new ColumnChecker();
+            _columnChecker = new ColumnChecker();
         }
 
         /// <summary>
@@ -252,16 +252,16 @@ namespace Susanoo.Processing
 #if !NETFX40
                     using (var records = await databaseManager
                         .ExecuteDataReaderAsync(
-                            CommandBuilderInfo.CommandText,
-                            CommandBuilderInfo.DbCommandType,
+                            executableCommandInfo.CommandText,
+                            executableCommandInfo.DbCommandType,
                             cancellationToken,
                             executableCommandInfo.Parameters)
                         .ConfigureAwait(false))
 #else
                     using (var records = databaseManager
                         .ExecuteDataReader(
-                            CommandBuilderInfo.CommandText,
-                            CommandBuilderInfo.DbCommandType,
+                            executableCommandInfo.CommandText,
+                            executableCommandInfo.DbCommandType,
                             executableCommandInfo.Parameters))
 #endif
                     {
