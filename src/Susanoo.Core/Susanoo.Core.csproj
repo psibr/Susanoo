@@ -162,6 +162,9 @@
     <Compile Include="Scope.cs" />
     <Compile Include="SusanooBootstrapper.cs" />
     <Compile Include="TinyIoC.cs" />
+    <Compile Include="Transforms\CommandTransform.cs" />
+    <Compile Include="Transforms\SingleResultTransformExtensions.cs" />
+    <Compile Include="Transforms\SingleResultTransformProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

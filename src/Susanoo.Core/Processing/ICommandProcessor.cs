@@ -147,6 +147,17 @@ namespace Susanoo.Processing
         /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
+        /// <param name="executableCommandInfo">The executable command information.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
@@ -221,12 +232,30 @@ namespace Susanoo.Processing
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
-    public interface ICommandProcessor<in TFilter, TResult>
+    public interface ICommandProcessor<TFilter, TResult>
         : ICommandProcessorWithResults<TFilter>, ICommandProcessorInterop<TFilter>
 #if !NETFX40
 , ICommandProcessorAsync<TFilter, TResult>
 #endif
     {
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="executableCommandInfo">The executable command information.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        IEnumerable<TResult> Execute(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo);
+
+        /// <summary>
+        /// Allows a hook in an instance of a processor
+        /// </summary>
+        /// <param name="interceptOrProxy">The intercept or proxy.</param>
+        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        ICommandProcessor<TFilter, TResult> InterceptOrProxyWith(
+            Func<ICommandProcessor<TFilter, TResult>, ICommandProcessor<TFilter, TResult>> interceptOrProxy); 
+
         /// <summary>
         /// Updates the column index information.
         /// </summary>

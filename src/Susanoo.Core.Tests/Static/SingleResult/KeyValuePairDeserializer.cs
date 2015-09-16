@@ -45,7 +45,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void KeyValuePairMapReverse()
         {
-            var results = CommandManager.Instance.DefineCommand("SELECT  String, Int FROM #DataTypeTable;", CommandType.Text)
+            var results = CommandManager.Instance.DefineCommand("SELECT String, Int FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<KeyValuePair<int, string>>()
                 .ForResults(expression =>
                 {

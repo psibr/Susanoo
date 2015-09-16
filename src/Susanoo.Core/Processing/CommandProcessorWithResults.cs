@@ -32,19 +32,13 @@ namespace Susanoo.Processing
         /// <summary>
         /// Prevents a default instance of the <see cref="CommandProcessorWithResults{TFilter}"/> class from being created.
         /// </summary>
-        private CommandProcessorWithResults() { _resultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>(); }
-
-        private readonly ConcurrentDictionary<BigInteger, CacheItem> _resultCacheContainer;
-        private CacheMode _resultCachingMode = CacheMode.None;
+        private CommandProcessorWithResults() { ResultCacheContainer = new ConcurrentDictionary<BigInteger, CacheItem>(); }
 
         /// <summary>
         ///     Gets the result cache container.
         /// </summary>
         /// <value>The result cache container.</value>
-        protected ConcurrentDictionary<BigInteger, CacheItem> ResultCacheContainer
-        {
-            get { return _resultCacheContainer; }
-        }
+        protected ConcurrentDictionary<BigInteger, CacheItem> ResultCacheContainer { get; }
 
         /// <summary>
         ///     Gets a value indicating whether [result caching enabled].
@@ -62,10 +56,7 @@ namespace Susanoo.Processing
         ///     Gets the result caching mode.
         /// </summary>
         /// <value>The result caching mode.</value>
-        protected CacheMode ResultCachingMode
-        {
-            get { return _resultCachingMode; }
-        }
+        protected CacheMode ResultCachingMode { get; private set; } = CacheMode.None;
 
         /// <summary>
         ///     Gets the CommandBuilder expression.
@@ -91,17 +82,15 @@ namespace Susanoo.Processing
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash
-        {
-            get { return CommandResultInfo.CacheHash; }
-        }
+        public virtual BigInteger CacheHash => 
+            CommandResultInfo.CacheHash;
 
         /// <summary>
         ///     Flushes the cache.
         /// </summary>
         public void FlushCache()
         {
-            _resultCacheContainer.Clear();
+            ResultCacheContainer.Clear();
         }
 
         /// <summary>
@@ -138,7 +127,7 @@ namespace Susanoo.Processing
                     nameof(mode));
 
             ResultCachingEnabled = true;
-            _resultCachingMode = mode;
+            ResultCachingMode = mode;
             ResultCachingInterval = interval != null && mode != CacheMode.Permanent ? interval.Value : 0d;
         }
 
@@ -152,7 +141,7 @@ namespace Susanoo.Processing
         {
             CacheItem cache;
             var result = false;
-            if (_resultCacheContainer.TryGetValue(hashCode, out cache))
+            if (ResultCacheContainer.TryGetValue(hashCode, out cache))
             {
                 if (cache.CachingMode == CacheMode.Permanent
                     ||
@@ -164,11 +153,11 @@ namespace Susanoo.Processing
                 else
                 {
                     CacheItem trash;
-                    _resultCacheContainer.TryRemove(hashCode, out trash);
+                    ResultCacheContainer.TryRemove(hashCode, out trash);
                 }
             }
 
-            value = cache != null ? cache.Item : null;
+            value = cache?.Item;
 
             return result;
         }

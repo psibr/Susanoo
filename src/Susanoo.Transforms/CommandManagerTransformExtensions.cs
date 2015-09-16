@@ -44,7 +44,6 @@ WHERE 1=1";
             return new CommandTransform
             {
                 Description = "SusanooWrapper",
-                Priority = 1000,
                 Transform = info =>
                     new ExecutableCommandInfo
                     {
@@ -52,8 +51,7 @@ WHERE 1=1";
                         CommandText = string.Format(format, info.CommandText, additionalColumns ?? string.Empty),
                         DbCommandType = info.DbCommandType,
                         Parameters = info.Parameters
-                    },
-                CacheHash = HashBuilder.Compute(format)
+                    }
             };
         }
 
