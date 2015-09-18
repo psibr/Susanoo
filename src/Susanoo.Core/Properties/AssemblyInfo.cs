@@ -10,12 +10,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Susanoo")]
+[assembly: AssemblyTitle("Susanoo.Core")]
 [assembly: AssemblyDescription("Lightweight Semi-Automatic ORM")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Psibernetic Solutions, LLC")]
+[assembly: AssemblyCompany("Ovan Crone")]
 [assembly: AssemblyProduct("Susanoo")]
-[assembly: AssemblyCopyright("Copyright © Psibernetic Solutions, LLC 2014")]
+[assembly: AssemblyCopyright("Copyright © Ovan Crone, LLC 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]
