@@ -15,7 +15,7 @@ namespace Susanoo.SqlServer.Tests
         [SetUp]
         public void Configure()
         {
-            CommandManager.RegisterBootstrapper(new TestBootstrapper());
+            CommandManager.Instance.Bootstrap(new TestBootstrapper());
 
             DatabaseManager = new DatabaseManager("Susanoo");
 

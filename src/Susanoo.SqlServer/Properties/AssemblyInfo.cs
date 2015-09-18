@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Susanoo.SqlServer")]
 [assembly: AssemblyDescription("Microsoft SQL Server specific functionality for Susanoo")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Psibernetic Solutions, LLC")]
+[assembly: AssemblyCompany("Ovan Crone")]
 [assembly: AssemblyProduct("Susanoo.SqlServer")]
-[assembly: AssemblyCopyright("Copyright © Psibernetic Solutions, LLC 2014")]
+[assembly: AssemblyCopyright("Copyright © Ovan Crone, LLC 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

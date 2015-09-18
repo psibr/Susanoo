@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using NUnit.Framework;
+using Susanoo.Exceptions;
 
 #endregion
 
@@ -14,7 +15,7 @@ namespace Susanoo.Tests.Scalar
     [TestFixture]
     public class ScalarTests
     {
-        private readonly DatabaseManager DatabaseManager = Setup.DatabaseManager;
+        private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -24,20 +25,27 @@ namespace Susanoo.Tests.Scalar
         [Test]
         public void NullableScalarAcceptsNull()
         {
-            var result = CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
+            var result = CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
                 .Realize()
-                .ExecuteScalar<int?>(DatabaseManager);
+                .ExecuteScalar<int?>(_databaseManager);
 
             Assert.AreEqual(result, null);
         }
 
         [Test]
-        [ExpectedException(typeof(NullReferenceException))]
         public void NonNullableScalarThrowsIfNull()
         {
-            CommandManager.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
-                .Realize()
-                .ExecuteScalar<int>(DatabaseManager);
+            try
+            {
+                CommandManager.Instance.DefineCommand("SELECT CAST(NULL AS INT)", CommandType.Text)
+                    .Realize()
+                    .ExecuteScalar<int>(_databaseManager);
+            }
+            catch (SusanooExecutionException ex)
+            {
+                if (ex.InnerException.GetType() != typeof (NullReferenceException))
+                    throw;
+            }
 
         }
     }

@@ -7,8 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
-
+using Susanoo.Mapping.Properties;
 #if !NETFX40
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
@@ -40,7 +39,7 @@ namespace Susanoo.Pipeline
             string[] blacklist = null)
         {
             if (objectType == null)
-                throw new ArgumentNullException("objectType");
+                throw new ArgumentNullException(nameof(objectType));
 
             var actionable = new Dictionary<PropertyInfo, PropertyMapping>();
 
@@ -67,15 +66,12 @@ namespace Susanoo.Pipeline
         public virtual string ResolveAlias(PropertyInfo propertyInfo, object[] customAttributes)
         {
             if (propertyInfo == null)
-                throw new ArgumentNullException("propertyInfo");
+                throw new ArgumentNullException(nameof(propertyInfo));
 
-            var column = customAttributes != null
-                ? customAttributes
-                    .OfType<ColumnAttribute>()
-                    .FirstOrDefault()
-                : null;
+            var column = customAttributes?.OfType<ColumnAttribute>()
+                .FirstOrDefault();
 
-            return column != null && !string.IsNullOrWhiteSpace(column.Name) ? column.Name : propertyInfo.Name;
+            return !string.IsNullOrWhiteSpace(column?.Name) ? column.Name : propertyInfo.Name;
         }
 
         /// <summary>
@@ -88,7 +84,7 @@ namespace Susanoo.Pipeline
         public bool IsWhitelisted(PropertyInfo propertyInfo, string[] whitelist)
         {
             if (propertyInfo == null)
-                throw new ArgumentNullException("propertyInfo");
+                throw new ArgumentNullException(nameof(propertyInfo));
 
             return (whitelist != null && whitelist.Contains(propertyInfo.Name));
         }
@@ -103,7 +99,7 @@ namespace Susanoo.Pipeline
         public bool IsBlacklisted(PropertyInfo propertyInfo, string[] blacklist)
         {
             if (propertyInfo == null)
-                throw new ArgumentNullException("propertyInfo");
+                throw new ArgumentNullException(nameof(propertyInfo));
 
             return (blacklist != null && blacklist.Contains(propertyInfo.Name));
         }
@@ -128,9 +124,9 @@ namespace Susanoo.Pipeline
             string[] blacklist = null)
         {
             if (propertyInfo == null)
-                throw new ArgumentNullException("propertyInfo");
+                throw new ArgumentNullException(nameof(propertyInfo));
             if (customAttributes == null)
-                throw new ArgumentNullException("customAttributes");
+                throw new ArgumentNullException(nameof(customAttributes));
 
             var isActionable = IsWhitelisted(propertyInfo, whitelist)
                                 || (!(IsBlacklisted(propertyInfo, blacklist))
@@ -158,7 +154,7 @@ namespace Susanoo.Pipeline
                 var allowedActions = attributes.OfType<AllowedActionsAttribute>().FirstOrDefault();
                 result = (allowedActions == null || (allowedActions.Actions & actions) != 0);
 
-                result = result && !attributes.Any(a => CommandManager.Bootstrapper.RetrieveIgnoredPropertyAttributes()
+                result = result && !attributes.Any(a => CommandManager.Instance.Bootstrapper.RetrieveIgnoredPropertyAttributes()
                     .Contains(a.GetType()));
             }
 

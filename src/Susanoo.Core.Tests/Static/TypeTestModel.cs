@@ -12,11 +12,11 @@ namespace Susanoo.Tests.Static
 
         public byte TinyInt { get; set; }
 
-        public Int16 SmallInt { get; set; }
+        public short SmallInt { get; set; }
 
         public int Int { get; set; }
 
-        public Int64 BigInt { get; set; }
+        public long BigInt { get; set; }
 
         public decimal SmallMoney { get; set; }
 

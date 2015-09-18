@@ -26,7 +26,7 @@ namespace Susanoo.Tests
         /// </summary>
         private static void BuildDataTypeTable()
         {
-            CommandManager.DefineCommand(
+            CommandManager.Instance.DefineCommand(
                 @"
                 IF OBJECT_ID('tempdb..#DataTypeTable') IS NOT NULL 
                 BEGIN

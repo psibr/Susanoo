@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Susanoo.Pipeline.Command.ResultSets.Mapping.Properties;
+using Susanoo.Mapping.Properties;
 
 #endregion
 

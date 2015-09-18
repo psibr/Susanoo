@@ -47,10 +47,7 @@ namespace Susanoo
                 return new Dictionary<T3, T4>(_dictionary);
             }
 
-            public int Count
-            {
-                get { return _dictionary.Count; }
-            }
+            public int Count => _dictionary.Count;
         }
 
         public void Add(T1 t1, T2 t2)

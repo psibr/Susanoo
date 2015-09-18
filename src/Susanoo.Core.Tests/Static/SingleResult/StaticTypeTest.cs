@@ -7,8 +7,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using NUnit.Framework;
-using Susanoo.Pipeline.Command;
-using Susanoo.Pipeline.Command.ResultSets.Processing;
 
 #endregion
 
@@ -25,7 +23,7 @@ namespace Susanoo.Tests.Static.SingleResult
         {
             for (int i = 0; i < 500; i ++)
             {
-                var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+                var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                     .DefineResults<TypeTestModel>()
                     .Realize()
                     .Execute(_databaseManager);
@@ -37,7 +35,7 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypes()
         {
-            var results = CommandManager.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
+            var results = CommandManager.Instance.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel>()
                 .Realize()
                 .Execute(_databaseManager);
@@ -93,14 +91,14 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypesInsert()
         {
-            var result = CommandManager.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
+            var result = CommandManager.Instance.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel>()
                 .Realize()
                 .Execute(_databaseManager).First();
 
             result.IgnoredByDescriptorActionsUpdate = "ignored";
 
-            CommandManager.DefineCommand<TypeTestModel>("INSERT INTO #DataTypeTable VALUES(@Bit, @TinyInt, @SmallInt, @Int, @BigInt, @SmallMoney, @Money, @Numeric, @Decimal, @Character, @String, @Text, @Date, @SmallDateTime, @DateTime, @DateTime2, '12:00:00:00', @Guid, 'ignored','ignored', @IgnoredByDescriptorActionsUpdate);", CommandType.Text)
+            CommandManager.Instance.DefineCommand<TypeTestModel>("INSERT INTO #DataTypeTable VALUES(@Bit, @TinyInt, @SmallInt, @Int, @BigInt, @SmallMoney, @Money, @Numeric, @Decimal, @Character, @String, @Text, @Date, @SmallDateTime, @DateTime, @DateTime2, '12:00:00:00', @Guid, 'ignored','ignored', @IgnoredByDescriptorActionsUpdate);", CommandType.Text)
                 .Realize()
                 .ExecuteNonQuery(_databaseManager, result);
         }
@@ -108,14 +106,14 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypesInsertAnonymous()
         {
-            var result = CommandManager.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
+            var result = CommandManager.Instance.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel>()
                 .Realize()
                 .Execute(_databaseManager).First();
 
             result.IgnoredByDescriptorActionsUpdate = "ignored";
 
-            CommandManager.DefineCommand<dynamic>("INSERT INTO #DataTypeTable VALUES(@Bit, @TinyInt, @SmallInt, @Int, @BigInt, @SmallMoney, @Money, @Numeric, @Decimal, @Character, @String, @Text, @Date, @SmallDateTime, @DateTime, @DateTime2, '12:00:00:00', @Guid, 'ignored','ignored', @IgnoredByDescriptorActionsUpdate);", CommandType.Text)
+            CommandManager.Instance.DefineCommand<dynamic>("INSERT INTO #DataTypeTable VALUES(@Bit, @TinyInt, @SmallInt, @Int, @BigInt, @SmallMoney, @Money, @Numeric, @Decimal, @Character, @String, @Text, @Date, @SmallDateTime, @DateTime, @DateTime2, '12:00:00:00', @Guid, 'ignored','ignored', @IgnoredByDescriptorActionsUpdate);", CommandType.Text)
                 .Realize()
                 .ExecuteNonQuery(_databaseManager, new { Bit = true, TinyInt = 1, SmallInt = 1, Int = 1, BigInt = 1, SmallMoney = 1, Money = 1, Numeric = 1, Decimal = 1, Character = 'c', String = "string", Text = "yay", Date = DateTime.Now, SmallDateTime = DateTime.Now, DateTime = DateTime.Now, DateTime2 = DateTime.Now, Guid = Guid.NewGuid(), IgnoredByDescriptorActionsUpdate = "ignored"});
         }
