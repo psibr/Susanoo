@@ -21,7 +21,7 @@ namespace Susanoo.ResultSets
         /// </summary>
         /// <param name="resultType">Type of the result.</param>
         /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        IResultMappingExport RetrieveExporter(Type resultType);
+        IMappingExport RetrieveExporter(Type resultType);
 
         /// <summary>
         /// Stores a mapping.

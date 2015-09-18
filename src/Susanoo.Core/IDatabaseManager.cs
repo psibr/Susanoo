@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Threading;
@@ -25,9 +26,10 @@ namespace Susanoo
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
-        IDataReader ExecuteDataReader(string commandText, CommandType commandType, params DbParameter[] parameters);
+        IDataReader ExecuteDataReader(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the scalar.
@@ -35,18 +37,20 @@ namespace Susanoo
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>A single value of type T.</returns>
-        T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters);
+        T ExecuteScalar<T>(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters);
+        int ExecuteNonQuery(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters);
 
         /// <summary>
         /// Creates a parameter.
@@ -91,10 +95,11 @@ namespace Susanoo
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;IDataReader&gt;.</returns>
-        Task<IDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType,
+        Task<IDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType, TimeSpan commandTimeout,
             CancellationToken cancellationToken, params DbParameter[] parameters);
 
         /// <summary>
@@ -103,10 +108,11 @@ namespace Susanoo
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
-        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, CancellationToken cancellationToken,
+        Task<T> ExecuteScalarAsync<T>(string commandText, CommandType commandType, TimeSpan commandTimeout, CancellationToken cancellationToken,
             params DbParameter[] parameters);
 
         /// <summary>
@@ -114,10 +120,11 @@ namespace Susanoo
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;System.Int32&gt;.</returns>
-        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, CancellationToken cancellationToken,
+        Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandType, TimeSpan commandTimeout, CancellationToken cancellationToken,
             params DbParameter[] parameters);
 
 #endif

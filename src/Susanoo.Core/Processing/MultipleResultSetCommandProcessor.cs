@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Numerics;
+using Susanoo.Exceptions;
 using Susanoo.ResultSets;
 
 namespace Susanoo.Processing
@@ -95,6 +96,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReader(
                             CommandBuilderInfo.CommandText,
                             CommandBuilderInfo.DbCommandType,
+                            Timeout,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -109,7 +111,7 @@ namespace Susanoo.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex, parameters);
+                    throw new SusanooExecutionException(ex, CommandBuilderInfo, Timeout, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -254,6 +256,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReader(
                             commandExpression.CommandText,
                             commandExpression.DbCommandType,
+                            Timeout,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -268,7 +271,7 @@ namespace Susanoo.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex, parameters);
+                    throw new SusanooExecutionException(ex, CommandBuilderInfo, Timeout, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -424,6 +427,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReader(
                             CommandBuilderInfo.CommandText,
                             CommandBuilderInfo.DbCommandType,
+                            Timeout,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -438,7 +442,7 @@ namespace Susanoo.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex, parameters);
+                    throw new SusanooExecutionException(ex, CommandBuilderInfo, Timeout, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -604,6 +608,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReader(
                             CommandBuilderInfo.CommandText,
                             CommandBuilderInfo.DbCommandType,
+                            Timeout,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -618,7 +623,7 @@ namespace Susanoo.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex, parameters);
+                    throw new SusanooExecutionException(ex, CommandBuilderInfo, Timeout, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -795,6 +800,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReader(
                             CommandBuilderInfo.CommandText,
                             CommandBuilderInfo.DbCommandType,
+                            Timeout,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -809,7 +815,7 @@ namespace Susanoo.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex, parameters);
+                    throw new SusanooExecutionException(ex, CommandBuilderInfo, Timeout, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,
@@ -998,6 +1004,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReader(
                             CommandBuilderInfo.CommandText,
                             CommandBuilderInfo.DbCommandType,
+                            Timeout,
                             parameters))
                     {
                         for (var i = 0; i < ResultCount; i++)
@@ -1012,7 +1019,7 @@ namespace Susanoo.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex, parameters);
+                    throw new SusanooExecutionException(ex, CommandBuilderInfo, Timeout, parameters);
                 }
 
                 finalResults = new Tuple<IEnumerable<TResult1>,

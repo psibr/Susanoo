@@ -4,9 +4,6 @@ using System.Collections.Generic;
 #if !NETFX40
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
-
-using System.Data.Common;
-using Susanoo.Command;
 using Susanoo.Deserialization;
 using Susanoo.Pipeline;
 using Susanoo.Processing;
@@ -66,18 +63,6 @@ namespace Susanoo
         public virtual IEnumerable<Type> RetrieveIgnoredPropertyAttributes()
         {
             return new[] { typeof(NotMappedAttribute) };
-        }
-
-        /// <summary>
-        /// Called when an execution exception is encountered.
-        /// </summary>
-        /// <param name="info">The information.</param>
-        /// <param name="exception">The exception.</param>
-        /// <param name="parameters">The parameters.</param>
-        public virtual void OnExecutionException(ICommandInfo info, Exception exception,
-            DbParameter[] parameters)
-        {
-            throw exception;
         }
     }
 }

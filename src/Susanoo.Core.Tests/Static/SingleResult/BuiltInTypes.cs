@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Susanoo.Exceptions;
+using Susanoo.Processing;
 
 namespace Susanoo.Tests.Static.SingleResult
 {
@@ -59,13 +62,13 @@ namespace Susanoo.Tests.Static.SingleResult
                     .Realize()
                     .Execute(Setup.DatabaseManager);
             }
-            catch (Exception ex) 
-                when (ex.GetType() == typeof (InvalidCastException) 
-                    || ((ex as AggregateException)?.InnerExceptions.Count == 1 
-                        && ((AggregateException) ex).InnerExceptions.Any(iex =>
-                            iex.GetType() == typeof(InvalidCastException))))
+            catch (AggregateException ex)
+                when (ex.InnerExceptions.Count == 1
+                    && ex.InnerExceptions.Any(iex =>
+                       iex.GetType() == typeof(SusanooExecutionException)
+                            && iex.InnerException.GetType() == typeof(InvalidCastException)))
             {
-                //Valid exceptions
+                //Valid exceptions 
             }
         }
 

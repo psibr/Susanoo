@@ -15,7 +15,7 @@ namespace Susanoo.Mapping
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface IResultMappingExpression<TFilter, TResult> : IResultMappingExport, IFluentPipelineFragment
+    public interface IResultMappingExpression<TFilter, TResult> : IMappingExport, IFluentPipelineFragment
     {
         /// <summary>
         /// Clears the result mappings.

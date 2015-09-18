@@ -65,6 +65,12 @@ namespace Susanoo.Processing
         public ICommandBuilderInfo<TFilter> CommandBuilderInfo { get; protected set; }
 
         /// <summary>
+        /// Gets or sets the timeout of a command execution.
+        /// </summary>
+        /// <value>The timeout.</value>
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
         ///     Gets the mapping expressions.
         /// </summary>
         /// <value>The mapping expressions.</value>

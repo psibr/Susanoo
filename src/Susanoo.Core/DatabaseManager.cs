@@ -233,11 +233,12 @@ namespace Susanoo
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout"></param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
         /// <exception cref="ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType,
+        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, TimeSpan commandTimeout,
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
@@ -250,7 +251,7 @@ namespace Susanoo
                 var open = _explicitlyOpened;
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     // If the connection was open before execute was called, then do not automatically close connection.
                     results = open ? command.ExecuteReader() : command.ExecuteReader(CommandBehavior.CloseConnection);
@@ -273,11 +274,13 @@ namespace Susanoo
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>A single value of type T.</returns>
+        /// <exception cref="System.ArgumentNullException"></exception>
         /// <exception cref="ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters)
+        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException(nameof(commandText));
@@ -288,7 +291,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     var result = CastValue(typeof(T), command.ExecuteScalar());
 
@@ -307,11 +310,13 @@ namespace Susanoo
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
+        /// <exception cref="System.ArgumentNullException"></exception>
         /// <exception cref="ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters)
+        public virtual int ExecuteNonQuery(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException(nameof(commandText));
@@ -322,7 +327,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     return command.ExecuteNonQuery();
                 }
@@ -471,10 +476,11 @@ namespace Susanoo
         /// <param name="connection">The connection.</param>
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>DbCommand.</returns>
         protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType,
-            params DbParameter[] parameters)
+             TimeSpan commandTimeout, params DbParameter[] parameters)
         {
             var command = Provider.CreateCommand();
 
@@ -484,6 +490,8 @@ namespace Susanoo
                 command.Connection = Connection;
 
                 command.CommandText = commandText;
+
+                command.CommandTimeout = Convert.ToInt32(commandTimeout.TotalSeconds);
 
                 if (parameters != null)
                     foreach (var param in parameters)
@@ -544,6 +552,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
@@ -551,6 +560,7 @@ namespace Susanoo
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual async Task<IDataReader> ExecuteDataReaderAsync(string commandText,
             CommandType commandType,
+            TimeSpan commandTimeout,
             CancellationToken cancellationToken = default(CancellationToken),
             params DbParameter[] parameters)
         {
@@ -563,7 +573,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
 
                     // If the connection was open before execute was called, then do not automatically close connection.
@@ -588,6 +598,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
@@ -595,6 +606,7 @@ namespace Susanoo
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual async Task<int> ExecuteNonQueryAsync(string commandText,
             CommandType commandType,
+            TimeSpan commandTimeout,
             CancellationToken cancellationToken = default(CancellationToken),
             params DbParameter[] parameters)
         {
@@ -607,7 +619,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }
@@ -625,12 +637,14 @@ namespace Susanoo
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         public async Task<T> ExecuteScalarAsync<T>(string commandText,
             CommandType commandType,
+            TimeSpan commandTimeout,
             CancellationToken cancellationToken = default(CancellationToken),
             params DbParameter[] parameters)
         {
@@ -643,7 +657,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     return
                         (T)

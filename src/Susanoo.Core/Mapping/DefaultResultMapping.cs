@@ -9,21 +9,24 @@ namespace Susanoo.Mapping
     /// <summary>
     /// Simple mapping when none were explicitly provided.
     /// </summary>
-    public class DefaultResultMapping : IResultMappingExport
+    public class DefaultResultMapping : IMappingExport
     {
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();
 
         private readonly Type _resultType;
+        private readonly DescriptorActions _actions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultResultMapping"/> class.
+        /// Initializes a new instance of the <see cref="DefaultResultMapping" /> class.
         /// </summary>
         /// <param name="resultType">Type of the result.</param>
-        public DefaultResultMapping(Type resultType)
+        /// <param name="actions">The actions.</param>
+        public DefaultResultMapping(Type resultType, DescriptorActions actions = DescriptorActions.Read)
         {
             _resultType = resultType;
-            
+            _actions = actions;
+
             MapDeclarativeProperties();
         }
 
@@ -34,7 +37,7 @@ namespace Susanoo.Mapping
         {
             foreach (var item in CommandManager.Instance.Bootstrapper
                 .ResolveDependency<IPropertyMetadataExtractor>()
-                .FindAllowedProperties(_resultType))
+                .FindAllowedProperties(_resultType, _actions))
             {
                 var configuration = new PropertyMappingConfiguration(item.Key);
 

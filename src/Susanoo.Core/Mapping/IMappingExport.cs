@@ -7,7 +7,7 @@ namespace Susanoo.Mapping
     /// <summary>
     /// Exposes property mapping export capabilities.
     /// </summary>
-    public interface IResultMappingExport : IFluentPipelineFragment
+    public interface IMappingExport : IFluentPipelineFragment
     {
         /// <summary>
         /// Exports this instance.

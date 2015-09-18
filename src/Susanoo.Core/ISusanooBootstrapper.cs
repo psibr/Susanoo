@@ -26,14 +26,5 @@ namespace Susanoo
         /// </summary>
         /// <returns>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;.</returns>
         IEnumerable<Type> RetrieveIgnoredPropertyAttributes();
-
-        /// <summary>
-        /// Called when an execution exception is encountered.
-        /// </summary>
-        /// <param name="info">The information.</param>
-        /// <param name="exception">The exception.</param>
-        /// <param name="parameters">The parameters.</param>
-        void OnExecutionException(ICommandInfo info, Exception exception,
-            DbParameter[] parameters);
     }
 }

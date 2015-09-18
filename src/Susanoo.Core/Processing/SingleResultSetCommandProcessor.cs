@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using Susanoo.Exceptions;
 
 namespace Susanoo.Processing
 {
@@ -254,6 +255,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReaderAsync(
                             executableCommandInfo.CommandText,
                             executableCommandInfo.DbCommandType,
+                            Timeout,
                             cancellationToken,
                             executableCommandInfo.Parameters)
                         .ConfigureAwait(false))
@@ -262,6 +264,7 @@ namespace Susanoo.Processing
                         .ExecuteDataReader(
                             executableCommandInfo.CommandText,
                             executableCommandInfo.DbCommandType,
+                            Timeout,
                             executableCommandInfo.Parameters))
 #endif
                     {
@@ -274,7 +277,7 @@ namespace Susanoo.Processing
                 }
                 catch (Exception ex)
                 {
-                    CommandManager.Instance.HandleExecutionException(executableCommandInfo, ex, executableCommandInfo.Parameters);
+                    throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
                 }
 
                 if (ResultCachingEnabled)

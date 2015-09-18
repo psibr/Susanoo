@@ -22,14 +22,14 @@ namespace Susanoo.Transforms
             : ICommandProcessor<TFilter, TResult>
     {
         private readonly ICommandProcessor<TFilter, TResult> _source;
-        private readonly ICollection<CommandTransform> _transforms;
+        private readonly IEnumerable<CommandTransform> _transforms;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetTransformProxy{TFilter,TResult}"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
-        public SingleResultSetTransformProxy(ICommandProcessor<TFilter, TResult> source, ICollection<CommandTransform> transforms)
+        public SingleResultSetTransformProxy(ICommandProcessor<TFilter, TResult> source, IEnumerable<CommandTransform> transforms)
         {
             _source = source;
             _transforms = transforms;
@@ -71,6 +71,12 @@ namespace Susanoo.Transforms
         /// <value>The CommandBuilder information.</value>
         public ICommandBuilderInfo<TFilter> CommandBuilderInfo =>
             _source.CommandBuilderInfo;
+
+        /// <summary>
+        /// Gets or sets the timeout of a command execution.
+        /// </summary>
+        /// <value>The timeout.</value>
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,

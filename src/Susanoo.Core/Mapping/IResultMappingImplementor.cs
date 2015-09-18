@@ -10,7 +10,7 @@ namespace Susanoo.Mapping
     /// A step in the CommandBuilder definition Fluent API, in which properties are mapped to potential result data.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface IResultMappingImplementor<TResult> : IResultMappingExport, IFluentPipelineFragment
+    public interface IResultMappingImplementor<TResult> : IMappingExport, IFluentPipelineFragment
     {
         /// <summary>
         /// Clears the result mappings.

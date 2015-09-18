@@ -17,15 +17,15 @@ namespace Susanoo.ResultSets
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public class CommandResultImplementor<TFilter> : ICommandResultImplementor<TFilter>
     {
-        private readonly IDictionary<Type, IResultMappingExport> _mappingContainer;
-        private readonly IDictionary<Type, IResultMappingExport> _mappingContainerRuntime;
+        private readonly IDictionary<Type, IMappingExport> _mappingContainer;
+        private readonly IDictionary<Type, IMappingExport> _mappingContainerRuntime;
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultImplementor{TFilter}" /> class.
         /// </summary>
         public CommandResultImplementor()
         {
-            _mappingContainer = new Dictionary<Type, IResultMappingExport>();
-            _mappingContainerRuntime = new Dictionary<Type, IResultMappingExport>();
+            _mappingContainer = new Dictionary<Type, IMappingExport>();
+            _mappingContainerRuntime = new Dictionary<Type, IMappingExport>();
         }
 
         /// <summary>
@@ -41,11 +41,11 @@ namespace Susanoo.ResultSets
         /// </summary>
         /// <param name="resultType">Type of the result.</param>
         /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
-        public IResultMappingExport RetrieveExporter(Type resultType)
+        public IMappingExport RetrieveExporter(Type resultType)
         {
-            IResultMappingExport result = null;
+            IMappingExport result = null;
 
-            IResultMappingExport value;
+            IMappingExport value;
             if (!_mappingContainer.TryGetValue(resultType, out value))
             {
                 if (!_mappingContainerRuntime.TryGetValue(resultType, out value))

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Numerics;
@@ -17,14 +18,14 @@ namespace Susanoo.Transforms
         : ICommandProcessor<TFilter>
     {
         private readonly ICommandProcessor<TFilter> _source;
-        private readonly CommandTransform[] _transforms;
+        private readonly IEnumerable<CommandTransform> _transforms;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NoResultSetTransformProxy{TFilter}"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
-        public NoResultSetTransformProxy(ICommandProcessor<TFilter> source, params CommandTransform[] transforms)
+        public NoResultSetTransformProxy(ICommandProcessor<TFilter> source, IEnumerable<CommandTransform> transforms)
         {
             _source = source;
             _transforms = transforms;
@@ -43,6 +44,12 @@ namespace Susanoo.Transforms
         /// <value>The CommandBuilder information.</value>
         public ICommandBuilderInfo<TFilter> CommandBuilderInfo =>
             _source.CommandBuilderInfo;
+
+        /// <summary>
+        /// Gets or sets the timeout of a command execution.
+        /// </summary>
+        /// <value>The timeout.</value>
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
         /// Allows a hook in an instance of a processor

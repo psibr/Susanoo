@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 #endif
 using Susanoo.Command;
+using Susanoo.Exceptions;
 
 #endregion
 
@@ -36,6 +37,12 @@ namespace Susanoo.Processing
         public ICommandBuilderInfo<TFilter> CommandBuilderInfo { get; }
 
         /// <summary>
+        /// Gets or sets the timeout of a command execution.
+        /// </summary>
+        /// <value>The timeout.</value>
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
@@ -57,12 +64,12 @@ namespace Susanoo.Processing
                 result = databaseManager.ExecuteNonQuery(
                     executableCommandInfo.CommandText,
                     executableCommandInfo.DbCommandType,
+                    Timeout,
                     executableCommandInfo.Parameters);
             }
             catch (Exception ex)
             {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
+                throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
             }
 
             return result;
@@ -85,12 +92,12 @@ namespace Susanoo.Processing
                 result = databaseManager.ExecuteScalar<TReturn>(
                     executableCommandInfo.CommandText,
                     executableCommandInfo.DbCommandType,
+                    Timeout,
                     executableCommandInfo.Parameters);
             }
             catch (Exception ex)
             {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
+                throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
             }
 
             return result;
@@ -227,13 +234,13 @@ namespace Susanoo.Processing
                 result = await databaseManager.ExecuteNonQueryAsync(
                     executableCommandInfo.CommandText,
                     executableCommandInfo.DbCommandType,
+                    Timeout,
                     cancellationToken,
                     executableCommandInfo.Parameters).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
+                throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
             }
 
             return result;
@@ -257,13 +264,13 @@ namespace Susanoo.Processing
                 result = await databaseManager.ExecuteScalarAsync<TReturn>(
                     executableCommandInfo.CommandText,
                     executableCommandInfo.DbCommandType,
+                    Timeout,
                     cancellationToken,
                     executableCommandInfo.Parameters).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                CommandManager.Instance.HandleExecutionException(CommandBuilderInfo, ex,
-                    executableCommandInfo.Parameters);
+                throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
             }
 
             return result;

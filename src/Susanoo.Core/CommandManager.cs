@@ -83,20 +83,6 @@ namespace Susanoo
             .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
 
         /// <summary>
-        /// Handles exceptions in execution.
-        /// </summary>
-        /// <param name="commandInfo">The CommandBuilder expression information.</param>
-        /// <param name="ex">The exception.</param>
-        /// <param name="parameters">The parameters.</param>
-        public void HandleExecutionException(
-            ICommandInfo commandInfo,
-            Exception ex,
-            DbParameter[] parameters)
-        {
-            Bootstrapper.OnExecutionException(commandInfo, ex, parameters);
-        }
-
-        /// <summary>
         /// Begins the CommandBuilder definition process using a Fluent API implementation.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>

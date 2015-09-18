@@ -11,9 +11,5 @@ namespace Susanoo.SqlServer.Tests
     public class TestBootstrapper : 
         SusanooBootstrapper
     {
-        public override void OnExecutionException(ICommandInfo info, Exception exception, DbParameter[] parameters)
-        {
-            base.OnExecutionException(info, exception, parameters);
-        }
     }
 }

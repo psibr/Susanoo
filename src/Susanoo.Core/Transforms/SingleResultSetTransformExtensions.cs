@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Susanoo.Processing;
 using Susanoo.Transforms;
 
@@ -19,12 +20,12 @@ namespace Susanoo
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">At least one transform is required.</exception>
         public static ICommandProcessor<TFilter, TResult> ApplyTransforms<TFilter, TResult>(
-            this ICommandProcessor<TFilter, TResult> source, params CommandTransform[] transforms)
+            this ICommandProcessor<TFilter, TResult> source, Func<ICommandProcessor<TFilter, TResult>, IEnumerable<CommandTransform>> transforms)
         {
             if (transforms == null)
                 throw new ArgumentNullException(nameof(transforms), "At least one transform is required.");
 
-            return source.InterceptOrProxyWith(s => new SingleResultSetTransformProxy<TFilter, TResult>(s, transforms));
+            return source.InterceptOrProxyWith(s => new SingleResultSetTransformProxy<TFilter, TResult>(s, transforms(s)));
         }
     }
 }
