@@ -185,10 +185,8 @@ namespace Susanoo.Command
         ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash
-        {
-            get { return ComputeHash(); }
-        }
+        public virtual BigInteger CacheHash => 
+            ComputeHash();
 
         /// <summary>
         ///     Realizes the pipeline with no result mappings.
