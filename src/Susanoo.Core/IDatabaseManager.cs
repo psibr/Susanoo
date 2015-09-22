@@ -13,7 +13,8 @@ namespace Susanoo
     /// <summary>
     /// The interface a Data later abstraction must support for use with Susanoo
     /// </summary>
-    public interface IDatabaseManager
+    public interface IDatabaseManager 
+        : IDisposable
     {
         /// <summary>
         /// Gets the state of the connection.
