@@ -73,7 +73,7 @@ namespace Susanoo
                 throw new ArgumentException("Provider is a required component of the connection string.",
                     nameof(connectionStringName));
         }
-        
+
         private DatabaseManager()
         {
 
@@ -181,7 +181,7 @@ namespace Susanoo
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
                     nameof(providerName));
-            
+
             return manager;
         }
 
@@ -484,18 +484,18 @@ namespace Susanoo
         {
             var command = Connection.CreateCommand();
 
-                command.CommandType = commandType;
-                command.Connection = Connection;
+            command.CommandType = commandType;
+            command.Connection = Connection;
 
-                command.CommandText = commandText;
+            command.CommandText = commandText;
 
-                command.CommandTimeout = Convert.ToInt32(commandTimeout.TotalSeconds);
+            command.CommandTimeout = Convert.ToInt32(commandTimeout.TotalSeconds);
 
-                if (parameters != null)
-                    foreach (var param in parameters)
-                        command.Parameters.Add(param);
+            if (parameters != null)
+                foreach (var param in parameters)
+                    command.Parameters.Add(param);
 
-                CallProviderSpecificCommandSettings(command);
+            CallProviderSpecificCommandSettings(command);
 
             return command;
         }
@@ -504,6 +504,7 @@ namespace Susanoo
         /// Adjusts the CommandBuilder by provider.
         /// </summary>
         /// <param name="command">The CommandBuilder.</param>
+        /// <exception cref="Exception">A delegate callback throws an exception.</exception>
         protected virtual void CallProviderSpecificCommandSettings(DbCommand command)
         {
             _providerSpecificCommandSettings?.Invoke(command);
@@ -542,7 +543,7 @@ namespace Susanoo
     /// <summary>
     /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    public partial class DatabaseManager 
+    public partial class DatabaseManager
     {
         /// <summary>
         /// Executes the data reader asynchronously.
