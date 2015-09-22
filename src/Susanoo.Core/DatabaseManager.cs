@@ -420,21 +420,18 @@ namespace Susanoo
         protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType,
             params DbParameter[] parameters)
         {
-            var command = Provider.CreateCommand();
+            var command = Connection.CreateCommand();
 
-            if (command != null)
-            {
-                command.CommandType = commandType;
-                command.Connection = Connection;
+            command.CommandType = commandType;
+            command.Connection = Connection;
 
-                command.CommandText = commandText;
+            command.CommandText = commandText;
 
-                if (parameters != null)
-                    foreach (var param in parameters)
-                        command.Parameters.Add(param);
+            if (parameters != null)
+                foreach (var param in parameters)
+                    command.Parameters.Add(param);
 
-                CallProviderSpecificCommandSettings(command);
-            }
+            CallProviderSpecificCommandSettings(command);
 
             return command;
         }
