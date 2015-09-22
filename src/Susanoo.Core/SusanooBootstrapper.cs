@@ -28,8 +28,8 @@ namespace Susanoo
         {
             #region Factory Registrations
 
+            DIContainer.Register<INoResultSetCommandProcessorFactory>(new NoResultSetCommandProcessorFactory());
             DIContainer.Register<ISingleResultSetCommandProcessorFactory>(new SingleResultSetCommandProcessorFactory());
-            //DIContainer.Register<INoResultSetCommandProcessorFactory>(new NoResultSetCommandProcessorFactory());
 
 
             #endregion Factory Registrations

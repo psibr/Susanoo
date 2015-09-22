@@ -15,7 +15,7 @@
     <tags>ADO.NET microORM orm C# .net MSSQL SqlClient MicrosoftSqlServer</tags>
     <dependencies>
       <group>
-        <dependency id="Susanoo.Core" version="0.8.4.36" />
+        <dependency id="Susanoo.Core" version="0.9.0.0" />
       </group>
     </dependencies>
   </metadata>

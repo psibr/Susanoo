@@ -35,7 +35,7 @@ namespace Susanoo
         /// Initializes a new instance of the <see cref="AllowedActionsAttribute" /> class.
         /// </summary>
         public AllowedActionsAttribute()
-            : this(DescriptorActions.Read | DescriptorActions.Insert | DescriptorActions.Update)
+            : this(DescriptorActions.Read | DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Filter)
         {
         }
 

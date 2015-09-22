@@ -95,13 +95,15 @@ namespace Susanoo.Command
         /// Gets the property blacklist.
         /// </summary>
         /// <value>The blacklist.</value>
-        public IEnumerable<string> PropertyBlacklist => _parameterExclusions;
+        public IEnumerable<string> PropertyBlacklist => 
+            _parameterExclusions;
 
         /// <summary>
         ///     Gets a value indicating whether storing column information is allowed.
         /// </summary>
         /// <value><c>true</c> if [allow store column information]; otherwise, <c>false</c>.</value>
-        public bool AllowStoringColumnInfo => !_doNotStoreColumnInfo;
+        public bool AllowStoringColumnInfo => 
+            !_doNotStoreColumnInfo;
 
         /// <summary>
         /// Builds the parameters (Not part of Fluent API).
@@ -194,7 +196,9 @@ namespace Susanoo.Command
         /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
         public ICommandProcessor<TFilter> Realize()
         {
-            return new NoResultSetCommandProcessor<TFilter>(this);
+            return CommandManager.Instance.Bootstrapper
+                .ResolveDependency<INoResultSetCommandProcessorFactory>()
+                .BuildCommandProcessor(this);
         }
 
         /// <summary>

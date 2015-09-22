@@ -28,10 +28,6 @@ namespace Susanoo.ResultSets
             Command = command;
         }
 
-
-
-
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultCommon{TFilter}" /> class.
         /// </summary>
@@ -63,13 +59,15 @@ namespace Susanoo.ResultSets
         /// Gets the hash code used for caching result mapping compilations.
         /// </summary>
         /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash => (_implementor.CacheHash ^ (Command.CacheHash * 31));
+        public virtual BigInteger CacheHash => 
+            (_implementor.CacheHash ^ (Command.CacheHash * 31));
 
         /// <summary>
         /// Gets the implementor of the Commandresult functionality.
         /// </summary>
         /// <value>The implementor.</value>
-        protected virtual ICommandResultImplementor<TFilter> Implementor => _implementor;
+        protected virtual ICommandResultImplementor<TFilter> Implementor => 
+            _implementor;
 
         /// <summary>
         /// Exports a results mappings for processing.
@@ -90,8 +88,6 @@ namespace Susanoo.ResultSets
         {
             return new CommandResultExpression<TFilter, TSingle>(Command, Implementor);
         }
-
-
 
         /// <summary>
         /// Gets or sets the CommandBuilder information.

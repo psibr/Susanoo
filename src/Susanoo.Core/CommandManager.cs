@@ -20,7 +20,7 @@ namespace Susanoo
     /// <summary>
     /// This class is used as the single entry point when using Susanoo.
     /// </summary>
-    public partial class CommandManager
+    public class CommandManager
     {
         private static readonly IDictionary<Type, DbType> BuiltinTypeConversions =
             new ConcurrentDictionary<Type, DbType>(new Dictionary<Type, DbType>
