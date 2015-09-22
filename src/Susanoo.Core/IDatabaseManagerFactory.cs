@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.Common;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Susanoo
+{
+    /// <summary>
+    /// A factory that can build database managers.
+    /// </summary>
+    public interface IDatabaseManagerFactory
+    {
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string name by resolving from configuration.
+        /// </summary>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
+        IDatabaseManager CreateFromConnectionStringName(string connectionStringName);
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <returns>DatabaseManager.</returns>
+        IDatabaseManager CreateFromConnection(DbConnection connection);
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string name by resolving from configuration.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <returns>DatabaseManager.</returns>
+        IDatabaseManager CreateFromConnectionStringName(DbProviderFactory provider, string connectionStringName);
+
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string name by resolving from configuration.
+        /// </summary>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <param name="providerName">Name of the provider.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
+        IDatabaseManager CreateFromConnectionStringName(string connectionStringName, string providerName);
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string and providerName.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="providerName">Name of the provider.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
+        IDatabaseManager CreateFromConnectionString(string connectionString, string providerName);
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string and providerName.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="connectionString">The connection string.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
+        IDatabaseManager CreateFromConnectionString(DbProviderFactory provider, string connectionString);
+    }
+}

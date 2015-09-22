@@ -4,12 +4,10 @@ using System.Collections.Generic;
 #if !NETFX40
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
-
-using System.Data.Common;
-using System.Text.RegularExpressions;
+using Susanoo.Deserialization;
 using Susanoo.Pipeline;
-using Susanoo.Pipeline.Command;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
+using Susanoo.Processing;
+using Susanoo.TinyIoC;
 
 namespace Susanoo
 {
@@ -19,31 +17,46 @@ namespace Susanoo
     public class SusanooBootstrapper : ISusanooBootstrapper
     {
         /// <summary>
-        /// Gets or sets the command builder.
+        /// The TinyIoC container used by default for building components.
         /// </summary>
-        /// <value>The command builder.</value>
-        /// <exception cref="System.ArgumentNullException">value</exception>
-        public virtual ICommandExpressionBuilder RetrieveCommandBuilder()
+        protected readonly TinyIoCContainer DIContainer = TinyIoCContainer.Current;
+
+        /// <summary>
+        /// Instantiates the bootstrapper and wires all dependencies to the resolve method.
+        /// </summary>
+        public SusanooBootstrapper()
         {
-            return new CommandBuilder();
+            #region Factory Registrations
+
+            DIContainer.Register<IDatabaseManagerFactory>(new DatabaseManagerFactory());
+            DIContainer.Register<INoResultSetCommandProcessorFactory>(new NoResultSetCommandProcessorFactory());
+            DIContainer.Register<ISingleResultSetCommandProcessorFactory>(new SingleResultSetCommandProcessorFactory());
+
+
+            #endregion Factory Registrations
+
+            #region Service Registrations
+
+            DIContainer.Register<IDeserializerResolver>(new DeserializerResolver(new IDeserializerFactory[]
+            {
+                new KeyValuePairDeserializerFactory()
+            }));
+
+            DIContainer.Register<ICommandBuilder>(new CommandBuilder());
+            DIContainer.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
+
+            #endregion Service Registrations
         }
 
         /// <summary>
-        /// Retrieves the deserializer resolver.
+        /// Resolves a type to a concrete implementation.
         /// </summary>
-        /// <returns>IDeserializerResolver.</returns>
-        public virtual IDeserializerResolver RetrieveDeserializerResolver()
+        /// <typeparam name="TDependency">The type of the  dependency.</typeparam>
+        /// <returns>Dependency.</returns>
+        public virtual TDependency ResolveDependency<TDependency>()
+            where TDependency : class
         {
-            return new DeserializerResolver();
-        }
-
-        /// <summary>
-        /// Retrieves the property metadata extractor Default uses ComponentModel Attributes..
-        /// </summary>
-        /// <returns>IPropertyMetadataExtractor.</returns>
-        public virtual IPropertyMetadataExtractor RetrievePropertyMetadataExtractor()
-        {
-            return new ComponentModelMetadataExtractor();
+            return DIContainer.Resolve<TDependency>();
         }
 
         /// <summary>
@@ -52,92 +65,7 @@ namespace Susanoo
         /// <returns>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;.</returns>
         public virtual IEnumerable<Type> RetrieveIgnoredPropertyAttributes()
         {
-            return new [] { typeof(NotMappedAttribute) };
-        }
-
-        /// <summary>
-        /// Called when an execution exception is encountered.
-        /// </summary>
-        /// <param name="info">The information.</param>
-        /// <param name="exception">The exception.</param>
-        /// <param name="parameters">The parameters.</param>
-        public virtual void OnExecutionException(ICommandInfo info, Exception exception,
-            DbParameter[] parameters)
-        {
-            throw exception;
-        }
-
-        private Regex _orderByRegex;
-
-        /// <summary>
-        /// Retrieves the order by regex used for whitelisting allowed cahracters.
-        /// </summary>
-        /// <returns>Regex.</returns>
-        public virtual Regex RetrieveOrderByRegex()
-        {
-            return _orderByRegex ?? (_orderByRegex = new Regex(
-                @"\A
-		            # 1. Match all of these conditions
-		            (?:
-		              # 2. Leading Whitespace
-		              \ *
-		              # 3. ColumnName: a-z, A-Z, 0-9, _
-		              (?<ColumnName>[0-9_a-z]*)
-		              # 4. Whitespace
-		              \ *
-		              # 5. SortDirection: ASC or DESC case-insensitive
-		              (?<SortDirection>ASC|DESC)?
-		              # 6. Optional Comma
-		              ,?
-		            )*
-		            \z",
-                RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace));
-        }
-
-        /// <summary>
-        /// Retrieves the query wrapper format.
-        /// </summary>
-        /// <returns>System.String.</returns>
-        public virtual string RetrieveQueryWrapperFormat()
-        {
-            return 
-@"SELECT *{1}
-FROM (
-    {0}
-) susanoo_query_wrapper
-WHERE 1=1";
-        }
-
-        /// <summary>
-        /// Builds a query wrapper.
-        /// </summary>
-        public virtual CommandModifier BuildQueryWrapper(string additionalColumns = null)
-        {
-            if (additionalColumns != null)
-            {
-                additionalColumns = additionalColumns.Trim();
-
-                if (!additionalColumns.StartsWith(","))
-                    additionalColumns = ", " + additionalColumns;
-            }
-
-            var format = CommandManager.Bootstrapper
-                    .RetrieveQueryWrapperFormat();
-
-            return new CommandModifier
-            {
-                Description = "SusanooWrapper",
-                Priority = 1000,
-                ModifierFunc = info => new ExecutableCommandInfo
-                {
-
-                    CommandText = string.Format(format, info.CommandText, additionalColumns ?? string.Empty),
-                    DbCommandType = info.DbCommandType,
-                    Parameters = info.Parameters
-                },
-                CacheHash = HashBuilder.Compute(format)
-            };
-
+            return new[] { typeof(NotMappedAttribute) };
         }
     }
 }

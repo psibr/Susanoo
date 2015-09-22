@@ -5,10 +5,10 @@ using System.Threading;
 namespace Susanoo
 {
     /// <summary>
-    /// Example of Thread static scoping. May use this in the future for command batching.
+    /// Example of Thread static scoping. May use this in the future for CommandBuilder batching.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal sealed class Scope<T> : IDisposable where T : class
+    internal sealed class Scope<T> : IDisposable where T: class
     {
         private bool _disposed;
         private readonly bool _ownsInstance;
@@ -23,7 +23,7 @@ namespace Susanoo
         public Scope(T instance, bool ownsInstance)
         {
             if (instance == null)
-                throw new ArgumentNullException("instance");
+                throw new ArgumentNullException(nameof(instance));
             _instance = instance;
             _ownsInstance = ownsInstance;
 
@@ -32,10 +32,7 @@ namespace Susanoo
             _head = this;
         }
 
-        public static T Current
-        {
-            get { return _head != null ? _head._instance : null; }
-        }
+        public static T Current => _head?._instance;
 
         public void Dispose()
         {
@@ -50,7 +47,7 @@ namespace Susanoo
                 if (_ownsInstance)
                 {
                     var disposable = _instance as IDisposable;
-                    if (disposable != null) disposable.Dispose();
+                    disposable?.Dispose();
                 }
             }
         }

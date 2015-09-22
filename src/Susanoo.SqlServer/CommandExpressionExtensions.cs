@@ -4,8 +4,7 @@ using System.Data.Common;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Numerics;
-using Susanoo.Pipeline.Command;
-using Susanoo.Pipeline.Command.ResultSets;
+using Susanoo.Command;
 using Susanoo.SqlServer;
 
 namespace Susanoo
@@ -18,7 +17,7 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="commandExpression">The command expression.</param>
         /// <param name="property">The property.</param>
         /// <param name="typeName">Name of the type.</param>
@@ -32,8 +31,8 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
-        /// <param name="commandExpression">The command expression.</param>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <param name="commandExpression">The CommandBuilder expression.</param>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="typeName">Name of the type.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
@@ -49,8 +48,8 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
-        /// <param name="commandExpression">The command expression.</param>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <param name="commandExpression">The CommandBuilder expression.</param>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="typeName">Name of the type.</param>
         /// <param name="parameterOptions">The parameter options.</param>
@@ -77,8 +76,8 @@ namespace Susanoo
         /// <summary>
         /// Includes the property as structured data type (Table Valued Parameter).
         /// </summary>
-        /// <typeparam name="TFilter">The type of the t filter.</typeparam>
-        /// <param name="commandExpression">The command expression.</param>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <param name="commandExpression">The CommandBuilder expression.</param>
         /// <param name="property">The property.</param>
         /// <param name="typeName">Name of the type.</param>
         /// <param name="parameterOptions">The parameter options.</param>

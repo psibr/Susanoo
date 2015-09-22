@@ -4,7 +4,6 @@ using System;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
-using Susanoo.Pipeline.Command.ResultSets.Processing.Deserialization;
 
 #endregion
 
@@ -21,7 +20,7 @@ namespace Susanoo.Tests.Dynamic
         {
             for (int i = 0; i < 500; i ++)
             {
-                var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+                var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                     .DefineResults<dynamic>()
                     .Realize()
                     .Execute(_databaseManager);
@@ -33,7 +32,7 @@ namespace Susanoo.Tests.Dynamic
         [Test(Description = "Tests that dynamic results correctly map data to CLR types.")]
         public void DynamicResultDataTypes()
         {
-            var results = CommandManager.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
+            var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<dynamic>()
                 .Realize()
                 .Execute(_databaseManager);
@@ -48,13 +47,13 @@ namespace Susanoo.Tests.Dynamic
             Assert.IsTrue(first.TinyInt is byte);
             Assert.AreEqual(first.TinyInt, (byte)0x05);
 
-            Assert.IsTrue(first.SmallInt is Int16);
-            Assert.AreEqual(first.SmallInt, (Int16)0x0004);
+            Assert.IsTrue(first.SmallInt is short);
+            Assert.AreEqual(first.SmallInt, (short)0x0004);
 
             Assert.IsTrue(first.Int is int);
             Assert.AreEqual(first.Int, 1);
 
-            Assert.IsTrue(first.BigInt is Int64);
+            Assert.IsTrue(first.BigInt is long);
             Assert.AreEqual(first.BigInt, 2147483648);
 
             Assert.IsTrue(first.SmallMoney is decimal);

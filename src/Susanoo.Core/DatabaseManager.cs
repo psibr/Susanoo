@@ -6,9 +6,12 @@ using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.CompilerServices;
+#if !NETFX40
 using System.Threading;
 using System.Threading.Tasks;
+#endif
 using System.Transactions;
 
 #endregion
@@ -30,8 +33,8 @@ namespace Susanoo
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <param name="providerSpecificCommandSettings">The provider specific command settings.</param>
-        /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. </exception>
+        /// <param name="providerSpecificCommandSettings">The provider specific CommandBuilder settings.</param>
+        /// <exception cref="NotSupportedException">The database provider type specified is not supported. </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName,
             Action<DbCommand> providerSpecificCommandSettings)
             : this(provider, connectionStringName)
@@ -44,7 +47,7 @@ namespace Susanoo
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <exception cref="System.NotSupportedException">The database provider type specified is not supported. </exception>
+        /// <exception cref="NotSupportedException">The database provider type specified is not supported. </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName)
         {
             Provider = provider;
@@ -57,7 +60,7 @@ namespace Susanoo
         /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <exception cref="System.ArgumentException">Provider is a required component of the connection
+        /// <exception cref="ArgumentException">Provider is a required component of the connection
         /// string.;connectionStringName</exception>
         public DatabaseManager(string connectionStringName)
         {
@@ -68,14 +71,40 @@ namespace Susanoo
 
             if (Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "connectionStringName");
+                    nameof(connectionStringName));
         }
         
-                protected DatabaseManager()
+        private DatabaseManager()
         {
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        public DatabaseManager(DbConnection connection)
+        {
+            this._connection = connection;
+
+            if (new[]
+            {
+                ConnectionState.Connecting,
+                ConnectionState.Open,
+                ConnectionState.Executing,
+                ConnectionState.Fetching
+            }.Contains(connection.State))
+            {
+                this._explicitlyOpened = true;
+            }
+        }
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string name by resolving from configuration.
+        /// </summary>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
         public static DatabaseManager CreateFromConnectionStringName(string connectionStringName)
         {
             var manager = new DatabaseManager();
@@ -87,31 +116,45 @@ namespace Susanoo
 
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "connectionStringName");
+                    nameof(connectionStringName));
 
             return manager;
         }
 
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string name by resolving from configuration.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <returns>DatabaseManager.</returns>
         public static DatabaseManager CreateFromConnectionStringName(DbProviderFactory provider, string connectionStringName)
         {
-            var manager = new DatabaseManager();
-            manager.Provider = provider;
+            var manager = new DatabaseManager
+            {
+                Provider = provider,
+                _connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
+                    .ConnectionString
+            };
 
-            manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
-                .ConnectionString;
 
             return manager;
         }
 
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string name by resolving from configuration.
+        /// </summary>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <param name="providerName">Name of the provider.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
         public static DatabaseManager CreateFromConnectionStringName(string connectionStringName, string providerName)
         {
-            var manager = new DatabaseManager();
-            manager.Provider =
-                DbProviderFactories.GetFactory(providerName);
+            var manager = new DatabaseManager { Provider = DbProviderFactories.GetFactory(providerName) };
 
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "providerName");
+                    nameof(providerName));
 
             manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName]
                 .ConnectionString;
@@ -119,18 +162,44 @@ namespace Susanoo
             return manager;
         }
 
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string and providerName.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="providerName">Name of the provider.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
         public static DatabaseManager CreateFromConnectionString(string connectionString, string providerName)
-        {
-            var manager = new DatabaseManager();
 
-            manager._connectionString = connectionString;
-            
-            manager.Provider =
-                DbProviderFactories.GetFactory(providerName);
+        {
+            var manager = new DatabaseManager
+            {
+                _connectionString = connectionString,
+                Provider = DbProviderFactories.GetFactory(providerName)
+            };
 
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
-                    "providerName");
+                    nameof(providerName));
+            
+            return manager;
+        }
+
+        /// <summary>
+        /// Creates a DatabaseManager from a connection string and providerName.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
+        /// <param name="connectionString">The connection string.</param>
+        /// <returns>DatabaseManager.</returns>
+        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
+        public static DatabaseManager CreateFromConnectionString(DbProviderFactory provider, string connectionString)
+
+        {
+            var manager = new DatabaseManager
+            {
+                _connectionString = connectionString,
+                Provider = provider
+            };
 
             return manager;
         }
@@ -163,16 +232,17 @@ namespace Susanoo
         /// Executes the data reader.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout"></param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
-        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        /// <exception cref="ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType,
+        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, TimeSpan commandTimeout,
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             IDataReader results = null;
 
@@ -181,7 +251,7 @@ namespace Susanoo
                 var open = _explicitlyOpened;
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     // If the connection was open before execute was called, then do not automatically close connection.
                     results = open ? command.ExecuteReader() : command.ExecuteReader(CommandBehavior.CloseConnection);
@@ -203,15 +273,17 @@ namespace Susanoo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>A single value of type T.</returns>
-        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        /// <exception cref="System.ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, params DbParameter[] parameters)
+        public virtual T ExecuteScalar<T>(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = _explicitlyOpened;
 
@@ -219,7 +291,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     var result = CastValue(typeof(T), command.ExecuteScalar());
 
@@ -237,15 +309,17 @@ namespace Susanoo
         /// Executes the stored procedure.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        /// <exception cref="System.ArgumentNullException">commandText</exception>
+        /// <exception cref="System.ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual int ExecuteNonQuery(string commandText, CommandType commandType, params DbParameter[] parameters)
+        public virtual int ExecuteNonQuery(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = (Connection.State != ConnectionState.Closed);
 
@@ -253,7 +327,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     return command.ExecuteNonQuery();
                 }
@@ -271,7 +345,7 @@ namespace Susanoo
         /// <returns>DbParameter.</returns>
         public virtual DbParameter CreateParameter()
         {
-            return Provider.CreateParameter();
+            return Provider?.CreateParameter() ?? Connection.CreateCommand().CreateParameter();
         }
 
         /// <summary>
@@ -334,10 +408,8 @@ namespace Susanoo
         /// Gets the state of the connection.
         /// </summary>
         /// <value>The state.</value>
-        public ConnectionState State
-        {
-            get { return Connection.State; }
-        }
+        public ConnectionState State =>
+            Connection.State;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -356,7 +428,7 @@ namespace Susanoo
         /// <param name="records">The records.</param>
         /// <param name="whiteList">The white list of properties to include. Default is NULL.</param>
         /// <param name="blackList">The black list of properties to exclude. Default is NULL.</param>
-        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void BulkCopy<TRecord>(string destinationTableName,
             IEnumerable<TRecord> records,
             IEnumerable<string> whiteList = null,
@@ -399,51 +471,42 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Begins a transaction.
-        /// </summary>
-        /// <returns>DbTransaction.</returns>
-        [Obsolete("Prefer using System.Transactions.TransactionScope.", false)]
-        public virtual DbTransaction BeginTransaction()
-        {
-            OpenConnectionInternal();
-            return Connection.BeginTransaction();
-        }
-
-        /// <summary>
-        /// Preps the command.
+        /// Preps the CommandBuilder.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandText">The CommandBuilder text.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>DbCommand.</returns>
         protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType,
-            params DbParameter[] parameters)
+             TimeSpan commandTimeout, params DbParameter[] parameters)
         {
             var command = Connection.CreateCommand();
 
-            command.CommandType = commandType;
-            command.Connection = Connection;
+                command.CommandType = commandType;
+                command.Connection = Connection;
 
-            command.CommandText = commandText;
+                command.CommandText = commandText;
 
-            if (parameters != null)
-                foreach (var param in parameters)
-                    command.Parameters.Add(param);
+                command.CommandTimeout = Convert.ToInt32(commandTimeout.TotalSeconds);
 
-            CallProviderSpecificCommandSettings(command);
+                if (parameters != null)
+                    foreach (var param in parameters)
+                        command.Parameters.Add(param);
+
+                CallProviderSpecificCommandSettings(command);
 
             return command;
         }
 
         /// <summary>
-        /// Adjusts the command by provider.
+        /// Adjusts the CommandBuilder by provider.
         /// </summary>
-        /// <param name="command">The command.</param>
+        /// <param name="command">The CommandBuilder.</param>
         protected virtual void CallProviderSpecificCommandSettings(DbCommand command)
         {
-            if (_providerSpecificCommandSettings != null)
-                _providerSpecificCommandSettings(command);
+            _providerSpecificCommandSettings?.Invoke(command);
         }
 
         /// <summary>
@@ -485,7 +548,8 @@ namespace Susanoo
         /// Executes the data reader asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
@@ -493,11 +557,12 @@ namespace Susanoo
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual async Task<IDataReader> ExecuteDataReaderAsync(string commandText,
             CommandType commandType,
+            TimeSpan commandTimeout,
             CancellationToken cancellationToken = default(CancellationToken),
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             IDataReader results = null;
             var open = _explicitlyOpened;
@@ -505,7 +570,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
 
                     // If the connection was open before execute was called, then do not automatically close connection.
@@ -529,7 +594,8 @@ namespace Susanoo
         /// Executes the stored procedure asynchronously.
         /// </summary>
         /// <param name="commandText">Name of the procedure.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.Int32.</returns>
@@ -537,11 +603,12 @@ namespace Susanoo
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public virtual async Task<int> ExecuteNonQueryAsync(string commandText,
             CommandType commandType,
+            TimeSpan commandTimeout,
             CancellationToken cancellationToken = default(CancellationToken),
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = _explicitlyOpened;
 
@@ -549,7 +616,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }
@@ -565,19 +632,21 @@ namespace Susanoo
         /// Execute scalar as an asynchronous operation.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="commandText">The command text.</param>
-        /// <param name="commandType">Type of the command.</param>
+        /// <param name="commandText">The CommandBuilder text.</param>
+        /// <param name="commandType">Type of the CommandBuilder.</param>
+        /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;T&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         public async Task<T> ExecuteScalarAsync<T>(string commandText,
             CommandType commandType,
+            TimeSpan commandTimeout,
             CancellationToken cancellationToken = default(CancellationToken),
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
 
             var open = _explicitlyOpened;
 
@@ -585,7 +654,7 @@ namespace Susanoo
             {
                 OpenConnectionInternal();
 
-                using (var command = PrepCommand(Connection, commandText, commandType, parameters))
+                using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
                     return
                         (T)
