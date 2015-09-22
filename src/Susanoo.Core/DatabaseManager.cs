@@ -345,7 +345,7 @@ namespace Susanoo
         /// <returns>DbParameter.</returns>
         public virtual DbParameter CreateParameter()
         {
-            return Provider.CreateParameter();
+            return Provider?.CreateParameter() ?? Connection.CreateCommand().CreateParameter();
         }
 
         /// <summary>

@@ -120,6 +120,7 @@
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
     <Compile Include="Command\NullValueMode.cs" />
+    <Compile Include="DatabaseManagerFactory.cs" />
     <Compile Include="DbConnectionExtensions.cs" />
     <Compile Include="Deserialization\KeyValuePairDeserializer.cs" />
     <Compile Include="Exceptions\SusanooExecutionException.cs" />
