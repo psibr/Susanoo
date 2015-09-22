@@ -133,7 +133,9 @@
     <Compile Include="Processing\CommandProcessorExtensions.cs" />
     <Compile Include="Processing\ICommandProcessorInterop.cs" />
     <Compile Include="Processing\ICommandProcessorWithResults.cs" />
+    <Compile Include="Processing\INoResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\ISingleResultSetCommandProcessorFactory.cs" />
+    <Compile Include="Processing\NoResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\SingleResultSetCommandProcessorFactory.cs" />
     <Compile Include="ResultSets\CommandResultCommon.cs" />
     <Compile Include="ResultSets\ICommandResultExpressionCore.cs" />
@@ -199,7 +201,6 @@
     <Compile Include="Transforms\SingleResultSetTransformProxy.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Properties\Key.snk" />
     <None Include="Susanoo.Core.nuspec" />
   </ItemGroup>

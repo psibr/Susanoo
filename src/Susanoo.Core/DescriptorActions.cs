@@ -35,6 +35,11 @@ namespace Susanoo
         /// <summary>
         /// Indicates delete action allowed
         /// </summary>
-        Delete = 0x08
+        Delete = 0x08,
+
+        /// <summary>
+        /// Indicates filter mapping is allowed
+        /// </summary>
+        Filter = 0x16
     }
 }

@@ -8,7 +8,7 @@ namespace Susanoo.ResultSets
     /// <summary>
     /// Exposes property mapping export capabilities.
     /// </summary>
-    public interface ICommandResultMappingExport : 
+    public interface ICommandResultMappingExport :
         IFluentPipelineFragment
     {
         /// <summary>

@@ -23,6 +23,9 @@ namespace Susanoo.Tests.Static.MultipleResults
             var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;" +
                                                        "SELECT * FROM #DataTypeTable;", CommandType.Text)
                 .DefineResults<TypeTestModel, TypeTestModel>()
+                .ForResultsOfType<TypeTestModel>(expression =>
+                    expression.ForProperty(o => o.BigInt, configuration =>
+                        configuration.UseAlias("")))
                 .Realize("IdenticalResults2Test")
                 .Execute(_databaseManager);
 

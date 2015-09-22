@@ -22,9 +22,6 @@ namespace Susanoo.Processing
         /// <param name="name">The name.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public ICommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(ICommandResultInfo<TFilter> mappings,
-            string name = null)
-        {
-            return new SingleResultSetCommandProcessor<TFilter, TResult>(mappings, name);
-        }
+            string name = null) => new SingleResultSetCommandProcessor<TFilter, TResult>(mappings, name);
     }
 }

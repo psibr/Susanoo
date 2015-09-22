@@ -61,6 +61,7 @@ namespace Susanoo.Processing
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
         /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="key" /> is  null.</exception>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>>
             Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
@@ -120,8 +121,7 @@ namespace Susanoo.Processing
                     results[1] as IEnumerable<TResult2>);
 
                 if (ResultCachingEnabled)
-                    ResultCacheContainer.TryAdd(hashCode,
-                        new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
+                        ResultCacheContainer.TryAdd(hashCode, new CacheItem(finalResults, ResultCachingMode, ResultCachingInterval));
             }
             return finalResults as Tuple<IEnumerable<TResult1>,
                 IEnumerable<TResult2>>;
@@ -162,6 +162,10 @@ namespace Susanoo.Processing
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2&gt;.</returns>
+        /// <exception cref="ArgumentException">
+        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        ///     this is confusing and therefor is not allowed.;mode
+        /// </exception>
         public ICommandProcessor<TFilter, TResult1, TResult2>
             EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
@@ -219,6 +223,7 @@ namespace Susanoo.Processing
         /// IEnumerable&lt;TResult1&gt;,
         /// IEnumerable&lt;TResult2&gt;,
         /// IEnumerable&lt;TResult3&gt;&gt;.</returns>
+        /// <exception cref="ArgumentNullException">item</exception>
         public Tuple<IEnumerable<TResult1>,
             IEnumerable<TResult2>,
             IEnumerable<TResult3>>
@@ -329,6 +334,10 @@ namespace Susanoo.Processing
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
+        /// <exception cref="ArgumentException">
+        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        ///     this is confusing and therefor is not allowed.;mode
+        /// </exception>
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3>
             EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
@@ -507,6 +516,10 @@ namespace Susanoo.Processing
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
         /// <returns>ICommandProcessor&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
+        /// <exception cref="ArgumentException">
+        ///     @Calling EnableResultCaching with CacheMode None effectively would disable caching,
+        ///     this is confusing and therefor is not allowed.;mode
+        /// </exception>
         public ICommandProcessor<TFilter, TResult1, TResult2, TResult3, TResult4>
             EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
