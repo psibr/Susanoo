@@ -19,9 +19,9 @@ namespace Susanoo.Transforms
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class SingleResultSetTransformProxy<TFilter, TResult>
-            : ICommandProcessor<TFilter, TResult>
+            : ISingleResultSetCommandProcessor<TFilter, TResult>
     {
-        private readonly ICommandProcessor<TFilter, TResult> _source;
+        private readonly ISingleResultSetCommandProcessor<TFilter, TResult> _source;
         private readonly IEnumerable<CommandTransform> _transforms;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Susanoo.Transforms
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
-        public SingleResultSetTransformProxy(ICommandProcessor<TFilter, TResult> source, IEnumerable<CommandTransform> transforms)
+        public SingleResultSetTransformProxy(ISingleResultSetCommandProcessor<TFilter, TResult> source, IEnumerable<CommandTransform> transforms)
         {
             _source = source;
             _transforms = transforms;
@@ -97,8 +97,8 @@ namespace Susanoo.Transforms
         /// Allows a hook in an instance of a processor
         /// </summary>
         /// <param name="interceptOrProxy">The intercept or proxy.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult> InterceptOrProxyWith(Func<ICommandProcessor<TFilter, TResult>, ICommandProcessor<TFilter, TResult>> interceptOrProxy)
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        public ISingleResultSetCommandProcessor<TFilter, TResult> InterceptOrProxyWith(Func<ISingleResultSetCommandProcessor<TFilter, TResult>, ISingleResultSetCommandProcessor<TFilter, TResult>> interceptOrProxy)
         {
             return interceptOrProxy(this);
         }
@@ -172,10 +172,10 @@ namespace Susanoo.Transforms
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
         /// this is confusing and therefor is not allowed.;mode</exception>
-        public ICommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
+        public ISingleResultSetCommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent, double? interval = null)
         {
             _source.EnableResultCaching(mode, interval);
             return this;

@@ -7,7 +7,7 @@ using Susanoo.Mapping.Properties;
 
 #endregion
 
-namespace Susanoo.Pipeline
+namespace Susanoo
 {
     /// <summary>
     /// Describes the required methods for determining if a property can be mapped using Susanoo.

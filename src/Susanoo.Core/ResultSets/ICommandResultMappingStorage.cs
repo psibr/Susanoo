@@ -14,7 +14,7 @@ namespace Susanoo.ResultSets
     /// Provides a common form of storage and retrieval for mapping details of results.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandResultImplementor<TFilter> : IFluentPipelineFragment
+    public interface ICommandResultMappingStorage<TFilter> : IFluentPipelineFragment
     {
         /// <summary>
         /// Retrieves a mapping exporter.

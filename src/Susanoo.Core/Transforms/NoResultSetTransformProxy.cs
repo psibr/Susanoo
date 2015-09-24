@@ -14,18 +14,18 @@ namespace Susanoo.Transforms
     /// A proxy for no result set command processors that allows transforms to be applied prior to execution.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public class NoResultSetTransformProxy<TFilter>
-        : ICommandProcessor<TFilter>
+    public class NoResultTransformProxy<TFilter>
+        : INoResultCommandProcessor<TFilter>
     {
-        private readonly ICommandProcessor<TFilter> _source;
+        private readonly INoResultCommandProcessor<TFilter> _source;
         private readonly IEnumerable<CommandTransform> _transforms;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NoResultSetTransformProxy{TFilter}"/> class.
+        /// Initializes a new instance of the <see cref="NoResultTransformProxy{TFilter}"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
-        public NoResultSetTransformProxy(ICommandProcessor<TFilter> source, IEnumerable<CommandTransform> transforms)
+        public NoResultTransformProxy(INoResultCommandProcessor<TFilter> source, IEnumerable<CommandTransform> transforms)
         {
             _source = source;
             _transforms = transforms;
@@ -55,8 +55,8 @@ namespace Susanoo.Transforms
         /// Allows a hook in an instance of a processor
         /// </summary>
         /// <param name="interceptOrProxy">The intercept or proxy.</param>
-        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
-        public ICommandProcessor<TFilter> InterceptOrProxyWith(Func<ICommandProcessor<TFilter>, ICommandProcessor<TFilter>> interceptOrProxy)
+        /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
+        public INoResultCommandProcessor<TFilter> InterceptOrProxyWith(Func<INoResultCommandProcessor<TFilter>, INoResultCommandProcessor<TFilter>> interceptOrProxy)
         {
             return interceptOrProxy(this);
         }

@@ -65,7 +65,7 @@ namespace Susanoo.Mapping.Properties
         /// Gets the <c>PropertyInfo</c> that describes the property.
         /// </summary>
         /// <value>The property reflection meta data.</value>
-        public virtual PropertyInfo PropertyMetadata { get; private set; }
+        public virtual PropertyInfo PropertyMetadata { get; }
 
         /// <summary>
         /// Gets the hash code used for caching result mapping compilations.

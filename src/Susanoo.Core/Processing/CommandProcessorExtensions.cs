@@ -20,7 +20,7 @@ namespace Susanoo
         /// <param name="timeout">The timeout.</param>
         /// <returns>TCommandProcessor.</returns>
         public static TCommandProcessor SetTimeout<TCommandProcessor>(this TCommandProcessor processor, TimeSpan timeout)
-            where TCommandProcessor : ICommandProcessorInterop
+            where TCommandProcessor : ICommandProcessor
         {
             processor.Timeout = timeout;
             return processor;

@@ -17,10 +17,10 @@ namespace Susanoo
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">At least one transform is required.</exception>
-        public static ICommandProcessor<TFilter, TResult> ApplyTransforms<TFilter, TResult>(
-            this ICommandProcessor<TFilter, TResult> source, Func<ICommandProcessor<TFilter, TResult>, IEnumerable<CommandTransform>> transforms)
+        public static ISingleResultSetCommandProcessor<TFilter, TResult> ApplyTransforms<TFilter, TResult>(
+            this ISingleResultSetCommandProcessor<TFilter, TResult> source, Func<ISingleResultSetCommandProcessor<TFilter, TResult>, IEnumerable<CommandTransform>> transforms)
         {
             if (transforms == null)
                 throw new ArgumentNullException(nameof(transforms), "At least one transform is required.");

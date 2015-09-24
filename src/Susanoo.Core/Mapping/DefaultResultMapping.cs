@@ -9,7 +9,8 @@ namespace Susanoo.Mapping
     /// <summary>
     /// Simple mapping when none were explicitly provided.
     /// </summary>
-    public class DefaultResultMapping : IMappingExport
+    public class DefaultResultMapping 
+        : IMappingExport
     {
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();

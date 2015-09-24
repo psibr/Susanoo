@@ -20,7 +20,7 @@
 //        /// </summary>
 //        /// <typeparam name="TFilter">The type of the filter.</typeparam>
 //        /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-//        public static ICommandProcessor<TFilter> DefineInsert<TFilter>(string tableName, Func<ICommandExpression<TFilter>, ICommandExpression<TFilter>> commandFunc = null)
+//        public static INoResultCommandProcessor<TFilter> DefineInsert<TFilter>(string tableName, Func<ICommandExpression<TFilter>, ICommandExpression<TFilter>> commandFunc = null)
 //        {
 //            var guid = Guid.NewGuid().ToString();
 

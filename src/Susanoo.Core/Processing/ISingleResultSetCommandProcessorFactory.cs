@@ -14,7 +14,7 @@ namespace Susanoo.Processing
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        ICommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(ICommandResultInfo<TFilter> mappings, string name = null);
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        ISingleResultSetCommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(ICommandResultInfo<TFilter> mappings, string name = null);
     }
 }

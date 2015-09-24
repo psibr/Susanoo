@@ -21,7 +21,7 @@ namespace Susanoo.Transforms
         /// or
         /// CommandText must contain an Order By clause to be paged.</exception>
         public static CommandTransform OffsetFetch<TFilter, TResult>(
-            ICommandProcessor<TFilter, TResult> processor, string format,
+            ISingleResultSetCommandProcessor<TFilter, TResult> processor, string format,
             string rowCountParameterName = "RowCount", string pageNumberParameterName = "PageNumber")
         {
             var commandInfo = processor.CommandBuilderInfo;
@@ -55,7 +55,7 @@ namespace Susanoo.Transforms
         /// or
         /// CommandText must contain an Order By clause to be paged.</exception>
         public static CommandTransform OffsetFetch<TFilter, TResult>(
-            ICommandProcessor<TFilter, TResult> processor,
+            ISingleResultSetCommandProcessor<TFilter, TResult> processor,
             string rowCountParameterName = "RowCount", string pageNumberParameterName = "PageNumber", bool computePageNumber = true)
         {
             var format = computePageNumber
@@ -79,7 +79,7 @@ namespace Susanoo.Transforms
         /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically built.</exception>
         /// <exception cref="ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically built.</exception>
         public static CommandTransform QueryWrapperWithTotalRowCount<TFilter, TResult>(
-            ICommandProcessor<TFilter, TResult> processor, 
+            ISingleResultSetCommandProcessor<TFilter, TResult> processor, 
             string totalRowsColumnName = "TotalRows", string format = "{0} = COUNT(*) OVER ()")
         {
             var commandInfo = processor.CommandBuilderInfo;

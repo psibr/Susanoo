@@ -9,19 +9,19 @@ using Susanoo.ResultSets;
 namespace Susanoo.Processing
 {
     /// <summary>
-    /// Builds a command processor that returns a single result set.
+    /// Builds a command processor that returns multiple result sets.
     /// </summary>
-    public class SingleResultSetCommandProcessorFactory : ISingleResultSetCommandProcessorFactory
+    public class MultipleResultSetCommandProcessorFactory : IMultipleResultSetCommandProcessorFactory
     {
         /// <summary>
         /// Builds the command processor.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
+        /// <param name="resultTypes">The result types.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ISingleResultSetCommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(ICommandResultInfo<TFilter> mappings,
-            string name = null) => new SingleResultSetCommandProcessor<TFilter, TResult>(mappings, name);
+        public IMultipleResultSetCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandResultInfo<TFilter> mappings,
+            string name = null, params Type[] resultTypes) => new MultipleResultSetCommandProcessor<TFilter>(mappings, name, resultTypes);
     }
 }

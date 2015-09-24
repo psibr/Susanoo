@@ -16,7 +16,7 @@ namespace Susanoo.Processing
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public abstract class CommandProcessorWithResults<TFilter> :
         ICommandProcessorWithResults<TFilter>,
-        ICommandProcessorInterop<TFilter>
+        ICommandProcessor<TFilter>
     {
         /// <summary>
         /// Initializes pipeline components of the result processor
@@ -79,7 +79,6 @@ namespace Susanoo.Processing
         /// <summary>
         ///     Clears any column index information that may have been cached.
         /// </summary>
-        /// <exception cref="System.NotImplementedException"></exception>
         public virtual void ClearColumnIndexInfo()
         {
         }
@@ -142,7 +141,7 @@ namespace Susanoo.Processing
         /// </summary>
         /// <param name="hashCode">The hash code.</param>
         /// <param name="value">The value.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public bool TryRetrieveCacheResult(BigInteger hashCode, out object value)
         {
             CacheItem cache;

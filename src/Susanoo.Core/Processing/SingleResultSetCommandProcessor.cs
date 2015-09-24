@@ -2,6 +2,7 @@
 using Susanoo.Deserialization;
 using Susanoo.ResultSets;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -22,8 +23,7 @@ namespace Susanoo.Processing
     /// <remarks>Appropriate mapping expressions are compiled at the point this interface becomes available.</remarks>
     public sealed class SingleResultSetCommandProcessor<TFilter, TResult> :
         CommandProcessorWithResults<TFilter>,
-        ICommandProcessor<TFilter, TResult>,
-        IResultMapper<TResult>
+        ISingleResultSetCommandProcessor<TFilter, TResult>
     {
         private ColumnChecker _columnChecker;
 
@@ -41,7 +41,7 @@ namespace Susanoo.Processing
                 .ResolveDependency<IDeserializerResolver>()
                 .ResolveDeserializer<TResult>(mappings.GetExporter());
 
-            var hash = (CacheHash * 31) ^ CommandResultCommon<TFilter>
+            var hash = (CacheHash * 31) ^ CommandResultExpression<TFilter>
                 .GetTypeArgumentHashCode(typeof(SingleResultSetCommandProcessor<TFilter, TResult>));
 
             CommandManager.Instance.RegisterCommandProcessor(this, name, hash);
@@ -51,7 +51,7 @@ namespace Susanoo.Processing
         /// Gets the compiled mapping.
         /// </summary>
         /// <value>The compiled mapping.</value>
-        private Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CompiledMapping { get; set; }
+        private IDeserializer<TResult> CompiledMapping { get; set; }
 
         /// <summary>
         /// Gets or sets the column report.
@@ -74,10 +74,10 @@ namespace Susanoo.Processing
         /// </summary>
         /// <param name="mode">The mode.</param>
         /// <param name="interval">The interval.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentException">@Calling EnableResultCaching with CacheMode None effectively would disable caching,
         /// this is confusing and therefor is not allowed.;mode</exception>
-        public ICommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent,
+        public ISingleResultSetCommandProcessor<TFilter, TResult> EnableResultCaching(CacheMode mode = CacheMode.Permanent,
             double? interval = null)
         {
             ActivateResultCaching(mode, interval);
@@ -88,7 +88,6 @@ namespace Susanoo.Processing
         /// <summary>
         /// Clears any column index information that may have been cached.
         /// </summary>
-        /// <exception cref="System.NotImplementedException"></exception>
         public override void ClearColumnIndexInfo()
         {
             _columnChecker = new ColumnChecker();
@@ -98,8 +97,8 @@ namespace Susanoo.Processing
         /// Allows a hook in an instance of a processor
         /// </summary>
         /// <param name="interceptOrProxy">The intercept or proxy.</param>
-        /// <returns>ICommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ICommandProcessor<TFilter, TResult> InterceptOrProxyWith(Func<ICommandProcessor<TFilter, TResult>, ICommandProcessor<TFilter, TResult>> interceptOrProxy)
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        public ISingleResultSetCommandProcessor<TFilter, TResult> InterceptOrProxyWith(Func<ISingleResultSetCommandProcessor<TFilter, TResult>, ISingleResultSetCommandProcessor<TFilter, TResult>> interceptOrProxy)
         {
             return interceptOrProxy(this);
         }
@@ -129,15 +128,6 @@ namespace Susanoo.Processing
         public override BigInteger CacheHash =>
             CommandResultInfo.CacheHash;
 
-        /// <summary>
-        /// Maps the result.
-        /// </summary>
-        /// <param name="record">The record.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        object IResultMapper.MapResult(IDataReader record)
-        {
-            return ((IResultMapper<TResult>)this).MapResult(record);
-        }
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
@@ -186,8 +176,6 @@ namespace Susanoo.Processing
             return Execute(databaseManager, executableCommandInfo);
         }
 
-#if !NETFX40
-
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
         /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
@@ -197,34 +185,6 @@ namespace Susanoo.Processing
         /// <returns>System.Collections.Generic.IEnumerable&lt;TResult&gt;.</returns>
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager,
             IExecutableCommandInfo executableCommandInfo)
-        {
-            return ExecuteAsync(databaseManager, executableCommandInfo, CancellationToken.None).Result;
-        }
-
-#endif
-
-#if !NETFX40
-
-        /// <summary>
-        /// Assembles a data CommandBuilder for an ADO.NET provider,
-        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        /// <param name="executableCommandInfo">The executable command information.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
-            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken)
-#else
-        /// <summary>
-        /// Assembles a data CommandBuilder for an ADO.NET provider,
-        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
-        /// </summary>
-        /// <param name="databaseManager">The database manager.</param>
-        /// <param name="executableCommandInfo">The executable command information.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
-#endif
         {
             var cachedItemPresent = false;
             var hashCode = BigInteger.Zero;
@@ -250,29 +210,16 @@ namespace Susanoo.Processing
             {
                 try
                 {
-#if !NETFX40
-                    using (var records = await databaseManager
-                        .ExecuteDataReaderAsync(
-                            executableCommandInfo.CommandText,
-                            executableCommandInfo.DbCommandType,
-                            Timeout,
-                            cancellationToken,
-                            executableCommandInfo.Parameters)
-                        .ConfigureAwait(false))
-#else
                     using (var records = databaseManager
                         .ExecuteDataReader(
                             executableCommandInfo.CommandText,
                             executableCommandInfo.DbCommandType,
                             Timeout,
                             executableCommandInfo.Parameters))
-#endif
-                    {
-                        results = (((IResultMapper<TResult>)this).MapResult(records, ColumnReport, CompiledMapping));
 
-                        var result = results as ListResult<TResult>;
-                        if (result != null)
-                            ColumnReport = result.ColumnReport;
+                    {
+                        results = CompiledMapping.Deserialize(records, ColumnReport);
+
                     }
                 }
                 catch (Exception ex)
@@ -285,48 +232,71 @@ namespace Susanoo.Processing
                         new CacheItem(results, ResultCachingMode, ResultCachingInterval));
             }
 
-            return results ?? new LinkedList<TResult>();
-        }
-
-        /// <summary>
-        /// Maps the result.
-        /// </summary>
-        /// <param name="reader">The reader.</param>
-        /// <param name="checker">The column checker.</param>
-        /// <param name="mapping">The mapping.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader reader, ColumnChecker checker,
-            Func<IDataReader, ColumnChecker, IEnumerable<TResult>> mapping)
-        {
-            var result = mapping(reader, checker);
-            return result;
-        }
-
-        /// <summary>
-        /// Maps the result.
-        /// </summary>
-        /// <param name="record">The record.</param>
-        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> IResultMapper<TResult>.MapResult(IDataReader record)
-        {
-            return (this as IResultMapper<TResult>).MapResult(record, ColumnReport, CompiledMapping);
-        }
-
-        /// <summary>
-        /// Builds the or regen result mapper from cache.
-        /// </summary>
-        /// <param name="commandResultInfo">The CommandBuilder result information.</param>
-        /// <param name="name">The name.</param>
-        /// <returns>IResultMapper&lt;TResult&gt;.</returns>
-        public static IResultMapper<TResult> BuildOrRegenResultMapper(
-            ICommandResultInfo<TFilter> commandResultInfo, string name = null)
-        {
-            return
-                (IResultMapper<TResult>)
-                    CommandResultExpression<TFilter, TResult>.BuildOrRegenCommandProcessor(commandResultInfo, name);
+            return results ?? Enumerable.Empty<TResult>();
         }
 
 #if !NETFX40
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="executableCommandInfo">The executable command information.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken)
+        {
+            var cachedItemPresent = false;
+            var hashCode = BigInteger.Zero;
+
+            IEnumerable<TResult> results = null;
+
+            if (ResultCachingEnabled)
+            {
+                var parameterAggregate = executableCommandInfo.Parameters.Aggregate(string.Empty,
+                    (p, c) => p + (c.ParameterName + (c.Value ?? string.Empty).ToString()));
+
+                hashCode = HashBuilder.Compute(parameterAggregate);
+
+                object value;
+                cachedItemPresent = TryRetrieveCacheResult(hashCode, out value);
+
+                results = value as IEnumerable<TResult>;
+
+                cachedItemPresent = cachedItemPresent && results != null;
+            }
+
+            if (!cachedItemPresent)
+            {
+                try
+                {
+                    using (var records = await databaseManager
+                        .ExecuteDataReaderAsync(
+                            executableCommandInfo.CommandText,
+                            executableCommandInfo.DbCommandType,
+                            Timeout,
+                            cancellationToken,
+                            executableCommandInfo.Parameters)
+                        .ConfigureAwait(false))
+                    {
+                        results = CompiledMapping.Deserialize(records, ColumnReport);
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
+                }
+
+                if (ResultCachingEnabled)
+                    ResultCacheContainer.TryAdd(hashCode,
+                        new CacheItem(results, ResultCachingMode, ResultCachingInterval));
+            }
+
+            return results ?? Enumerable.Empty<TResult>();
+        }
 
         /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,

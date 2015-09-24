@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
 using Susanoo.Deserialization;
+using Susanoo.Exceptions;
 using Susanoo.Pipeline;
 using Susanoo.Processing;
 using Susanoo.TinyIoC;
@@ -29,18 +30,18 @@ namespace Susanoo
             #region Factory Registrations
 
             DIContainer.Register<IDatabaseManagerFactory>(new DatabaseManagerFactory());
+
             DIContainer.Register<INoResultSetCommandProcessorFactory>(new NoResultSetCommandProcessorFactory());
             DIContainer.Register<ISingleResultSetCommandProcessorFactory>(new SingleResultSetCommandProcessorFactory());
-
+            DIContainer.Register<IMultipleResultSetCommandProcessorFactory>(
+                new MultipleResultSetCommandProcessorFactory());
 
             #endregion Factory Registrations
 
             #region Service Registrations
 
-            DIContainer.Register<IDeserializerResolver>(new DeserializerResolver(new IDeserializerFactory[]
-            {
-                new KeyValuePairDeserializerFactory()
-            }));
+            DIContainer.Register<IDeserializerResolver>(new DeserializerResolver(
+                new KeyValuePairDeserializerFactory()));
 
             DIContainer.Register<ICommandBuilder>(new CommandBuilder());
             DIContainer.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
@@ -52,11 +53,19 @@ namespace Susanoo
         /// Resolves a type to a concrete implementation.
         /// </summary>
         /// <typeparam name="TDependency">The type of the  dependency.</typeparam>
+        /// <exception cref="SusanooDependencyResolutionException"></exception>
         /// <returns>Dependency.</returns>
         public virtual TDependency ResolveDependency<TDependency>()
             where TDependency : class
         {
-            return DIContainer.Resolve<TDependency>();
+            try
+            {
+                return DIContainer.Resolve<TDependency>();
+            }
+            catch (TinyIoCResolutionException ex)
+            {
+                throw new SusanooDependencyResolutionException("Unable to resolve a dependency.", ex);
+            }
         }
 
         /// <summary>

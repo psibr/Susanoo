@@ -15,14 +15,14 @@ namespace Susanoo.ResultSets
     /// Provides a common class for ICommandResultExpressions to store and retrieve mappings.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public class CommandResultImplementor<TFilter> : ICommandResultImplementor<TFilter>
+    public class CommandResultMappingStorage<TFilter> : ICommandResultMappingStorage<TFilter>
     {
         private readonly IDictionary<Type, IMappingExport> _mappingContainer;
         private readonly IDictionary<Type, IMappingExport> _mappingContainerRuntime;
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandResultImplementor{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="CommandResultMappingStorage{TFilter}" /> class.
         /// </summary>
-        public CommandResultImplementor()
+        public CommandResultMappingStorage()
         {
             _mappingContainer = new Dictionary<Type, IMappingExport>();
             _mappingContainerRuntime = new Dictionary<Type, IMappingExport>();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -23,11 +24,11 @@ namespace Susanoo.Deserialization
         /// Compiles mappings.
         /// </summary>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;System.Object&gt;&gt;.</returns>
-        public static Func<IDataReader, ColumnChecker, object> Compile(ICommandResultMappingExport mapping, Type resultType)
+        public static Func<IDataReader, ColumnChecker, IEnumerable> Compile(ICommandResultMappingExporter mapping, Type resultType)
         {
             var listType = typeof(List<>).MakeGenericType(resultType);
-            var listResultType = typeof(ListResult<>).MakeGenericType(resultType);
-            var enumerableType = typeof(object);
+            var listResultType = typeof(List<>).MakeGenericType(resultType);
+            var enumerableType = typeof(IEnumerable);
 
             var addLastMethod = listType.GetMethod("Add", new[] { resultType });
 
@@ -61,12 +62,7 @@ namespace Susanoo.Deserialization
 
             // if(!reader.Read) { return resultSet; }
             innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, ReadMethod)),
-                Expression.Block(
-                    Expression.Call(resultSet,
-                        listResultType.GetMethod("BuildReport",
-                            BindingFlags.Public | BindingFlags.Instance),
-                        columnChecker),
-                    Expression.Break(returnStatement, resultSet))));
+                Expression.Block(Expression.Break(returnStatement, resultSet))));
 
             // descriptor = new TResult();
             innerStatements.Add(Expression.Assign(
@@ -143,7 +139,7 @@ namespace Susanoo.Deserialization
             outerStatements.Add(Expression.Loop(loopBody, returnStatement));
 
             var body = Expression.Block(new[] { columnChecker, resultSet }, outerStatements);
-            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, object>>(body, reader,
+            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, IEnumerable>>(body, reader,
                 columnReport);
 
             var type = CommandManager.DynamicNamespace
@@ -156,8 +152,8 @@ namespace Susanoo.Deserialization
 
             var dynamicType = type.CreateType();
 
-            return (Func<IDataReader, ColumnChecker, object>)Delegate
-                .CreateDelegate(typeof(Func<IDataReader, ColumnChecker, object>),
+            return (Func<IDataReader, ColumnChecker, IEnumerable>)Delegate
+                .CreateDelegate(typeof(Func<IDataReader, ColumnChecker, IEnumerable>),
                     dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
         }
 
@@ -166,7 +162,7 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>(ICommandResultMappingExport mapping, Type resultType)
+        public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>(ICommandResultMappingExporter mapping, Type resultType)
         {
             var result = Compile(mapping, resultType);
 
@@ -192,9 +188,20 @@ namespace Susanoo.Deserialization
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public Func<IDataReader, ColumnChecker, IEnumerable<TResult>> BuildDeserializer<TResult>(ICommandResultMappingExport mappings)
+        public IDeserializer<TResult> BuildDeserializer<TResult>(ICommandResultMappingExporter mappings)
         {
-            return Compile<TResult>(mappings, typeof(TResult));
+            return new Deserializer<TResult>(Compile<TResult>(mappings, typeof(TResult)));
+        }
+
+        /// <summary>
+        /// Builds a deserializer.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
+        /// <param name="mappings">The mappings.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IDeserializer BuildDeserializer(Type resultType, ICommandResultMappingExporter mappings)
+        {
+            return new Deserializer(resultType, Compile(mappings, resultType));
         }
     }
 }

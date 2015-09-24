@@ -14,7 +14,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 #endregion
 
-namespace Susanoo.Pipeline
+namespace Susanoo
 {
     /// <summary>
     /// Default implementation of IPropertyMetadataExtractor that uses Component Model ColumnAttributes to resolve
@@ -32,6 +32,7 @@ namespace Susanoo.Pipeline
         /// <param name="blacklist">The blacklist.</param>
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">filterType</exception>
+        /// <exception cref="TypeLoadException">A custom attribute type could not be loaded. </exception>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public Dictionary<PropertyInfo, PropertyMapping> FindAllowedProperties(
             Type objectType, DescriptorActions actions = DescriptorActions.Read,

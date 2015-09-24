@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -8,20 +8,15 @@ using Susanoo.ResultSets;
 namespace Susanoo.Deserialization
 {
     /// <summary>
-    /// Maps properties to a KeyValuePair using Activator
+    /// Provides the ability to map objects with constructors or special considerations.
     /// </summary>
-    public class KeyValuePairDeserializerFactory
-        : IDeserializerFactory
+    public interface IDeserializerFactory
     {
         /// <summary>
         /// Determines whether this deserializer applies to the type.
         /// </summary>
         /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
-        public bool CanDeserialize(Type type)
-        {
-            return type.IsGenericType &&
-                   type.GetGenericTypeDefinition() == typeof (KeyValuePair<,>);
-        }
+        bool CanDeserialize(Type type);
 
         /// <summary>
         /// Builds a deserializer.
@@ -29,10 +24,7 @@ namespace Susanoo.Deserialization
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IDeserializer<TResult> BuildDeserializer<TResult>(ICommandResultMappingExporter mappings)
-        {
-            return new Deserializer<TResult>(new KeyValuePairDeserializer(mappings, typeof (TResult)).Deserialize<TResult>);
-        }
+        IDeserializer<TResult> BuildDeserializer<TResult>(ICommandResultMappingExporter mappings);
 
         /// <summary>
         /// Builds a deserializer.
@@ -40,9 +32,6 @@ namespace Susanoo.Deserialization
         /// <param name="resultType">Type of the result.</param>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IDeserializer BuildDeserializer(Type resultType, ICommandResultMappingExporter mappings)
-        {
-            return new Deserializer(resultType, new KeyValuePairDeserializer(mappings, resultType).Deserialize);
-        }
+        IDeserializer BuildDeserializer(Type resultType, ICommandResultMappingExporter mappings);
     }
 }

@@ -76,6 +76,7 @@ namespace Susanoo.Deserialization
         /// <summary>
         /// Gets the value for a column name.
         /// </summary>
+        /// <exception cref="KeyNotFoundException">Column was not available.</exception>
         public object GetValue(string columnName)
         {
             int ordinal;
@@ -100,6 +101,7 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <param name="columnName">The name of the column in SQL.</param>
         /// <param name="value">The value of the column in this record.</param>
+        /// <exception cref="KeyNotFoundException">Column was not available.</exception>
         public void SetValue(string columnName, object value)
         {
             int ordinal;

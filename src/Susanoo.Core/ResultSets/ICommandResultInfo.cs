@@ -11,15 +11,15 @@ namespace Susanoo.ResultSets
         IFluentPipelineFragment
     {
         /// <summary>
-        /// Gets or sets the CommandBuilder information.
+        /// Gets the command information.
         /// </summary>
         /// <value>The CommandBuilder information.</value>
         ICommandBuilderInfo<TFilter> GetCommandInfo();
 
         /// <summary>
-        /// Converts to a single result expression.
+        /// Gets the result mapping exporter.
         /// </summary>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandResultMappingExport GetExporter();
+        /// <returns>ICommandResultMappingExporter.</returns>
+        ICommandResultMappingExporter GetExporter();
     }
 }

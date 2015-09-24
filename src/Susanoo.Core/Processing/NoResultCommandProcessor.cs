@@ -18,14 +18,14 @@ namespace Susanoo.Processing
     ///     A fully built and ready to be executed CommandBuilder expression with a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public partial class NoResultSetCommandProcessor<TFilter> :
-        ICommandProcessor<TFilter>
+    public partial class NoResultCommandProcessor<TFilter> :
+        INoResultCommandProcessor<TFilter>
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="NoResultSetCommandProcessor{TFilter}" /> class.
+        ///     Initializes a new instance of the <see cref="NoResultCommandProcessor{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The CommandBuilder.</param>
-        public NoResultSetCommandProcessor(ICommandBuilderInfo<TFilter> command)
+        public NoResultCommandProcessor(ICommandBuilderInfo<TFilter> command)
         {
             CommandBuilderInfo = command;
         }
@@ -57,7 +57,7 @@ namespace Susanoo.Processing
         /// <returns>System.Int32.</returns>
         public int ExecuteNonQuery(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
         {
-            var result = 0;
+            int result;
 
             try
             {
@@ -107,9 +107,9 @@ namespace Susanoo.Processing
         ///     Allows a hook in an instance of a processor
         /// </summary>
         /// <param name="interceptOrProxy">The intercept or proxy.</param>
-        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
-        public ICommandProcessor<TFilter> InterceptOrProxyWith(
-            Func<ICommandProcessor<TFilter>, ICommandProcessor<TFilter>> interceptOrProxy)
+        /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
+        public INoResultCommandProcessor<TFilter> InterceptOrProxyWith(
+            Func<INoResultCommandProcessor<TFilter>, INoResultCommandProcessor<TFilter>> interceptOrProxy)
         {
             return interceptOrProxy(this);
         }
@@ -215,7 +215,7 @@ namespace Susanoo.Processing
     /// <summary>
     ///     A fully built and ready to be executed CommandBuilder expression with a filter parameter.
     /// </summary>
-    public partial class NoResultSetCommandProcessor<TFilter>
+    public partial class NoResultCommandProcessor<TFilter>
     {
         /// <summary>
         ///     Executes the non query asynchronously.
