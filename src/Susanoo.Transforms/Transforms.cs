@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Susanoo;
 using Susanoo.Command;
 using Susanoo.Processing;
-using Susanoo.Transforms;
 
 namespace Susanoo.Transforms
 {
     public static class Transforms
     {
         /// <summary>
-        /// Builds a query wrapper.
+        /// Builds a single query wrapper.
         /// </summary>
         /// <param name="additionalColumns">The additional columns.</param>
         /// <returns>CommandTransform.</returns>

@@ -24,6 +24,7 @@ namespace Susanoo.ResultSets
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandSingleResultExpression{TFilter,TResult}" /> class.
         /// </summary>
+        /// <param name="propertyMetadataExtractor">The property metadata extractor.</param>
         /// <param name="singleResultSetCommandProcessorFactory">The single result set command processor factory.</param>
         /// <param name="command">The CommandBuilder.</param>
         public CommandSingleResultExpression(

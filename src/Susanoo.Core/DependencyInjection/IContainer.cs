@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Susanoo
+namespace Susanoo.DependencyInjection
 {
     /// <summary>
     /// A simple container interface for plugging in DI containers.

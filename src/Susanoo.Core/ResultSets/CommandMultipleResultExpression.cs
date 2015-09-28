@@ -30,7 +30,7 @@ namespace Susanoo.ResultSets
         /// <param name="command">The CommandBuilder.</param>
         /// <param name="resultTypes">The result types.</param>
         /// <exception cref="System.ArgumentNullException"></exception>
-        /// <exception cref="ArgumentNullException"><paramref name="" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public CommandMultipleResultExpression(
             IPropertyMetadataExtractor propertyMetadataExtractor,
             IMultipleResultSetCommandProcessorFactory multipleResultSetCommandProcessorFactory,

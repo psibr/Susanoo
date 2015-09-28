@@ -69,7 +69,7 @@
 #endif
 
 #endregion
-namespace Susanoo.TinyIoC
+namespace Susanoo.DependencyInjection.TinyIoC
 {
     using System;
     using System.Collections.Generic;

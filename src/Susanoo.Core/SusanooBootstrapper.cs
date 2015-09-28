@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Susanoo.Command;
+using Susanoo.DependencyInjection;
+using Susanoo.DependencyInjection.TinyIoC;
 #if !NETFX40
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
@@ -8,7 +10,6 @@ using Susanoo.Deserialization;
 using Susanoo.Pipeline;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
-using Susanoo.TinyIoC;
 
 namespace Susanoo
 {

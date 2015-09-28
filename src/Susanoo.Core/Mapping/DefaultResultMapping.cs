@@ -22,6 +22,7 @@ namespace Susanoo.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultResultMapping" /> class.
         /// </summary>
+        /// <param name="propertyMetadataExtractor">The property metadata extractor.</param>
         /// <param name="resultType">Type of the result.</param>
         /// <param name="actions">The actions.</param>
         public DefaultResultMapping(IPropertyMetadataExtractor propertyMetadataExtractor, Type resultType, DescriptorActions actions = DescriptorActions.Read)

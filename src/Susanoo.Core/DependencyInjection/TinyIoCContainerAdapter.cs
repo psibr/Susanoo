@@ -1,13 +1,13 @@
 ﻿using System;
+using Susanoo.DependencyInjection.TinyIoC;
 using Susanoo.Exceptions;
-using Susanoo.TinyIoC;
 
-namespace Susanoo
+namespace Susanoo.DependencyInjection
 {
     /// <summary>
     /// An adpater for TinyIoC to the shared IContainer interface.
     /// </summary>
-    public class TinyIoCContainerAdapter 
+    internal class TinyIoCContainerAdapter 
         : IContainer
     {
         private readonly TinyIoCContainer _container;
@@ -16,7 +16,7 @@ namespace Susanoo
         /// Initializes a new instance of the <see cref="TinyIoCContainerAdapter"/> class.
         /// </summary>
         /// <param name="container">The container.</param>
-        public TinyIoCContainerAdapter(TinyIoCContainer container)
+        internal TinyIoCContainerAdapter(TinyIoCContainer container)
         {
             _container = container;
         }

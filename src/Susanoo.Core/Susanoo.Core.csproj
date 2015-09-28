@@ -26,7 +26,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">NETFX40</CustomConstants>
     <DefineConstants Condition=" '$(DefineConstants)' != '' And '$(CustomConstants)' != '' ">$(DefineConstants);</DefineConstants>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TINYIOC_INTERNAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -44,7 +44,7 @@
     <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">NETFX40</CustomConstants>
     <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">NETFX45</CustomConstants>
     <DefineConstants Condition=" '$(DefineConstants)' != '' And '$(CustomConstants)' != '' ">$(DefineConstants);</DefineConstants>
-    <DefineConstants>$(DefineConstants)$(CustomConstants)</DefineConstants>
+    <DefineConstants>NETFX45 TINYIOC_INTERNAL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Susanoo.Core.XML</DocumentationFile>
@@ -131,7 +131,7 @@
     <Compile Include="Deserialization\KeyValuePairDeserializer.cs" />
     <Compile Include="Exceptions\SusanooDependencyResolutionException.cs" />
     <Compile Include="Exceptions\SusanooExecutionException.cs" />
-    <Compile Include="IContainer.cs" />
+    <Compile Include="DependencyInjection\IContainer.cs" />
     <Compile Include="IDatabaseManagerFactory.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
     <Compile Include="ObjectExtensions.cs" />
@@ -165,7 +165,6 @@
     <Compile Include="ResultSets\ICommandResultMappingExporter.cs" />
     <Compile Include="Deserialization\BuiltInTypeDeserializerFactory.cs" />
     <Compile Include="Deserialization\DynamicRow.cs" />
-    <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Mapping\IMappingExport.cs" />
     <Compile Include="Mapping\Properties\IPropertyMapping.cs" />
@@ -208,8 +207,8 @@
     <Compile Include="Mapping\Properties\PropertyMappingConfiguration.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="SusanooBootstrapper.cs" />
-    <Compile Include="TinyIoC.cs" />
-    <Compile Include="TinyIoCContainerAdapter.cs" />
+    <Compile Include="DependencyInjection\TinyIoC.cs" />
+    <Compile Include="DependencyInjection\TinyIoCContainerAdapter.cs" />
     <Compile Include="Transforms\CommandManagerExtensions.cs" />
     <Compile Include="Transforms\CommandTransform.cs" />
     <Compile Include="Transforms\NoResultSetTransformExtensions.cs" />
