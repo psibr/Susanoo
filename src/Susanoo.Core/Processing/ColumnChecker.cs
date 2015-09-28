@@ -14,7 +14,7 @@ namespace Susanoo.Processing
     {
         private bool _isInit;
 
-        private readonly Map<int, string> _fieldMap;
+        private Map<int, string> _fieldMap;
 
         /// <summary>
         /// Tries the get value.
@@ -45,16 +45,13 @@ namespace Susanoo.Processing
         public int Count => 
             _fieldMap.Forward.Count;
 
-        private ColumnChecker(IDictionary<int, string> intKey, IDictionary<string, int> stringKey)
-        {
-            _isInit = true;
-            _fieldMap = new Map<int, string>(intKey, stringKey);
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnChecker"/> class.
         /// </summary>
-        public ColumnChecker() { _fieldMap = new Map<int, string>(); }
+        public ColumnChecker(int? capacity = null)
+        {
+            _fieldMap = capacity != null ? new Map<int, string>(capacity.Value) : new Map<int, string>();
+        }
 
         /// <summary>
         ///  Determines whether the specified record has a column.
@@ -109,15 +106,6 @@ namespace Susanoo.Processing
         public Dictionary<string, int> ExportReport()
         {
             return _fieldMap.Reverse.ToDictionary();
-        }
-
-        /// <summary>
-        /// Copies this instance.
-        /// </summary>
-        /// <returns>ColumnChecker.</returns>
-        public ColumnChecker Copy()
-        {
-            return new ColumnChecker(_fieldMap.Forward.ToDictionary(), _fieldMap.Reverse.ToDictionary());
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using NUnit.Framework;
+using Susanoo.Processing;
 
 #endregion
 
@@ -18,17 +19,18 @@ namespace Susanoo.Tests.Static.SingleResult
     {
         private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
+        private             ISingleResultSetCommandProcessor<dynamic, TypeTestModel> results =
+        CommandManager.Instance.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
+                .DefineResults<TypeTestModel>()
+                .Realize();
+
+
         [Test]
         public void StaticRowPerformance()
         {
-            for (int i = 0; i < 500; i ++)
+            for (int i = 0; i < 500; i++)
             {
-                var results = CommandManager.Instance.DefineCommand("SELECT * FROM #DataTypeTable;", CommandType.Text)
-                    .DefineResults<TypeTestModel>()
-                    .Realize()
-                    .Execute(_databaseManager);
-
-                Assert.IsNotNull(results);
+                results.Execute(_databaseManager);
             }
         }
 
@@ -106,16 +108,9 @@ namespace Susanoo.Tests.Static.SingleResult
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypesInsertAnonymous()
         {
-            var result = CommandManager.Instance.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<TypeTestModel>()
-                .Realize()
-                .Execute(_databaseManager).First();
-
-            result.IgnoredByDescriptorActionsUpdate = "ignored";
-
             CommandManager.Instance.DefineCommand<dynamic>("INSERT INTO #DataTypeTable VALUES(@Bit, @TinyInt, @SmallInt, @Int, @BigInt, @SmallMoney, @Money, @Numeric, @Decimal, @Character, @String, @Text, @Date, @SmallDateTime, @DateTime, @DateTime2, '12:00:00:00', @Guid, 'ignored','ignored', @IgnoredByDescriptorActionsUpdate);", CommandType.Text)
                 .Realize()
-                .ExecuteNonQuery(_databaseManager, new { Bit = true, TinyInt = 1, SmallInt = 1, Int = 1, BigInt = 1, SmallMoney = 1, Money = 1, Numeric = 1, Decimal = 1, Character = 'c', String = "string", Text = "yay", Date = DateTime.Now, SmallDateTime = DateTime.Now, DateTime = DateTime.Now, DateTime2 = DateTime.Now, Guid = Guid.NewGuid(), IgnoredByDescriptorActionsUpdate = "ignored"});
+                .ExecuteNonQuery(_databaseManager, new { Bit = true, TinyInt = 1, SmallInt = 1, Int = 1, BigInt = 1, SmallMoney = 1, Money = 1, Numeric = 1, Decimal = 1, Character = 'c', String = "string", Text = "yay", Date = DateTime.Now, SmallDateTime = DateTime.Now, DateTime = DateTime.Now, DateTime2 = DateTime.Now, Guid = Guid.NewGuid(), IgnoredByDescriptorActionsUpdate = "ignored" });
         }
     }
 }

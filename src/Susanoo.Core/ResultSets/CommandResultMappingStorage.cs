@@ -17,13 +17,16 @@ namespace Susanoo.ResultSets
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public class CommandResultMappingStorage<TFilter> : ICommandResultMappingStorage<TFilter>
     {
+        private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
         private readonly IDictionary<Type, IMappingExport> _mappingContainer;
         private readonly IDictionary<Type, IMappingExport> _mappingContainerRuntime;
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultMappingStorage{TFilter}" /> class.
         /// </summary>
-        public CommandResultMappingStorage()
+        /// <param name="propertyMetadataExtractor">The property metadata extractor.</param>
+        public CommandResultMappingStorage(IPropertyMetadataExtractor propertyMetadataExtractor)
         {
+            _propertyMetadataExtractor = propertyMetadataExtractor;
             _mappingContainer = new Dictionary<Type, IMappingExport>();
             _mappingContainerRuntime = new Dictionary<Type, IMappingExport>();
         }
@@ -50,7 +53,7 @@ namespace Susanoo.ResultSets
             {
                 if (!_mappingContainerRuntime.TryGetValue(resultType, out value))
                 {
-                    result = new DefaultResultMapping(resultType);
+                    result = new DefaultResultMapping(_propertyMetadataExtractor, resultType);
                     _mappingContainerRuntime.Add(resultType, result);
                 }
             }
@@ -72,7 +75,7 @@ namespace Susanoo.ResultSets
             else
             {
                 IResultMappingExpression<TFilter, TResult> mappingExpression =
-                    new ResultMappingExpression<TFilter, TResult>();
+                    new ResultMappingExpression<TFilter, TResult>(_propertyMetadataExtractor);
 
                 mapping(mappingExpression);
 

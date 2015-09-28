@@ -25,20 +25,24 @@ namespace Susanoo.Processing
         CommandProcessorWithResults<TFilter>,
         ISingleResultSetCommandProcessor<TFilter, TResult>
     {
-        private ColumnChecker _columnChecker;
+        private readonly IDeserializerResolver _deserializerResolver;
+        private ColumnChecker _columnChecker = new ColumnChecker();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCommandProcessor{TFilter, TResult}" /> class.
         /// </summary>
+        /// <param name="deserializerResolver">The deserializer resolver.</param>
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
-        internal SingleResultSetCommandProcessor(
+        public SingleResultSetCommandProcessor(
+            IDeserializerResolver deserializerResolver,
             ICommandResultInfo<TFilter> mappings,
             string name = null)
             : base(mappings)
         {
-            CompiledMapping = CommandManager.Instance.Bootstrapper
-                .ResolveDependency<IDeserializerResolver>()
+            _deserializerResolver = deserializerResolver;
+
+            CompiledMapping = _deserializerResolver
                 .ResolveDeserializer<TResult>(mappings.GetExporter());
 
             var hash = (CacheHash * 31) ^ CommandResultExpression<TFilter>
@@ -118,7 +122,7 @@ namespace Susanoo.Processing
         /// <returns>ColumnChecker.</returns>
         public override ColumnChecker RetrieveColumnIndexInfo()
         {
-            return ColumnReport?.Copy();
+            return ColumnReport;
         }
 
         /// <summary>

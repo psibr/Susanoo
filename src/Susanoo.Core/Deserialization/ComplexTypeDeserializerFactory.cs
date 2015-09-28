@@ -20,6 +20,10 @@ namespace Susanoo.Deserialization
         private static readonly MethodInfo ReadMethod = typeof(IDataReader)
             .GetMethod("Read", BindingFlags.Public | BindingFlags.Instance);
 
+        private static readonly ConstructorInfo ColumnCheckerConstructorInfo =
+            typeof (ColumnChecker).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null,
+                new[] {typeof (int)}, null);
+
         /// <summary>
         /// Compiles mappings.
         /// </summary>
@@ -52,7 +56,8 @@ namespace Susanoo.Deserialization
             // columnChecker = (columnReport == null) ? new ColumnChecker() : columnReport;
             outerStatements.Add(Expression.IfThenElse(Expression.Equal(columnReport, Expression.Constant(null)),
                 Expression.Assign(
-                    columnChecker, Expression.New(typeof(ColumnChecker))),
+                    columnChecker, Expression.New(ColumnCheckerConstructorInfo, 
+                    Expression.Convert(Expression.Property(Expression.Convert(reader, typeof(IDataRecord)), "FieldCount"), typeof(int?)))),
                 Expression.Assign(columnChecker, columnReport)));
 
             #region Loop Code
@@ -167,7 +172,7 @@ namespace Susanoo.Deserialization
             var result = Compile(mapping, resultType);
 
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> typedResult =
-                (reader, columnMeta) => (IEnumerable<TResult>)(result.Invoke(reader, columnMeta));
+                (reader, columnMeta) => (IEnumerable<TResult>) (result(reader, columnMeta));
 
             return typedResult;
         }

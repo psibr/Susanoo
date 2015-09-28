@@ -29,13 +29,12 @@ namespace Susanoo.Transforms
             if (commandInfo.DbCommandType != CommandType.Text)
                 throw new ArgumentException("Only CommandType.Text CommandBuilder Expressions can be dynamically paged.");
 
-            var offsetFetchStatement = string.Format(format, pageNumberParameterName, rowCountParameterName);
-
             return new CommandTransform(
                 "OFFSET/FETCH",
                 info => new ExecutableCommandInfo
                 {
-                    CommandText = string.Concat(info.CommandText, offsetFetchStatement),
+                    CommandText = string.Concat(info.CommandText, 
+                        string.Format(format, pageNumberParameterName, rowCountParameterName)),
                     DbCommandType = info.DbCommandType,
                     Parameters = info.Parameters
                 });

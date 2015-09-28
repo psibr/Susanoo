@@ -8,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using Susanoo.Pipeline;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 
@@ -25,6 +24,11 @@ namespace Susanoo.Command
         ICommandExpression<TFilter>,
         ICommandBuilderInfo<TFilter>
     {
+        private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
+        private readonly INoResultSetCommandProcessorFactory _noResultSetCommandProcessorFactory;
+        private readonly ICommandMultipleResultExpressionFactory _commandMultipleResultExpressionFactory;
+        private readonly ICommandSingleResultExpressionFactory _commandSingleResultExpressionFactory;
+
         /// <summary>
         ///     The constant parameters
         /// </summary>
@@ -52,28 +56,42 @@ namespace Susanoo.Command
         private NullValueMode _nullValueMode = NullValueMode.Never;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
         /// </summary>
+        /// <param name="propertyMetadataExtractor">A property metadata extractor.</param>
+        /// <param name="noResultSetCommandProcessorFactory">A no result set command processor factory.</param>
+        /// <param name="commandMultipleResultExpressionFactory">The command multiple result expression factory.</param>
+        /// <param name="commandSingleResultExpressionFactory">The command single result expression factory.</param>
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
-        /// <exception cref="System.ArgumentNullException">
-        ///     databaseManager
-        ///     or
-        ///     commandText
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        ///     No CommandBuilder text provided.;commandText
-        ///     or
-        ///     TableDirect is not supported.;commandType
-        /// </exception>
-        public CommandExpression(string commandText, CommandType commandType)
+        /// <exception cref="System.ArgumentNullException">databaseManager
+        /// or
+        /// commandText</exception>
+        /// <exception cref="System.ArgumentException">No CommandBuilder text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType</exception>
+        public CommandExpression(IPropertyMetadataExtractor propertyMetadataExtractor,
+            INoResultSetCommandProcessorFactory noResultSetCommandProcessorFactory,
+            ICommandMultipleResultExpressionFactory commandMultipleResultExpressionFactory,
+            ICommandSingleResultExpressionFactory commandSingleResultExpressionFactory,
+            string commandText, CommandType commandType)
         {
+            if (propertyMetadataExtractor == null)
+                throw new ArgumentNullException(nameof(propertyMetadataExtractor));
+            if (noResultSetCommandProcessorFactory == null)
+                throw new ArgumentNullException(nameof(noResultSetCommandProcessorFactory));
             if (commandText == null)
                 throw new ArgumentNullException(nameof(commandText));
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentException("No CommandBuilder text provided.", nameof(commandText));
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", nameof(commandType));
+
+            _propertyMetadataExtractor = propertyMetadataExtractor;
+            _noResultSetCommandProcessorFactory = noResultSetCommandProcessorFactory;
+            _commandMultipleResultExpressionFactory = commandMultipleResultExpressionFactory;
+            _commandSingleResultExpressionFactory = commandSingleResultExpressionFactory;
+
             CommandText = commandText;
             DbCommandType = commandType;
         }
@@ -196,8 +214,7 @@ namespace Susanoo.Command
         /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
         public INoResultCommandProcessor<TFilter> Realize()
         {
-            return CommandManager.Instance.Bootstrapper
-                .ResolveDependency<INoResultSetCommandProcessorFactory>()
+            return _noResultSetCommandProcessorFactory
                 .BuildCommandProcessor(this);
         }
 
@@ -279,23 +296,21 @@ namespace Susanoo.Command
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression)
         {
             return IncludeProperty(propertyExpression.GetPropertyName(), null);
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression,
             Action<DbParameter> parameterOptions)
         {
@@ -303,11 +318,10 @@ namespace Susanoo.Command
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public ICommandExpression<TFilter> IncludeProperty(string propertyName)
         {
             return IncludeProperty(propertyName, null);
@@ -340,7 +354,8 @@ namespace Susanoo.Command
         /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
         public ICommandSingleResultExpression<TFilter, TResult> DefineResults<TResult>()
         {
-            return new CommandSingleResultExpression<TFilter, TResult>(this);
+            return _commandSingleResultExpressionFactory
+                .BuildCommandSingleResultExpression<TFilter, TResult>(this);
         }
 
         /// <summary>
@@ -350,7 +365,8 @@ namespace Susanoo.Command
         /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
         public ICommandMultipleResultExpression<TFilter> DefineResults(params Type[] resultTypes)
         {
-            return new CommandMultipleResultExpression<TFilter>(this, resultTypes);
+            return _commandMultipleResultExpressionFactory
+                .BuildCommandMultipleResultExpression(this, resultTypes);
         }
 
         /// <summary>
@@ -432,8 +448,7 @@ namespace Susanoo.Command
                 }
                 else
                 {
-                    var implicitProperties = CommandManager.Instance.Bootstrapper
-                        .ResolveDependency<IPropertyMetadataExtractor>()
+                    var implicitProperties = _propertyMetadataExtractor
                         .FindAllowedProperties(
                             filter.GetType(),
                             DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Delete,

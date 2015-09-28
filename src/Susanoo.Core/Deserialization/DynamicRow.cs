@@ -22,7 +22,7 @@ namespace Susanoo.Deserialization
         /// <param name="columns">The columns Susanoo has discovered and will map to properties.</param>
         public DynamicRow(ColumnChecker columns)
         {
-            _columns = columns ?? new ColumnChecker();
+            _columns = columns ?? new ColumnChecker(0);
             _values = new object[_columns.Count];
         }
 
@@ -31,7 +31,7 @@ namespace Susanoo.Deserialization
         /// </summary>
         public DynamicRow()
         {
-            _columns = new ColumnChecker();
+            _columns = new ColumnChecker(0);
             _values = new object[_columns.Count];
         }
 

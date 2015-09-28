@@ -112,7 +112,7 @@ namespace Susanoo.Processing
         /// <returns>ColumnChecker.</returns>
         public virtual ColumnChecker RetrieveColumnIndexInfo()
         {
-            return new ColumnChecker();
+            return new ColumnChecker(0);
         }
 
         /// <summary>

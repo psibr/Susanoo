@@ -21,7 +21,7 @@ namespace Susanoo
         public static IDatabaseManager ToDatabaseManager(this DbConnection connection)
         {
             return CommandManager.Instance.Bootstrapper
-                .ResolveDependency<IDatabaseManagerFactory>()
+                .ResolveDatabaseManagerFactory()
                 .CreateFromConnection(connection);
         }
     }

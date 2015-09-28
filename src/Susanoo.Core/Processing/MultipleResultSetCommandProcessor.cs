@@ -19,6 +19,7 @@ namespace Susanoo.Processing
     public class MultipleResultSetCommandProcessor<TFilter> :
         CommandProcessorWithResults<TFilter>, IMultipleResultSetCommandProcessor<TFilter>
     {
+        private readonly IDeserializerResolver _deserializerResolver;
 
         private readonly IDeserializer[] _mappers;
 
@@ -27,17 +28,17 @@ namespace Susanoo.Processing
         /// <see cref="MultipleResultSetCommandProcessor{TFilter}" />
         /// class.
         /// </summary>
+        /// <param name="deserializerResolver">The deserializer resolver.</param>
         /// <param name="commandResultInfo">The CommandBuilder result information.</param>
         /// <param name="name">The name.</param>
         /// <param name="resultTypes">The result types.</param>
-        public MultipleResultSetCommandProcessor(ICommandResultInfo<TFilter> commandResultInfo, string name, Type[] resultTypes)
+        public MultipleResultSetCommandProcessor(IDeserializerResolver deserializerResolver, ICommandResultInfo<TFilter> commandResultInfo, string name, Type[] resultTypes)
             : base(commandResultInfo)
         {
-            var resolver = CommandManager.Instance.Bootstrapper
-                .ResolveDependency<IDeserializerResolver>();
+            _deserializerResolver = deserializerResolver;
 
             _mappers = resultTypes
-                .Select(t => resolver.ResolveDeserializer(t, commandResultInfo.GetExporter()))
+                .Select(t => _deserializerResolver.ResolveDeserializer(t, commandResultInfo.GetExporter()))
                 .ToArray();
 
             CommandManager.Instance.RegisterCommandProcessor(this, name);
@@ -63,6 +64,7 @@ namespace Susanoo.Processing
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
         /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
         public IResultSetReader Execute(IDatabaseManager databaseManager,
             TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
@@ -132,6 +134,7 @@ namespace Susanoo.Processing
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
         /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
         public IResultSetReader Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
@@ -146,6 +149,7 @@ namespace Susanoo.Processing
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
         /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
         public IResultSetReader Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, filter, null, explicitParameters);

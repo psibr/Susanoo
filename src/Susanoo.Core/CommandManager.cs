@@ -22,6 +22,11 @@ namespace Susanoo
     /// </summary>
     public class CommandManager
     {
+        private CommandManager()
+        {
+            
+        }
+
         private static readonly IDictionary<Type, DbType> BuiltinTypeConversions =
             new ConcurrentDictionary<Type, DbType>(new Dictionary<Type, DbType>
             {
@@ -92,7 +97,7 @@ namespace Susanoo
         public ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
         {
             return Bootstrapper
-                .ResolveDependency<ICommandBuilder>()
+                .ResolveCommandBuilder()
                 .DefineCommand<TFilter>(commandText, commandType);
         }
 
@@ -105,7 +110,7 @@ namespace Susanoo
         public ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
         {
             return Bootstrapper
-                .ResolveDependency<ICommandBuilder>()
+                .ResolveCommandBuilder()
                 .DefineCommand(commandText, commandType);
         }
 

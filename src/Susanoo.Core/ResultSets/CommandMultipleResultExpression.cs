@@ -19,16 +19,28 @@ namespace Susanoo.ResultSets
         CommandResultExpression<TFilter>,
         ICommandMultipleResultExpression<TFilter>
     {
+        private readonly IMultipleResultSetCommandProcessorFactory _multipleResultSetCommandProcessorFactory;
         private readonly Type[] _resultTypes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandMultipleResultExpression{TFilter}" /> class.
         /// </summary>
+        /// <param name="propertyMetadataExtractor">The property metadata extractor.</param>
+        /// <param name="multipleResultSetCommandProcessorFactory">The multiple result set command processor factory.</param>
         /// <param name="command">The CommandBuilder.</param>
         /// <param name="resultTypes">The result types.</param>
-        public CommandMultipleResultExpression(ICommandBuilderInfo<TFilter> command, params Type[] resultTypes)
-            : base(command)
+        /// <exception cref="System.ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="" /> is <see langword="null" />.</exception>
+        public CommandMultipleResultExpression(
+            IPropertyMetadataExtractor propertyMetadataExtractor,
+            IMultipleResultSetCommandProcessorFactory multipleResultSetCommandProcessorFactory,
+            ICommandBuilderInfo<TFilter> command, params Type[] resultTypes)
+            : base(propertyMetadataExtractor, command)
         {
+            if (multipleResultSetCommandProcessorFactory == null)
+                throw new ArgumentNullException(nameof(multipleResultSetCommandProcessorFactory));
+
+            _multipleResultSetCommandProcessorFactory = multipleResultSetCommandProcessorFactory;
             _resultTypes = resultTypes;
         }
 
@@ -78,8 +90,7 @@ namespace Susanoo.ResultSets
             }
 
             return result ??
-                   CommandManager.Instance.Bootstrapper
-                       .ResolveDependency<IMultipleResultSetCommandProcessorFactory>()
+                   _multipleResultSetCommandProcessorFactory
                        .BuildCommandProcessor(this, name, _resultTypes);
         }
     }

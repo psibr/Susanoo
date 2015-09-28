@@ -24,15 +24,16 @@ namespace Susanoo.Mapping
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();
 
-        private IPropertyMetadataExtractor _propertyMetadataExtractor =
-            CommandManager.Instance.Bootstrapper
-                .ResolveDependency<IPropertyMetadataExtractor>();
+        private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResultMappingExpression{TFilter, TResult}" /> class.
+        /// Resolves dependencies for Result mapping expressions and instantiates.
         /// </summary>
-        public ResultMappingExpression()
+        /// <param name="propertyMetadataExtractor">The property metadata extractor.</param>
+        public ResultMappingExpression(IPropertyMetadataExtractor propertyMetadataExtractor)
         {
+            _propertyMetadataExtractor = propertyMetadataExtractor;
+
             MapDeclarativeProperties();
         }
 
@@ -43,16 +44,6 @@ namespace Susanoo.Mapping
         public BigInteger CacheHash =>
             _mappingActions.Aggregate(HashBuilder.Seed, (i, pair) =>
                 (i * 31) ^ pair.Value.CacheHash);
-
-        /// <summary>
-        /// Gets or sets the property metadata extractor.
-        /// </summary>
-        /// <value>The property metadata extractor.</value>
-        protected IPropertyMetadataExtractor PropertyMetadataExtractor
-        {
-            get { return _propertyMetadataExtractor; }
-            set { if (value != null) _propertyMetadataExtractor = value; }
-        }
 
         /// <summary>
         /// Clears the result mappings.
@@ -113,7 +104,7 @@ namespace Susanoo.Mapping
         /// </summary>
         protected void MapDeclarativeProperties()
         {
-            foreach (var item in PropertyMetadataExtractor
+            foreach (var item in _propertyMetadataExtractor
                 .FindAllowedProperties(typeof(TResult)))
             {
                 var configuration = new PropertyMappingConfiguration(item.Key);

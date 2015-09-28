@@ -64,7 +64,7 @@ namespace Susanoo.Deserialization
 
             IList resultSet = new ArrayList();
 
-            checker = checker ?? new ColumnChecker();
+            checker = checker ?? new ColumnChecker(reader.FieldCount);
 
             while (reader.Read())
             {

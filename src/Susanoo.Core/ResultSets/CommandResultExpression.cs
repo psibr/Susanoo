@@ -32,9 +32,10 @@ namespace Susanoo.ResultSets
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter}" /> class.
         /// </summary>
+        /// <param name="propertyMetadataExtractor">The property metadata extractor.</param>
         /// <param name="command">The CommandBuilder.</param>
-        protected CommandResultExpression(ICommandBuilderInfo<TFilter> command)
-            : this(command, new CommandResultMappingStorage<TFilter>())
+        protected CommandResultExpression(IPropertyMetadataExtractor propertyMetadataExtractor, ICommandBuilderInfo<TFilter> command)
+            : this(command, new CommandResultMappingStorage<TFilter>(propertyMetadataExtractor))
         {
         }
 

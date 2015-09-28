@@ -119,7 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActionsAttribute.cs" />
+    <Compile Include="Command\CommandExpressionFactory.cs" />
     <Compile Include="Command\ExecutableCommandInfo.cs" />
+    <Compile Include="Command\ICommandExpressionFactory.cs" />
     <Compile Include="Command\ICommandInfo.cs" />
     <Compile Include="Command\NullValueMode.cs" />
     <Compile Include="DatabaseManagerFactory.cs" />
@@ -129,6 +131,7 @@
     <Compile Include="Deserialization\KeyValuePairDeserializer.cs" />
     <Compile Include="Exceptions\SusanooDependencyResolutionException.cs" />
     <Compile Include="Exceptions\SusanooExecutionException.cs" />
+    <Compile Include="IContainer.cs" />
     <Compile Include="IDatabaseManagerFactory.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
     <Compile Include="ObjectExtensions.cs" />
@@ -143,15 +146,20 @@
     <Compile Include="Processing\IMultipleResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\INoResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\IResultSetReader.cs" />
+    <Compile Include="Processing\ISingleResultSetCommandProcessor.cs" />
     <Compile Include="Processing\ISingleResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\MultipleResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\NoResultSetCommandProcessorFactory.cs" />
     <Compile Include="Processing\ResultSetReader.cs" />
     <Compile Include="Processing\SingleResultSetCommandProcessorFactory.cs" />
     <Compile Include="ResultSets\CommandMultipleResultExpression.cs" />
+    <Compile Include="ResultSets\CommandSingleResultExpressionFactory.cs" />
+    <Compile Include="ResultSets\CommandMultipleResultExpressionFactory.cs" />
     <Compile Include="ResultSets\CommandResultExpression.cs" />
     <Compile Include="ResultSets\CommandSingleResultExpression.cs" />
     <Compile Include="ResultSets\ICommandMultipleResultExpression.cs" />
+    <Compile Include="ResultSets\ICommandSingleResultExpressionFactory.cs" />
+    <Compile Include="ResultSets\ICommandMultipleResultExpressionFactory.cs" />
     <Compile Include="ResultSets\ICommandResultExpression.cs" />
     <Compile Include="ResultSets\ICommandResultInfo.cs" />
     <Compile Include="ResultSets\ICommandResultMappingExporter.cs" />
@@ -201,11 +209,13 @@
     <Compile Include="Scope.cs" />
     <Compile Include="SusanooBootstrapper.cs" />
     <Compile Include="TinyIoC.cs" />
+    <Compile Include="TinyIoCContainerAdapter.cs" />
     <Compile Include="Transforms\CommandManagerExtensions.cs" />
     <Compile Include="Transforms\CommandTransform.cs" />
     <Compile Include="Transforms\NoResultSetTransformExtensions.cs" />
     <Compile Include="Transforms\NoResultSetTransformProxy.cs" />
-    <Compile Include="Transforms\SingleResultSetTransformExtensions.cs" />
+    <Compile Include="Transforms\SingleResultSetProxyExtensions.cs" />
+    <Compile Include="Transforms\SingleResultSetExceptionInterceptionProxy.cs" />
     <Compile Include="Transforms\SingleResultSetTransformProxy.cs" />
   </ItemGroup>
   <ItemGroup>

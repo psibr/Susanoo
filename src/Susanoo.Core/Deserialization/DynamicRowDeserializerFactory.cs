@@ -56,9 +56,9 @@ namespace Susanoo.Deserialization
         {
             IList resultSet = new ArrayList();
 
-            checker = checker ?? new ColumnChecker();
-
             var fieldCount = reader.FieldCount;
+
+            checker = checker ?? new ColumnChecker(fieldCount);
 
             var needsFieldNames = fieldCount > checker.Count;
 

@@ -15,6 +15,10 @@ namespace Susanoo
         public Map()
             : this(new Dictionary<T1, T2>(), new Dictionary<T2, T1>()) { }
 
+        public Map(int capacity)
+            : this(new Dictionary<T1, T2>(capacity), new Dictionary<T2, T1>(capacity))
+            { }
+
         public Map(IDictionary<T1, T2> one, IDictionary<T2, T1> two)
         {
             this._forward = one;

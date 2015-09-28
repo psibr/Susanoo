@@ -15,6 +15,7 @@ namespace Susanoo.Mapping
         private readonly IDictionary<string, IPropertyMapping> _mappingActions =
             new Dictionary<string, IPropertyMapping>();
 
+        private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
         private readonly Type _resultType;
         private readonly DescriptorActions _actions;
 
@@ -23,8 +24,9 @@ namespace Susanoo.Mapping
         /// </summary>
         /// <param name="resultType">Type of the result.</param>
         /// <param name="actions">The actions.</param>
-        public DefaultResultMapping(Type resultType, DescriptorActions actions = DescriptorActions.Read)
+        public DefaultResultMapping(IPropertyMetadataExtractor propertyMetadataExtractor, Type resultType, DescriptorActions actions = DescriptorActions.Read)
         {
+            _propertyMetadataExtractor = propertyMetadataExtractor;
             _resultType = resultType;
             _actions = actions;
 
@@ -36,8 +38,7 @@ namespace Susanoo.Mapping
         /// </summary>
         public void MapDeclarativeProperties()
         {
-            foreach (var item in CommandManager.Instance.Bootstrapper
-                .ResolveDependency<IPropertyMetadataExtractor>()
+            foreach (var item in _propertyMetadataExtractor
                 .FindAllowedProperties(_resultType, _actions))
             {
                 var configuration = new PropertyMappingConfiguration(item.Key);

@@ -19,24 +19,20 @@ namespace Susanoo.ResultSets
         CommandResultExpression<TFilter>,
         ICommandSingleResultExpression<TFilter, TResult>
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandSingleResultExpression{TFilter,TResult}" /> class.
-        /// </summary>
-        /// <param name="command">The CommandBuilder.</param>
-        public CommandSingleResultExpression(ICommandBuilderInfo<TFilter> command)
-            : base(command)
-        {
-        }
+        private readonly ISingleResultSetCommandProcessorFactory _singleResultSetCommandProcessorFactory;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandSingleResultExpression{TFilter,TResult}" /> class.
+        /// Initializes a new instance of the <see cref="CommandSingleResultExpression{TFilter,TResult}" /> class.
         /// </summary>
+        /// <param name="singleResultSetCommandProcessorFactory">The single result set command processor factory.</param>
         /// <param name="command">The CommandBuilder.</param>
-        /// <param name="mappingStorage">The mappingStorage.</param>
-        internal CommandSingleResultExpression(ICommandBuilderInfo<TFilter> command,
-            ICommandResultMappingStorage<TFilter> mappingStorage)
-            : base(command, mappingStorage)
+        public CommandSingleResultExpression(
+            IPropertyMetadataExtractor propertyMetadataExtractor,
+            ISingleResultSetCommandProcessorFactory singleResultSetCommandProcessorFactory,
+            ICommandBuilderInfo<TFilter> command)
+            : base(propertyMetadataExtractor, command)
         {
+            _singleResultSetCommandProcessorFactory = singleResultSetCommandProcessorFactory;
         }
 
         /// <summary>
@@ -86,8 +82,7 @@ namespace Susanoo.ResultSets
             }
 
             return result ??
-                   CommandManager.Instance.Bootstrapper
-                       .ResolveDependency<ISingleResultSetCommandProcessorFactory>()
+                   _singleResultSetCommandProcessorFactory
                        .BuildCommandProcessor<TFilter, TResult>(this, name);
         }
     }
