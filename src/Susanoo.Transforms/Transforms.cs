@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Susanoo.Command;
 using Susanoo.Processing;
+using Susanoo.Proxies;
 
 namespace Susanoo.Transforms
 {

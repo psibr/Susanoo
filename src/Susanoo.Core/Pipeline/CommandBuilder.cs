@@ -2,8 +2,6 @@
 
 using System.Data;
 using Susanoo.Command;
-using Susanoo.Processing;
-using Susanoo.ResultSets;
 
 #endregion
 

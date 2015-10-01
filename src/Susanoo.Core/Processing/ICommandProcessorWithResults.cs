@@ -25,10 +25,5 @@ namespace Susanoo.Processing
         /// Clears any column index information that may have been cached.
         /// </summary>
         void ClearColumnIndexInfo();
-
-        /// <summary>
-        /// Flushes the result cache.
-        /// </summary>
-        void FlushCache();
     }
 }

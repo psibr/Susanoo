@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-
-namespace Susanoo
+﻿namespace Susanoo
 {
     /// <summary>
     /// Extends Result expressions to add SQL Server specific funtionality

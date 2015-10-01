@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using Susanoo.Mapping.Properties;
-using Susanoo.Pipeline;
 
 #endregion
 

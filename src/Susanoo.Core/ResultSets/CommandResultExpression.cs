@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using Susanoo.Command;
 using Susanoo.Mapping.Properties;
-using Susanoo.Pipeline;
 
 namespace Susanoo.ResultSets
 {

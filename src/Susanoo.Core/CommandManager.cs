@@ -4,13 +4,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
 using Susanoo.Command;
-using Susanoo.Pipeline;
 using Susanoo.Processing;
 
 #endregion
@@ -176,17 +174,6 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Flushes caches on all CommandBuilder processors.
-        /// </summary>
-        public void FlushCacheGlobally()
-        {
-            foreach (var registeredCommandProcessor in _registeredCommandProcessors)
-            {
-                registeredCommandProcessor.Value.FlushCache();
-            }
-        }
-
-        /// <summary>
         /// Clears any column index information that may have been cached.
         /// </summary>
         /// <param name="processor">The processor.</param>
@@ -207,17 +194,6 @@ namespace Susanoo
             foreach (var processor in _registeredCommandProcessors
                 .Select(kvp => kvp.Value))
                 processor.ClearColumnIndexInfo();
-        }
-
-        /// <summary>
-        /// Flushes caches on a specific named CommandBuilder processor.
-        /// </summary>
-        /// <param name="name">The name of the CommandBuilder processor.</param>
-        public void FlushCache(string name)
-        {
-            ICommandProcessorWithResults reference;
-            if (_namedCommandProcessors.TryGetValue(name, out reference))
-                reference.FlushCache();
         }
 
         /// <summary>
@@ -264,6 +240,17 @@ namespace Susanoo
                 throw new ArgumentNullException(nameof(bootstrapper));
 
             Bootstrapper = bootstrapper;
+        }
+
+        /// <summary>
+        /// Resolves a DatabaseManagerFactory from the bootstrapper
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>Susanoo.IDatabaseManagerFactory.</returns>
+        public static IDatabaseManagerFactory ResolveDatabaseManagerFactory(string name = null)
+        {
+            return Instance.Bootstrapper
+                .ResolveDatabaseManagerFactory(name);
         }
 
         /// <summary>

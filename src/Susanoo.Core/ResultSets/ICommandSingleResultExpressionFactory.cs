@@ -1,5 +1,4 @@
-﻿using System;
-using Susanoo.Command;
+﻿using Susanoo.Command;
 
 namespace Susanoo.ResultSets
 {

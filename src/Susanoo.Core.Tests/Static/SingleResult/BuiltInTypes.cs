@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Susanoo.Exceptions;
-using Susanoo.Processing;
 
 namespace Susanoo.Tests.Static.SingleResult
 {

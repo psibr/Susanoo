@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using Susanoo.Processing;
 using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization

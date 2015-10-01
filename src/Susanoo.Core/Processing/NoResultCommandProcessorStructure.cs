@@ -1,65 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region
+
+using System;
 using System.Data.Common;
-using System.Linq;
 using System.Numerics;
+#if !NETFX40
 using System.Threading;
 using System.Threading.Tasks;
+#endif
 using Susanoo.Command;
-using Susanoo.Processing;
 
-namespace Susanoo.Transforms
+#endregion
+
+namespace Susanoo.Processing
 {
     /// <summary>
-    /// A proxy for no result set command processors that allows transforms to be applied prior to execution.
+    ///     A fully built and ready to be executed CommandBuilder expression with a filter parameter.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public class NoResultTransformProxy<TFilter>
-        : INoResultCommandProcessor<TFilter>
+    public abstract class NoResultCommandProcessorStructure<TFilter>
     {
-        private readonly INoResultCommandProcessor<TFilter> _source;
-        private readonly IEnumerable<CommandTransform> _transforms;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NoResultTransformProxy{TFilter}"/> class.
+        ///     Gets the CommandBuilder expression.
         /// </summary>
-        /// <param name="source">The source.</param>
-        /// <param name="transforms">The transforms.</param>
-        public NoResultTransformProxy(INoResultCommandProcessor<TFilter> source, IEnumerable<CommandTransform> transforms)
-        {
-            _source = source;
-            _transforms = transforms;
-        }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public BigInteger CacheHash =>
-            _source.CacheHash;
-
-        /// <summary>
-        /// Gets the CommandBuilder information.
-        /// </summary>
-        /// <value>The CommandBuilder information.</value>
-        public ICommandBuilderInfo<TFilter> CommandBuilderInfo =>
-            _source.CommandBuilderInfo;
+        /// <value>The CommandBuilder expression.</value>
+        public virtual ICommandBuilderInfo<TFilter> CommandBuilderInfo { get; protected set; }
 
         /// <summary>
         /// Gets or sets the timeout of a command execution.
         /// </summary>
         /// <value>The timeout.</value>
-        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
+        public virtual TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
-        /// Allows a hook in an instance of a processor
+        ///     Gets the hash code used for caching result mapping compilations.
         /// </summary>
-        /// <param name="interceptOrProxy">The intercept or proxy.</param>
-        /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
-        public INoResultCommandProcessor<TFilter> InterceptOrProxyWith(Func<INoResultCommandProcessor<TFilter>, INoResultCommandProcessor<TFilter>> interceptOrProxy)
-        {
-            return interceptOrProxy(this);
-        }
+        /// <value>The cache hash.</value>
+        public virtual BigInteger CacheHash =>
+            CommandBuilderInfo.CacheHash;
 
         /// <summary>
         ///     Executes the non query.
@@ -67,13 +45,8 @@ namespace Susanoo.Transforms
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="executableCommandInfo">The executable command information.</param>
         /// <returns>System.Int32.</returns>
-        public int ExecuteNonQuery(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
-        {
-            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
-                commandTransform.Transform(current));
-
-            return _source.ExecuteNonQuery(databaseManager, transformed);
-        }
+        public abstract int ExecuteNonQuery(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo);
 
         /// <summary>
         ///     Executes the scalar.
@@ -82,14 +55,16 @@ namespace Susanoo.Transforms
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="executableCommandInfo">The executable command information.</param>
         /// <returns>TReturn.</returns>
-        public TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager,
-            IExecutableCommandInfo executableCommandInfo)
-        {
-            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
-                commandTransform.Transform(current));
+        public abstract TReturn ExecuteScalar<TReturn>(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo);
 
-            return _source.ExecuteScalar<TReturn>(databaseManager, transformed);
-        }
+        /// <summary>
+        ///     Allows a hook in an instance of a processor
+        /// </summary>
+        /// <param name="interceptOrProxy">The intercept or proxy.</param>
+        /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
+        public abstract INoResultCommandProcessor<TFilter> InterceptOrProxyWith(
+            Func<INoResultCommandProcessor<TFilter>, INoResultCommandProcessor<TFilter>> interceptOrProxy);
 
         /// <summary>
         ///     Executes the scalar.
@@ -187,7 +162,6 @@ namespace Susanoo.Transforms
         }
 
 #if !NETFX40
-
         /// <summary>
         ///     Executes the non query asynchronously.
         /// </summary>
@@ -195,15 +169,8 @@ namespace Susanoo.Transforms
         /// <param name="executableCommandInfo">The executable command information.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>System.Threading.Tasks.Task&lt;System.Int32&gt;.</returns>
-        public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
-            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken)
-        {
-            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
-                commandTransform.Transform(current));
-
-            return await _source.ExecuteNonQueryAsync(databaseManager, transformed, cancellationToken)
-                .ConfigureAwait(false);
-        }
+        public abstract Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken);
 
         /// <summary>
         ///     Executes the scalar asynchronously.
@@ -213,15 +180,8 @@ namespace Susanoo.Transforms
         /// <param name="executableCommandInfo">The executable command information.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>System.Threading.Tasks.Task&lt;TReturn&gt;.</returns>
-        public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
-            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken)
-        {
-            var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
-                commandTransform.Transform(current));
-
-            return await _source.ExecuteScalarAsync<TReturn>(databaseManager, transformed, cancellationToken)
-                .ConfigureAwait(false);
-        }
+        public abstract Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
+            IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken);
 
         /// <summary>
         ///     Execute scalar as an asynchronous operation.
@@ -302,11 +262,10 @@ namespace Susanoo.Transforms
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return
-                await
-                    ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), null, CancellationToken.None,
-                        explicitParameters)
-                        .ConfigureAwait(false);
+            return await
+                ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), null, CancellationToken.None,
+                    explicitParameters)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -320,11 +279,10 @@ namespace Susanoo.Transforms
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters)
         {
-            return
-                await
-                    ExecuteScalarAsync<TReturn>(databaseManager, filter, null, CancellationToken.None,
-                        explicitParameters)
-                        .ConfigureAwait(false);
+            return await
+                ExecuteScalarAsync<TReturn>(databaseManager, filter, null, CancellationToken.None,
+                    explicitParameters)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -337,11 +295,10 @@ namespace Susanoo.Transforms
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters)
         {
-            return
-                await
-                    ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), null, CancellationToken.None,
-                        explicitParameters)
-                        .ConfigureAwait(false);
+            return await
+                ExecuteScalarAsync<TReturn>(databaseManager, default(TFilter), null, CancellationToken.None,
+                    explicitParameters)
+                    .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -356,11 +313,10 @@ namespace Susanoo.Transforms
         public async Task<TReturn> ExecuteScalarAsync<TReturn>(IDatabaseManager databaseManager,
             TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
-            return
-                await
-                    ExecuteScalarAsync<TReturn>(databaseManager, filter, parameterObject, CancellationToken.None,
-                        explicitParameters)
-                        .ConfigureAwait(false);
+            return await
+                ExecuteScalarAsync<TReturn>(databaseManager, filter, parameterObject, CancellationToken.None,
+                    explicitParameters)
+                    .ConfigureAwait(false);
         }
 
 
@@ -375,9 +331,8 @@ namespace Susanoo.Transforms
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager, TFilter filter,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return
-                await ExecuteNonQueryAsync(databaseManager, filter, null, cancellationToken, explicitParameters)
-                    .ConfigureAwait(false);
+            return await ExecuteNonQueryAsync(databaseManager, filter, null, cancellationToken, explicitParameters)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -404,9 +359,8 @@ namespace Susanoo.Transforms
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
-            return
-                await ExecuteNonQueryAsync(databaseManager, default(TFilter), cancellationToken, explicitParameters)
-                    .ConfigureAwait(false);
+            return await ExecuteNonQueryAsync(databaseManager, default(TFilter), cancellationToken, explicitParameters)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -418,14 +372,12 @@ namespace Susanoo.Transforms
         public async Task<int> ExecuteNonQueryAsync(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters)
         {
-            return
-                await
-                    ExecuteNonQueryAsync(databaseManager, default(TFilter), default(CancellationToken),
-                        explicitParameters)
-                        .ConfigureAwait(false);
+            return await
+                ExecuteNonQueryAsync(databaseManager, default(TFilter), default(CancellationToken),
+                    explicitParameters)
+                    .ConfigureAwait(false);
         }
 
 #endif
-
     }
 }

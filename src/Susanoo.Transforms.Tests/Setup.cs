@@ -2,7 +2,6 @@
 
 using System.Data;
 using System.Diagnostics;
-using NUnit.Core;
 using NUnit.Framework;
 using Susanoo.Deserialization;
 using Susanoo.Processing;

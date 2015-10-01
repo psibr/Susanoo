@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Susanoo.Command;
-using Susanoo.Mapping;
 using Susanoo.Processing;
 
 namespace Susanoo.Transforms

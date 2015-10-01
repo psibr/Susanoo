@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Numerics;
 using Susanoo.Mapping.Properties;
-using Susanoo.Pipeline;
 
 namespace Susanoo.Mapping
 {

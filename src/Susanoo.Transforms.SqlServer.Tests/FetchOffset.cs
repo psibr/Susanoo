@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Susanoo.Command;
-using Susanoo.Transforms;
 
 namespace Susanoo.Transforms.SqlServer.Tests
 {
