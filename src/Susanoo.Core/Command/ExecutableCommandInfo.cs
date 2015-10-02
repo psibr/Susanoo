@@ -1,5 +1,7 @@
+using System;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 
 namespace Susanoo.Command
 {
@@ -26,5 +28,15 @@ namespace Susanoo.Command
         /// </summary>
         /// <value>The parameters.</value>
         public DbParameter[] Parameters { get; set; }
+
+        /// <summary>
+        /// Gets a deterministic key based on hashing.
+        /// </summary>
+        /// <returns>Base64 encoded 128bit hash code</returns>
+        public string GetDeterministicKey()
+        {
+            return Convert.ToBase64String(HashBuilder.Compute(Parameters.Aggregate(CommandText + DbCommandType,
+                (s, parameter) => s += parameter.ParameterName + parameter.DbType + parameter.Value.ToString())).ToByteArray());
+        }
     }
 }

@@ -81,17 +81,20 @@ namespace Susanoo.Deserialization
         /// <exception cref="System.InvalidCastException">Value types cannot cast null.</exception>
         public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
         {
+            return Deserialize(reader, checker).Cast<object>().Select(o =>
+            {
+                try
+                {
+                    return (TResult) o;
+                }
+                catch (NullReferenceException ex)
+                {
+                        // It is confusing to get a NullReference Exception due to casting,
+                        // so we rethrow as an invalid cast with more details.
+                        throw new InvalidCastException("Value types cannot cast null.", ex);
+                }
+            });
 
-            try
-            {
-                return Deserialize(reader, checker).Cast<TResult>();
-            }
-            catch (NullReferenceException ex)
-            {
-                // It is confusing to get a NullReference Exception due to casting,
-                // so we rethrow as an invalid cast with more details.
-                throw new InvalidCastException("Value types cannot cast null.", ex);
-            }
         }
     }
 }

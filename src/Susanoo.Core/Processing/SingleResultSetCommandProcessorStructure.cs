@@ -33,6 +33,7 @@ namespace Susanoo.Processing
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, default(TFilter), explicitParameters);
@@ -46,6 +47,7 @@ namespace Susanoo.Processing
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters)
         {
             return Execute(databaseManager, filter, null, explicitParameters);
@@ -60,6 +62,7 @@ namespace Susanoo.Processing
         /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public IEnumerable<TResult> Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject,
             params DbParameter[] explicitParameters)
         {
@@ -108,6 +111,7 @@ namespace Susanoo.Processing
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, object parameterObject, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
 
@@ -131,6 +135,7 @@ namespace Susanoo.Processing
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {
@@ -146,6 +151,7 @@ namespace Susanoo.Processing
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters)
         {
@@ -163,6 +169,7 @@ namespace Susanoo.Processing
         /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
         {
@@ -179,6 +186,7 @@ namespace Susanoo.Processing
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters)
         {
@@ -196,6 +204,7 @@ namespace Susanoo.Processing
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception is encountered during execution.</exception>
         public async Task<IEnumerable<TResult>> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters)
         {

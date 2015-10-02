@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using Susanoo.Exceptions;
 using Susanoo.Processing;
-using Susanoo.Proxies;
+using Susanoo.Proxies.ExceptionInterception;
+using Susanoo.Proxies.Transforms;
 
 namespace Susanoo
 {

@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 #endif
 
-namespace Susanoo.Proxies
+namespace Susanoo.Proxies.ExceptionInterception
 {
     /// <summary>
     /// A proxy for single result command processors that allows an interception action to be invoked when an execution exception occurs

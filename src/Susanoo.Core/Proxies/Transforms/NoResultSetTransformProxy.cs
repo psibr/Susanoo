@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Susanoo.Command;
 using Susanoo.Processing;
@@ -8,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 #endif
 
-namespace Susanoo.Proxies
+namespace Susanoo.Proxies.Transforms
 {
     /// <summary>
     /// A proxy for no result set command processors that allows transforms to be applied prior to execution.

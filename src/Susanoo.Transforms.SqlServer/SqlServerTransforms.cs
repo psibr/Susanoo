@@ -3,6 +3,7 @@ using System.Data;
 using Susanoo.Command;
 using Susanoo.Processing;
 using Susanoo.Proxies;
+using Susanoo.Proxies.Transforms;
 
 namespace Susanoo.Transforms
 {

@@ -141,6 +141,8 @@
     <Compile Include="IPropertyMetadataExtractor.cs" />
     <Compile Include="Processing\CommandProcessorExtensions.cs" />
     <Compile Include="Processing\ICommandProcessor.cs" />
+    <Compile Include="Processing\IMultipleResultSetCommandProcessorAsync.cs" />
+    <Compile Include="Processing\ISingleResultSetCommandProcessorAsync.cs" />
     <Compile Include="Processing\ICommandProcessorWithResults.cs" />
     <Compile Include="Processing\IMultipleResultSetCommandProcessor.cs" />
     <Compile Include="Processing\IMultipleResultSetCommandProcessorFactory.cs" />
@@ -155,10 +157,14 @@
     <Compile Include="Processing\MultipleResultSetCommandProcessorStructure.cs" />
     <Compile Include="Processing\SingleResultSetCommandProcessorStructure.cs" />
     <Compile Include="Processing\SingleResultSetCommandProcessorFactory.cs" />
+    <Compile Include="Proxies\Caching\ICacheProvider.cs" />
     <Compile Include="Proxies\MultipleResultSetProxy.cs" />
     <Compile Include="Proxies\NoResultSetProxy.cs" />
-    <Compile Include="Proxies\NoResultSetExceptionInterceptionProxy.cs" />
+    <Compile Include="Proxies\ExceptionInterception\NoResultSetExceptionInterceptionProxy.cs" />
+    <Compile Include="Proxies\ExceptionInterception\SingleResultSetExceptionInterceptionProxy.cs" />
     <Compile Include="Proxies\SingleResultSetProxy.cs" />
+    <Compile Include="Proxies\Caching\SingleResultSetCachingProxy.cs" />
+    <Compile Include="Proxies\Transforms\SingleResultSetTransformProxy.cs" />
     <Compile Include="ResultSets\CommandMultipleResultExpression.cs" />
     <Compile Include="ResultSets\CommandSingleResultExpressionFactory.cs" />
     <Compile Include="ResultSets\CommandMultipleResultExpressionFactory.cs" />
@@ -216,12 +222,12 @@
     <Compile Include="DependencyInjection\TinyIoC.cs" />
     <Compile Include="DependencyInjection\TinyIoCContainerAdapter.cs" />
     <Compile Include="Proxies\CommandManagerExtensions.cs" />
-    <Compile Include="Proxies\CommandTransform.cs" />
+    <Compile Include="Proxies\Transforms\CommandTransform.cs" />
     <Compile Include="Proxies\NoResultSetProxyExtensions.cs" />
-    <Compile Include="Proxies\NoResultSetTransformProxy.cs" />
+    <Compile Include="Proxies\Transforms\NoResultSetTransformProxy.cs" />
     <Compile Include="Proxies\SingleResultSetProxyExtensions.cs" />
-    <Compile Include="Proxies\SingleResultSetExceptionInterceptionProxy.cs" />
-    <Compile Include="Proxies\SingleResultSetTransformProxy.cs" />
+    <Compile Include="Proxies\ExceptionInterception\MultipleResultSetExceptionInterceptionProxy.cs" />
+    <Compile Include="Proxies\Transforms\MultipleResultSetTransformProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Key.snk" />

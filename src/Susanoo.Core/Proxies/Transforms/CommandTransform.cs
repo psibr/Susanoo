@@ -1,7 +1,7 @@
 ﻿using System;
 using Susanoo.Command;
 
-namespace Susanoo.Proxies
+namespace Susanoo.Proxies.Transforms
 {
     /// <summary>
     /// Describes and contains a transform operation for IExecutableCommandInfo.

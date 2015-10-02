@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
-using System.Data.Common;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
+using Susanoo.Command;
 using Susanoo.Deserialization;
 using Susanoo.Exceptions;
 using Susanoo.ResultSets;
@@ -70,29 +72,24 @@ namespace Susanoo.Processing
         /// parameters.
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
-        /// <param name="filter">The filter.</param>
-        /// <param name="parameterObject">The parameter object.</param>
-        /// <param name="explicitParameters">The explicit parameters.</param>
+        /// <param name="executableCommandInfo">The executable command information.</param>
         /// <returns>Tuple&lt;
         /// IEnumerable&lt;TResult1&gt;,
         /// IEnumerable&lt;TResult2&gt;&gt;.</returns>
         /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
         public override IResultSetReader Execute(IDatabaseManager databaseManager,
-            TFilter filter, object parameterObject, params DbParameter[] explicitParameters)
+            IExecutableCommandInfo executableCommandInfo)
         {
             var results = new IEnumerable[_mappers.Length];
-
-            var parameters = CommandBuilderInfo.BuildParameters(databaseManager, filter, parameterObject,
-                explicitParameters);
 
             try
             {
                 using (var record = databaseManager
                     .ExecuteDataReader(
-                        CommandBuilderInfo.CommandText,
-                        CommandBuilderInfo.DbCommandType,
+                        executableCommandInfo.CommandText,
+                        executableCommandInfo.DbCommandType,
                         Timeout,
-                        parameters))
+                        executableCommandInfo.Parameters))
                 {
                     var ix = 0;
 
@@ -105,7 +102,50 @@ namespace Susanoo.Processing
             }
             catch (Exception ex)
             {
-                throw new SusanooExecutionException(ex, CommandBuilderInfo, Timeout, parameters);
+                throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
+            }
+
+            IResultSetReader finalResults = new ResultSetReader(results);
+
+            return finalResults;
+        }
+
+        /// <summary>
+        /// Assembles a data CommandBuilder for an ADO.NET provider,
+        /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
+        /// </summary>
+        /// <param name="databaseManager">The database manager.</param>
+        /// <param name="executableCommandInfo">The executable command information.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
+        public override async Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo,
+            CancellationToken cancellationToken)
+        {
+            var results = new IEnumerable[_mappers.Length];
+
+            try
+            {
+                using (var record = await databaseManager
+                    .ExecuteDataReaderAsync(
+                        executableCommandInfo.CommandText,
+                        executableCommandInfo.DbCommandType,
+                        Timeout,
+                        cancellationToken,
+                        executableCommandInfo.Parameters))
+                {
+                    var ix = 0;
+
+                    do
+                    {
+                        results[ix] = _mappers[ix].Deserialize(record, RetrieveColumnIndexInfo());
+                        ix++;
+                    } while (ix < results.Length && record.NextResult());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SusanooExecutionException(ex, executableCommandInfo, Timeout, executableCommandInfo.Parameters);
             }
 
             IResultSetReader finalResults = new ResultSetReader(results);
