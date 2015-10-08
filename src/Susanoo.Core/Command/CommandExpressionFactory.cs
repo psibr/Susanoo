@@ -51,6 +51,10 @@ namespace Susanoo.Command
         /// <param name="commandText">The command text.</param>
         /// <param name="commandType">Type of the command.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="ArgumentNullException">commandText</exception>
+        /// <exception cref="ArgumentException">No CommandBuilder text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType</exception>
         public virtual ICommandExpression<TFilter> BuildCommandExpression<TFilter>(string commandText, CommandType commandType)
         {
             return new CommandExpression<TFilter>(

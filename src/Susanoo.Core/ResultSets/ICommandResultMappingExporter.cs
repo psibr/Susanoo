@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Susanoo.Mapping.Properties;
-using Susanoo.Pipeline;
 
 namespace Susanoo.ResultSets
 {
     /// <summary>
     /// Exposes property mapping export capabilities.
     /// </summary>
-    public interface ICommandResultMappingExporter :
-        IFluentPipelineFragment
+    public interface ICommandResultMappingExporter
     {
         /// <summary>
         /// Exports a results mappings for processing.

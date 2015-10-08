@@ -162,6 +162,7 @@
     <Compile Include="Proxies\NoResultSetProxy.cs" />
     <Compile Include="Proxies\ExceptionInterception\NoResultSetExceptionInterceptionProxy.cs" />
     <Compile Include="Proxies\ExceptionInterception\SingleResultSetExceptionInterceptionProxy.cs" />
+    <Compile Include="Proxies\MultipleResultSetProxyExtensions.cs" />
     <Compile Include="Proxies\SingleResultSetProxy.cs" />
     <Compile Include="Proxies\Caching\SingleResultSetCachingProxy.cs" />
     <Compile Include="Proxies\Transforms\SingleResultSetTransformProxy.cs" />
@@ -198,7 +199,6 @@
     <Compile Include="ResultSets\ICommandSingleResultExpression.cs" />
     <Compile Include="ResultSets\ICommandResultMappingStorage.cs" />
     <Compile Include="Deserialization\KeyValuePairDeserializerFactory.cs" />
-    <Compile Include="Pipeline\IFluentPipelineFragment.cs" />
     <Compile Include="Processing\MultipleResultSetCommandProcessor.cs" />
     <Compile Include="Processing\NoResultCommandProcessor.cs" />
     <Compile Include="Mapping\ResultMappingExpression.cs" />

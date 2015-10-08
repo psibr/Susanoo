@@ -1,5 +1,6 @@
-﻿using Susanoo.Command;
-using Susanoo.Pipeline;
+﻿using System;
+using Susanoo.Command;
+using Susanoo.Mapping;
 
 namespace Susanoo.ResultSets
 {
@@ -7,19 +8,27 @@ namespace Susanoo.ResultSets
     /// Exposes information to CommandBuilder Processors for result mapping.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandResultInfo<in TFilter> :
-        IFluentPipelineFragment
+    public interface ICommandResultInfo<in TFilter>
+        : ICommandResultInfo
     {
         /// <summary>
         /// Gets the command information.
         /// </summary>
         /// <value>The CommandBuilder information.</value>
         ICommandBuilderInfo<TFilter> GetCommandInfo();
+    }
+
+    /// <summary>
+    /// Exposes information to CommandBuilder Processors for result mapping.
+    /// </summary>
+    public interface ICommandResultInfo
+    {
 
         /// <summary>
-        /// Gets the result mapping exporter.
+        /// Retrieves the result set mappings.
         /// </summary>
-        /// <returns>ICommandResultMappingExporter.</returns>
-        ICommandResultMappingExporter GetExporter();
+        /// <param name="resultType">Type of the result.</param>
+        /// <returns>IMappingExport.</returns>
+        IMappingExport RetrieveResultSetMappings(Type resultType);
     }
 }

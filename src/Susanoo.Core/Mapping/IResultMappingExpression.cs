@@ -4,7 +4,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using Susanoo.Mapping.Properties;
-using Susanoo.Pipeline;
 
 #endregion
 
@@ -15,7 +14,7 @@ namespace Susanoo.Mapping
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public interface IResultMappingExpression<TFilter, TResult> : IMappingExport, IFluentPipelineFragment
+    public interface IResultMappingExpression<TFilter, TResult> : IMappingExport
     {
         /// <summary>
         /// Clears the result mappings.

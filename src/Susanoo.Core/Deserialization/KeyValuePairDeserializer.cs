@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Susanoo.Mapping;
 using Susanoo.Mapping.Properties;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
@@ -22,10 +23,10 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         /// <param name="type">The type.</param>
-        public KeyValuePairDeserializer(ICommandResultMappingExporter mappings, Type type)
+        public KeyValuePairDeserializer(IMappingExport mappings, Type type)
         {
             _type = type;
-            _props = mappings.Export(type);
+            _props = mappings.Export();
         }
 
         /// <summary>

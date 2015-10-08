@@ -1,6 +1,5 @@
 ﻿using System;
 using Susanoo.Command;
-using Susanoo.Pipeline;
 
 namespace Susanoo.Processing
 {
@@ -20,7 +19,7 @@ namespace Susanoo.Processing
     /// <summary>
     /// Shared members for all CommandBuilder processors.
     /// </summary>
-    public interface ICommandProcessor : IFluentPipelineFragment
+    public interface ICommandProcessor
     {
         /// <summary>
         /// Gets or sets the timeout of a command execution.

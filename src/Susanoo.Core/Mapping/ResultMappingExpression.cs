@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Numerics;
 using Susanoo.Mapping.Properties;
 
 #endregion
@@ -35,14 +33,6 @@ namespace Susanoo.Mapping
 
             MapDeclarativeProperties();
         }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public BigInteger CacheHash =>
-            _mappingActions.Aggregate(HashBuilder.Seed, (i, pair) =>
-                (i * 31) ^ pair.Value.CacheHash);
 
         /// <summary>
         /// Clears the result mappings.

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 
@@ -26,13 +25,6 @@ namespace Susanoo.Proxies
         {
             Source = source;
         }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash =>
-            Source.CacheHash;
 
         /// <summary>
         /// Clears any column index information that may have been cached.

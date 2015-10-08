@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Susanoo.Mapping;
 using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
@@ -26,7 +27,7 @@ namespace Susanoo.Deserialization
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IDeserializer<TResult> BuildDeserializer<TResult>(ICommandResultMappingExporter mappings)
+        public IDeserializer<TResult> BuildDeserializer<TResult>(IMappingExport mappings)
         {
             return new Deserializer<TResult>(new KeyValuePairDeserializer(mappings, typeof (TResult)).Deserialize<TResult>);
         }
@@ -37,7 +38,7 @@ namespace Susanoo.Deserialization
         /// <param name="resultType">Type of the result.</param>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IDeserializer BuildDeserializer(Type resultType, ICommandResultMappingExporter mappings)
+        public IDeserializer BuildDeserializer(Type resultType, IMappingExport mappings)
         {
             return new Deserializer(resultType, new KeyValuePairDeserializer(mappings, resultType).Deserialize);
         }

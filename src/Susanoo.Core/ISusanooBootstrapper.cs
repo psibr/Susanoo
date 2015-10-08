@@ -10,6 +10,11 @@ namespace Susanoo
     public interface ISusanooBootstrapper
     {
         /// <summary>
+        /// Initializes this instance.
+        /// </summary>
+        void Initialize();
+
+        /// <summary>
         /// Retrieves a set of attributes to use to determine when to ignore a property unless explicitly included.
         /// </summary>
         /// <returns>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;.</returns>

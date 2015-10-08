@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using Susanoo.Mapping.Properties;
 
 namespace Susanoo.Mapping
@@ -11,8 +10,7 @@ namespace Susanoo.Mapping
     public class DefaultResultMapping 
         : IMappingExport
     {
-        private readonly IDictionary<string, IPropertyMapping> _mappingActions =
-            new Dictionary<string, IPropertyMapping>();
+        private IDictionary<string, IPropertyMapping> _mappingActions;
 
         private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
         private readonly Type _resultType;
@@ -30,7 +28,25 @@ namespace Susanoo.Mapping
             _resultType = resultType;
             _actions = actions;
 
-            MapDeclarativeProperties();
+
+        }
+
+        /// <summary>
+        /// Gets the mapping actions.
+        /// </summary>
+        /// <value>The mapping actions.</value>
+        private IDictionary<string, IPropertyMapping> MappingActions
+        {
+            get
+            {
+                if (_mappingActions == null)
+                {
+                    _mappingActions = new Dictionary<string, IPropertyMapping>();
+                    MapDeclarativeProperties();
+                }
+
+                return _mappingActions;
+            }
         }
 
         /// <summary>
@@ -50,18 +66,12 @@ namespace Susanoo.Mapping
         }
 
         /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public BigInteger CacheHash => -1;
-
-        /// <summary>
         /// Exports this instance.
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
         public IDictionary<string, IPropertyMapping> Export()
         {
-            return _mappingActions;
+            return MappingActions;
         }
 
 

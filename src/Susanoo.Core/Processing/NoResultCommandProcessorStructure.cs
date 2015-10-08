@@ -2,7 +2,6 @@
 
 using System;
 using System.Data.Common;
-using System.Numerics;
 #if !NETFX40
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,13 +30,6 @@ namespace Susanoo.Processing
         /// </summary>
         /// <value>The timeout.</value>
         public virtual TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
-
-        /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash =>
-            CommandBuilderInfo.CacheHash;
 
         /// <summary>
         ///     Executes the non query.

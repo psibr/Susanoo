@@ -4,7 +4,6 @@ using System;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Susanoo.Pipeline;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 
@@ -18,7 +17,6 @@ namespace Susanoo.Command
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public interface ICommandExpression<TFilter>
-        : IFluentPipelineFragment
     {
         /// <summary>
         /// Gets or sets the CommandBuilder text.

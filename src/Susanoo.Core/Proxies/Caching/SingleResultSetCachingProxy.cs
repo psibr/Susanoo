@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
-using Microsoft.CSharp.RuntimeBinder;
 using Susanoo.Command;
 using Susanoo.Processing;
 #if !NETFX40
@@ -45,24 +43,16 @@ namespace Susanoo.Proxies.Caching
         public override IEnumerable<TResult> Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
         {
             var key = executableCommandInfo.GetDeterministicKey();
-            IEnumerable<TResult> result = null;
-            try
-            {
-                result = _cacheProvider.Get<IEnumerable<TResult>>(key);
-            }
-            catch (RuntimeBinderException) { }
-            catch (SerializationException) { }
+
+            var result = _cacheProvider.Get<IEnumerable<TResult>>(key);
+
 
             if (result == null)
             {
                 result = Source.Execute(databaseManager, executableCommandInfo);
 
-                try
-                {
-                    _cacheProvider.Set(key, result);
-                }
-                catch (RuntimeBinderException) { }
-                catch (SerializationException) { }
+                _cacheProvider.Set(key, result);
+
             }
 
             return result;

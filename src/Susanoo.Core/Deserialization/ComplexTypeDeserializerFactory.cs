@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 using Susanoo.Exceptions;
+using Susanoo.Mapping;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 
@@ -24,11 +29,14 @@ namespace Susanoo.Deserialization
             typeof (ColumnChecker).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null,
                 new[] {typeof (int)}, null);
 
+        private static readonly ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, IEnumerable>> 
+            DeserilializerCache = new ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, IEnumerable>>();
+
         /// <summary>
         /// Compiles mappings.
         /// </summary>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;System.Object&gt;&gt;.</returns>
-        public static Func<IDataReader, ColumnChecker, IEnumerable> Compile(ICommandResultMappingExporter mapping, Type resultType)
+        public static Func<IDataReader, ColumnChecker, IEnumerable> Compile(IMappingExport mapping, Type resultType)
         {
             var listType = typeof(List<>).MakeGenericType(resultType);
             var listResultType = typeof(List<>).MakeGenericType(resultType);
@@ -37,7 +45,7 @@ namespace Susanoo.Deserialization
             var addLastMethod = listType.GetMethod("Add", new[] { resultType });
 
             //Get the properties we care about.
-            var mappings = mapping.Export(resultType);
+            var mappings = mapping.Export();
 
             var outerStatements = new List<Expression>();
             var innerStatements = new List<Expression>();
@@ -167,9 +175,9 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> Compile<TResult>(ICommandResultMappingExporter mapping, Type resultType)
+        public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CastResults<TResult>(Func<IDataReader, ColumnChecker, IEnumerable> compiledFunc)
         {
-            var result = Compile(mapping, resultType);
+            var result = compiledFunc;
 
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> typedResult =
                 (reader, columnMeta) => (IEnumerable<TResult>) (result(reader, columnMeta));
@@ -193,9 +201,20 @@ namespace Susanoo.Deserialization
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IDeserializer<TResult> BuildDeserializer<TResult>(ICommandResultMappingExporter mappings)
+        public IDeserializer<TResult> BuildDeserializer<TResult>(IMappingExport mappings)
         {
-            return new Deserializer<TResult>(Compile<TResult>(mappings, typeof(TResult)));
+            var cacheKey = GetCacheKey(typeof(TResult), mappings);
+
+            Func<IDataReader, ColumnChecker, IEnumerable> deserializer;
+
+            if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
+            {
+
+                deserializer = Compile(mappings, typeof(TResult));
+                DeserilializerCache.TryAdd(cacheKey, deserializer);
+            }
+
+            return new Deserializer<TResult>(CastResults<TResult>(deserializer));
         }
 
         /// <summary>
@@ -204,9 +223,31 @@ namespace Susanoo.Deserialization
         /// <param name="resultType">Type of the result.</param>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IDeserializer BuildDeserializer(Type resultType, ICommandResultMappingExporter mappings)
+        public IDeserializer BuildDeserializer(Type resultType, IMappingExport mappings)
         {
-            return new Deserializer(resultType, Compile(mappings, resultType));
+            var cacheKey = GetCacheKey(resultType, mappings);
+
+            Func<IDataReader, ColumnChecker, IEnumerable> deserializer;
+
+            if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
+            {
+                
+                deserializer = Compile(mappings, resultType);
+                DeserilializerCache.TryAdd(cacheKey, deserializer);
+            }
+
+
+            return new Deserializer(resultType, deserializer);
+        }
+
+        private BigInteger GetCacheKey(Type resultType, IMappingExport mappings)
+        {
+            if (mappings is DefaultResultMapping)
+                return HashBuilder.Compute(resultType.AssemblyQualifiedName);
+
+            return HashBuilder.Compute(mappings.Export()
+                .Aggregate(resultType.AssemblyQualifiedName, (seed, kvp)
+                    => seed + kvp.Key + kvp.Value.ActiveAlias + kvp.Value.PropertyMetadata.Name));
         }
     }
 }

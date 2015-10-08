@@ -15,7 +15,7 @@ namespace Susanoo.Command
         DbParameter[] Parameters { get; }
 
         /// <summary>
-        /// Gets a deterministic key based.
+        /// Gets a deterministic key.
         /// </summary>
         /// <returns>System.string</returns>
         string GetDeterministicKey();

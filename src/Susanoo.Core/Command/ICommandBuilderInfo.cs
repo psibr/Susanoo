@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
-using Susanoo.Pipeline;
 
 namespace Susanoo.Command
 {
@@ -8,7 +7,7 @@ namespace Susanoo.Command
     /// Basic details about a CommandBuilder and parameter building.
     /// </summary>
     public interface ICommandBuilderInfo<in TFilter>
-        : ICommandInfo, IFluentPipelineFragment
+        : ICommandInfo
     {
         /// <summary>
         /// Builds the parameters.

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Susanoo.Command;
@@ -35,27 +34,16 @@ namespace Susanoo.Processing
         /// <param name="name">The name.</param>
         /// <param name="resultTypes">The result types.</param>
         public MultipleResultSetCommandProcessor(IDeserializerResolver deserializerResolver,
-            ICommandResultInfo<TFilter> commandResultInfo, string name, Type[] resultTypes)
+            ICommandResultInfo<TFilter> commandResultInfo, Type[] resultTypes)
         {
             CommandResultInfo = commandResultInfo;
 
             _deserializerResolver = deserializerResolver;
 
             _mappers = resultTypes
-                .Select(t => _deserializerResolver.ResolveDeserializer(t, commandResultInfo.GetExporter()))
+                .Select(t => _deserializerResolver.ResolveDeserializer(t, commandResultInfo))
                 .ToArray();
-
-            CommandManager.Instance.RegisterCommandProcessor(this, name);
         }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash =>
-            CommandResultInfo.CacheHash
-                + HashBuilder.Compute(_mappers.Aggregate(string.Empty, (s, deserializer)
-                    => s + deserializer.DeserializationType.AssemblyQualifiedName));
 
         /// <summary>
         /// Allows a hook in an instance of a processor

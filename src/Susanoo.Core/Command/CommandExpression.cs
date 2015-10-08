@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Numerics;
 using System.Reflection;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
@@ -202,13 +201,6 @@ namespace Susanoo.Command
         public string CommandText { get; set; }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash => 
-            ComputeHash();
-
-        /// <summary>
         ///     Realizes the pipeline with no result mappings.
         /// </summary>
         /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
@@ -367,27 +359,6 @@ namespace Susanoo.Command
         {
             return _commandMultipleResultExpressionFactory
                 .BuildCommandMultipleResultExpression(this, resultTypes);
-        }
-
-        /// <summary>
-        /// Computes the hash.
-        /// </summary>
-        private BigInteger ComputeHash()
-        {
-            //This is faster than string builder and less resource intensive
-            var strings =
-                string.Concat(_constantParameters.Select(c => c.Key)
-                    .Concat(_parameterInclusions.Select(c => c.Key))
-                    .Concat(_parameterExclusions)
-                    .Concat(new[]
-                    {
-                        CommandText,
-                        DbCommandType.ToString(),
-                        _explicitInclusionMode.ToString(),
-                        _nullValueMode.ToString()
-                    }));
-
-            return HashBuilder.Compute(strings);
         }
 
 

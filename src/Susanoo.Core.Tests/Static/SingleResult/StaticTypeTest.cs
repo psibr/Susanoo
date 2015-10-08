@@ -16,18 +16,16 @@ namespace Susanoo.Tests.Static.SingleResult
     {
         private readonly DatabaseManager _databaseManager = Setup.DatabaseManager;
 
-        private             ISingleResultSetCommandProcessor<dynamic, TypeTestModel> results =
-        CommandManager.Instance.DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
-                .DefineResults<TypeTestModel>()
-                .Realize();
-
-
         [Test]
         public void StaticRowPerformance()
         {
             for (int i = 0; i < 500; i++)
             {
-                results.Execute(_databaseManager);
+                CommandManager.Instance
+                    .DefineCommand("SELECT TOP 1 * FROM #DataTypeTable;", CommandType.Text)
+                    .DefineResults<TypeTestModel>()
+                    .Realize()
+                    .Execute(_databaseManager);
             }
         }
 
@@ -101,6 +99,8 @@ namespace Susanoo.Tests.Static.SingleResult
                 .Realize()
                 .ExecuteNonQuery(_databaseManager, result);
         }
+
+
 
         [Test(Description = "Tests that results correctly map data to CLR types.")]
         public void StaticResultDataTypesInsertAnonymous()

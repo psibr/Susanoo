@@ -4,12 +4,9 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
 using Susanoo.Command;
-using Susanoo.Processing;
 
 #endregion
 
@@ -22,7 +19,7 @@ namespace Susanoo
     {
         private CommandManager()
         {
-            
+
         }
 
         private static readonly IDictionary<Type, DbType> BuiltinTypeConversions =
@@ -64,12 +61,6 @@ namespace Susanoo
                 {typeof (DateTimeOffset?), DbType.DateTimeOffset}
             });
 
-        private readonly ConcurrentDictionary<BigInteger, ICommandProcessorWithResults> _registeredCommandProcessors =
-                    new ConcurrentDictionary<BigInteger, ICommandProcessorWithResults>();
-
-        private readonly ConcurrentDictionary<string, ICommandProcessorWithResults> _namedCommandProcessors =
-                    new ConcurrentDictionary<string, ICommandProcessorWithResults>();
-
         /// <summary>
         /// Gets the expression assembly that contains runtime compiled methods used for mappings.
         /// </summary>
@@ -81,7 +72,7 @@ namespace Susanoo
         /// Gets the dynamic namespace.
         /// </summary>
         /// <value>The dynamic namespace.</value>
-        internal static ModuleBuilder DynamicNamespace { get; } = 
+        internal static ModuleBuilder DynamicNamespace { get; } =
             ExpressionAssembly
             .DefineDynamicModule("Susanoo.DynamicExpression", "Susanoo.DynamicExpression.dll");
 
@@ -130,73 +121,6 @@ namespace Susanoo
         }
 
         /// <summary>
-        /// Attempts to get a CommandBuilder processor by hash code.
-        /// </summary>
-        /// <param name="hash">The hash.</param>
-        /// <param name="commandProcessor">The CommandBuilder processor.</param>
-        /// <returns><c>true</c> if a CommandBuilder processor with the same configuration has been registered and not garbage collected,
-        /// <c>false</c> otherwise.</returns>
-        public bool TryGetCommandProcessor(BigInteger hash, out ICommandProcessorWithResults commandProcessor)
-        {
-            var result = _registeredCommandProcessors.TryGetValue(hash, out commandProcessor);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Attempts to get a CommandBuilder processor by name.
-        /// </summary>
-        /// <param name="name">The name of the processor.</param>
-        /// <param name="commandProcessor">The CommandBuilder processor.</param>
-        /// <returns><c>true</c> if a CommandBuilder processor with the same configuration has been registered and not garbage collected,
-        /// <c>false</c> otherwise.</returns>
-        public bool TryGetCommandProcessor(string name, out ICommandProcessorWithResults commandProcessor)
-        {
-            var result = _namedCommandProcessors.TryGetValue(name, out commandProcessor);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Registers the CommandBuilder processor.
-        /// </summary>
-        /// <param name="processor">The processor.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="hashCodeOverride">The hash code override.</param>
-        public void RegisterCommandProcessor(ICommandProcessorWithResults processor, string name = null, BigInteger hashCodeOverride = default(BigInteger))
-        {
-            var hash = hashCodeOverride != default(BigInteger) ? hashCodeOverride : processor.CacheHash;
-
-            _registeredCommandProcessors.TryAdd(hash, processor);
-
-            if (!string.IsNullOrWhiteSpace(name))
-                _namedCommandProcessors.TryAdd(name, processor);
-        }
-
-        /// <summary>
-        /// Clears any column index information that may have been cached.
-        /// </summary>
-        /// <param name="processor">The processor.</param>
-        /// <exception cref="System.ArgumentNullException">processor</exception>
-        public void ClearColumnIndexInfo(ICommandProcessorWithResults processor)
-        {
-            if (processor == null)
-                throw new ArgumentNullException(nameof(processor));
-
-            processor.ClearColumnIndexInfo();
-        }
-
-        /// <summary>
-        /// Clears any column index information that may have been cached.
-        /// </summary>
-        public void ClearColumnIndexInfo()
-        {
-            foreach (var processor in _registeredCommandProcessors
-                .Select(kvp => kvp.Value))
-                processor.ClearColumnIndexInfo();
-        }
-
-        /// <summary>
         /// Saves the dynamic assembly to disk.
         /// </summary>
         public static void SaveDynamicAssemblyToDisk()
@@ -207,6 +131,8 @@ namespace Susanoo
         private static CommandManager _instance;
 
         private static readonly object SyncRoot = new object();
+
+        private ISusanooBootstrapper _bootstrapper;
 
         /// <summary>
         /// Gets the instance.
@@ -239,7 +165,9 @@ namespace Susanoo
             if (bootstrapper == null)
                 throw new ArgumentNullException(nameof(bootstrapper));
 
-            Bootstrapper = bootstrapper;
+            _bootstrapper = bootstrapper;
+
+            _bootstrapper.Initialize();
         }
 
         /// <summary>
@@ -257,7 +185,19 @@ namespace Susanoo
         /// Gets the bootstrapper.
         /// </summary>
         /// <value>The bootstrapper.</value>
-        public ISusanooBootstrapper Bootstrapper { get; private set; } =
-            new SusanooBootstrapper();
+        public ISusanooBootstrapper Bootstrapper
+        {
+            get
+            {
+                if (_bootstrapper == null)
+                {
+                    _bootstrapper = new SusanooBootstrapper();
+
+                    _bootstrapper.Initialize();
+                }
+
+                return _bootstrapper;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Susanoo.Command;
+using Susanoo.Mapping;
 using Susanoo.Mapping.Properties;
 
 namespace Susanoo.ResultSets
@@ -12,18 +13,17 @@ namespace Susanoo.ResultSets
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
     public abstract class CommandResultExpression<TFilter> 
-        : ICommandResultExpression<TFilter>, ICommandResultInfo<TFilter>, ICommandResultMappingExporter
+        : ICommandResultExpression<TFilter>, ICommandResultInfo<TFilter>
     {
-        private readonly ICommandResultMappingStorage<TFilter> _mappingStorage;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandResultExpression{TFilter}" /> class.
         /// </summary>
         /// <param name="command">The CommandBuilder.</param>
         /// <param name="mappingStorage">The mappingStorage.</param>
-        internal CommandResultExpression(ICommandBuilderInfo<TFilter> command, ICommandResultMappingStorage<TFilter> mappingStorage)
+        internal CommandResultExpression(ICommandBuilderInfo<TFilter> command,
+            ICommandResultMappingStorage<TFilter> mappingStorage)
         {
-            _mappingStorage = mappingStorage;
+            MappingStorage = mappingStorage;
 
             Command = command;
         }
@@ -39,46 +39,17 @@ namespace Susanoo.ResultSets
         }
 
         /// <summary>
-        /// Gets the type argument hash code.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>BigInteger.</returns>
-        internal static BigInteger GetTypeArgumentHashCode(Type type)
-        {
-            return type
-                .GetGenericArguments()
-                .Aggregate(new BigInteger(0), (p, arg) => (p * 31) ^ arg.AssemblyQualifiedName.GetHashCode());
-        }
-
-        /// <summary>
         /// Gets the CommandBuilder expression.
         /// </summary>
         /// <value>The CommandBuilder expression.</value>
         public virtual ICommandBuilderInfo<TFilter> Command { get; }
 
         /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash => 
-            (_mappingStorage.CacheHash ^ (Command.CacheHash * 31));
-
-        /// <summary>
         /// Gets the mappingStorage of the Commandresult functionality.
         /// </summary>
         /// <value>The mappingStorage.</value>
-        protected virtual ICommandResultMappingStorage<TFilter> MappingStorage => 
-            _mappingStorage;
+        protected virtual ICommandResultMappingStorage<TFilter> MappingStorage { get; }
 
-        /// <summary>
-        /// Exports a results mappings for processing.
-        /// </summary>
-        /// <param name="resultType">Type of the result.</param>
-        /// <returns>IDictionary&lt;System.String, IPropertyMapping&gt;.</returns>
-        public IDictionary<string, IPropertyMapping> Export(Type resultType)
-        {
-            return MappingStorage.Export(resultType);
-        }
 
         /// <summary>
         /// Gets or sets the CommandBuilder information.
@@ -91,14 +62,13 @@ namespace Susanoo.ResultSets
         }
 
         /// <summary>
-        ///     Gets the mappings exporter.
+        /// Retrieves the result set mappings.
         /// </summary>
-        /// <returns>ICommandResultMappingExporter.</returns>
-        public ICommandResultMappingExporter GetExporter()
+        /// <param name="resultType">Type of the result.</param>
+        /// <returns>IMappingExport.</returns>
+        public IMappingExport RetrieveResultSetMappings(Type resultType)
         {
-            return this;
+            return MappingStorage.RetrieveExporter(resultType);
         }
-
-
     }
 }

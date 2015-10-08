@@ -17,6 +17,6 @@ namespace Susanoo.Processing
         /// <param name="resultTypes">The result types.</param>
         /// <returns>IMultipleResultSetCommandProcessor&lt;TFilter&gt;.</returns>
         IMultipleResultSetCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandResultInfo<TFilter> mappings,
-            string name = null, params Type[] resultTypes);
+            params Type[] resultTypes);
     }
 }

@@ -4,7 +4,6 @@ using Susanoo.ResultSets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Susanoo.Exceptions;
@@ -38,12 +37,7 @@ namespace Susanoo.Processing
             CommandResultInfo = mappings;
 
             CompiledMapping = deserializerResolver
-                .ResolveDeserializer<TResult>(mappings.GetExporter());
-
-            var hash = (CacheHash * 31) ^ CommandResultExpression<TFilter>
-                .GetTypeArgumentHashCode(typeof(SingleResultSetCommandProcessor<TFilter, TResult>));
-
-            CommandManager.Instance.RegisterCommandProcessor(this, name, hash);
+                .ResolveDeserializer<TResult>(mappings);
         }
 
         /// <summary>
@@ -75,13 +69,6 @@ namespace Susanoo.Processing
         {
             return ColumnReport;
         }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash =>
-            CommandResultInfo.CacheHash;
 
         /// <summary>
         /// Allows a hook in an instance of a processor

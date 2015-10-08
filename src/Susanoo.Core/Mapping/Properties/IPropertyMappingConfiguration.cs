@@ -1,11 +1,9 @@
-﻿using Susanoo.Pipeline;
-
-namespace Susanoo.Mapping.Properties
+﻿namespace Susanoo.Mapping.Properties
 {
     /// <summary>
     /// Allows configuration of the Susanoo mapper at the property level during CommandBuilder definition.
     /// </summary>
-    public interface IPropertyMappingConfiguration : IFluentPipelineFragment
+    public interface IPropertyMappingConfiguration
     {
         /// <summary>
         /// Uses the specified alias when mapping from the data call.

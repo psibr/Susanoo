@@ -1,8 +1,6 @@
 ﻿#region
 
 using System;
-using System.Collections.Concurrent;
-using System.Numerics;
 using Susanoo.Command;
 using Susanoo.ResultSets;
 
@@ -43,13 +41,6 @@ namespace Susanoo.Processing
         public virtual void ClearColumnIndexInfo()
         {
         }
-
-        /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash => 
-            CommandResultInfo.CacheHash;
 
         /// <summary>
         ///     Retrieves a copy of the column index information.

@@ -29,7 +29,7 @@ namespace Susanoo.Processing
         /// <param name="resultTypes">The result types.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public virtual IMultipleResultSetCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandResultInfo<TFilter> mappings,
-            string name = null, params Type[] resultTypes) => 
-                new MultipleResultSetCommandProcessor<TFilter>(_deserializerResolver, mappings, name, resultTypes);
+            params Type[] resultTypes) => 
+                new MultipleResultSetCommandProcessor<TFilter>(_deserializerResolver, mappings, resultTypes);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Susanoo.Command;
-using Susanoo.Pipeline;
 
 namespace Susanoo.ResultSets
 {
@@ -7,8 +6,7 @@ namespace Susanoo.ResultSets
     /// Shared components for CommandBuilder Result Expressions.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandResultExpression<in TFilter> :
-        IFluentPipelineFragment
+    public interface ICommandResultExpression<in TFilter>
     {
 
         /// <summary>

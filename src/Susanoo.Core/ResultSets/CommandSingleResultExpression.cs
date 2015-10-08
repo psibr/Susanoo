@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Numerics;
 using Susanoo.Command;
 using Susanoo.Mapping;
 using Susanoo.Processing;
@@ -37,15 +36,6 @@ namespace Susanoo.ResultSets
         }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public override BigInteger CacheHash =>
-            (base.CacheHash*31)
-            ^ (GetTypeArgumentHashCode(this.GetType())*31)
-            ^ GetType().AssemblyQualifiedName.GetHashCode();
-
-        /// <summary>
         ///     Provide mapping actions and options for a result set
         /// </summary>
         /// <param name="mappings">The mappings.</param>
@@ -65,25 +55,7 @@ namespace Susanoo.ResultSets
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public ISingleResultSetCommandProcessor<TFilter, TResult> Realize(string name = null)
         {
-            ICommandProcessorWithResults instance;
-            ISingleResultSetCommandProcessor<TFilter, TResult> result = null;
-
-            if (name == null)
-            {
-                var hash = (CacheHash * 31) ^
-                           GetTypeArgumentHashCode(typeof(ISingleResultSetCommandProcessor<TFilter, TResult>));
-
-                if (CommandManager.Instance.TryGetCommandProcessor(hash, out instance))
-                    result = (ISingleResultSetCommandProcessor<TFilter, TResult>)instance;
-            }
-            else
-            {
-                if (CommandManager.Instance.TryGetCommandProcessor(name, out instance))
-                    result = (ISingleResultSetCommandProcessor<TFilter, TResult>)instance;
-            }
-
-            return result ??
-                   _singleResultSetCommandProcessorFactory
+            return _singleResultSetCommandProcessorFactory
                        .BuildCommandProcessor<TFilter, TResult>(this, name);
         }
     }

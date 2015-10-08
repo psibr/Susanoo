@@ -46,12 +46,12 @@ namespace Susanoo.Deserialization
         /// <param name="mappings">The mappings.</param>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public virtual IDeserializer<TResult>
-            ResolveDeserializer<TResult>(ICommandResultMappingExporter mappings)
+            ResolveDeserializer<TResult>(ICommandResultInfo mappings)
         {
 
             var factory = _deserializerFactories.First(df => df.CanDeserialize(typeof (TResult)));
 
-            return factory.BuildDeserializer<TResult>(mappings);
+            return factory.BuildDeserializer<TResult>(mappings.RetrieveResultSetMappings(typeof(TResult)));
         }
 
         /// <summary>
@@ -60,11 +60,11 @@ namespace Susanoo.Deserialization
         /// <param name="resultType">Type of the result.</param>
         /// <param name="mappings">The mappings.</param>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public IDeserializer ResolveDeserializer(Type resultType, ICommandResultMappingExporter mappings)
+        public IDeserializer ResolveDeserializer(Type resultType, ICommandResultInfo mappings)
         {
             var factory = _deserializerFactories.First(df => df.CanDeserialize(resultType));
 
-            return factory.BuildDeserializer(resultType, mappings);
+            return factory.BuildDeserializer(resultType, mappings.RetrieveResultSetMappings(resultType));
         }
     }
 }

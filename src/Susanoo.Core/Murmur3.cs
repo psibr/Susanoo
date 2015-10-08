@@ -2,7 +2,7 @@
 // Authors          : Jasmin Muharemovic
 // Created          : 07-17-2014
 //
-// Last Modified By : Donovan Crone
+// Last Modified By : Ovan Crone
 // Last Modified On : 09-03-2014
 // Original Implementation By: Jasmin Muharemovic
 // Adjusted to C# 4.0 BigInteger by Ovan Crone
@@ -80,7 +80,7 @@ namespace Susanoo
             // we only read aligned longs, so a simple casting is enough
             fixed (byte* pbyte = &bb[pos])
             {
-                return *((ulong*) pbyte);
+                return *((ulong*)pbyte);
             }
         }
     }
@@ -121,11 +121,11 @@ namespace Susanoo
             _h1 ^= MixKey1(k1);
             _h1 = _h1.RotateLeft(27);
             _h1 += _h2;
-            _h1 = _h1*5 + 0x52dce729;
+            _h1 = _h1 * 5 + 0x52dce729;
             _h2 ^= MixKey2(k2);
             _h2 = _h2.RotateLeft(31);
             _h2 += _h1;
-            _h2 = _h2*5 + 0x38495ab5;
+            _h2 = _h2 * 5 + 0x38495ab5;
         }
 
         private static ulong MixKey1(ulong k1)
@@ -166,7 +166,7 @@ namespace Susanoo
             _h1 = Seed;
             _length = 0L;
             var pos = 0;
-            var remaining = (ulong) bb.Length;
+            var remaining = (ulong)bb.Length;
             // read 128 bits, 16 bytes, 2 longs in eacy cycle
             while (remaining >= ReadSize)
             {
@@ -192,22 +192,22 @@ namespace Susanoo
             switch (remaining)
             {
                 case 15:
-                    k2 ^= (ulong) bb[pos + 14] << 48; // fall through
+                    k2 ^= (ulong)bb[pos + 14] << 48; // fall through
                     goto case 14;
                 case 14:
-                    k2 ^= (ulong) bb[pos + 13] << 40; // fall through
+                    k2 ^= (ulong)bb[pos + 13] << 40; // fall through
                     goto case 13;
                 case 13:
-                    k2 ^= (ulong) bb[pos + 12] << 32; // fall through
+                    k2 ^= (ulong)bb[pos + 12] << 32; // fall through
                     goto case 12;
                 case 12:
-                    k2 ^= (ulong) bb[pos + 11] << 24; // fall through
+                    k2 ^= (ulong)bb[pos + 11] << 24; // fall through
                     goto case 11;
                 case 11:
-                    k2 ^= (ulong) bb[pos + 10] << 16; // fall through
+                    k2 ^= (ulong)bb[pos + 10] << 16; // fall through
                     goto case 10;
                 case 10:
-                    k2 ^= (ulong) bb[pos + 9] << 8; // fall through
+                    k2 ^= (ulong)bb[pos + 9] << 8; // fall through
                     goto case 9;
                 case 9:
                     k2 ^= bb[pos + 8]; // fall through
@@ -216,22 +216,22 @@ namespace Susanoo
                     k1 ^= bb.GetUInt64(pos);
                     break;
                 case 7:
-                    k1 ^= (ulong) bb[pos + 6] << 48; // fall through
+                    k1 ^= (ulong)bb[pos + 6] << 48; // fall through
                     goto case 6;
                 case 6:
-                    k1 ^= (ulong) bb[pos + 5] << 40; // fall through
+                    k1 ^= (ulong)bb[pos + 5] << 40; // fall through
                     goto case 5;
                 case 5:
-                    k1 ^= (ulong) bb[pos + 4] << 32; // fall through
+                    k1 ^= (ulong)bb[pos + 4] << 32; // fall through
                     goto case 4;
                 case 4:
-                    k1 ^= (ulong) bb[pos + 3] << 24; // fall through
+                    k1 ^= (ulong)bb[pos + 3] << 24; // fall through
                     goto case 3;
                 case 3:
-                    k1 ^= (ulong) bb[pos + 2] << 16; // fall through
+                    k1 ^= (ulong)bb[pos + 2] << 16; // fall through
                     goto case 2;
                 case 2:
-                    k1 ^= (ulong) bb[pos + 1] << 8; // fall through
+                    k1 ^= (ulong)bb[pos + 1] << 8; // fall through
                     goto case 1;
                 case 1:
                     k1 ^= bb[pos]; // fall through

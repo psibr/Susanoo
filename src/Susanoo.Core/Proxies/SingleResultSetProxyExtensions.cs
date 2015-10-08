@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Susanoo.Exceptions;
 using Susanoo.Processing;
+using Susanoo.Proxies.Caching;
 using Susanoo.Proxies.ExceptionInterception;
 using Susanoo.Proxies.Transforms;
 
@@ -49,5 +50,25 @@ namespace Susanoo
                 source.InterceptOrProxyWith(
                     s => new SingleResultSetExceptionInterceptionProxy<TFilter, TResult>(s, executionHandler));
         }
+
+        /// <summary>
+        /// Caches the results.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="provider">The provider.</param>
+        /// <returns>ISingleResultSetCommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <exception cref="System.ArgumentNullException">provider</exception>
+        public static ISingleResultSetCommandProcessor<TFilter, TResult> CacheResults<TFilter, TResult>(
+            this ISingleResultSetCommandProcessor<TFilter, TResult> source, ICacheProvider provider)
+        {
+            if(provider == null)
+                throw new ArgumentNullException(nameof(provider));
+
+            return source
+                .InterceptOrProxyWith(s =>
+                    new SingleResultSetCachingProxy<TFilter, TResult>(s, provider));
+        } 
     }
 }

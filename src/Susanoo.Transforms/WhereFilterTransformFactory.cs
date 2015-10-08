@@ -30,7 +30,7 @@ namespace Susanoo.Transforms
         public IExecutableCommandInfo BuildWhereFilterTransform(IExecutableCommandInfo info)
         {
             var mappings = info.Parameters
-                .Join(_processor.CommandResultInfo.GetExporter().Export(typeof(TResult)), parameter =>
+                .Join(_processor.CommandResultInfo.RetrieveResultSetMappings(typeof(TResult)).Export(), parameter =>
                         parameter.SourceColumn, pair => pair.Key,
                     (parameter, pair) =>
                         new Tuple<string, Type, string, string>(

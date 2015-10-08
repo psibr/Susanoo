@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using Susanoo.Mapping;
 using Susanoo.Mapping.Properties;
 
@@ -30,14 +28,6 @@ namespace Susanoo.ResultSets
             _mappingContainer = new Dictionary<Type, IMappingExport>();
             _mappingContainerRuntime = new Dictionary<Type, IMappingExport>();
         }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public BigInteger CacheHash => 
-            _mappingContainer.Aggregate(default(BigInteger), (p, c) =>
-                ((p * 31) ^ c.Value.CacheHash));
 
         /// <summary>
         /// Retrieves a mapping exporter.
@@ -81,17 +71,6 @@ namespace Susanoo.ResultSets
 
                 _mappingContainer.Add(typeof(TResult), mappingExpression);
             }
-        }
-
-        /// <summary>
-        /// Exports a results mappings for processing.
-        /// </summary>
-        /// <param name="resultType">Type of the result.</param>
-        /// <returns>IDictionary&lt;System.String, IPropertyMapping&gt;.</returns>
-        public IDictionary<string, IPropertyMapping> Export(Type resultType)
-        {
-            return RetrieveExporter(resultType)
-                .Export();
         }
     }
 }

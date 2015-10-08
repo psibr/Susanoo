@@ -39,14 +39,12 @@ namespace Susanoo
         public SusanooBootstrapper(IContainer container)
         {
             Container = container;
-
-            RegisterTypeChain();
         }
 
         /// <summary>
         /// Registers the type chain for all types in Susanoo.
         /// </summary>
-        protected void RegisterTypeChain()
+        public virtual void Initialize()
         {
             Container.Register<IPropertyMetadataExtractor>(new ComponentModelMetadataExtractor());
 
