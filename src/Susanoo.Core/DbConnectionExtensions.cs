@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 
 namespace Susanoo
 {
@@ -21,7 +15,7 @@ namespace Susanoo
         public static IDatabaseManager ToDatabaseManager(this DbConnection connection)
         {
             return CommandManager.Instance.Bootstrapper
-                .ResolveDependency<IDatabaseManagerFactory>()
+                .ResolveDatabaseManagerFactory()
                 .CreateFromConnection(connection);
         }
     }

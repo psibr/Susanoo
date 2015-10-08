@@ -12,7 +12,7 @@ namespace Susanoo.Processing
         /// </summary>
         /// <typeparam name="TFilter">The type of the t filter.</typeparam>
         /// <param name="command">The command.</param>
-        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
-        ICommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandBuilderInfo<TFilter> command);
+        /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
+        INoResultCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandBuilderInfo<TFilter> command);
     }
 }

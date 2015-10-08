@@ -6,9 +6,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Numerics;
 using System.Reflection;
-using Susanoo.Pipeline;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 
@@ -25,6 +23,11 @@ namespace Susanoo.Command
         ICommandExpression<TFilter>,
         ICommandBuilderInfo<TFilter>
     {
+        private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
+        private readonly INoResultSetCommandProcessorFactory _noResultSetCommandProcessorFactory;
+        private readonly ICommandMultipleResultExpressionFactory _commandMultipleResultExpressionFactory;
+        private readonly ICommandSingleResultExpressionFactory _commandSingleResultExpressionFactory;
+
         /// <summary>
         ///     The constant parameters
         /// </summary>
@@ -52,28 +55,42 @@ namespace Susanoo.Command
         private NullValueMode _nullValueMode = NullValueMode.Never;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
+        /// Initializes a new instance of the <see cref="CommandExpression{TFilter}" /> class.
         /// </summary>
+        /// <param name="propertyMetadataExtractor">A property metadata extractor.</param>
+        /// <param name="noResultSetCommandProcessorFactory">A no result set command processor factory.</param>
+        /// <param name="commandMultipleResultExpressionFactory">The command multiple result expression factory.</param>
+        /// <param name="commandSingleResultExpressionFactory">The command single result expression factory.</param>
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
-        /// <exception cref="System.ArgumentNullException">
-        ///     databaseManager
-        ///     or
-        ///     commandText
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        ///     No CommandBuilder text provided.;commandText
-        ///     or
-        ///     TableDirect is not supported.;commandType
-        /// </exception>
-        public CommandExpression(string commandText, CommandType commandType)
+        /// <exception cref="System.ArgumentNullException">databaseManager
+        /// or
+        /// commandText</exception>
+        /// <exception cref="System.ArgumentException">No CommandBuilder text provided.;commandText
+        /// or
+        /// TableDirect is not supported.;commandType</exception>
+        public CommandExpression(IPropertyMetadataExtractor propertyMetadataExtractor,
+            INoResultSetCommandProcessorFactory noResultSetCommandProcessorFactory,
+            ICommandMultipleResultExpressionFactory commandMultipleResultExpressionFactory,
+            ICommandSingleResultExpressionFactory commandSingleResultExpressionFactory,
+            string commandText, CommandType commandType)
         {
+            if (propertyMetadataExtractor == null)
+                throw new ArgumentNullException(nameof(propertyMetadataExtractor));
+            if (noResultSetCommandProcessorFactory == null)
+                throw new ArgumentNullException(nameof(noResultSetCommandProcessorFactory));
             if (commandText == null)
                 throw new ArgumentNullException(nameof(commandText));
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentException("No CommandBuilder text provided.", nameof(commandText));
             if (commandType == CommandType.TableDirect)
                 throw new ArgumentException("TableDirect is not supported.", nameof(commandType));
+
+            _propertyMetadataExtractor = propertyMetadataExtractor;
+            _noResultSetCommandProcessorFactory = noResultSetCommandProcessorFactory;
+            _commandMultipleResultExpressionFactory = commandMultipleResultExpressionFactory;
+            _commandSingleResultExpressionFactory = commandSingleResultExpressionFactory;
+
             CommandText = commandText;
             DbCommandType = commandType;
         }
@@ -184,20 +201,12 @@ namespace Susanoo.Command
         public string CommandText { get; set; }
 
         /// <summary>
-        ///     Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash => 
-            ComputeHash();
-
-        /// <summary>
         ///     Realizes the pipeline with no result mappings.
         /// </summary>
-        /// <returns>ICommandProcessor&lt;TFilter&gt;.</returns>
-        public ICommandProcessor<TFilter> Realize()
+        /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
+        public INoResultCommandProcessor<TFilter> Realize()
         {
-            return CommandManager.Instance.Bootstrapper
-                .ResolveDependency<INoResultSetCommandProcessorFactory>()
+            return _noResultSetCommandProcessorFactory
                 .BuildCommandProcessor(this);
         }
 
@@ -279,23 +288,21 @@ namespace Susanoo.Command
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression)
         {
             return IncludeProperty(propertyExpression.GetPropertyName(), null);
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="parameterOptions">The parameter options.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public ICommandExpression<TFilter> IncludeProperty(Expression<Func<TFilter, object>> propertyExpression,
             Action<DbParameter> parameterOptions)
         {
@@ -303,11 +310,10 @@ namespace Susanoo.Command
         }
 
         /// <summary>
-        ///     Includes the property of the filter.
+        /// Includes the property of the filter.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        /// <exception cref="System.NotImplementedException"></exception>
         public ICommandExpression<TFilter> IncludeProperty(string propertyName)
         {
             return IncludeProperty(propertyName, null);
@@ -337,120 +343,22 @@ namespace Susanoo.Command
         ///     Defines the result mappings.
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult> DefineResults<TResult>()
+        /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
+        public ICommandSingleResultExpression<TFilter, TResult> DefineResults<TResult>()
         {
-            return new CommandResultExpression<TFilter, TResult>(this);
+            return _commandSingleResultExpressionFactory
+                .BuildCommandSingleResultExpression<TFilter, TResult>(this);
         }
 
         /// <summary>
-        ///     Defines the result mappings.
+        /// Defines the result mappings.
         /// </summary>
-        /// <typeparam name="TResult1">The type of the result1.</typeparam>
-        /// <typeparam name="TResult2">The type of the result2.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2> DefineResults<TResult1, TResult2>()
+        /// <param name="resultTypes">The result types in order.</param>
+        /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
+        public ICommandMultipleResultExpression<TFilter> DefineResults(params Type[] resultTypes)
         {
-            return new CommandResultExpression<TFilter, TResult1, TResult2>(this);
-        }
-
-        /// <summary>
-        ///     Defines the result mappings.
-        /// </summary>
-        /// <typeparam name="TResult1">The type of the result1.</typeparam>
-        /// <typeparam name="TResult2">The type of the result2.</typeparam>
-        /// <typeparam name="TResult3">The type of the result3.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3> DefineResults
-            <TResult1, TResult2, TResult3>()
-        {
-            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3>(this);
-        }
-
-        /// <summary>
-        ///     Defines the result mappings.
-        /// </summary>
-        /// <typeparam name="TResult1">The type of the result1.</typeparam>
-        /// <typeparam name="TResult2">The type of the result2.</typeparam>
-        /// <typeparam name="TResult3">The type of the result3.</typeparam>
-        /// <typeparam name="TResult4">The type of the result4.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4> DefineResults
-            <TResult1, TResult2, TResult3, TResult4>()
-        {
-            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4>(this);
-        }
-
-        /// <summary>
-        ///     Defines the result mappings.
-        /// </summary>
-        /// <typeparam name="TResult1">The type of the result1.</typeparam>
-        /// <typeparam name="TResult2">The type of the result2.</typeparam>
-        /// <typeparam name="TResult3">The type of the result3.</typeparam>
-        /// <typeparam name="TResult4">The type of the result4.</typeparam>
-        /// <typeparam name="TResult5">The type of the result5.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5> DefineResults
-            <TResult1, TResult2, TResult3, TResult4, TResult5>()
-        {
-            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5>(this);
-        }
-
-        /// <summary>
-        ///     Defines the result mappings.
-        /// </summary>
-        /// <typeparam name="TResult1">The type of the result1.</typeparam>
-        /// <typeparam name="TResult2">The type of the result2.</typeparam>
-        /// <typeparam name="TResult3">The type of the result3.</typeparam>
-        /// <typeparam name="TResult4">The type of the result4.</typeparam>
-        /// <typeparam name="TResult5">The type of the result5.</typeparam>
-        /// <typeparam name="TResult6">The type of the result6.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>
-            DefineResults<TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>()
-        {
-            return new CommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6>(this);
-        }
-
-        /// <summary>
-        ///     Defines the result mappings.
-        /// </summary>
-        /// <typeparam name="TResult1">The type of the result1.</typeparam>
-        /// <typeparam name="TResult2">The type of the result2.</typeparam>
-        /// <typeparam name="TResult3">The type of the result3.</typeparam>
-        /// <typeparam name="TResult4">The type of the result4.</typeparam>
-        /// <typeparam name="TResult5">The type of the result5.</typeparam>
-        /// <typeparam name="TResult6">The type of the result6.</typeparam>
-        /// <typeparam name="TResult7">The type of the result7.</typeparam>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7&gt;.</returns>
-        public ICommandResultExpression<TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>
-            DefineResults
-            <TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>()
-        {
-            return
-                new CommandResultExpression
-                    <TFilter, TResult1, TResult2, TResult3, TResult4, TResult5, TResult6, TResult7>(this);
-        }
-
-        /// <summary>
-        /// Computes the hash.
-        /// </summary>
-        private BigInteger ComputeHash()
-        {
-            //This is faster than string builder and less resource intensive
-            var strings =
-                string.Concat(_constantParameters.Select(c => c.Key)
-                    .Concat(_parameterInclusions.Select(c => c.Key))
-                    .Concat(_parameterExclusions)
-                    .Concat(new[]
-                    {
-                        CommandText,
-                        DbCommandType.ToString(),
-                        _explicitInclusionMode.ToString(),
-                        _nullValueMode.ToString()
-                    }));
-
-            return HashBuilder.Compute(strings);
+            return _commandMultipleResultExpressionFactory
+                .BuildCommandMultipleResultExpression(this, resultTypes);
         }
 
 
@@ -511,8 +419,7 @@ namespace Susanoo.Command
                 }
                 else
                 {
-                    var implicitProperties = CommandManager.Instance.Bootstrapper
-                        .ResolveDependency<IPropertyMetadataExtractor>()
+                    var implicitProperties = _propertyMetadataExtractor
                         .FindAllowedProperties(
                             filter.GetType(),
                             DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Delete,

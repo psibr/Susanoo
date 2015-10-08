@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using Susanoo.Mapping.Properties;
-using Susanoo.Pipeline;
 
 namespace Susanoo.Mapping
 {
     /// <summary>
     /// Exposes property mapping export capabilities.
     /// </summary>
-    public interface IMappingExport : IFluentPipelineFragment
+    public interface IMappingExport
     {
         /// <summary>
         /// Exports this instance.

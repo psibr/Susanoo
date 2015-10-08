@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Susanoo.Command;
-using Susanoo.Transforms;
 
 namespace Susanoo.Transforms.SqlServer.Tests
 {
@@ -94,7 +90,8 @@ namespace Susanoo.Transforms.SqlServer.Tests
         {
             var results = CommandManager.Instance.DefineCommand<dynamic>(@"
                 SELECT Int, String
-                FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)", CommandType.Text)
+                FROM (VALUES ('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')) AS SampleSet(Int, String)",
+                CommandType.Text)
                 .SendNullValues(NullValueMode.FilterOnlyFull)
                 .DefineResults<dynamic>()
                 .Realize()
@@ -105,12 +102,7 @@ namespace Susanoo.Transforms.SqlServer.Tests
                     Transforms.OrderByExpression(),
                     SqlServerTransforms.OffsetFetch(source)
                 })
-                .InterceptOrProxyWith(source =>
-                {
-                    source.Timeout = TimeSpan.Zero;
-                    return source;
-                })
-                .Execute(Setup.DatabaseManager, null, new { RowCount = 2, PageNumber = 2, OrderBy = "Int" });
+            .Execute(Setup.DatabaseManager, null, new { RowCount = 2, PageNumber = 2, OrderBy = "Int" });
 
             Assert.IsNotNull(results);
             Assert.AreEqual(2, results.Count());

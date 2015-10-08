@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Susanoo.Command;
-using Susanoo.Mapping;
 using Susanoo.Processing;
 
 namespace Susanoo.Transforms
 {
     internal sealed class WhereFilterTransformFactory<TFilter, TResult>
     {
-        private readonly ICommandProcessor<TFilter, TResult> _processor;
+        private readonly ISingleResultSetCommandProcessor<TFilter, TResult> _processor;
 
-        public WhereFilterTransformFactory(ICommandProcessor<TFilter, TResult> processor, IDictionary<string, object> whereFilterOptions)
+        public WhereFilterTransformFactory(ISingleResultSetCommandProcessor<TFilter, TResult> processor, IDictionary<string, object> whereFilterOptions)
         {
             _processor = processor;
             WhereFilterOptions = whereFilterOptions;
@@ -27,11 +26,11 @@ namespace Susanoo.Transforms
         /// Builds the where filter implementation.
         /// </summary>
         /// <param name="info">The information.</param>
-        /// <returns>ICommandResultExpression&lt;TFilter, TResult&gt;.</returns>
+        /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
         public IExecutableCommandInfo BuildWhereFilterTransform(IExecutableCommandInfo info)
         {
             var mappings = info.Parameters
-                .Join(_processor.CommandResultInfo.GetExporter().Export(typeof(TResult)), parameter =>
+                .Join(_processor.CommandResultInfo.RetrieveResultSetMappings(typeof(TResult)).Export(), parameter =>
                         parameter.SourceColumn, pair => pair.Key,
                     (parameter, pair) =>
                         new Tuple<string, Type, string, string>(

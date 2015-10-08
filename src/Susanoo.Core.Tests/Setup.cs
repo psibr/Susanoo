@@ -15,6 +15,8 @@ namespace Susanoo.Tests
         [SetUp]
         public void Configure()
         {
+            CommandManager.Instance.Bootstrap(new InterceptedSusanooBootstrapper());
+
             //By explicitly opening the connection, it becomes a shared connection.
             DatabaseManager.OpenConnection();
 

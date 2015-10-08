@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Numerics;
 using Susanoo.Mapping.Properties;
 
 #endregion
@@ -15,39 +13,33 @@ namespace Susanoo.Mapping
     /// <summary>
     /// A step in the CommandBuilder definition Fluent API, in which properties are mapped to potential result data.
     /// </summary>
-    /// <typeparam name="TFilter">The type of the filter.</typeparam>
+    /// <typeparam name="TFilter">The type of the t filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public class ResultMappingExpression<TFilter, TResult>
         : IResultMappingExpression<TFilter, TResult>
     {
+        private readonly IDictionary<string, IPropertyMapping> _mappingActions =
+            new Dictionary<string, IPropertyMapping>();
+
+        private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResultMappingExpression{TFilter, TResult}" /> class.
+        /// Resolves dependencies for Result mapping expressions and instantiates.
         /// </summary>
-        public ResultMappingExpression()
+        /// <param name="propertyMetadataExtractor">The property metadata extractor.</param>
+        public ResultMappingExpression(IPropertyMetadataExtractor propertyMetadataExtractor)
         {
-            Implementor = new ResultMappingImplementor<TResult>();
+            _propertyMetadataExtractor = propertyMetadataExtractor;
+
+            MapDeclarativeProperties();
         }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash =>
-            Implementor.CacheHash;
-
-        /// <summary>
-        /// Gets the implementor this is the Bridge design pattern.
-        /// </summary>
-        /// <value>The implementor.</value>
-        protected IResultMappingImplementor<TResult> Implementor { get; }
 
         /// <summary>
         /// Clears the result mappings.
         /// </summary>
-        /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         public virtual IResultMappingExpression<TFilter, TResult> ClearMappings()
         {
-            Implementor.ClearMappings();
+            _mappingActions.Clear();
 
             return this;
         }
@@ -57,13 +49,14 @@ namespace Susanoo.Mapping
         /// </summary>
         /// <param name="propertyExpression">The property expression.</param>
         /// <param name="options">The options.</param>
-        /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public virtual IResultMappingExpression<TFilter, TResult> ForProperty(
             Expression<Func<TResult, object>> propertyExpression,
             Action<IPropertyMappingConfiguration> options)
         {
-            return ForProperty(propertyExpression.GetPropertyName(), options);
+            ForProperty(propertyExpression.GetPropertyName(), options);
+
+            return this;
         }
 
         /// <summary>
@@ -71,12 +64,17 @@ namespace Susanoo.Mapping
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="options">The options.</param>
-        /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
         public virtual IResultMappingExpression<TFilter, TResult> ForProperty(
             string propertyName,
             Action<IPropertyMappingConfiguration> options)
         {
-            Implementor.ForProperty(propertyName, options);
+            var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(propertyName));
+            options.Invoke(config);
+
+            if (!_mappingActions.ContainsKey(propertyName))
+                _mappingActions.Add(propertyName, config);
+            else
+                _mappingActions[propertyName] = config;
 
             return this;
         }
@@ -85,10 +83,25 @@ namespace Susanoo.Mapping
         /// Exports this instance.
         /// </summary>
         /// <returns>IDictionary&lt;System.String, Action&lt;IPropertyMappingConfiguration&lt;IDataRecord&gt;&gt;&gt;.</returns>
-        /// <exception cref="NotImplementedException"></exception>
         public virtual IDictionary<string, IPropertyMapping> Export()
         {
-            return Implementor.Export();
+            return new Dictionary<string, IPropertyMapping>(_mappingActions);
+        }
+
+        /// <summary>
+        /// Maps the declarative properties.
+        /// </summary>
+        protected void MapDeclarativeProperties()
+        {
+            foreach (var item in _propertyMetadataExtractor
+                .FindAllowedProperties(typeof(TResult)))
+            {
+                var configuration = new PropertyMappingConfiguration(item.Key);
+
+                configuration.UseAlias(item.Value.ActiveAlias);
+
+                _mappingActions.Add(item.Key.Name, configuration);
+            }
         }
     }
 }

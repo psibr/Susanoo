@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Susanoo.Processing;
 
 namespace Susanoo
@@ -20,7 +16,7 @@ namespace Susanoo
         /// <param name="timeout">The timeout.</param>
         /// <returns>TCommandProcessor.</returns>
         public static TCommandProcessor SetTimeout<TCommandProcessor>(this TCommandProcessor processor, TimeSpan timeout)
-            where TCommandProcessor : ICommandProcessorInterop
+            where TCommandProcessor : ICommandProcessor
         {
             processor.Timeout = timeout;
             return processor;

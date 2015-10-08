@@ -1,28 +1,49 @@
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using Susanoo.Processing;
-using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {
     /// <summary>
-    /// Provides the ability to map objects with constructors or special considerations.
+    /// Interface IDeserializer
     /// </summary>
-    public interface IDeserializerFactory
+    public interface IDeserializer
     {
         /// <summary>
-        /// Determines whether this deserializer applies to the type.
+        /// Gets the type of the deserialization target.
         /// </summary>
-        /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
-        bool CanDeserialize(Type type);
+        /// <value>The type of the deserialization.</value>
+        Type DeserializationType { get; }
 
         /// <summary>
-        /// Builds a deserializer.
+        /// Deserializes the reader into a collection of objects.
         /// </summary>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
-        /// <param name="mappings">The mappings.</param>
+        /// <param name="reader">The reader.</param>
+        /// <param name="columnReport">The column report.</param>
+        /// <returns>IEnumerable.</returns>
+        IEnumerable Deserialize(IDataReader reader, ColumnChecker columnReport);
+    }
+
+    /// <summary>
+    /// Interface IDeserializer
+    /// </summary>
+    /// <typeparam name="TResult">The type of the t result.</typeparam>
+    public interface IDeserializer<out TResult>
+    {
+        /// <summary>
+        /// Gets the type of the deserialization target.
+        /// </summary>
+        /// <value>The type of the deserialization.</value>
+        Type DeserializationType { get; }
+
+        /// <summary>
+        /// Deserializes the reader into a collection of objects.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="columnReport">The column report.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        Func<IDataReader, ColumnChecker, IEnumerable<TResult>> BuildDeserializer<TResult>(ICommandResultMappingExport mappings);
+        IEnumerable<TResult> Deserialize(IDataReader reader, ColumnChecker columnReport);
     }
 }

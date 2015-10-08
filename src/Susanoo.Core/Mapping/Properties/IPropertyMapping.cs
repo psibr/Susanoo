@@ -2,14 +2,13 @@
 using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
-using Susanoo.Pipeline;
 
 namespace Susanoo.Mapping.Properties
 {
     /// <summary>
     /// Allows retrieval of configurations at the property level.
     /// </summary>
-    public interface IPropertyMapping : IFluentPipelineFragment
+    public interface IPropertyMapping
     {
         /// <summary>
         /// Gets the property metadata.

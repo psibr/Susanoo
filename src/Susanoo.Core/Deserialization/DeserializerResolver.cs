@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using Susanoo.Processing;
 using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
@@ -10,7 +8,8 @@ namespace Susanoo.Deserialization
     /// <summary>
     /// An extendable or replaceable component that chooses an appropriate way to deserialize an IDataReader to objects.
     /// </summary>
-    public class DeserializerResolver : IDeserializerResolver
+    public class DeserializerResolver 
+        : IDeserializerResolver
     {
         private readonly IEnumerable<IDeserializerFactory> _deserializerFactories;
 
@@ -18,7 +17,8 @@ namespace Susanoo.Deserialization
         /// Initializes a new instance of the <see cref="DeserializerResolver"/> class.
         /// </summary>
         /// <param name="deserializerFactories">The deserializer factories.</param>
-        public DeserializerResolver(IEnumerable<IDeserializerFactory> deserializerFactories)
+        /// <exception cref="ArgumentNullException"><paramref name="deserializerFactories" /> is null.</exception>
+        public DeserializerResolver(params IDeserializerFactory[] deserializerFactories)
         {
             var workflow = new List<IDeserializerFactory>
             {
@@ -28,7 +28,13 @@ namespace Susanoo.Deserialization
                 new ComplexTypeDeserializerFactory()
             };
 
-            workflow.InsertRange(2, deserializerFactories);
+            try
+            {
+                workflow.InsertRange(2, deserializerFactories);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+            }
 
             _deserializerFactories = workflow;
         }
@@ -39,14 +45,26 @@ namespace Susanoo.Deserialization
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public virtual Func<IDataReader, ColumnChecker, IEnumerable<TResult>>
-            ResolveDeserializer<TResult>(ICommandResultMappingExport mappings)
+        public virtual IDeserializer<TResult>
+            ResolveDeserializer<TResult>(ICommandResultInfo mappings)
         {
-            var type = typeof (TResult);
 
-            var factory = _deserializerFactories.First(df => df.CanDeserialize(type));
+            var factory = _deserializerFactories.First(df => df.CanDeserialize(typeof (TResult)));
 
-            return factory.BuildDeserializer<TResult>(mappings);
+            return factory.BuildDeserializer<TResult>(mappings.RetrieveResultSetMappings(typeof(TResult)));
+        }
+
+        /// <summary>
+        /// Retrieves and compiles, if necessary, an appropriate type deserializer.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
+        /// <param name="mappings">The mappings.</param>
+        /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
+        public IDeserializer ResolveDeserializer(Type resultType, ICommandResultInfo mappings)
+        {
+            var factory = _deserializerFactories.First(df => df.CanDeserialize(resultType));
+
+            return factory.BuildDeserializer(resultType, mappings.RetrieveResultSetMappings(resultType));
         }
     }
 }

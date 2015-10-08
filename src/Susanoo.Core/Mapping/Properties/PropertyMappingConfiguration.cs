@@ -4,7 +4,6 @@ using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System.Numerics;
 using System.Reflection;
 
 #endregion
@@ -65,14 +64,7 @@ namespace Susanoo.Mapping.Properties
         /// Gets the <c>PropertyInfo</c> that describes the property.
         /// </summary>
         /// <value>The property reflection meta data.</value>
-        public virtual PropertyInfo PropertyMetadata { get; private set; }
-
-        /// <summary>
-        /// Gets the hash code used for caching result mapping compilations.
-        /// </summary>
-        /// <value>The cache hash.</value>
-        public virtual BigInteger CacheHash => 
-            HashBuilder.Compute(PropertyMetadata.Name + ActiveAlias);
+        public virtual PropertyInfo PropertyMetadata { get; }
 
         /// <summary>
         /// Uses the specified alias when mapping from the data call.

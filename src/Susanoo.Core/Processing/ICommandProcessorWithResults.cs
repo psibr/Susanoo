@@ -1,4 +1,3 @@
-using Susanoo.Pipeline;
 using Susanoo.ResultSets;
 
 namespace Susanoo.Processing
@@ -19,16 +18,11 @@ namespace Susanoo.Processing
     /// <summary>
     /// Shared members for all CommandBuilder processors that have ResultSets.
     /// </summary>
-    public interface ICommandProcessorWithResults : IFluentPipelineFragment
+    public interface ICommandProcessorWithResults
     {
         /// <summary>
         /// Clears any column index information that may have been cached.
         /// </summary>
         void ClearColumnIndexInfo();
-
-        /// <summary>
-        /// Flushes the result cache.
-        /// </summary>
-        void FlushCache();
     }
 }

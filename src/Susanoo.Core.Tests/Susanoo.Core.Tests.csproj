@@ -103,6 +103,7 @@
   <ItemGroup>
     <Compile Include="DbManager\ConnectionTests.cs" />
     <Compile Include="Inserts\DBNullCheck.cs" />
+    <Compile Include="InterceptedSusanooBootstrapper.cs" />
     <Compile Include="Scalar\DBNullCheck.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Dynamic\DynamicTypeTest.cs" />

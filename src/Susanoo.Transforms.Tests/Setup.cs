@@ -1,12 +1,47 @@
 ﻿#region
 
 using System.Data;
+using System.Diagnostics;
 using NUnit.Framework;
+using Susanoo.Deserialization;
+using Susanoo.Processing;
+using Susanoo.ResultSets;
 
 #endregion
 
 namespace Susanoo.Transforms.Tests
 {
+    public class InterceptedSusanooBootstrapper : SusanooBootstrapper
+    {
+        public InterceptedSusanooBootstrapper()
+        {
+            Container.Register<ISingleResultSetCommandProcessorFactory>((container) 
+                => new InterceptedSingleResultSetFactory(container.Resolve<IDeserializerResolver>()));
+        }
+    }
+
+    public class InterceptedSingleResultSetFactory
+        : SingleResultSetCommandProcessorFactory
+    {
+        public InterceptedSingleResultSetFactory(IDeserializerResolver deserializerResolver)
+            : base(deserializerResolver)
+        {
+            
+        }
+
+        /// <summary>
+        /// Builds the command processor.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="mappings">The mappings.</param>
+        /// <param name="name">The name.</param>
+        /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        public override ISingleResultSetCommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(ICommandResultInfo<TFilter> mappings, string name = null)
+            => base.BuildCommandProcessor<TFilter, TResult>(mappings, name)
+                .InterceptExceptions(ex => Debug.Print($"{ex.Info.CommandText}"));
+    }
+
     [SetUpFixture]
     public class Setup
     {
@@ -15,6 +50,8 @@ namespace Susanoo.Transforms.Tests
         [SetUp]
         public void Configure()
         {
+            CommandManager.Instance.Bootstrap(new InterceptedSusanooBootstrapper());
+
             //By explicitly opening the connection, it becomes a shared connection.
             DatabaseManager.OpenConnection();
 

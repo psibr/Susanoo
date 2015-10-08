@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using Susanoo.Mapping;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 
@@ -29,9 +31,20 @@ namespace Susanoo.Deserialization
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public Func<IDataReader, ColumnChecker, IEnumerable<TResult>> BuildDeserializer<TResult>(ICommandResultMappingExport mappings)
+        public IDeserializer<TResult> BuildDeserializer<TResult>(IMappingExport mappings)
         {
-            return Deserialize<TResult>;
+            return new Deserializer<TResult>(Deserialize<TResult>);
+        }
+
+        /// <summary>
+        /// Builds a deserializer.
+        /// </summary>
+        /// <param name="resultType">Type of the result.</param>
+        /// <param name="mappings">The mappings.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IDeserializer BuildDeserializer(Type resultType, IMappingExport mappings)
+        {
+            return new Deserializer(resultType, Deserialize);
         }
 
         /// <summary>
@@ -40,13 +53,13 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>
         /// <returns>dynamic.</returns>
-        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
+        public IEnumerable Deserialize(IDataReader reader, ColumnChecker checker)
         {
-            IList resultSet = new ListResult<TResult>();
-
-            checker = checker ?? new ColumnChecker();
+            IList resultSet = new ArrayList();
 
             var fieldCount = reader.FieldCount;
+
+            checker = checker ?? new ColumnChecker(fieldCount);
 
             var needsFieldNames = fieldCount > checker.Count;
 
@@ -73,9 +86,19 @@ namespace Susanoo.Deserialization
                 resultSet.Add(new DynamicRow(checker, values));
             }
 
-            ((ListResult<TResult>)resultSet).BuildReport(checker);
+            return resultSet;
+        }
 
-            return (IEnumerable<TResult>)resultSet;
+        /// <summary>
+        /// Dumps all columns into an array for simple use cases.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="reader">The reader.</param>
+        /// <param name="checker">The column checker.</param>
+        /// <returns>dynamic.</returns>
+        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
+        {
+            return Deserialize(reader, checker).Cast<TResult>();
         }
     }
 }

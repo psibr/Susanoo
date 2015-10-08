@@ -2,8 +2,6 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using NUnit.Framework;
 using Susanoo.Exceptions;
 

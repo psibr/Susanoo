@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Susanoo
 {
+    /// <summary>
+    /// A factory that can build database managers from connections and connection strings.
+    /// </summary>
     public class DatabaseManagerFactory 
         : IDatabaseManagerFactory
     {
