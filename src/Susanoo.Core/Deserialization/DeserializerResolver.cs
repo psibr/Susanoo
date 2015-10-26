@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Susanoo.ResultSets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {

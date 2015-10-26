@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NUnit.Framework;
+using Susanoo.Exceptions;
+using System;
 using System.Data;
 using System.Linq;
-using NUnit.Framework;
-using Susanoo.Exceptions;
 
 namespace Susanoo.Tests.Static.SingleResult
 {
@@ -59,11 +59,16 @@ namespace Susanoo.Tests.Static.SingleResult
             }
             catch (AggregateException ex)
                 when (ex.InnerExceptions.Count == 1
-                    && ex.InnerExceptions.Any(iex =>
-                       iex.GetType() == typeof(SusanooExecutionException)
-                            && iex.InnerException.GetType() == typeof(InvalidCastException)))
+                      && ex.InnerExceptions.Any(iex =>
+                          iex.GetType() == typeof (SusanooExecutionException)
+                          && iex.InnerException.GetType() == typeof (InvalidCastException)))
             {
                 //Valid exceptions 
+            }
+            catch (SusanooExecutionException ex)
+                when (ex.InnerException.GetType() == typeof (InvalidCastException))
+            {
+                
             }
         }
 

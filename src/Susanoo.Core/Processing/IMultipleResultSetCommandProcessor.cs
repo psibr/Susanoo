@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data.Common;
-using Susanoo.Command;
+﻿using Susanoo.Command;
 using Susanoo.Exceptions;
+using System;
+using System.Data.Common;
 
 namespace Susanoo.Processing
 {
@@ -33,9 +33,9 @@ namespace Susanoo.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="executableCommandInfo">The executable command information.</param>
-        /// <returns>IResultSetReader.</returns>
+        /// <returns>IResultSetCollection.</returns>
         /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
-        IResultSetReader Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo);
+        IResultSetCollection Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo);
 
         /// <summary>
         /// Executes the CommandBuilder using a provided database manager and optionally a filter to read parameters from and explicit
@@ -43,9 +43,9 @@ namespace Susanoo.Processing
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IResultSetReader.</returns>
+        /// <returns>IResultSetCollection.</returns>
         /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
-        IResultSetReader Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
+        IResultSetCollection Execute(IDatabaseManager databaseManager, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Executes the CommandBuilder using a provided database manager and optionally a filter to read parameters from and explicit
@@ -54,9 +54,9 @@ namespace Susanoo.Processing
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IResultSetReader.</returns>
+        /// <returns>IResultSetCollection.</returns>
         /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
-        IResultSetReader Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
+        IResultSetCollection Execute(IDatabaseManager databaseManager, TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
         /// Executes the CommandBuilder using a provided database manager and optionally a filter to read parameters from and explicit
@@ -66,8 +66,8 @@ namespace Susanoo.Processing
         /// <param name="filter">The filter.</param>
         /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
-        /// <returns>IResultSetReader.</returns>
+        /// <returns>IResultSetCollection.</returns>
         /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
-        IResultSetReader Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters);
+        IResultSetCollection Execute(IDatabaseManager databaseManager, TFilter filter, object parameterObject, params DbParameter[] explicitParameters);
     }
 }

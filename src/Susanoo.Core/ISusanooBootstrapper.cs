@@ -1,6 +1,6 @@
+using Susanoo.Pipeline;
 using System;
 using System.Collections.Generic;
-using Susanoo.Pipeline;
 
 namespace Susanoo
 {

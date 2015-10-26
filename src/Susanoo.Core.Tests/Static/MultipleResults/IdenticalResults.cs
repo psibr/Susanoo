@@ -1,8 +1,8 @@
 ﻿#region
 
+using NUnit.Framework;
 using System.Data;
 using System.Linq;
-using NUnit.Framework;
 
 #endregion
 

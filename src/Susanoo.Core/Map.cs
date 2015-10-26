@@ -21,11 +21,11 @@ namespace Susanoo
 
         public Map(IDictionary<T1, T2> one, IDictionary<T2, T1> two)
         {
-            this._forward = one;
-            this._reverse = two;
+            _forward = one;
+            _reverse = two;
 
-            this.Forward = new Indexer<T1, T2>(_forward);
-            this.Reverse = new Indexer<T2, T1>(_reverse);
+            Forward = new Indexer<T1, T2>(_forward);
+            Reverse = new Indexer<T2, T1>(_reverse);
         }
 
         public class Indexer<T3, T4>

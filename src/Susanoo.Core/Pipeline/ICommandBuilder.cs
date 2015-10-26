@@ -1,7 +1,7 @@
 ﻿#region
 
-using System.Data;
 using Susanoo.Command;
+using System.Data;
 
 #endregion
 

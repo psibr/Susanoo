@@ -1,12 +1,11 @@
+using Susanoo.Mapping;
+using Susanoo.Mapping.Properties;
+using Susanoo.Processing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Susanoo.Mapping;
-using Susanoo.Mapping.Properties;
-using Susanoo.Processing;
-using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {
@@ -14,8 +13,8 @@ namespace Susanoo.Deserialization
     /// Performs deserialization of KeyValuePairs
     /// </summary>
     public class KeyValuePairDeserializer
+        : IDeserializer
     {
-        private readonly Type _type;
         private readonly IDictionary<string, IPropertyMapping> _props;
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace Susanoo.Deserialization
         /// <param name="type">The type.</param>
         public KeyValuePairDeserializer(IMappingExport mappings, Type type)
         {
-            _type = type;
+            DeserializationType = type;
             _props = mappings.Export();
         }
 
@@ -40,6 +39,12 @@ namespace Susanoo.Deserialization
         {
             return Deserialize(reader, checker).Cast<TResult>();
         }
+
+        /// <summary>
+        /// Gets the type of the deserialization target.
+        /// </summary>
+        /// <value>The type of the deserialization.</value>
+        public Type DeserializationType { get; }
 
         /// <summary>
         /// Deserializes into a KeyValuePair from a data reader.
@@ -59,23 +64,55 @@ namespace Susanoo.Deserialization
             if (_props.TryGetValue("Value", out valueMapping))
                 valueAlias = valueMapping.ActiveAlias;
 
-            var resultType = _type;
+            var resultType = DeserializationType;
 
             var genericTypeArguments = resultType.GetGenericArguments();
-
-            IList resultSet = new ArrayList();
 
             checker = checker ?? new ColumnChecker(reader.FieldCount);
 
             while (reader.Read())
             {
-                resultSet.Add(Activator.CreateInstance(resultType,
+                yield return Activator.CreateInstance(resultType,
                     Convert.ChangeType(reader.GetValue(checker.HasColumn(reader, keyAlias)), genericTypeArguments[0]),
-                    Convert.ChangeType(reader.GetValue(checker.HasColumn(reader, valueAlias)), genericTypeArguments[1])));
+                    Convert.ChangeType(reader.GetValue(checker.HasColumn(reader, valueAlias)), genericTypeArguments[1]));
 
             }
+        }
+    }
 
-            return resultSet;
+    /// <summary>
+    /// Performs deserialization of KeyValuePairs
+    /// </summary>
+    public class KeyValuePairDeserializer<TResult>
+        : IDeserializer<TResult>
+    {
+        private readonly KeyValuePairDeserializer baseDeserializer;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyValuePairDeserializer" /> class.
+        /// </summary>
+        /// <param name="mappings">The mappings.</param>
+        public KeyValuePairDeserializer(IMappingExport mappings) 
+        {
+            baseDeserializer = new KeyValuePairDeserializer(mappings, typeof(TResult));
+        }
+
+        /// <summary>
+        /// Gets the type of the deserialization target.
+        /// </summary>
+        /// <value>The type of the deserialization.</value>
+        public Type DeserializationType => baseDeserializer.DeserializationType;
+
+        /// <summary>
+        /// Deserializes the reader into a collection of objects.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="columnReport">The column report.</param>
+        /// <returns>IEnumerable&lt;TResult&gt;.</returns>
+        public IEnumerable<TResult> Deserialize(IDataReader reader, ColumnChecker columnReport)
+        {
+            return baseDeserializer.Deserialize(reader, columnReport)
+                .Cast<TResult>();
         }
     }
 }

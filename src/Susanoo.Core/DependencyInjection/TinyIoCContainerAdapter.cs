@@ -1,6 +1,6 @@
-﻿using System;
-using Susanoo.DependencyInjection.TinyIoC;
+﻿using Susanoo.DependencyInjection.TinyIoC;
 using Susanoo.Exceptions;
+using System;
 
 namespace Susanoo.DependencyInjection
 {

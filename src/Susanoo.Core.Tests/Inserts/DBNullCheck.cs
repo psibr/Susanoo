@@ -1,9 +1,9 @@
 ﻿#region
 
-using System;
-using System.Data;
 using NUnit.Framework;
 using Susanoo.Exceptions;
+using System;
+using System.Data;
 
 #endregion
 

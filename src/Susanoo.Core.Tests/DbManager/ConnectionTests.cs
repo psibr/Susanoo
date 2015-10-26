@@ -1,5 +1,5 @@
-﻿using System.Data;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System.Data;
 
 namespace Susanoo.Tests.DbManager
 {

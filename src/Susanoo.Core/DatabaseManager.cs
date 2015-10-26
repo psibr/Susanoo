@@ -191,7 +191,6 @@ namespace Susanoo
         /// <param name="provider">The provider.</param>
         /// <param name="connectionString">The connection string.</param>
         /// <returns>DatabaseManager.</returns>
-        /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
         public static DatabaseManager CreateFromConnectionString(DbProviderFactory provider, string connectionString)
 
         {
@@ -479,6 +478,7 @@ namespace Susanoo
         /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>DbCommand.</returns>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected virtual DbCommand PrepCommand(DbConnection connection, string commandText, CommandType commandType,
              TimeSpan commandTimeout, params DbParameter[] parameters)
         {

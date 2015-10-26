@@ -95,27 +95,27 @@ namespace Susanoo.Mapping.Properties
         /// <summary>
         /// Assembles the assignment expression.
         /// </summary>
-        /// <param name="property">The property.</param>
+        /// <param name="propertyExpression">The property expression.</param>
         /// <param name="record">The record parameter.</param>
         /// <param name="ordinal">The ordinal parameter.</param>
         /// <returns>BinaryExpression.</returns>
-        protected virtual BinaryExpression AssembleAssignment(MemberExpression property, ParameterExpression record,
+        protected virtual BinaryExpression AssembleAssignment(MemberExpression propertyExpression, ParameterExpression record,
             ParameterExpression ordinal)
         {
             // descriptor.property = (property.Type)_conversionProcessExpression(PropertyMetadata.PropertyType, record[ordinal]);
             return
                 Expression.Assign(
-                    property,
+                    propertyExpression,
                     Expression.Convert(
                         Expression.Invoke(_conversionProcessExpression,
-                            Expression.Constant(PropertyMetadata.PropertyType, typeof (Type)),
+                            Expression.Constant(PropertyMetadata.PropertyType, typeof(Type)),
                             Expression.MakeIndex(record,
-                                typeof (IDataRecord).GetProperty("Item", new[] {typeof (int)}),
+                                typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) }),
                                 new[]
                                 {
                                     ordinal
                                 })),
-                        property.Type));
+                        propertyExpression.Type));
         }
     }
 }

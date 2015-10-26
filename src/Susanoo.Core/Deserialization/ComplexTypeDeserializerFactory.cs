@@ -1,18 +1,16 @@
-﻿using System;
+﻿using Susanoo.Exceptions;
+using Susanoo.Mapping;
+using Susanoo.Processing;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using Susanoo.Exceptions;
-using Susanoo.Mapping;
-using Susanoo.Processing;
-using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {
@@ -22,63 +20,41 @@ namespace Susanoo.Deserialization
     public class ComplexTypeDeserializerFactory
         : IDeserializerFactory
     {
-        private static readonly MethodInfo ReadMethod = typeof(IDataReader)
-            .GetMethod("Read", BindingFlags.Public | BindingFlags.Instance);
-
         private static readonly ConstructorInfo ColumnCheckerConstructorInfo =
             typeof (ColumnChecker).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null,
                 new[] {typeof (int)}, null);
 
-        private static readonly ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, IEnumerable>> 
-            DeserilializerCache = new ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, IEnumerable>>();
+        private static readonly ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, object>> 
+            DeserilializerCache = new ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, object>>();
 
         /// <summary>
         /// Compiles mappings.
         /// </summary>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;System.Object&gt;&gt;.</returns>
-        public static Func<IDataReader, ColumnChecker, IEnumerable> Compile(IMappingExport mapping, Type resultType)
+        public static Func<IDataReader, ColumnChecker, object> Compile(IMappingExport mapping, Type resultType)
         {
-            var listType = typeof(List<>).MakeGenericType(resultType);
-            var listResultType = typeof(List<>).MakeGenericType(resultType);
-            var enumerableType = typeof(IEnumerable);
-
-            var addLastMethod = listType.GetMethod("Add", new[] { resultType });
-
             //Get the properties we care about.
             var mappings = mapping.Export();
 
-            var outerStatements = new List<Expression>();
-            var innerStatements = new List<Expression>();
+            var statements = new List<Expression>();
 
             var reader = Expression.Parameter(typeof(IDataReader), "reader");
             var columnReport = Expression.Parameter(typeof(ColumnChecker), "columnReport");
 
             var columnChecker = Expression.Variable(typeof(ColumnChecker), "columnChecker");
-            var resultSet = Expression.Variable(listResultType, "resultSet");
-
-            var returnStatement = Expression.Label(enumerableType, "return");
-
-            // resultSet = new LinkedListResult<TResult>();
-            outerStatements.Add(Expression.Assign(resultSet, Expression.New(listResultType)));
 
             // columnChecker = (columnReport == null) ? new ColumnChecker() : columnReport;
-            outerStatements.Add(Expression.IfThenElse(Expression.Equal(columnReport, Expression.Constant(null)),
+            statements.Add(Expression.IfThenElse(Expression.Equal(columnReport, Expression.Constant(null)),
                 Expression.Assign(
                     columnChecker, Expression.New(ColumnCheckerConstructorInfo, 
                     Expression.Convert(Expression.Property(Expression.Convert(reader, typeof(IDataRecord)), "FieldCount"), typeof(int?)))),
                 Expression.Assign(columnChecker, columnReport)));
 
-            #region Loop Code
-
             // var descriptor;
             var descriptor = Expression.Variable(resultType, "descriptor");
 
-            // if(!reader.Read) { return resultSet; }
-            innerStatements.Add(Expression.IfThen(Expression.IsFalse(Expression.Call(reader, ReadMethod)),
-                Expression.Block(Expression.Break(returnStatement, resultSet))));
-
             // descriptor = new TResult();
-            innerStatements.Add(Expression.Assign(
+            statements.Add(Expression.Assign(
                 descriptor, Expression.New(resultType)));
 
             // ReSharper disable once LoopCanBeConvertedToQuery
@@ -95,7 +71,7 @@ namespace Susanoo.Deserialization
 
                 #endregion locals
 
-                innerStatements.Add(
+                statements.Add(
                     Expression.Block(new[] {/* LOCAL */ ordinal },
 
                         // ordinal = columnChecker.HasColumn(pair.Value.ActiveAlias);
@@ -142,17 +118,10 @@ namespace Susanoo.Deserialization
                                                 ))))))));
             }
 
-            //resultSet.AddLast(descriptor);
-            innerStatements.Add(Expression.Call(resultSet, addLastMethod, descriptor));
+            statements.Add(descriptor);
 
-            var loopBody = Expression.Block(new[] { descriptor }, innerStatements);
-
-            #endregion Loop Code
-
-            outerStatements.Add(Expression.Loop(loopBody, returnStatement));
-
-            var body = Expression.Block(new[] { columnChecker, resultSet }, outerStatements);
-            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, IEnumerable>>(body, reader,
+            var body = Expression.Block(new[] { columnChecker, descriptor }, statements);
+            var lambda = Expression.Lambda<Func<IDataReader, ColumnChecker, object>>(body, reader,
                 columnReport);
 
             var type = CommandManager.DynamicNamespace
@@ -165,8 +134,8 @@ namespace Susanoo.Deserialization
 
             var dynamicType = type.CreateType();
 
-            return (Func<IDataReader, ColumnChecker, IEnumerable>)Delegate
-                .CreateDelegate(typeof(Func<IDataReader, ColumnChecker, IEnumerable>),
+            return (Func<IDataReader, ColumnChecker, object>)Delegate
+                .CreateDelegate(typeof(Func<IDataReader, ColumnChecker, object>),
                     dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
         }
 
@@ -205,16 +174,16 @@ namespace Susanoo.Deserialization
         {
             var cacheKey = GetCacheKey(typeof(TResult), mappings);
 
-            Func<IDataReader, ColumnChecker, IEnumerable> deserializer;
+            Func<IDataReader, ColumnChecker, object> deserializer;
+               
 
             if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
             {
-
-                deserializer = Compile(mappings, typeof(TResult));
+                deserializer = Compile(mappings, typeof (TResult));
                 DeserilializerCache.TryAdd(cacheKey, deserializer);
             }
 
-            return new Deserializer<TResult>(CastResults<TResult>(deserializer));
+            return new ComplexTypeDeserializer<TResult>(mappings, deserializer);
         }
 
         /// <summary>
@@ -227,7 +196,7 @@ namespace Susanoo.Deserialization
         {
             var cacheKey = GetCacheKey(resultType, mappings);
 
-            Func<IDataReader, ColumnChecker, IEnumerable> deserializer;
+            Func<IDataReader, ColumnChecker, object> deserializer;
 
             if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
             {
@@ -237,10 +206,10 @@ namespace Susanoo.Deserialization
             }
 
 
-            return new Deserializer(resultType, deserializer);
+            return new ComplexTypeDeserializer(mappings, resultType, deserializer);
         }
 
-        private BigInteger GetCacheKey(Type resultType, IMappingExport mappings)
+        private static BigInteger GetCacheKey(Type resultType, IMappingExport mappings)
         {
             if (mappings is DefaultResultMapping)
                 return HashBuilder.Compute(resultType.AssemblyQualifiedName);

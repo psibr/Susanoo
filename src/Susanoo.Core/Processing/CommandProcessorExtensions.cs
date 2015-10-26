@@ -1,5 +1,5 @@
-﻿using System;
-using Susanoo.Processing;
+﻿using Susanoo.Processing;
+using System;
 
 namespace Susanoo
 {

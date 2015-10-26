@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Susanoo.Mapping;
+using Susanoo.Processing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Susanoo.Mapping;
-using Susanoo.Processing;
-using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {
@@ -55,7 +54,6 @@ namespace Susanoo.Deserialization
         /// <returns>dynamic.</returns>
         public IEnumerable Deserialize(IDataReader reader, ColumnChecker checker)
         {
-            IList resultSet = new ArrayList();
 
             var fieldCount = reader.FieldCount;
 
@@ -83,10 +81,8 @@ namespace Susanoo.Deserialization
                     reader.GetValues(values);
                 }
 
-                resultSet.Add(new DynamicRow(checker, values));
+                yield return new DynamicRow(checker, values);
             }
-
-            return resultSet;
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data;
-using Susanoo.Processing;
+﻿using Susanoo.Processing;
 using Susanoo.ResultSets;
+using System;
+using System.Data;
 
 namespace Susanoo.Command
 {

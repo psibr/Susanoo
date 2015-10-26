@@ -37,9 +37,9 @@ namespace Susanoo.Proxies.Transforms
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="executableCommandInfo">The executable command information.</param>
-        /// <returns>IResultSetReader.</returns>
+        /// <returns>IResultSetCollection.</returns>
         /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
-        public override IResultSetReader Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
+        public override IResultSetCollection Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
@@ -56,7 +56,7 @@ namespace Susanoo.Proxies.Transforms
         /// <param name="executableCommandInfo">The executable command information.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public override async Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo,
+        public override async Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo,
             CancellationToken cancellationToken)
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>

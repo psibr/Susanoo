@@ -1,9 +1,9 @@
 #if !NETFX40
+using Susanoo.Command;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
-using Susanoo.Command;
 
 namespace Susanoo.Processing
 {

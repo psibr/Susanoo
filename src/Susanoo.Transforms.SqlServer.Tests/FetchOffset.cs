@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework;
+using Susanoo.Command;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using NUnit.Framework;
-using Susanoo.Command;
 
 namespace Susanoo.Transforms.SqlServer.Tests
 {

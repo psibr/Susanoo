@@ -1,10 +1,10 @@
 ﻿#region
 
+using Susanoo.Command;
 using System;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
-using Susanoo.Command;
 
 #endregion
 

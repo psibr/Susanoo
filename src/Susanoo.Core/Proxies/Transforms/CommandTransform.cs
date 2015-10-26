@@ -1,5 +1,5 @@
-﻿using System;
-using Susanoo.Command;
+﻿using Susanoo.Command;
+using System;
 
 namespace Susanoo.Proxies.Transforms
 {

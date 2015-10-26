@@ -5,7 +5,7 @@ namespace Susanoo.Processing
     /// <summary>
     /// Provides an enumeration and clear structure for retrieving multiple results.
     /// </summary>
-    public interface IResultSetReader 
+    public interface IResultSetCollection
         : IEnumerable<IEnumerable<object>>
     {
     }

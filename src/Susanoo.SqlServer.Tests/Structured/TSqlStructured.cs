@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using NUnit.Framework;
 
 namespace Susanoo.SqlServer.Tests.Structured
 {
@@ -58,7 +58,7 @@ namespace Susanoo.SqlServer.Tests.Structured
 			var results = CommandManager.Instance.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
 				.IncludePropertyAsStructured("ReferenceTable", "ReferenceTable")
 				.DefineResults<dynamic>()
-				.Realize("StructuredViaInclude")
+				.Realize()
 				.Execute(_databaseManager, new { ReferenceTable = list.Select(o => new { Id = o.Key }) });
 
 			var enumerable = results as IList<dynamic> ?? results.ToList();
@@ -74,7 +74,7 @@ namespace Susanoo.SqlServer.Tests.Structured
 			var results = CommandManager.Instance.DefineCommand("[dbo].[uspStructuredParameterTest]", CommandType.StoredProcedure)
 				.IncludePropertyAsStructured("ReferenceTable", "ReferenceTable")
 				.DefineResults<dynamic>()
-				.Realize("StructuredViaInclude")
+				.Realize()
 				.Execute(_databaseManager, new { ReferenceTable = list.Select(o => new { Id = o.Key }) });
 
 			var enumerable = results as IList<dynamic> ?? results.ToList();

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using Susanoo.Command;
 using Susanoo.Mapping;
-using Susanoo.Mapping.Properties;
+using System;
 
 namespace Susanoo.ResultSets
 {

@@ -1,11 +1,11 @@
 ﻿#region
 
+using Susanoo.Processing;
+using Susanoo.ResultSets;
 using System;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Susanoo.Processing;
-using Susanoo.ResultSets;
 
 #endregion
 

@@ -1,6 +1,5 @@
-using System;
 using Susanoo.Mapping;
-using Susanoo.ResultSets;
+using System;
 
 namespace Susanoo.Deserialization
 {

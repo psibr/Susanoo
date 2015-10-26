@@ -1,5 +1,5 @@
-﻿using System;
-using Susanoo.ResultSets;
+﻿using Susanoo.ResultSets;
+using System;
 
 namespace Susanoo.Processing
 {
@@ -13,7 +13,6 @@ namespace Susanoo.Processing
         /// </summary>
         /// <typeparam name="TFilter">The type of the t filter.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <param name="name">The name.</param>
         /// <param name="resultTypes">The result types.</param>
         /// <returns>IMultipleResultSetCommandProcessor&lt;TFilter&gt;.</returns>
         IMultipleResultSetCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandResultInfo<TFilter> mappings,

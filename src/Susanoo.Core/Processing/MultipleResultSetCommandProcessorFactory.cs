@@ -1,6 +1,6 @@
-﻿using System;
-using Susanoo.Deserialization;
+﻿using Susanoo.Deserialization;
 using Susanoo.ResultSets;
+using System;
 
 namespace Susanoo.Processing
 {
@@ -25,11 +25,10 @@ namespace Susanoo.Processing
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <param name="name">The name.</param>
         /// <param name="resultTypes">The result types.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public virtual IMultipleResultSetCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandResultInfo<TFilter> mappings,
-            params Type[] resultTypes) => 
+            params Type[] resultTypes) =>
                 new MultipleResultSetCommandProcessor<TFilter>(_deserializerResolver, mappings, resultTypes);
     }
 }

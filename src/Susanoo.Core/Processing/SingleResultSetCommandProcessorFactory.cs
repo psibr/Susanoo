@@ -25,10 +25,9 @@ namespace Susanoo.Processing
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <param name="name">The name.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         public virtual ISingleResultSetCommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(
-            ICommandResultInfo<TFilter> mappings,string name = null) => 
-                new SingleResultSetCommandProcessor<TFilter, TResult>(_deserializerResolver, mappings, name);
+            ICommandResultInfo<TFilter> mappings) =>
+                new SingleResultSetCommandProcessor<TFilter, TResult>(_deserializerResolver, mappings);
     }
 }

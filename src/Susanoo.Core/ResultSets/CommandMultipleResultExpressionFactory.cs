@@ -1,6 +1,6 @@
-﻿using System;
-using Susanoo.Command;
+﻿using Susanoo.Command;
 using Susanoo.Processing;
+using System;
 
 namespace Susanoo.ResultSets
 {
