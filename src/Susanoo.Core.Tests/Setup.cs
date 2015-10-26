@@ -1,7 +1,7 @@
 ﻿#region
 
-using System.Data;
 using NUnit.Framework;
+using System.Data;
 
 #endregion
 

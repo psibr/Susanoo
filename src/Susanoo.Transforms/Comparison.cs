@@ -71,6 +71,7 @@ namespace Susanoo.Transforms
         /// </summary>
         /// <param name="compare">The compare.</param>
         /// <returns>System.String.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">CompareMethod is not mapped to an action.</exception>
         public static string GetComparisonFormat(CompareMethod compare)
         {
             var comparisonString = "";

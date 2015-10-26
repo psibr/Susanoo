@@ -1,7 +1,7 @@
+using Susanoo.Command;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using Susanoo.Command;
 
 namespace Susanoo.Processing
 {

@@ -1,12 +1,12 @@
 ﻿using Susanoo.Command;
 using Susanoo.Deserialization;
+using Susanoo.Exceptions;
 using Susanoo.ResultSets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Susanoo.Exceptions;
 
 namespace Susanoo.Processing
 {
@@ -28,11 +28,9 @@ namespace Susanoo.Processing
         /// </summary>
         /// <param name="deserializerResolver">The deserializer resolver.</param>
         /// <param name="mappings">The mappings.</param>
-        /// <param name="name">The name.</param>
         public SingleResultSetCommandProcessor(
             IDeserializerResolver deserializerResolver,
-            ICommandResultInfo<TFilter> mappings,
-            string name = null)
+            ICommandResultInfo<TFilter> mappings)
         {
             CommandResultInfo = mappings;
 
@@ -50,7 +48,7 @@ namespace Susanoo.Processing
         /// Gets or sets the column report.
         /// </summary>
         /// <value>The column report.</value>
-        private ColumnChecker ColumnReport 
+        private ColumnChecker ColumnReport
             => CommandBuilderInfo.AllowStoringColumnInfo ? _columnChecker : null;
 
         /// <summary>
@@ -93,18 +91,32 @@ namespace Susanoo.Processing
         {
             try
             {
-                using (var records = databaseManager
+                var records = databaseManager
                     .ExecuteDataReader(
                         executableCommandInfo.CommandText,
                         executableCommandInfo.DbCommandType,
                         Timeout,
-                        executableCommandInfo.Parameters))
+                        executableCommandInfo.Parameters);
 
+                var results = CompiledMapping.Deserialize(records, ColumnReport);
+
+                if (StreamingScope.Current == null)
                 {
-                    var results = CompiledMapping.Deserialize(records, ColumnReport);
-
-                    return results ?? Enumerable.Empty<TResult>();
+                    try
+                    {
+                        results = results?.ToList();
+                    }
+                    finally
+                    {
+                        records.Dispose();
+                    }
                 }
+                else
+                {
+                    StreamingScope.Current.Enlist(records);
+                }
+
+                return results ?? Enumerable.Empty<TResult>();
             }
             catch (Exception ex)
             {
@@ -128,19 +140,34 @@ namespace Susanoo.Processing
         {
             try
             {
-                using (var records = await databaseManager
+                var records = await databaseManager
                     .ExecuteDataReaderAsync(
                         executableCommandInfo.CommandText,
                         executableCommandInfo.DbCommandType,
                         Timeout,
                         cancellationToken,
                         executableCommandInfo.Parameters)
-                    .ConfigureAwait(false))
-                {
-                    var results = CompiledMapping.Deserialize(records, ColumnReport);
+                    .ConfigureAwait(false);
 
-                    return results ?? Enumerable.Empty<TResult>();
+                var results = CompiledMapping.Deserialize(records, ColumnReport);
+
+                if (StreamingScope.Current == null)
+                {
+                    try
+                    {
+                        results = results?.ToList();
+                    }
+                    finally
+                    {
+                        records.Dispose();
+                    }
                 }
+                else
+                {
+                    StreamingScope.Current.Enlist(records);
+                }
+
+                return results ?? Enumerable.Empty<TResult>();
             }
             catch (Exception ex)
             {

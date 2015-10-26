@@ -1,8 +1,8 @@
 ﻿#region
 
-using System;
 using Susanoo.Command;
 using Susanoo.ResultSets;
+using System;
 
 #endregion
 

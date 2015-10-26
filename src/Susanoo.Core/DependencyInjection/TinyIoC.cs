@@ -539,7 +539,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 
 	}
 
-	// @mbrit - 2012-05-22 - shim for ForEach call on List<T>...
+    // @mbrit - 2012-05-22 - shim for ForEach call on List<T>...
 #if NETFX_CORE
 	internal static class ListExtender
 	{
@@ -551,11 +551,13 @@ namespace Susanoo.DependencyInjection.TinyIoC
 	}
 #endif
 
-	#endregion
+    #endregion
 
-	#region TinyIoC Exception Types
+    #region TinyIoC Exception Types
+
+    [Serializable]
 #if TINYIOC_INTERNAL
-	internal
+    internal
 #else
 	public
 #endif
@@ -574,8 +576,9 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		}
 	}
 
+    [Serializable]
 #if TINYIOC_INTERNAL
-	internal
+    internal
 #else
 	public
 #endif
@@ -594,8 +597,9 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		}
 	}
 
+    [Serializable]
 #if TINYIOC_INTERNAL
-	internal
+    internal
 #else
 	public
 #endif
@@ -625,8 +629,9 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		}
 	}
 
+    [Serializable]
 #if TINYIOC_INTERNAL
-	internal
+    internal
 #else
 	public
 #endif
@@ -644,9 +649,9 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		{
 		}
 	}
-
+    [Serializable]
 #if TINYIOC_INTERNAL
-	internal
+    internal
 #else
 	public
 #endif
@@ -675,11 +680,13 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		}
 	}
 
+	[Serializable]
 #if TINYIOC_INTERNAL
 	internal
 #else
 	public
 #endif
+
 	class TinyIoCAutoRegistrationException : Exception
 	{
 		private const string ERROR_TEXT = "Duplicate implementation of type {0} found ({1}).";
@@ -1031,13 +1038,13 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			public static RegisterOptions ToCustomLifetimeManager(RegisterOptions instance, ITinyIoCObjectLifetimeProvider lifetimeProvider, string errorString)
 			{
 				if (instance == null)
-					throw new ArgumentNullException("instance", "instance is null.");
+					throw new ArgumentNullException(nameof(instance), "instance is null.");
 
 				if (lifetimeProvider == null)
-					throw new ArgumentNullException("lifetimeProvider", "lifetimeProvider is null.");
+					throw new ArgumentNullException(nameof(lifetimeProvider), "lifetimeProvider is null.");
 
 				if (String.IsNullOrEmpty(errorString))
-					throw new ArgumentException("errorString is null or empty.", "errorString");
+					throw new ArgumentException("errorString is null or empty.", nameof(errorString));
 
 				var currentFactory = instance._Container.GetCurrentFactory(instance._Registration);
 
@@ -1101,13 +1108,13 @@ namespace Susanoo.DependencyInjection.TinyIoC
 				string errorString)
 			{
 				if (instance == null)
-					throw new ArgumentNullException("instance", "instance is null.");
+					throw new ArgumentNullException(nameof(instance), "instance is null.");
 
 				if (lifetimeProvider == null)
-					throw new ArgumentNullException("lifetimeProvider", "lifetimeProvider is null.");
+					throw new ArgumentNullException(nameof(lifetimeProvider), "lifetimeProvider is null.");
 
 				if (String.IsNullOrEmpty(errorString))
-					throw new ArgumentException("errorString is null or empty.", "errorString");
+					throw new ArgumentException("errorString is null or empty.", nameof(errorString));
 
 				instance._RegisterOptions = instance.ExecuteOnAllRegisterOptions(ro => RegisterOptions.ToCustomLifetimeManager(ro, lifetimeProvider, errorString));
 
@@ -1480,7 +1487,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		{
 			if (factory == null)
 			{
-				throw new ArgumentNullException("factory");
+				throw new ArgumentNullException(nameof(factory));
 			}
 
 			return this.Register(typeof(RegisterType), (c, o) => factory(c, o));
@@ -1498,7 +1505,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		{
 			if (factory == null)
 			{
-				throw new ArgumentNullException("factory");
+				throw new ArgumentNullException(nameof(factory));
 			}
 
 			return this.Register(typeof(RegisterType), (c, o) => factory(c, o), name);
@@ -2660,7 +2667,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			public DelegateFactory( Type registerType, Func<TinyIoCContainer, NamedParameterOverloads, object> factory)
 			{
 				if (factory == null)
-					throw new ArgumentNullException("factory");
+					throw new ArgumentNullException(nameof(factory));
 
 				_factory = factory;
 
@@ -2723,7 +2730,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			public WeakDelegateFactory(Type registerType, Func<TinyIoCContainer, NamedParameterOverloads, object> factory)
 			{
 				if (factory == null)
-					throw new ArgumentNullException("factory");
+					throw new ArgumentNullException(nameof(factory));
 
 				_factory = new WeakReference(factory);
 
@@ -3000,7 +3007,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			public CustomObjectLifetimeFactory(Type registerType, Type registerImplementation, ITinyIoCObjectLifetimeProvider lifetimeProvider, string errorMessage)
 			{
 				if (lifetimeProvider == null)
-					throw new ArgumentNullException("lifetimeProvider", "lifetimeProvider is null.");
+					throw new ArgumentNullException(nameof(lifetimeProvider), "lifetimeProvider is null.");
 
 				if (!IsValidAssignment(registerType, registerImplementation))
 					throw new TinyIoCRegistrationTypeException(registerImplementation, "SingletonFactory");
@@ -3080,22 +3087,12 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		#endregion
 
 		#region Singleton Container
-		private static readonly TinyIoCContainer _Current = new TinyIoCContainer();
-
-		static TinyIoCContainer()
-		{
-		}
 
 		/// <summary>
 		/// Lazy created Singleton instance of the container for simple scenarios
 		/// </summary>
-		public static TinyIoCContainer Current
-		{
-			get
-			{
-				return _Current;
-			}
-		}
+		public static TinyIoCContainer Current { get; } = new TinyIoCContainer();
+
 		#endregion
 
 		#region Type Registrations
@@ -3155,7 +3152,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			RegisterDefaultTypes();
 		}
 
-		TinyIoCContainer _Parent;
+		readonly TinyIoCContainer _Parent;
 		private TinyIoCContainer(TinyIoCContainer parent)
 			: this()
 		{
@@ -3225,7 +3222,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			}
 		}
 
-		private bool IsIgnoredAssembly(Assembly assembly)
+		private static bool IsIgnoredAssembly(Assembly assembly)
 		{
 			// TODO - find a better way to remove "system" assemblies from the auto registration
 			var ignoreChecks = new List<Func<Assembly, bool>>()
@@ -3239,16 +3236,10 @@ namespace Susanoo.DependencyInjection.TinyIoC
 				asm => asm.FullName.StartsWith("DevExpress.CodeRush", StringComparison.Ordinal),
 			};
 
-			foreach (var check in ignoreChecks)
-			{
-				if (check(assembly))
-					return true;
-			}
-
-			return false;
+			return ignoreChecks.Any(check => check(assembly));
 		}
 
-		private bool IsIgnoredType(Type type, Func<Type, bool> registrationPredicate)
+		private static bool IsIgnoredType(Type type, Func<Type, bool> registrationPredicate)
 		{
 			// TODO - find a better way to remove "system" types from the auto registration
 			var ignoreChecks = new List<Func<Type, bool>>()
@@ -3267,13 +3258,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 				ignoreChecks.Add(t => !registrationPredicate(t));    
 			}
 
-			foreach (var check in ignoreChecks)
-			{
-				if (check(type))
-					return true;
-			}
-
-			return false;
+			return ignoreChecks.Any(check => check(type));
 		}
 
 		private void RegisterDefaultTypes()
@@ -3315,7 +3300,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			_RegisteredTypes.Remove(typeRegistration);
 		}
 
-		private ObjectFactoryBase GetDefaultObjectFactory(Type registerType, Type registerImplementation)
+		private static ObjectFactoryBase GetDefaultObjectFactory(Type registerType, Type registerImplementation)
 		{
 //#if NETFX_CORE
 //			if (registerType.GetTypeInfo().IsInterface() || registerType.GetTypeInfo().IsAbstract())
@@ -3330,7 +3315,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		private bool CanResolveInternal(TypeRegistration registration, NamedParameterOverloads parameters, ResolveOptions options)
 		{
 			if (parameters == null)
-				throw new ArgumentNullException("parameters");
+				throw new ArgumentNullException(nameof(parameters));
 
 			Type checkType = registration.Type;
 			string name = registration.Name;
@@ -3367,7 +3352,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			// Fail if requesting named resolution and settings set to fail if unresolved
 			// Or bubble up if we have a parent
 			if (!String.IsNullOrEmpty(name) && options.NamedResolutionFailureAction == NamedResolutionFailureActions.Fail)
-				return (_Parent != null) ? _Parent.CanResolveInternal(registration, parameters, options) : false;
+				return _Parent?.CanResolveInternal(registration, parameters, options) ?? false;
 
 			// Attemped unnamed fallback container resolution if relevant and requested
 			if (!String.IsNullOrEmpty(name) && options.NamedResolutionFailureAction == NamedResolutionFailureActions.AttemptUnnamedResolution)
@@ -3377,7 +3362,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 					if (factory.AssumeConstruction)
 						return true;
 
-					return (GetBestConstructor(factory.CreatesType, parameters, options) != null) ? true : false;
+					return (GetBestConstructor(factory.CreatesType, parameters, options) != null);
 				}
 			}
 
@@ -3392,7 +3377,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			// Attempt unregistered construction if possible and requested
 			// If we cant', bubble if we have a parent
 			if ((options.UnregisteredResolutionAction == UnregisteredResolutionActions.AttemptResolve) || (checkType.IsGenericType() && options.UnregisteredResolutionAction == UnregisteredResolutionActions.GenericsOnly))
-				return (GetBestConstructor(checkType, parameters, options) != null) ? true : (_Parent != null) ? _Parent.CanResolveInternal(registration, parameters, options) : false;
+				return (GetBestConstructor(checkType, parameters, options) != null) || (_Parent?.CanResolveInternal(registration, parameters, options) ?? false);
 
 			// Bubble resolution up the container tree if we have a parent
 			if (_Parent != null)
@@ -3401,7 +3386,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			return false;
 		}
 
-		private bool IsIEnumerableRequest(Type type)
+		private static bool IsIEnumerableRequest(Type type)
 		{
 			if (!type.IsGenericType())
 				return false;
@@ -3414,7 +3399,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			return false;
 		}
 
-		private bool IsAutomaticLazyFactoryRequest(Type type)
+		private static bool IsAutomaticLazyFactoryRequest(Type type)
 		{
 			if (!type.IsGenericType())
 				return false;
@@ -3660,7 +3645,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		private bool CanConstruct(ConstructorInfo ctor, NamedParameterOverloads parameters, ResolveOptions options)
 		{
 			if (parameters == null)
-				throw new ArgumentNullException("parameters");
+				throw new ArgumentNullException(nameof(parameters));
 
 			foreach (var parameter in ctor.GetParameters())
 			{
@@ -3686,7 +3671,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 		private ConstructorInfo GetBestConstructor(Type type, NamedParameterOverloads parameters, ResolveOptions options)
 		{
 			if (parameters == null)
-				throw new ArgumentNullException("parameters");
+				throw new ArgumentNullException(nameof(parameters));
 
 //#if NETFX_CORE
 //			if (type.GetTypeInfo().IsValueType)
@@ -3697,29 +3682,18 @@ namespace Susanoo.DependencyInjection.TinyIoC
 
 			// Get constructors in reverse order based on the number of parameters
 			// i.e. be as "greedy" as possible so we satify the most amount of dependencies possible
-			var ctors = this.GetTypeConstructors(type);
+			var ctors = GetTypeConstructors(type);
 
-			foreach (var ctor in ctors)
-			{
-				if (this.CanConstruct(ctor, parameters, options))
-					return ctor;
-			}
-
-			return null;
+			return ctors.FirstOrDefault(ctor => CanConstruct(ctor, parameters, options));
 		}
 
-		private IEnumerable<ConstructorInfo> GetTypeConstructors(Type type)
+		private static IEnumerable<ConstructorInfo> GetTypeConstructors(Type type)
 		{
 //#if NETFX_CORE
 //			return type.GetTypeInfo().DeclaredConstructors.OrderByDescending(ctor => ctor.GetParameters().Count());
 //#else
 			return type.GetConstructors().OrderByDescending(ctor => ctor.GetParameters().Count());
 //#endif
-		}
-
-		private object ConstructType(Type requestedType, Type implementationType, ResolveOptions options)
-		{
-			return ConstructType(requestedType, implementationType, null, NamedParameterOverloads.Default, options);
 		}
 
 		private object ConstructType(Type requestedType, Type implementationType, ConstructorInfo constructor, ResolveOptions options)
@@ -3846,18 +3820,15 @@ namespace Susanoo.DependencyInjection.TinyIoC
 							 select property;
 //#endif
 
-			foreach (var property in properties)
+			foreach (var property in properties.Where(property => property.GetValue(input, null) == null))
 			{
-				if (property.GetValue(input, null) == null)
+				try
 				{
-					try
-					{
-						property.SetValue(input, ResolveInternal(new TypeRegistration(property.PropertyType), NamedParameterOverloads.Default, resolveOptions), null);
-					}
-					catch (TinyIoCResolutionException)
-					{
-						// Catch any resolution errors and ignore them
-					}
+					property.SetValue(input, ResolveInternal(new TypeRegistration(property.PropertyType), NamedParameterOverloads.Default, resolveOptions), null);
+				}
+				catch (TinyIoCResolutionException)
+				{
+					// Catch any resolution errors and ignore them
 				}
 			}
 		}
@@ -3877,7 +3848,7 @@ namespace Susanoo.DependencyInjection.TinyIoC
 			var registrations = _RegisteredTypes.Keys.Where(tr => tr.Type == resolveType).Concat(GetParentRegistrationsForType(resolveType));
 
 			if (!includeUnnamed)
-				registrations = registrations.Where(tr => tr.Name != string.Empty);
+				registrations = registrations.Where(tr => string.IsNullOrEmpty(tr.Name));
 
 			return registrations.Select(registration => this.ResolveInternal(registration, NamedParameterOverloads.Default, ResolveOptions.Default));
 		}

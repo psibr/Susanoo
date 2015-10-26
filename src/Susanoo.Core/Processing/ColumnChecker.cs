@@ -14,7 +14,7 @@ namespace Susanoo.Processing
     {
         private bool _isInit;
 
-        private Map<int, string> _fieldMap;
+        private readonly Map<int, string> _fieldMap;
 
         /// <summary>
         /// Tries the get value.

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Susanoo.Command;
+using Susanoo.SqlServer;
+using System;
 using System.Data.Common;
 using System.Linq.Expressions;
-using Susanoo.Command;
-using Susanoo.SqlServer;
 
 namespace Susanoo
 {

@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Susanoo.Mapping.Properties;
+using System.Collections.Generic;
 
 namespace Susanoo.Mapping
 {

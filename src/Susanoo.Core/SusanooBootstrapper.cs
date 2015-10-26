@@ -100,7 +100,16 @@ namespace Susanoo
         /// Resolves a command builder.
         /// </summary>
         /// <returns>ICommandBuilder.</returns>
-        public ICommandBuilder ResolveCommandBuilder(string name = null)
+        public ICommandBuilder ResolveCommandBuilder()
+        {
+            return ResolveCommandBuilder(null);
+        }
+
+        /// <summary>
+        /// Resolves a command builder.
+        /// </summary>
+        /// <returns>ICommandBuilder.</returns>
+        public ICommandBuilder ResolveCommandBuilder(string name)
         {
             return Container.Resolve<ICommandBuilder>(name);
         }
@@ -109,7 +118,16 @@ namespace Susanoo
         /// Resolves a database manager factory.
         /// </summary>
         /// <returns>IDatabaseManagerFactory.</returns>
-        public IDatabaseManagerFactory ResolveDatabaseManagerFactory(string name = null)
+        public IDatabaseManagerFactory ResolveDatabaseManagerFactory()
+        {
+            return ResolveDatabaseManagerFactory(null);
+        }
+
+        /// <summary>
+        /// Resolves a database manager factory.
+        /// </summary>
+        /// <returns>IDatabaseManagerFactory.</returns>
+        public IDatabaseManagerFactory ResolveDatabaseManagerFactory(string name)
         {
             return Container.Resolve<IDatabaseManagerFactory>(name);
         }

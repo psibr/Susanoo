@@ -37,10 +37,10 @@ namespace Susanoo.Proxies.ExceptionInterception
         /// </summary>
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="executableCommandInfo">The executable command information.</param>
-        /// <returns>IResultSetReader.</returns>
+        /// <returns>IResultSetCollection.</returns>
         /// <exception cref="SusanooExecutionException">Any exception occured during execution.</exception>
         [SuppressMessage("ReSharper", "ThrowFromCatchWithNoInnerException")]
-        public override IResultSetReader Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
+        public override IResultSetCollection Execute(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace Susanoo.Proxies.ExceptionInterception
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
         /// <exception cref="SusanooExecutionException">Exception interception failed.</exception>
         [SuppressMessage("ReSharper", "ThrowFromCatchWithNoInnerException")]
-        public override async Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo,
+        public override async Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager, IExecutableCommandInfo executableCommandInfo,
             CancellationToken cancellationToken)
         {
             try

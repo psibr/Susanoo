@@ -1,6 +1,6 @@
-﻿using System;
-using Susanoo.Processing;
+﻿using Susanoo.Processing;
 using Susanoo.ResultSets;
+using System;
 
 namespace Susanoo.Proxies
 {

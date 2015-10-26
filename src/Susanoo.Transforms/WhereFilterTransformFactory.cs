@@ -1,8 +1,8 @@
+using Susanoo.Command;
+using Susanoo.Processing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Susanoo.Command;
-using Susanoo.Processing;
 
 namespace Susanoo.Transforms
 {

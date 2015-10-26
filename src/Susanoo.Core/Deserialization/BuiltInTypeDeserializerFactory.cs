@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Susanoo.Mapping;
+using Susanoo.Processing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Susanoo.Mapping;
-using Susanoo.Processing;
-using Susanoo.ResultSets;
 
 namespace Susanoo.Deserialization
 {
@@ -55,7 +54,6 @@ namespace Susanoo.Deserialization
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         public IEnumerable Deserialize(IDataReader reader, ColumnChecker checker)
         {
-            var resultSet = new ArrayList();
             var fieldCount = reader.FieldCount;
             if (fieldCount > 0)
             {
@@ -65,11 +63,10 @@ namespace Susanoo.Deserialization
 
                     result = result == DBNull.Value ? null : result;
 
-                    resultSet.Add(result);
+                    yield return result;
                 }
             }
 
-            return resultSet;
         }
 
         /// <summary>

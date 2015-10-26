@@ -14,7 +14,7 @@ namespace Susanoo.Processing
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
         /// <param name="command">The command.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public INoResultCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandBuilderInfo<TFilter> command) => 
+        public virtual INoResultCommandProcessor<TFilter> BuildCommandProcessor<TFilter>(ICommandBuilderInfo<TFilter> command) => 
             new NoResultCommandProcessor<TFilter>(command);
     }
 }

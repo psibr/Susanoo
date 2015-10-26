@@ -1,8 +1,8 @@
-﻿using System;
-using System.Data;
-using Susanoo.Command;
+﻿using Susanoo.Command;
 using Susanoo.Processing;
 using Susanoo.Proxies.Transforms;
+using System;
+using System.Data;
 
 namespace Susanoo.Transforms
 {

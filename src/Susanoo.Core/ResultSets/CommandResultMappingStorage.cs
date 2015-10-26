@@ -1,9 +1,8 @@
 ﻿#region
 
+using Susanoo.Mapping;
 using System;
 using System.Collections.Generic;
-using Susanoo.Mapping;
-using Susanoo.Mapping.Properties;
 
 #endregion
 

@@ -1,9 +1,9 @@
 ﻿#region
 
-using System;
 using Susanoo.Command;
 using Susanoo.Mapping;
 using Susanoo.Processing;
+using System;
 
 #endregion
 

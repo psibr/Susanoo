@@ -1,9 +1,9 @@
 ﻿#region
 
-using System;
 using Susanoo.Command;
 using Susanoo.Mapping;
 using Susanoo.Processing;
+using System;
 
 #endregion
 
@@ -51,12 +51,11 @@ namespace Susanoo.ResultSets
         /// <summary>
         ///     Realizes the pipeline and compiles result mappings.
         /// </summary>
-        /// <param name="name">The name of the processor.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ISingleResultSetCommandProcessor<TFilter, TResult> Realize(string name = null)
+        public ISingleResultSetCommandProcessor<TFilter, TResult> Realize()
         {
             return _singleResultSetCommandProcessorFactory
-                       .BuildCommandProcessor<TFilter, TResult>(this, name);
+                       .BuildCommandProcessor<TFilter, TResult>(this);
         }
     }
 }

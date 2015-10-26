@@ -1,8 +1,8 @@
 #if !NETFX40
+using Susanoo.Command;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
-using Susanoo.Command;
 
 namespace Susanoo.Processing
 {
@@ -20,7 +20,7 @@ namespace Susanoo.Processing
         /// <param name="executableCommandInfo">The executable command information.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager,
+        Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager,
             IExecutableCommandInfo executableCommandInfo, CancellationToken cancellationToken);
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Susanoo.Processing
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager,
+        Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager,
             CancellationToken cancellationToken, params DbParameter[] explicitParameters);
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Susanoo.Processing
         /// <param name="databaseManager">The database manager.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager,
+        Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager,
             params DbParameter[] explicitParameters);
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Susanoo.Processing
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager,
+        Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, object parameterObject, CancellationToken cancellationToken,
             params DbParameter[] explicitParameters);
 
@@ -67,7 +67,7 @@ namespace Susanoo.Processing
         /// <param name="parameterObject">The parameter object.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager,
+        Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, object parameterObject, params DbParameter[] explicitParameters);
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Susanoo.Processing
         /// <param name="filter">The filter.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager,
+        Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, params DbParameter[] explicitParameters);
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Susanoo.Processing
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="explicitParameters">The explicit parameters.</param>
         /// <returns>Task&lt;IEnumerable&lt;TResult&gt;&gt;.</returns>
-        Task<IResultSetReader> ExecuteAsync(IDatabaseManager databaseManager,
+        Task<IResultSetCollection> ExecuteAsync(IDatabaseManager databaseManager,
             TFilter filter, CancellationToken cancellationToken, params DbParameter[] explicitParameters);
     }
 }

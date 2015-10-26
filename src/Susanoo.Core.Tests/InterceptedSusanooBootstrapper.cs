@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using Susanoo.Deserialization;
+﻿using Susanoo.Deserialization;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
+using System.Diagnostics;
 
 namespace Susanoo.Tests
 {
@@ -30,8 +30,8 @@ namespace Susanoo.Tests
         /// <param name="mappings">The mappings.</param>
         /// <param name="name">The name.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public override ISingleResultSetCommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(ICommandResultInfo<TFilter> mappings, string name = null)
-            => base.BuildCommandProcessor<TFilter, TResult>(mappings, name)
+        public override ISingleResultSetCommandProcessor<TFilter, TResult> BuildCommandProcessor<TFilter, TResult>(ICommandResultInfo<TFilter> mappings)
+            => base.BuildCommandProcessor<TFilter, TResult>(mappings)
                 .InterceptExceptions(ex => Debug.Print($"{ex.Info.CommandText}"));
     }
 }
