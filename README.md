@@ -2,17 +2,15 @@ Susanoo
 ====
 A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! 
 
-[Docs are available here.](https://susanoo.torchpad.com/)
-
-[Susanoo has a gitter.im chatroom](https://gitter.im/psibernetic/Susanoo).
+[![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8/branch/master?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo/branch/master)
 
 [![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
 
-Support for .NET 4.0+, nuget packages reference 4.5
+[Docs are available here.](https://susanoo.torchpad.com/)
 
 #####Usage
 ```csharp
-var command = CommandManager
+var command = CommandManager.Instance
     .DefineCommand(@"SELECT Id, FirstName, LastName 
                      FROM Customers
                      WHERE HasStoreCard = @HasStoreCard", CommandType.Text)
@@ -48,10 +46,3 @@ A guide on adding the symbol server to Visual Studio is available [here](http://
 ## License
 
 Susanoo is licensed under [MIT](http://www.opensource.org/licenses/mit-license.php "Read more about the MIT license form"). Refer to license.txt for more information.
-
-## CI Builds
-
-### MyGet
-[![susanoo-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/susanoo-ci?identifier=776e9352-77be-4427-b372-c091644d9568)](https://www.myget.org/)
-
-
