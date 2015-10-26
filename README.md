@@ -2,17 +2,6 @@ Susanoo
 ====
 A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! 
 
-####Build Status
-#####Master
-[![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8/branch/master?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo/branch/master)
-
-#####CI
-[![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo)
-
-[![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
-
-[Docs are available here.](https://susanoo.torchpad.com/)
-
 ####Usage
 ```csharp
 var command = CommandManager.Instance
@@ -29,6 +18,19 @@ using (var databaseManager =
         command.Execute(databaseManager, new { HasStoreCard = true });
 }
 ```
+
+####Build Status
+#####Master
+[![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8/branch/master?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo/branch/master)
+
+#####CI
+[![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo)
+
+####Nuget
+[![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
+
+####Documentation
+[Docs are available here.](https://susanoo.torchpad.com/)
 
 ####Project Updates
 [Susanoo's Blog is here](http://blog.susanoo.net)
