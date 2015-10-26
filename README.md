@@ -2,20 +2,18 @@ Susanoo
 ====
 A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! 
 
-#####Build Status
+####Build Status
+#####Master
+[![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8/branch/master?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo/branch/master)
 
-* **Master**
-
-   [![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8/branch/master?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo/branch/master)
-* **CI**
-
-   [![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo)
+#####CI
+[![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo)
 
 [![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
 
 [Docs are available here.](https://susanoo.torchpad.com/)
 
-#####Usage
+####Usage
 ```csharp
 var command = CommandManager.Instance
     .DefineCommand(@"SELECT Id, FirstName, LastName 
@@ -32,13 +30,13 @@ using (var databaseManager =
 }
 ```
 
-#####Project Updates
+####Project Updates
 [Susanoo's Blog is here](http://blog.susanoo.net)
 
-#####How does it work?
+####How does it work?
 Susanoo uses Linq expression trees to dynamically write and compile code to map your objects before the command ever executes, leaving your SQL calls unaffected. It does this all while avoiding slow reflection code and nasty reflection.emit IL.
 
-#####Installation
+####Installation
 Susanoo does not require any configuration out of the box. The easiest way to install is of course via nuget package.
 
 ```
