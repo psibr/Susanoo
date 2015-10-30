@@ -1,5 +1,5 @@
-Susanoo 
-====
+![Susanoo](https://avatars0.githubusercontent.com/u/621605?v=3&s=460)
+
 A simple, fast, fluently structured library that takes the pain out of writing ADO.NET by eliminating boiler plate code and providing SQL result mappings to strongly-typed objects with no attributing or baseclass/interface, just pure POCOs and fast! 
 
 ####Usage
