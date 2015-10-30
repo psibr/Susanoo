@@ -132,7 +132,7 @@
     <Compile Include="Deserialization\KeyValuePairDeserializer.cs" />
     <Compile Include="Exceptions\SusanooDependencyResolutionException.cs" />
     <Compile Include="Exceptions\SusanooExecutionException.cs" />
-    <Compile Include="DependencyInjection\IContainer.cs" />
+    <Compile Include="DependencyInjection\IComponentContainer.cs" />
     <Compile Include="IDatabaseManagerFactory.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
     <Compile Include="ObjectExtensions.cs" />
@@ -159,6 +159,7 @@
     <Compile Include="Processing\SingleResultSetCommandProcessorStructure.cs" />
     <Compile Include="Processing\SingleResultSetCommandProcessorFactory.cs" />
     <Compile Include="Proxies\Caching\ICacheProvider.cs" />
+    <Compile Include="Caching\InMemoryCache.cs" />
     <Compile Include="Proxies\MultipleResultSetProxy.cs" />
     <Compile Include="Proxies\NoResultSetProxy.cs" />
     <Compile Include="Proxies\ExceptionInterception\NoResultSetExceptionInterceptionProxy.cs" />
@@ -179,7 +180,7 @@
     <Compile Include="ResultSets\ICommandResultInfo.cs" />
     <Compile Include="ResultSets\ICommandResultMappingExporter.cs" />
     <Compile Include="Deserialization\BuiltInTypeDeserializerFactory.cs" />
-    <Compile Include="Deserialization\DynamicRow.cs" />
+    <Compile Include="DynamicRow.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Mapping\IMappingExport.cs" />
     <Compile Include="Mapping\Properties\IPropertyMapping.cs" />

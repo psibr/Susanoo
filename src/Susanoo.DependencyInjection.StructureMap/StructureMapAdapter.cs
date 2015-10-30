@@ -1,22 +1,15 @@
-﻿using Susanoo.DependencyInjection.TinyIoC;
+﻿using System;
+using StructureMap;
 using Susanoo.Exceptions;
-using System;
 
-namespace Susanoo.DependencyInjection
+namespace Susanoo.DependencyInjection.StructureMap
 {
-    /// <summary>
-    /// An adpater for TinyIoC to the shared IContainer interface.
-    /// </summary>
-    internal class TinyIoCContainerAdapter 
+    public class StructureMapAdapter
         : IComponentContainer
     {
-        private readonly TinyIoCContainer _container;
+        private readonly IContainer _container;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TinyIoCContainerAdapter"/> class.
-        /// </summary>
-        /// <param name="container">The container.</param>
-        internal TinyIoCContainerAdapter(TinyIoCContainer container)
+        public StructureMapAdapter(IContainer container)
         {
             _container = container;
         }
@@ -28,19 +21,18 @@ namespace Susanoo.DependencyInjection
         /// <param name="name">The name.</param>
         /// <returns>T.</returns>
         /// <exception cref="SusanooDependencyResolutionException">An error occured resolving a type.</exception>
-        public T Resolve<T>(string name = null)
-            where T : class
+        public T Resolve<T>(string name = null) where T : class
         {
             try
             {
-                return name == null 
-                    ? _container.Resolve<T>() 
-                    : _container.Resolve<T>(name);
+                return name == null
+                    ? _container.GetInstance<T>()
+                    : _container.GetInstance<T>(name);
             }
-            catch (TinyIoCResolutionException tinyIoCResolutionException)
+            catch (Exception ex)
             {
                 throw new SusanooDependencyResolutionException("An error occured resolving a type.",
-                    tinyIoCResolutionException);
+                    ex);
             }
         }
 
@@ -53,10 +45,13 @@ namespace Susanoo.DependencyInjection
         public void Register<T>(T instance, string name = null)
             where T : class
         {
-            if (name == null)
-                _container.Register(instance);
-            else
-                _container.Register(instance, name);
+            _container.Configure(_ =>
+            {
+                if (name == null)
+                    _.For<T>().Use(instance);
+                else
+                    _.For<T>().Use(instance).Named(name);
+            });
         }
 
         /// <summary>
@@ -66,12 +61,15 @@ namespace Susanoo.DependencyInjection
         /// <param name="resolver">The resolver.</param>
         /// <param name="name">The name.</param>
         public void Register<T>(Func<IComponentContainer, T> resolver, string name = null)
-            where T : class 
+            where T : class
         {
-            if (name == null)
-                _container.Register<T>((tinyIoC, overloads) => resolver(this));
-            else
-                _container.Register<T>((tinyIoC, overloads) => resolver(this), name);
+            _container.Configure(_ =>
+            {
+                if (name == null)
+                    _.For<T>().Use(() => resolver(this));
+                else
+                    _.For<T>().Use(() => resolver(this));
+            });
         }
     }
 }

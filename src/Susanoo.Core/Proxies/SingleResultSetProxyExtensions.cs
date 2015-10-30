@@ -23,12 +23,14 @@ namespace Susanoo
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException">At least one transform is required.</exception>
         public static ISingleResultSetCommandProcessor<TFilter, TResult> ApplyTransforms<TFilter, TResult>(
-            this ISingleResultSetCommandProcessor<TFilter, TResult> source, Func<ISingleResultSetCommandProcessor<TFilter, TResult>, IEnumerable<CommandTransform>> transforms)
+            this ISingleResultSetCommandProcessor<TFilter, TResult> source,
+            Func<ISingleResultSetCommandProcessor<TFilter, TResult>, IEnumerable<CommandTransform>> transforms)
         {
             if (transforms == null)
                 throw new ArgumentNullException(nameof(transforms), "At least one transform is required.");
 
-            return source.InterceptOrProxyWith(s => new SingleResultSetTransformProxy<TFilter, TResult>(s, transforms(s)));
+            return
+                source.InterceptOrProxyWith(s => new SingleResultSetTransformProxy<TFilter, TResult>(s, transforms(s)));
         }
 
         /// <summary>
@@ -41,7 +43,8 @@ namespace Susanoo
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="System.ArgumentNullException"></exception>
         public static ISingleResultSetCommandProcessor<TFilter, TResult> InterceptExceptions<TFilter, TResult>(
-            this ISingleResultSetCommandProcessor<TFilter, TResult> source, Action<SusanooExecutionException> executionHandler)
+            this ISingleResultSetCommandProcessor<TFilter, TResult> source,
+            Action<SusanooExecutionException> executionHandler)
         {
             if (executionHandler == null)
                 throw new ArgumentNullException(nameof(executionHandler));
@@ -63,12 +66,34 @@ namespace Susanoo
         public static ISingleResultSetCommandProcessor<TFilter, TResult> CacheResults<TFilter, TResult>(
             this ISingleResultSetCommandProcessor<TFilter, TResult> source, ICacheProvider provider)
         {
-            if(provider == null)
+            if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
 
             return source
                 .InterceptOrProxyWith(s =>
                     new SingleResultSetCachingProxy<TFilter, TResult>(s, provider));
-        } 
+        }
+
+        /// <summary>
+        /// Caches the results.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="provider">The provider.</param>
+        /// <param name="expiryPeriod">The expiry period.</param>
+        /// <returns>ISingleResultSetCommandProcessor&lt;TFilter, TResult&gt;.</returns>
+        /// <exception cref="System.ArgumentNullException">provider</exception>
+        public static ISingleResultSetCommandProcessor<TFilter, TResult> CacheResults<TFilter, TResult>(
+            this ISingleResultSetCommandProcessor<TFilter, TResult> source, ICacheProvider provider,
+            TimeSpan expiryPeriod)
+        {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+
+            return source
+                .InterceptOrProxyWith(s =>
+                    new SingleResultSetCachingProxy<TFilter, TResult>(s, provider, expiryPeriod));
+        }
     }
 }
