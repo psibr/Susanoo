@@ -19,6 +19,7 @@ namespace Susanoo.Proxies.Caching
             : SingleResultSetProxy<TFilter, TResult>
     {
         private readonly ICacheProvider _cacheProvider;
+        private readonly TimeSpan _expiryPeriod = System.Threading.Timeout.InfiniteTimeSpan;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetCachingProxy{TFilter,TResult}" /> class.
@@ -33,6 +34,20 @@ namespace Susanoo.Proxies.Caching
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="SingleResultSetCachingProxy{TFilter,TResult}" /> class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="cacheProvider">The cache provider.</param>
+        /// <param name="expiryPeriod"></param>
+        public SingleResultSetCachingProxy(ISingleResultSetCommandProcessor<TFilter, TResult> source,
+            ICacheProvider cacheProvider, TimeSpan expiryPeriod)
+            : base(source)
+        {
+            _cacheProvider = cacheProvider;
+            _expiryPeriod = expiryPeriod;
+        }
+
+        /// <summary>
         /// Assembles a data CommandBuilder for an ADO.NET provider,
         /// executes the CommandBuilder and uses pre-compiled mappings to assign the resultant data to the result object type.
         /// </summary>
@@ -44,14 +59,17 @@ namespace Susanoo.Proxies.Caching
         {
             var key = executableCommandInfo.GetDeterministicKey();
 
-            var result = _cacheProvider.Get<IEnumerable<TResult>>(key);
+            var result = _cacheProvider.GetValue<IEnumerable<TResult>>(key);
 
 
             if (result == null)
             {
                 result = Source.Execute(databaseManager, executableCommandInfo);
 
-                _cacheProvider.Set(key, result);
+                if (_expiryPeriod != System.Threading.Timeout.InfiniteTimeSpan)
+                    _cacheProvider.SetValue(key, result, _expiryPeriod);
+                else
+                    _cacheProvider.SetValue(key, result);
 
             }
 
@@ -81,13 +99,16 @@ namespace Susanoo.Proxies.Caching
             CancellationToken cancellationToken)
         {
             var key = executableCommandInfo.GetDeterministicKey();
-            var result = _cacheProvider.Get<IEnumerable<TResult>>(key);
+            var result = _cacheProvider.GetValue<IEnumerable<TResult>>(key);
 
             if (result == null)
             {
                 result = await Source.ExecuteAsync(databaseManager, executableCommandInfo, cancellationToken);
 
-                _cacheProvider.Set(key, result);
+                if (_expiryPeriod != System.Threading.Timeout.InfiniteTimeSpan)
+                    _cacheProvider.SetValue(key, result, _expiryPeriod);
+                else
+                    _cacheProvider.SetValue(key, result);
             }
 
             return result;

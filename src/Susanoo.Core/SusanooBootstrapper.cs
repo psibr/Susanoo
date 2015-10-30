@@ -22,7 +22,7 @@ namespace Susanoo
         /// <summary>
         /// The TinyIoC container used by default for building components.
         /// </summary>
-        protected readonly IContainer Container;
+        protected readonly IComponentContainer Container;
 
         /// <summary>
         /// Instantiates the bootstrapper and wires all dependencies to the resolve method. Uses TinyIoC container by default.
@@ -36,7 +36,7 @@ namespace Susanoo
         /// <summary>
         /// Instantiates the bootstrapper and wires all dependencies to the resolve method.
         /// </summary>
-        public SusanooBootstrapper(IContainer container)
+        public SusanooBootstrapper(IComponentContainer container)
         {
             Container = container;
         }
@@ -84,7 +84,7 @@ namespace Susanoo
                     container.Resolve<ICommandSingleResultExpressionFactory>()));
 
             Container.Register<ICommandBuilder>((container)
-                => new CommandBuilder(container.Resolve<CommandExpressionFactory>()));
+                => new CommandBuilder(container.Resolve<ICommandExpressionFactory>()));
         }
 
         /// <summary>

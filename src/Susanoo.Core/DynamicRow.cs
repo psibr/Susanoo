@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Susanoo.Deserialization
+namespace Susanoo
 {
     /// <summary>
     /// Represents values from an IDataRecord object.

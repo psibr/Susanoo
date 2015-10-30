@@ -21,7 +21,8 @@ namespace Susanoo
     /// <summary>
     /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    public partial class DatabaseManager : IDatabaseManager, IDisposable
+    public partial class DatabaseManager 
+        : IDatabaseManager
     {
         private DbConnection _connection;
         private bool _explicitlyOpened;
@@ -34,7 +35,6 @@ namespace Susanoo
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
         /// <param name="providerSpecificCommandSettings">The provider specific CommandBuilder settings.</param>
-        /// <exception cref="NotSupportedException">The database provider type specified is not supported. </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName,
             Action<DbCommand> providerSpecificCommandSettings)
             : this(provider, connectionStringName)
@@ -47,7 +47,6 @@ namespace Susanoo
         /// </summary>
         /// <param name="provider">The provider.</param>
         /// <param name="connectionStringName">Name of the connection string.</param>
-        /// <exception cref="NotSupportedException">The database provider type specified is not supported. </exception>
         public DatabaseManager(DbProviderFactory provider, string connectionStringName)
         {
             Provider = provider;
@@ -261,6 +260,8 @@ namespace Susanoo
                 if (results != null && !results.IsClosed)
                     results.Close();
 
+                // ReSharper disable once ExceptionNotDocumented
+                // ReSharper disable once ThrowingSystemException
                 throw;
             }
 

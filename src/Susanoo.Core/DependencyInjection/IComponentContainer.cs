@@ -5,7 +5,7 @@ namespace Susanoo.DependencyInjection
     /// <summary>
     /// A simple container interface for plugging in DI containers.
     /// </summary>
-    public interface IContainer
+    public interface IComponentContainer
     {
         /// <summary>
         /// Resolves the specified type.
@@ -31,7 +31,7 @@ namespace Susanoo.DependencyInjection
         /// <typeparam name="T"></typeparam>
         /// <param name="resolver">The resolver.</param>
         /// <param name="name">The name.</param>
-        void Register<T>(Func<IContainer, T> resolver, string name = null)
+        void Register<T>(Func<IComponentContainer, T> resolver, string name = null)
             where T : class;
     }
 }

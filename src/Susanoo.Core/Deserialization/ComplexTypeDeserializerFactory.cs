@@ -21,17 +21,17 @@ namespace Susanoo.Deserialization
         : IDeserializerFactory
     {
         private static readonly ConstructorInfo ColumnCheckerConstructorInfo =
-            typeof (ColumnChecker).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null,
-                new[] {typeof (int)}, null);
+            typeof(ColumnChecker).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null,
+                new[] { typeof(int) }, null);
 
-        private static readonly ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, object>> 
-            DeserilializerCache = new ConcurrentDictionary<BigInteger, Func<IDataReader, ColumnChecker, object>>();
+        private static readonly ConcurrentDictionary<string, Func<IDataReader, ColumnChecker, object>>
+            DeserilializerCache = new ConcurrentDictionary<string, Func<IDataReader, ColumnChecker, object>>();
 
         /// <summary>
         /// Compiles mappings.
         /// </summary>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;System.Object&gt;&gt;.</returns>
-        public static Func<IDataReader, ColumnChecker, object> Compile(IMappingExport mapping, Type resultType)
+        public static Func<IDataReader, ColumnChecker, object> Compile(string cacheKey, IMappingExport mapping, Type resultType)
         {
             //Get the properties we care about.
             var mappings = mapping.Export();
@@ -46,7 +46,7 @@ namespace Susanoo.Deserialization
             // columnChecker = (columnReport == null) ? new ColumnChecker() : columnReport;
             statements.Add(Expression.IfThenElse(Expression.Equal(columnReport, Expression.Constant(null)),
                 Expression.Assign(
-                    columnChecker, Expression.New(ColumnCheckerConstructorInfo, 
+                    columnChecker, Expression.New(ColumnCheckerConstructorInfo,
                     Expression.Convert(Expression.Property(Expression.Convert(reader, typeof(IDataRecord)), "FieldCount"), typeof(int?)))),
                 Expression.Assign(columnChecker, columnReport)));
 
@@ -126,17 +126,15 @@ namespace Susanoo.Deserialization
 
             var type = CommandManager.DynamicNamespace
                 .DefineType(string.Format(CultureInfo.CurrentCulture, "{0}_{1}",
-                    resultType.Name,
-                    Guid.NewGuid().ToString().Replace("-", string.Empty)),
-                    TypeAttributes.Public);
+                    resultType.Name, cacheKey));
 
-            lambda.CompileToMethod(type.DefineMethod("Map", MethodAttributes.Public | MethodAttributes.Static));
+            lambda.CompileToMethod(type.DefineMethod("MapResult", MethodAttributes.Public | MethodAttributes.Static));
 
             var dynamicType = type.CreateType();
 
             return (Func<IDataReader, ColumnChecker, object>)Delegate
                 .CreateDelegate(typeof(Func<IDataReader, ColumnChecker, object>),
-                    dynamicType.GetMethod("Map", BindingFlags.Public | BindingFlags.Static));
+                    dynamicType.GetMethod("MapResult", BindingFlags.Public | BindingFlags.Static));
         }
 
         /// <summary>
@@ -144,12 +142,13 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
-        public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CastResults<TResult>(Func<IDataReader, ColumnChecker, IEnumerable> compiledFunc)
+        public static Func<IDataReader, ColumnChecker, IEnumerable<TResult>> CastResults<TResult>(
+            Func<IDataReader, ColumnChecker, IEnumerable> compiledFunc)
         {
             var result = compiledFunc;
 
             Func<IDataReader, ColumnChecker, IEnumerable<TResult>> typedResult =
-                (reader, columnMeta) => (IEnumerable<TResult>) (result(reader, columnMeta));
+                (reader, columnMeta) => (IEnumerable<TResult>)(result(reader, columnMeta));
 
             return typedResult;
         }
@@ -172,14 +171,14 @@ namespace Susanoo.Deserialization
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         public IDeserializer<TResult> BuildDeserializer<TResult>(IMappingExport mappings)
         {
-            var cacheKey = GetCacheKey(typeof(TResult), mappings);
+            var cacheKey = GetCacheKey(typeof(TResult), mappings).ToString();
 
             Func<IDataReader, ColumnChecker, object> deserializer;
-               
+
 
             if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
             {
-                deserializer = Compile(mappings, typeof (TResult));
+                deserializer = Compile(cacheKey, mappings, typeof(TResult));
                 DeserilializerCache.TryAdd(cacheKey, deserializer);
             }
 
@@ -194,17 +193,15 @@ namespace Susanoo.Deserialization
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         public IDeserializer BuildDeserializer(Type resultType, IMappingExport mappings)
         {
-            var cacheKey = GetCacheKey(resultType, mappings);
+            var cacheKey = GetCacheKey(resultType, mappings).ToString();
 
             Func<IDataReader, ColumnChecker, object> deserializer;
 
             if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
             {
-                
-                deserializer = Compile(mappings, resultType);
+                deserializer = Compile(cacheKey, mappings, resultType);
                 DeserilializerCache.TryAdd(cacheKey, deserializer);
             }
-
 
             return new ComplexTypeDeserializer(mappings, resultType, deserializer);
         }

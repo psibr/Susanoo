@@ -12,13 +12,13 @@ namespace Susanoo.Pipeline
     /// </summary>
     public class CommandBuilder : ICommandBuilder
     {
-        private readonly CommandExpressionFactory _commandExpressionFactory;
+        private readonly ICommandExpressionFactory _commandExpressionFactory;
 
         /// <summary>
         /// Resolves dependency on CommandExpressionFactory and instantiates.
         /// </summary>
         /// <param name="commandExpressionFactory"></param>
-        public CommandBuilder(CommandExpressionFactory commandExpressionFactory)
+        public CommandBuilder(ICommandExpressionFactory commandExpressionFactory)
         {
             _commandExpressionFactory = commandExpressionFactory;
         }

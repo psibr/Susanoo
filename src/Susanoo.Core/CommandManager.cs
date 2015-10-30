@@ -125,7 +125,7 @@ namespace Susanoo
         /// </summary>
         public static void SaveDynamicAssemblyToDisk()
         {
-            ExpressionAssembly.Save("Susanoo.DynamicExpression.Loader");
+            ExpressionAssembly.Save("Susanoo.DynamicExpression.Loader.dll");
         }
 
         private static CommandManager _instance;

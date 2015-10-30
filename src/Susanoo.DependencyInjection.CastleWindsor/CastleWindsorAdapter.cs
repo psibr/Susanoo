@@ -1,24 +1,18 @@
-﻿using Susanoo.DependencyInjection.TinyIoC;
+﻿using System;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
 using Susanoo.Exceptions;
-using System;
 
-namespace Susanoo.DependencyInjection
+namespace Susanoo.DependencyInjection.CastleWindsor
 {
-    /// <summary>
-    /// An adpater for TinyIoC to the shared IContainer interface.
-    /// </summary>
-    internal class TinyIoCContainerAdapter 
+    public class CastleWindsorAdapter
         : IComponentContainer
     {
-        private readonly TinyIoCContainer _container;
+        private readonly IWindsorContainer _windsorContainer;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TinyIoCContainerAdapter"/> class.
-        /// </summary>
-        /// <param name="container">The container.</param>
-        internal TinyIoCContainerAdapter(TinyIoCContainer container)
+        public CastleWindsorAdapter(IWindsorContainer windsorContainer)
         {
-            _container = container;
+            _windsorContainer = windsorContainer;
         }
 
         /// <summary>
@@ -33,14 +27,14 @@ namespace Susanoo.DependencyInjection
         {
             try
             {
-                return name == null 
-                    ? _container.Resolve<T>() 
-                    : _container.Resolve<T>(name);
+                return name == null
+                    ? _windsorContainer.Resolve<T>()
+                    : _windsorContainer.Resolve<T>(name);
             }
-            catch (TinyIoCResolutionException tinyIoCResolutionException)
+            catch (Exception ex)
             {
                 throw new SusanooDependencyResolutionException("An error occured resolving a type.",
-                    tinyIoCResolutionException);
+                    ex);
             }
         }
 
@@ -53,10 +47,17 @@ namespace Susanoo.DependencyInjection
         public void Register<T>(T instance, string name = null)
             where T : class
         {
-            if (name == null)
-                _container.Register(instance);
+            var binding = Component.For<T>().Instance(instance).LifeStyle.Transient;
+
+            if (name != null)
+                binding.Named(name);
+
+            if (!_windsorContainer.Kernel.HasComponent(typeof(T)))
+                binding.IsFallback();
             else
-                _container.Register(instance, name);
+                binding.NamedAutomatically(Guid.NewGuid().ToString());
+
+            _windsorContainer.Register(binding);
         }
 
         /// <summary>
@@ -66,12 +67,20 @@ namespace Susanoo.DependencyInjection
         /// <param name="resolver">The resolver.</param>
         /// <param name="name">The name.</param>
         public void Register<T>(Func<IComponentContainer, T> resolver, string name = null)
-            where T : class 
+            where T : class
         {
-            if (name == null)
-                _container.Register<T>((tinyIoC, overloads) => resolver(this));
+            var binding = Component.For<T>().UsingFactoryMethod(() => resolver(this)).LifeStyle.Transient;
+
+            if (name != null)
+                binding.Named(name);
+
+            if (!_windsorContainer.Kernel.HasComponent(typeof(T)))
+                binding.IsFallback();
             else
-                _container.Register<T>((tinyIoC, overloads) => resolver(this), name);
+                binding.NamedAutomatically(Guid.NewGuid().ToString());
+
+
+            _windsorContainer.Register(binding);
         }
     }
 }
