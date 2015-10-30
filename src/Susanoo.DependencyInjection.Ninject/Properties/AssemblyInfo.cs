@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Susanoo.Core")]
+[assembly: AssemblyTitle("Susanoo.DependencyInjection.Ninject")]
 [assembly: AssemblyDescription("Lightweight Semi-Automatic ORM")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ovan Crone")]

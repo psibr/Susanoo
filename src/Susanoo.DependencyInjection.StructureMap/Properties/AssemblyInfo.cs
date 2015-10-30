@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Susanoo.DependencyInjection.StructureMap")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Lightweight Semi-Automatic ORM")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Susanoo.DependencyInjection.StructureMap")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("Ovan Crone")]
+[assembly: AssemblyProduct("Susanoo")]
+[assembly: AssemblyCopyright("Copyright © Ovan Crone, LLC 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
