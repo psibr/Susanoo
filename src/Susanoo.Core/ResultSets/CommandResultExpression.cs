@@ -2,6 +2,7 @@ using Susanoo.Command;
 using Susanoo.Mapping;
 using System;
 
+
 namespace Susanoo.ResultSets
 {
     /// <summary>
@@ -21,7 +22,11 @@ namespace Susanoo.ResultSets
         {
             MappingStorage = mappingStorage;
 
-            Command = command;
+            // ReSharper disable ArrangeThisQualifier
+            //Mono required
+
+            this.Command = command;
+            // ReSharper restore ArrangeThisQualifier
         }
 
         /// <summary>
