@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 
 namespace Susanoo
 {
+#if FULLFX
     /// <summary>
     /// Extension methods for SQL Server
     /// </summary>
@@ -100,4 +101,5 @@ namespace Susanoo
 
 
     }
+#endif
 }

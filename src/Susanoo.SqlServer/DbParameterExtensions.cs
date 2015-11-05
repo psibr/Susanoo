@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 
 namespace Susanoo.SqlServer
 {
+#if FULLFX
     /// <summary>
     /// Extensions for SQL Parameters
     /// </summary>
@@ -40,4 +41,5 @@ namespace Susanoo.SqlServer
             return sqlParam;
         }
     }
+#endif
 }

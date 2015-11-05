@@ -10,6 +10,7 @@ using System.Reflection;
 
 namespace Susanoo.SqlServer
 {
+#if FULLFX
     internal static class EnumerableExtensions
     {
         private static readonly Dictionary<string, DelegateInfo> CompiledFuncs =
@@ -145,4 +146,6 @@ namespace Susanoo.SqlServer
             public Func<SqlMetaData[], object, SqlDataRecord> Func { get; set; }
         }
     }
+
+#endif
 }

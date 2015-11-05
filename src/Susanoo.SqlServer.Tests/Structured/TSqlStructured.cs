@@ -46,7 +46,7 @@ namespace Susanoo.SqlServer.Tests.Structured
 				.Realize()
 				.ExecuteNonQuery(_databaseManager);
 		}
-
+#if FULLFX
 		[Test(Description = "Uses SqlDbType.Structured and TypeName to pass a set of data to a stored procedure.")]
 		public void StructuredViaInclude()
 		{
@@ -88,6 +88,6 @@ namespace Susanoo.SqlServer.Tests.Structured
 			DbParameterExtensions.MakeTableValuedParameter(null, string.Empty, string.Empty);
 		}
 
-
+#endif
 	}
 }
