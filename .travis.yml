@@ -2,3 +2,4 @@ language: csharp
 solution: src/Susanoo.sln
 script:    # the following commands are just examples, use whatever your build process requires
   - xbuild /p:Configuration=Mono src/Susanoo.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./src/Susanoo.Core.Tests/bin/Mono/Susanoo.Core.Tests.dll
