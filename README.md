@@ -26,6 +26,11 @@ using (var databaseManager =
 #####CI
 [![Build status](https://ci.appveyor.com/api/projects/status/8v0yyni93b4hmlo8?svg=true)](https://ci.appveyor.com/project/psibernetic/susanoo)
 
+#####Travis CI
+[![Build Status](https://travis-ci.org/psibernetic/Susanoo.svg?branch=master)](https://travis-ci.org/psibernetic/Susanoo)
+
+*Currently Structured parameters are not supported on Mono do to limitation with SqlDataRecord missing on Mono.*
+
 ####Nuget
 [![NuGet version](https://badge.fury.io/nu/Susanoo.Core.svg)](http://badge.fury.io/nu/Susanoo.Core)
 
