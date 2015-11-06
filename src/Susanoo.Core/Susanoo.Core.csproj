@@ -21,7 +21,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">NETFX40</CustomConstants>
@@ -135,6 +135,7 @@
     <Compile Include="DependencyInjection\IComponentContainer.cs" />
     <Compile Include="IDatabaseManagerFactory.cs" />
     <Compile Include="ISusanooBootstrapper.cs" />
+    <Compile Include="Mapping\Properties\ResultMappingBase.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Command\ICommandBuilderInfo.cs" />
     <Compile Include="Command\IExecutableCommandInfo.cs" />

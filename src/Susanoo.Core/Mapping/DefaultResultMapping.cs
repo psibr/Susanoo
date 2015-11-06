@@ -1,16 +1,15 @@
 ﻿using Susanoo.Mapping.Properties;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Susanoo.Mapping
 {
     /// <summary>
     /// Simple mapping when none were explicitly provided.
     /// </summary>
-    public class DefaultResultMapping 
-        : IMappingExport
+    public class DefaultResultMapping : ResultMappingBase, IMappingExport
     {
-        private IDictionary<string, IPropertyMapping> _mappingActions;
 
         private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
         private readonly Type _resultType;
@@ -27,8 +26,6 @@ namespace Susanoo.Mapping
             _propertyMetadataExtractor = propertyMetadataExtractor;
             _resultType = resultType;
             _actions = actions;
-
-
         }
 
         /// <summary>
@@ -39,7 +36,7 @@ namespace Susanoo.Mapping
         {
             get
             {
-                if (_mappingActions == null)
+                if (_mappingActions == null || _mappingActions.Count == 0)
                 {
                     _mappingActions = new Dictionary<string, IPropertyMapping>();
                     MapDeclarativeProperties();
@@ -54,17 +51,12 @@ namespace Susanoo.Mapping
         /// </summary>
         public void MapDeclarativeProperties()
         {
-            foreach (var item in _propertyMetadataExtractor
-                .FindAllowedProperties(_resultType, _actions))
+            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(_resultType, _actions))
             {
-                var configuration = new PropertyMappingConfiguration(item.Key);
-
-                configuration.UseAlias(item.Value.ActiveAlias);
-
-                _mappingActions.Add(item.Key.Name, configuration);
+                TryAddMapping(item);
             }
         }
-
+        
         /// <summary>
         /// Exports this instance.
         /// </summary>
@@ -73,7 +65,5 @@ namespace Susanoo.Mapping
         {
             return MappingActions;
         }
-
-
     }
 }
