@@ -1,13 +1,11 @@
 source https://nuget.org/api/v2
-framework >= net45
+framework: net40, net45
 
-nuget Moq 4.2.1507.0118
-nuget NUnit 2.6.4
-nuget NUnitTestAdapter 2.0.0
-nuget Newtonsoft.Json 7.0.1
-nuget StackExchange.Redis 1.0.481
-nuget structuremap 3.1.6.186
-nuget Ninject 3.2.2.0
-nuget Castle.Core 3.3.0
-nuget Castle.Windsor 3.3.0
-nuget Autofac 3.5.2
+nuget Moq >= 4.2 < 5
+nuget NUnit >= 2.6 < 3
+nuget Newtonsoft.Json >= 7 < 8
+nuget StackExchange.Redis >= 1.0 < 2
+nuget structuremap >= 3.1 < 4
+nuget Ninject >= 3.2 < 4
+nuget Castle.Windsor >= 3.3 < 4
+nuget Autofac >= 3.5 < 4

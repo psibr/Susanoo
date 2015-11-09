@@ -254,6 +254,7 @@
     <Compile Include="Proxies\Transforms\MultipleResultSetTransformProxy.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="paket.references" />
     <None Include="Properties\Key.snk" />
     <None Include="Susanoo.Core.nuspec" />
   </ItemGroup>
