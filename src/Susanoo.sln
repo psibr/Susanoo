@@ -44,6 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 		paket.dependencies = paket.dependencies
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.MSpec.Tests", "Susanoo.MSpec.Tests\Susanoo.MSpec.Tests.csproj", "{CB2F9861-E559-4C20-80AA-8995E8F0583E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -260,6 +262,22 @@ Global
 		{BC5FB44A-95BA-4CAF-8282-93A8F07F11CE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC5FB44A-95BA-4CAF-8282-93A8F07F11CE}.Release|x64.ActiveCfg = Release|Any CPU
 		{BC5FB44A-95BA-4CAF-8282-93A8F07F11CE}.Release|x64.Build.0 = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Debug|x64.Build.0 = Debug|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Mono|Any CPU.ActiveCfg = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Mono|Any CPU.Build.0 = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Mono|x64.ActiveCfg = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Mono|x64.Build.0 = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release 4.0|Any CPU.ActiveCfg = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release 4.0|Any CPU.Build.0 = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release 4.0|x64.ActiveCfg = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release 4.0|x64.Build.0 = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release|x64.ActiveCfg = Release|Any CPU
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -279,6 +297,7 @@ Global
 		{153D4245-00EB-448A-B5B7-4779103D1F7B} = {4843057B-2B16-4A7B-9AB1-8603970804D6}
 		{B8F92CB8-4274-466B-BA9D-72FACE1AB9F1} = {4843057B-2B16-4A7B-9AB1-8603970804D6}
 		{CD9DA71A-6630-4E8B-9864-AEAE481D2D52} = {4843057B-2B16-4A7B-9AB1-8603970804D6}
+		{CB2F9861-E559-4C20-80AA-8995E8F0583E} = {D8EDF0F3-5D9F-44BC-A6FE-CB2C56C8679B}
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 00000000-0000-0000-0000-000000000000
