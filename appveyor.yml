@@ -13,7 +13,6 @@ install:
 - cmd: >-
     set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
-
     cd src
 
     cd .paket
@@ -26,6 +25,14 @@ install:
 
     cd ..
 build:
-  publish_nuget: true
-  publish_nuget_symbols: true
   verbosity: minimal
+after_build:
+- cmd: >-
+    cd src
+
+    .paket\paket.exe pack output nupkgs
+
+    cd ..
+artifacts:
+- path: src\nupkgs
+  name: nupkgs

@@ -59,9 +59,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandBuilderInfo\when_building_parameters_in_explicit_property_mode.cs" />
+    <Compile Include="CommandBuilderInfo\when_building_parameters_in_implicit_property_mode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="When_defining_a_command_with_a_dynamic_filter.cs" />
-    <Compile Include="When_defining_a_command_with_a_typed_filter.cs" />
+    <Compile Include="CommandExpression\when_realizing_a_no_result_set_command.cs" />
+    <Compile Include="CommandManager\when_defining_a_command_expression.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />
@@ -83,4 +85,15 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5')">
+      <ItemGroup>
+        <Reference Include="Moq">
+          <HintPath>..\packages\Moq\lib\net40\Moq.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>

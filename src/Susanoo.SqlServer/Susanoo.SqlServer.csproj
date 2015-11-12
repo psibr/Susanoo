@@ -71,6 +71,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="paket.references" />
     <None Include="Properties\Key.snk" />
     <None Include="Susanoo.SqlServer.nuspec" />
   </ItemGroup>
@@ -79,6 +80,9 @@
       <Project>{3f241cbd-fff8-45ab-ad2a-f4780bb5fa59}</Project>
       <Name>Susanoo.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="paket.template" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
