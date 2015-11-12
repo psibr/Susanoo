@@ -15,12 +15,8 @@ namespace Susanoo.Mapping
     /// </summary>
     /// <typeparam name="TFilter">The type of the t filter.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
-    public class ResultMappingExpression<TFilter, TResult>
-        : IResultMappingExpression<TFilter, TResult>
+    public class ResultMappingExpression<TFilter, TResult> : ResultMappingBase, IResultMappingExpression<TFilter, TResult>
     {
-        private readonly IDictionary<string, IPropertyMapping> _mappingActions =
-            new Dictionary<string, IPropertyMapping>();
-
         private readonly IPropertyMetadataExtractor _propertyMetadataExtractor;
 
         /// <summary>
@@ -68,7 +64,7 @@ namespace Susanoo.Mapping
             string propertyName,
             Action<IPropertyMappingConfiguration> options)
         {
-            var config = new PropertyMappingConfiguration(typeof(TResult).GetProperty(propertyName));
+            var config = new PropertyMappingConfiguration<TResult>(typeof(TResult).GetProperty(propertyName));
             options.Invoke(config);
 
             if (!_mappingActions.ContainsKey(propertyName))
@@ -93,14 +89,9 @@ namespace Susanoo.Mapping
         /// </summary>
         protected void MapDeclarativeProperties()
         {
-            foreach (var item in _propertyMetadataExtractor
-                .FindAllowedProperties(typeof(TResult)))
+            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(typeof(TResult)))
             {
-                var configuration = new PropertyMappingConfiguration(item.Key);
-
-                configuration.UseAlias(item.Value.ActiveAlias);
-
-                _mappingActions.Add(item.Key.Name, configuration);
+                TryAddMapping(item);
             }
         }
     }

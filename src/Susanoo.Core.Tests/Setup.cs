@@ -26,7 +26,7 @@ namespace Susanoo.Tests
         /// <summary>
         ///     Builds the data type table used for testing conversions.
         /// </summary>
-        private static void BuildDataTypeTable()
+        private void BuildDataTypeTable()
         {
             CommandManager.Instance.DefineCommand(
                 @"
