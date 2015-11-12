@@ -17,11 +17,11 @@ namespace Susanoo.Tests.Static.SingleResult
             string expectedName = "Joe";
             DateTime expectedDoB = new DateTime(1980, 1, 1);
             CraeteSingleUser(expectedName, expectedDoB);
-            string query = string.Format("SELECT [String] As UserName, [DateTime] As DoB FROM #DataTypeTable where [String] = '{0}'", expectedName);
+            string query = "SELECT [String] As UserName, [DateTime] As DoB FROM #DataTypeTable where [String] = @expectedName";
             var results = CommandManager.Instance.DefineCommand(query, CommandType.Text)
                 .DefineResults<User>()
                 .Realize()
-                .Execute(_databaseManager)
+                .Execute(_databaseManager, new { expectedName })
                 .ToList();
             
             Assert.AreEqual(1, results.Count());
