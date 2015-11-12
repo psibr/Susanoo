@@ -3,7 +3,7 @@ licenseUrl http://opensource.org/licenses/MIT
 authors Ovan Crone
 owners Ovan Crone
 description
-    Autofac DI bidnings for Susanoo
+    Autofac DI bindings for Susanoo
 iconUrl https://avatars0.githubusercontent.com/u/621605?v=3&amp;s=460
 requireLicenseAcceptance false
 copyright Psibernetic Solutions, LLC 2015

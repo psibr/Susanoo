@@ -34,5 +34,5 @@ after_build:
 
     cd ..
 artifacts:
-- path: src\nupkgs
+- path: src\nupkgs\*.nupkg
   name: nupkgs
