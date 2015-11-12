@@ -293,9 +293,7 @@ namespace Susanoo
 
                 using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
-                    var result = CastValue(typeof(T), command.ExecuteScalar());
-
-                    return (T)result;
+                    return CastValue<T>(command.ExecuteScalar());
                 }
             }
             finally
@@ -449,25 +447,24 @@ namespace Susanoo
         /// <summary>
         /// Returns value or it's string representation.
         /// </summary>
-        /// <param name="newType">The new type.</param>
         /// <param name="value">The value.</param>
         /// <returns>Value or string representation.</returns>
 #if !NETFX40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static object CastValue(Type newType, object value)
+        public static T CastValue<T>(object value)
         {
             if (value == DBNull.Value)
                 value = null;
 
             var returnValue = value;
 
-            if (newType == typeof(string))
+            if (typeof(T) == typeof(string))
             {
                 returnValue = (value ?? "").ToString();
             }
 
-            return returnValue;
+            return (T)(object)returnValue;
         }
 
         /// <summary>
@@ -658,10 +655,7 @@ namespace Susanoo
 
                 using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
-                    return
-                        (T)
-                            CastValue(typeof(T),
-                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
+                    return CastValue<T>(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
                 }
             }
             finally

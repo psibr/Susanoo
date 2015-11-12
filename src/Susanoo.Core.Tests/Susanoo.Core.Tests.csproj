@@ -110,6 +110,8 @@
     <Compile Include="Static\SingleResult\BuiltInTypes.cs" />
     <Compile Include="Static\SingleResult\KeyValuePairDeserializer.cs" />
     <Compile Include="Static\SingleResult\StaticTypeTest.cs" />
+    <Compile Include="Static\SingleResult\ValueTypes.cs" />
+    <Compile Include="Static\StringValueType.cs" />
     <Compile Include="Static\TypeTestModel.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -13,15 +13,10 @@ namespace Susanoo.Mapping.Properties
     /// <summary>
     /// Allows configuration of the Susanoo mapper at the property level during CommandBuilder definition.
     /// </summary>
-    public class PropertyMappingConfiguration
-        : IPropertyMappingConfiguration, IPropertyMapping
+    public class PropertyMappingConfiguration<T> : IPropertyMappingConfiguration, IPropertyMapping
     {
-        private Expression<Func<Type, object, object>> _conversionProcessExpression =
-            (type, value) => DatabaseManager.CastValue(type, value);
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyMappingConfiguration" /> class.
-        /// </summary>
+        private Expression<Func<object, T>> _conversionProcessExpression = (value) => DatabaseManager.CastValue<T>(value);
+        
         /// <param name="propertyInfo">The property information.</param>
         public PropertyMappingConfiguration(PropertyInfo propertyInfo)
         {
@@ -33,8 +28,7 @@ namespace Susanoo.Mapping.Properties
         /// Gets the conversion process.
         /// </summary>
         /// <value>The conversion process.</value>
-        public Func<Type, object, object> ConversionProcess { get; private set; } =
-            (type, value) => DatabaseManager.CastValue(type, value);
+        public Func<object, T> ConversionProcess { get; private set; } = (value) => DatabaseManager.CastValue<T>(value);
 
         /// <summary>
         /// Gets the active alias of the property.
@@ -84,10 +78,10 @@ namespace Susanoo.Mapping.Properties
         /// <param name="process">The process.</param>
         /// <returns>IPropertyMappingConfiguration&lt;TRecord&gt;.</returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public virtual IPropertyMappingConfiguration ProcessValueUsing(Func<Type, object, object> process)
+        public virtual IPropertyMappingConfiguration ProcessValueUsing(Func<object, T> process)
         {
             ConversionProcess = process;
-            _conversionProcessExpression = (type, value) => process(type, value);
+            _conversionProcessExpression = (value) => process(value);
 
             return this;
         }
@@ -102,20 +96,12 @@ namespace Susanoo.Mapping.Properties
         protected virtual BinaryExpression AssembleAssignment(MemberExpression propertyExpression, ParameterExpression record,
             ParameterExpression ordinal)
         {
-            // descriptor.property = (property.Type)_conversionProcessExpression(PropertyMetadata.PropertyType, record[ordinal]);
-            return
-                Expression.Assign(
-                    propertyExpression,
-                    Expression.Convert(
-                        Expression.Invoke(_conversionProcessExpression,
-                            Expression.Constant(PropertyMetadata.PropertyType, typeof(Type)),
-                            Expression.MakeIndex(record,
-                                typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) }),
-                                new[]
-                                {
-                                    ordinal
-                                })),
-                        propertyExpression.Type));
+            var iType = typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) });
+            var arrOrd = new[] { ordinal };
+            var eIndex = Expression.MakeIndex(record, iType, arrOrd);
+            var eInvoke = Expression.Invoke(_conversionProcessExpression, eIndex);
+            var convert = Expression.Convert(eInvoke, propertyExpression.Type);
+            return Expression.Assign(propertyExpression, convert);
         }
     }
 }
