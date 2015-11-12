@@ -3,6 +3,7 @@
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 using System;
+using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -19,12 +20,18 @@ namespace Susanoo.Command
     public interface ICommandExpression<TFilter>
     {
         /// <summary>
-        /// Gets or sets the CommandBuilder text.
+        /// Gets the CommandBuilder text.
         /// </summary>
         /// <value>The CommandBuilder text.</value>
-        string CommandText { get; set; }
+        string CommandText { get; }
 
-            /// <summary>
+        /// <summary>
+        /// Gets the type of the database command.
+        /// </summary>
+        /// <value>The type of the database command.</value>
+        CommandType DbCommandType { get; }
+
+        /// <summary>
         /// Realizes the pipeline with no result mappings.
         /// </summary>
         /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>

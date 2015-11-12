@@ -7,6 +7,7 @@ NUGET
     Castle.Windsor (3.3.0)
       Castle.Core (>= 3.3.0)
     Machine.Specifications (0.9.3)
+    Machine.Specifications.Runner.Console (0.9.2)
     Machine.Specifications.Runner.TDNet (0.9.0)
     Machine.Specifications.Should (0.8.0)
       Machine.Specifications (>= 0.9 < 1.0)

@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
@@ -21,7 +20,7 @@ namespace Susanoo
     /// <summary>
     /// Standard Database Manager for Susanoo that supports any DB implementation that provides a DbProviderFactory.
     /// </summary>
-    public partial class DatabaseManager 
+    public partial class DatabaseManager
         : IDatabaseManager
     {
         private DbConnection _connection;
@@ -106,12 +105,16 @@ namespace Susanoo
         /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
         public static DatabaseManager CreateFromConnectionStringName(string connectionStringName)
         {
-            var manager = new DatabaseManager();
+            var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
 
-            manager._connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
-
-            manager.Provider =
+            var provider =
                 DbProviderFactories.GetFactory(ConfigurationManager.ConnectionStrings[connectionStringName].ProviderName);
+
+            var manager = new DatabaseManager
+            {
+                _connectionString = connectionString,
+                Provider = provider
+            };
 
             if (manager.Provider == null)
                 throw new ArgumentException("Provider is a required component of the connection string.",
@@ -420,23 +423,22 @@ namespace Susanoo
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Performs a bulk copy operation.
-        /// </summary>
-        /// <typeparam name="TRecord">The type of the record.</typeparam>
-        /// <param name="destinationTableName">Name of the destination table.</param>
-        /// <param name="records">The records.</param>
-        /// <param name="whiteList">The white list of properties to include. Default is NULL.</param>
-        /// <param name="blackList">The black list of properties to exclude. Default is NULL.</param>
-        /// <exception cref="NotImplementedException"></exception>
-        public virtual void BulkCopy<TRecord>(string destinationTableName,
-            IEnumerable<TRecord> records,
-            IEnumerable<string> whiteList = null,
-            IEnumerable<string> blackList = null)
-        {
-            //TODO: Implement BulkCopy operation.
-            throw new NotImplementedException();
-        }
+        ///// <summary>
+        ///// Performs a bulk copy operation.
+        ///// </summary>
+        ///// <typeparam name="TRecord">The type of the record.</typeparam>
+        ///// <param name="destinationTableName">Name of the destination table.</param>
+        ///// <param name="records">The records.</param>
+        ///// <param name="whiteList">The white list of properties to include. Default is NULL.</param>
+        ///// <param name="blackList">The black list of properties to exclude. Default is NULL.</param>
+        ///// <exception cref="NotImplementedException"></exception>
+        //public virtual void BulkCopy<TRecord>(string destinationTableName,
+        //    IEnumerable<TRecord> records,
+        //    IEnumerable<string> whiteList = null,
+        //    IEnumerable<string> blackList = null)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// Realizes an instance of the <see cref="DatabaseManager" /> class.
@@ -575,7 +577,8 @@ namespace Susanoo
                 using (var command = PrepCommand(Connection, commandText, commandType, commandTimeout, parameters))
                 {
 
-                    // If the connection was open before execute was called, then do not automatically close connection.
+                    // If the connection was open before execute was called,
+                    // then do not automatically close connection.
                     results = await (open
                         ? command.ExecuteReaderAsync(cancellationToken)
                         : command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken));
@@ -661,7 +664,7 @@ namespace Susanoo
                     return
                         (T)
                             CastValue(typeof(T),
-                                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
+                        await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
                 }
             }
             finally
