@@ -7,7 +7,7 @@ using Susanoo.Command;
 using Susanoo.Processing;
 using It = Machine.Specifications.It;
 
-namespace Susanoo.MSpec.Tests.CommandExpression
+namespace Susanoo.MSpec.Tests.CommandBuilderInfo
 {
     [Subject("CommandBuilderInfo")]
     public class when_building_parameters_in_implicit_property_mode
@@ -46,9 +46,6 @@ namespace Susanoo.MSpec.Tests.CommandExpression
                 MockDatabaseManager.Object,
                 new Tuple<string, string, string>("Explicit", "Implicit", "Excluded"),
                 null, null);
-
-        It should_not_return_null = () => 
-            Parameters.ShouldNotBeNull();
 
         It should_include_explicit_properties = () =>
             Parameters.ShouldContain(parameter => parameter.ParameterName == "Item1");

@@ -65,7 +65,7 @@ WHERE 1=1";
 	    /// <param name = "parameterName" > Name of the parameter.</param>
 	    /// <exception cref="ArgumentNullException">parameterName is null.</exception>
 	    /// <returns>ICommandExpression&lt; TFilter&gt;.</returns>
-	    /// <exception cref="FormatException">Order By paramter either contains unsafe characters or a bad format</exception>
+	    /// <exception cref="FormatException">Order By parameter either contains unsafe characters or a bad format</exception>
 	    public static CommandTransform OrderByExpression(string parameterName = "OrderBy")
 		{
 			if (parameterName == null)

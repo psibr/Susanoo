@@ -25,7 +25,7 @@ namespace Susanoo.Deserialization
                 new[] { typeof(int) }, null);
 
         private static readonly ConcurrentDictionary<string, Func<IDataReader, ColumnChecker, object>>
-            DeserilializerCache = new ConcurrentDictionary<string, Func<IDataReader, ColumnChecker, object>>();
+            DeserializerCache = new ConcurrentDictionary<string, Func<IDataReader, ColumnChecker, object>>();
 
         /// <summary>
         /// Compiles mappings.
@@ -176,10 +176,10 @@ namespace Susanoo.Deserialization
             Func<IDataReader, ColumnChecker, object> deserializer;
 
 
-            if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
+            if (!DeserializerCache.TryGetValue(cacheKey, out deserializer))
             {
                 deserializer = Compile(cacheKey, mappings, typeof(TResult));
-                DeserilializerCache.TryAdd(cacheKey, deserializer);
+                DeserializerCache.TryAdd(cacheKey, deserializer);
             }
 
             return new ComplexTypeDeserializer<TResult>(mappings, deserializer);
@@ -197,10 +197,10 @@ namespace Susanoo.Deserialization
 
             Func<IDataReader, ColumnChecker, object> deserializer;
 
-            if (!DeserilializerCache.TryGetValue(cacheKey, out deserializer))
+            if (!DeserializerCache.TryGetValue(cacheKey, out deserializer))
             {
                 deserializer = Compile(cacheKey, mappings, resultType);
-                DeserilializerCache.TryAdd(cacheKey, deserializer);
+                DeserializerCache.TryAdd(cacheKey, deserializer);
             }
 
             return new ComplexTypeDeserializer(mappings, resultType, deserializer);

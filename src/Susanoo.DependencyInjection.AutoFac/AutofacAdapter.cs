@@ -20,7 +20,7 @@ namespace Susanoo.DependencyInjection.Autofac
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The name.</param>
         /// <returns>T.</returns>
-        /// <exception cref="SusanooDependencyResolutionException">An error occured resolving a type.</exception>
+        /// <exception cref="SusanooDependencyResolutionException">An error occurred resolving a type.</exception>
         public T Resolve<T>(string name = null) where T : class
         {
             try
@@ -31,7 +31,7 @@ namespace Susanoo.DependencyInjection.Autofac
             }
             catch (Exception ex)
             {
-                throw new SusanooDependencyResolutionException("An error occured resolving a type.",
+                throw new SusanooDependencyResolutionException("An error occurred resolving a type.",
                     ex);
             }
         }

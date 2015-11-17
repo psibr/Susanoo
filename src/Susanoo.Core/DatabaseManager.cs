@@ -466,7 +466,7 @@ namespace Susanoo
                 returnValue = (value ?? "").ToString();
             }
 
-            return (T)(object)returnValue;
+            return (T)returnValue;
         }
 
         /// <summary>
@@ -586,6 +586,8 @@ namespace Susanoo
                 if (results != null && !results.IsClosed)
                     results.Close();
 
+                // ReSharper disable once ExceptionNotDocumented
+                // ReSharper disable once ThrowingSystemException
                 throw;
             }
 

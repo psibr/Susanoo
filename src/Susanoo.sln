@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Transforms.SqlServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.Transforms.SqlServer.Tests", "Susanoo.Transforms.SqlServer.Tests\Susanoo.Transforms.SqlServer.Tests.csproj", "{69924A58-0ABB-4819-9909-64D2EE33D8B6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{D8EDF0F3-5D9F-44BC-A6FE-CB2C56C8679B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D8EDF0F3-5D9F-44BC-A6FE-CB2C56C8679B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.DependencyInjection.Ninject", "Susanoo.DependencyInjection.Ninject\Susanoo.DependencyInjection.Ninject.csproj", "{07626B61-92B7-45B2-BD0C-82B509109308}"
 EndProject
@@ -42,6 +42,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{CF60E374-6D1A-4AB1-A1D8-99E5453D02B8}"
 	ProjectSection(SolutionItems) = preProject
 		paket.dependencies = paket.dependencies
+		paket.lock = paket.lock
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susanoo.MSpec.Tests", "Susanoo.MSpec.Tests\Susanoo.MSpec.Tests.csproj", "{CB2F9861-E559-4C20-80AA-8995E8F0583E}"

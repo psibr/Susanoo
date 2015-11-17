@@ -61,8 +61,11 @@
   <ItemGroup>
     <Compile Include="CommandBuilderInfo\when_building_parameters_in_explicit_property_mode.cs" />
     <Compile Include="CommandBuilderInfo\when_building_parameters_in_implicit_property_mode.cs" />
+    <Compile Include="CommandExpression\when_realizing_a_command_expression_with_DoNotStoreColumnIndexes.cs" />
+    <Compile Include="CommandManager\when_resolving_a_database_manager_factory.cs" />
+    <Compile Include="CommandManager\when_bootstrapping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CommandExpression\when_realizing_a_no_result_set_command.cs" />
+    <Compile Include="CommandExpression\when_realizing_a_command_expression.cs" />
     <Compile Include="CommandManager\when_defining_a_command_expression.cs" />
   </ItemGroup>
   <ItemGroup>

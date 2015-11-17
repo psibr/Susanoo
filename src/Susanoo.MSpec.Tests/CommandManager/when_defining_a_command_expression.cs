@@ -13,11 +13,9 @@ namespace Susanoo.MSpec.Tests
         static ICommandExpression<KeyValuePair<string, string>> Command;
 
         Because of = () => Command =
-            CommandManager.Instance
+            Susanoo.CommandManager.Instance
                 .DefineCommand<KeyValuePair<string, string>>(CommandText, CommandType);
 
-        It should_not_return_null = () =>
-            Command.ShouldNotBeNull();
 
         It should_respect_provided_command_text = () =>
             Command.CommandText.ShouldEqual(CommandText);
