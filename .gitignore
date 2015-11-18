@@ -127,6 +127,8 @@ publish/
 **/.paket/paket.exe
 **/.fake/
 
+#VS 2015
+**/.vs/
 
 
 # NuGet Packages Directory
