@@ -82,7 +82,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
         <Reference Include="Ninject">
-          <HintPath>..\packages\Ninject\lib\net40\Ninject.dll</HintPath>
+          <HintPath>..\..\packages\Ninject\lib\net40\Ninject.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -91,7 +91,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5'">
       <ItemGroup>
         <Reference Include="Ninject">
-          <HintPath>..\packages\Ninject\lib\net45-full\Ninject.dll</HintPath>
+          <HintPath>..\..\packages\Ninject\lib\net45-full\Ninject.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

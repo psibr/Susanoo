@@ -124,7 +124,10 @@ publish/
 *.azurePubxml
 
 #Paket
-src/.paket/paket.exe
+**/.paket/paket.exe
+**/.fake/
+
+
 
 # NuGet Packages Directory
 packages/

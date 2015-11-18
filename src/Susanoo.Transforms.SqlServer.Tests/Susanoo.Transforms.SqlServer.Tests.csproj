@@ -132,7 +132,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5')">
       <ItemGroup>
         <Reference Include="Moq">
-          <HintPath>..\packages\Moq\lib\net40\Moq.dll</HintPath>
+          <HintPath>..\..\packages\Moq\lib\net40\Moq.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -143,7 +143,7 @@
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5')">
       <ItemGroup>
         <Reference Include="nunit.framework">
-          <HintPath>..\packages\NUnit\lib\nunit.framework.dll</HintPath>
+          <HintPath>..\..\packages\NUnit\lib\nunit.framework.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

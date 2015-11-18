@@ -12,27 +12,9 @@ assembly_info:
 install:
 - cmd: >-
     set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
-
-    cd src
-
-    cd .paket
-
-    paket.bootstrapper.exe
-
-    cd ..
-
-    .paket\paket.exe install
-
-    cd ..
 build:
-  verbosity: minimal
-after_build:
-- cmd: >-
-    cd src
-
-    .paket\paket.exe pack output nupkgs
-
-    cd ..
+- cmd >-
+    build.cmd
 artifacts:
-- path: src\nupkgs\*.nupkg
+- path: nupkgs\*.nupkg
   name: nupkgs
