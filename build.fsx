@@ -5,7 +5,7 @@ open Fake.Paket
 
 // Properties
 let deployDir = "./nupkgs/"
-let testOutputDir = "./test-results/"
+let testOutputDir = "./test-results"
 
 // Targets
 
@@ -52,6 +52,8 @@ let testDlls =
     -- MSpecDllPath
 
 Target "MSpecTest" (fun _ ->
+    CleanDir testOutputDir
+
     MSpecDlls
         |> MSpec (fun p ->
             {p with

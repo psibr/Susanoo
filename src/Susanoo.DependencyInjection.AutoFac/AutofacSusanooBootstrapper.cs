@@ -8,7 +8,7 @@ namespace Susanoo.DependencyInjection.Autofac
         public AutofacSusanooBootstrapper(IContainer container)
             : base(new AutofacAdapter(container))
         {
-            
+
         }
     }
 }

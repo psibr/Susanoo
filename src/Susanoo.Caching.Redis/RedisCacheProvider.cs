@@ -20,21 +20,26 @@ namespace Susanoo.Caching.Redis
         private bool isDisposed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedisCacheProvider"/> class.
+        /// Initializes a new instance of the 
+        ///<see cref="RedisCacheProvider"/> class.
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="database">The database.</param>
-        public RedisCacheProvider(ConnectionMultiplexer connection, int database)
+        public RedisCacheProvider(
+            ConnectionMultiplexer connection, int database)
         {
             _client = connection.GetDatabase(database);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedisCacheProvider"/> class.
+        /// Initializes a new instance of the
+        /// <see cref="RedisCacheProvider"/> class.
         /// </summary>
         /// <param name="endpoints">The endpoints.</param>
         /// <param name="database">The database.</param>
-        public RedisCacheProvider(IEnumerable<Tuple<string, int>> endpoints, int database)
+        public RedisCacheProvider(
+            IEnumerable<Tuple<string, int>> endpoints,
+            int database)
         {
             var config = new ConfigurationOptions();
 
@@ -51,7 +56,8 @@ namespace Susanoo.Caching.Redis
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Performs application-defined tasks associated with freeing,
+        /// releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
@@ -75,7 +81,8 @@ namespace Susanoo.Caching.Redis
         /// </summary>
         /// <param name="key">The identifier for the item to delete.</param>
         /// <returns>
-        /// true if the item was successfully removed from the cache; false otherwise.
+        /// true if the item was successfully removed from the cache;
+        /// false otherwise.
         /// </returns>
         public bool RemoveValue(string key)
         {
@@ -95,16 +102,18 @@ namespace Susanoo.Caching.Redis
         {
             var json = _client.StringGet(key);
 
-            var value = typeof(T).GenericTypeArguments.First() == typeof(object)
-                ? JsonConvert.DeserializeObject<IEnumerable<JObject>>(json)?
-                    .Select(o => o.ToObject<ExpandoObject>()) as T
-                : JsonConvert.DeserializeObject<T>(json);
+            var value =
+                typeof(T).GenericTypeArguments.First() == typeof(object)
+                    ? JsonConvert.DeserializeObject<IEnumerable<JObject>>(json)
+                        ?.Select(o => o.ToObject<ExpandoObject>()) as T
+                    : JsonConvert.DeserializeObject<T>(json);
 
             return value;
         }
 
         /// <summary>
-        /// Sets an item into the cache at the cache key specified regardless if it already exists or not.
+        /// Sets an item into the cache at the cache key specified regardless
+        /// if it already exists or not.
         /// </summary>
         public bool SetValue<T>(string key, T value)
             where T : class
@@ -115,7 +124,8 @@ namespace Susanoo.Caching.Redis
         }
 
         /// <summary>
-        /// Sets an item into the cache at the cache key specified regardless if it already exists or not.
+        /// Sets an item into the cache at the cache key specified regardless
+        /// if it already exists or not.
         /// </summary>
         public bool SetValue<T>(string key, T value, TimeSpan expiresIn)
             where T : class
@@ -130,7 +140,12 @@ namespace Susanoo.Caching.Redis
         /// </summary>
         public void FlushAll()
         {
-            _client.Multiplexer.GetEndPoints().ToList().ForEach(e => _client.Multiplexer.GetServer(e).FlushDatabase(_client.Database));
+            _client.Multiplexer.GetEndPoints()
+                .ToList()
+                .ForEach(e =>
+                    _client.Multiplexer
+                        .GetServer(e)
+                        .FlushDatabase(_client.Database));
         }
     }
 }
