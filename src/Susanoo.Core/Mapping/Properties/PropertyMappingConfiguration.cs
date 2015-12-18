@@ -16,7 +16,7 @@ namespace Susanoo.Mapping.Properties
     public class PropertyMappingConfiguration<T> : IPropertyMappingConfiguration, IPropertyMapping
     {
         private Expression<Func<object, T>> _conversionProcessExpression = (value) => DatabaseManager.CastValue<T>(value);
-        
+
         /// <param name="propertyInfo">The property information.</param>
         public PropertyMappingConfiguration(PropertyInfo propertyInfo)
         {
@@ -96,11 +96,11 @@ namespace Susanoo.Mapping.Properties
         protected virtual BinaryExpression AssembleAssignment(MemberExpression propertyExpression, ParameterExpression record,
             ParameterExpression ordinal)
         {
-            var iType = typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) });
-            var arrOrd = new[] { ordinal };
-            var eIndex = Expression.MakeIndex(record, iType, arrOrd);
-            var eInvoke = Expression.Invoke(_conversionProcessExpression, eIndex);
-            var convert = Expression.Convert(eInvoke, propertyExpression.Type);
+            var indexProperty = typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) });
+            var indexOrdinals = new[] { ordinal };
+            var indexAccess = Expression.MakeIndex(record, indexProperty, indexOrdinals);
+            var conversionProcess = Expression.Invoke(_conversionProcessExpression, indexAccess);
+            var convert = Expression.Convert(conversionProcess, propertyExpression.Type);
             return Expression.Assign(propertyExpression, convert);
         }
     }
