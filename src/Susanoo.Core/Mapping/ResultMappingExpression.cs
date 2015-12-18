@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Reflection;
 
 #endregion
 
@@ -64,13 +65,14 @@ namespace Susanoo.Mapping
             string propertyName,
             Action<IPropertyMappingConfiguration> options)
         {
-            var config = new PropertyMappingConfiguration<TResult>(typeof(TResult).GetProperty(propertyName));
-            options.Invoke(config);
+            var propInfo = typeof (TResult).GetProperty(propertyName);
 
             if (!_mappingActions.ContainsKey(propertyName))
-                _mappingActions.Add(propertyName, config);
-            else
-                _mappingActions[propertyName] = config;
+                TryAddMapping(new KeyValuePair<PropertyInfo, PropertyMapping>(propInfo, new PropertyMapping(propInfo, propertyName)));
+
+            var config = _mappingActions[propertyName] as IPropertyMappingConfiguration;
+
+            options.Invoke(config);
 
             return this;
         }
