@@ -88,7 +88,11 @@ namespace Susanoo.SqlServer
                                                    DbType.Object;
                         break;
                 }
-                metaData[index] = new SqlMetaData(prop.Name, coercionParameter.SqlDbType);
+
+                if(coercionParameter.SqlDbType == SqlDbType.NVarChar)
+                    metaData[index] = new SqlMetaData(prop.Name, coercionParameter.SqlDbType, -1);
+                else
+                    metaData[index] = new SqlMetaData(prop.Name, coercionParameter.SqlDbType);
             }
 
             var bodyExpressions = new List<Expression>();
