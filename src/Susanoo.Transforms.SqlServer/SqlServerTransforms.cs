@@ -21,11 +21,11 @@ namespace Susanoo.Transforms
         /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically paged.
         /// or
         /// CommandText must contain an Order By clause to be paged.</exception>
-        public static CommandTransform OffsetFetch<TFilter, TResult>(
-            ISingleResultSetCommandProcessor<TFilter, TResult> processor, string format,
+        public static CommandTransform OffsetFetch<TFilter>(
+            ICommandProcessorWithResults<TFilter> processor, string format,
             string rowCountParameterName = "RowCount", string pageNumberParameterName = "PageNumber")
         {
-            var commandInfo = processor.CommandBuilderInfo;
+            var commandInfo = processor.CommandResultInfo.GetCommandInfo();
 
             if (commandInfo.DbCommandType != CommandType.Text)
                 throw new ArgumentException("Only CommandType.Text CommandBuilder Expressions can be dynamically paged.");
@@ -36,6 +36,80 @@ namespace Susanoo.Transforms
                 {
                     CommandText = string.Concat(info.CommandText, 
                         string.Format(format, pageNumberParameterName, rowCountParameterName)),
+                    DbCommandType = info.DbCommandType,
+                    Parameters = info.Parameters
+                });
+        }
+
+        /// <summary>
+        /// Makes the query gather a count of total records. REQUIRES Sql Server 2012.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="processor">The processor.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="rowCountParameterName">Column name to return the total row count.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically paged.
+        /// or
+        /// CommandText must contain an Order By clause to be paged.</exception>
+        public static CommandTransform GatherTotalRowCount<TFilter>(
+            ICommandProcessorWithResults<TFilter> processor, 
+            string totalRowCountColumnName = "TotalRowCount")
+        {
+            var commandInfo = processor.CommandResultInfo.GetCommandInfo();
+
+            if (commandInfo.DbCommandType != CommandType.Text)
+                throw new ArgumentException("Only CommandType.Text CommandBuilder Expressions can be dynamically paged.");
+
+            const string CteCountWrapper =
+                ";WITH SUSANOO_CTE AS(\r\n" +
+                "\t{0})\r\n" +
+                "FROM SUSANOO_CTE query\r\n" +
+                "CROSS APPLY (SELECT {1} = COUNT(*) FROM SUSANOO_CTE) [Count]";
+
+            return new CommandTransform(
+                "TotalRowCount",
+                info => new ExecutableCommandInfo
+                {
+                    CommandText = string.Format(CteCountWrapper, info.CommandText, totalRowCountColumnName),
+                    DbCommandType = info.DbCommandType,
+                    Parameters = info.Parameters
+                });
+        }
+
+        /// <summary>
+        /// Makes the query gather a count of total records as the FIRST result set. REQUIRES Sql Server 2012.
+        /// </summary>
+        /// <typeparam name="TFilter">The type of the filter.</typeparam>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="processor">The processor.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="rowCountParameterName">Column name to return the total row count.</param>
+        /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
+        /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically paged.
+        /// or
+        /// CommandText must contain an Order By clause to be paged.</exception>
+        public static CommandTransform GatherTotalRowCountSeperate<TFilter>(
+            ICommandProcessorWithResults<TFilter> processor,
+            string totalRowCountColumnName = "TotalRowCount")
+        {
+            var commandInfo = processor.CommandResultInfo.GetCommandInfo();
+
+            if (commandInfo.DbCommandType != CommandType.Text)
+                throw new ArgumentException("Only CommandType.Text CommandBuilder Expressions can be dynamically paged.");
+
+                        const string format = "SELECT {1} = COUNT(*)" + "\r\n" +
+                                  "FROM (" + "\r\n" +
+                                  "{0} " + "\r\n" +
+                                  ") [count]" + "\r\n\r\n" +
+                                  "{0}";
+
+            return new CommandTransform(
+                "TotalRowCountSeperate",
+                info => new ExecutableCommandInfo
+                {
+                    CommandText = string.Format(format, info.CommandText, totalRowCountColumnName),
                     DbCommandType = info.DbCommandType,
                     Parameters = info.Parameters
                 });
@@ -54,8 +128,8 @@ namespace Susanoo.Transforms
         /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically paged.
         /// or
         /// CommandText must contain an Order By clause to be paged.</exception>
-        public static CommandTransform OffsetFetch<TFilter, TResult>(
-            ISingleResultSetCommandProcessor<TFilter, TResult> processor,
+        public static CommandTransform OffsetFetch<TFilter>(
+            ICommandProcessorWithResults<TFilter> processor,
             string rowCountParameterName = "RowCount", string pageNumberParameterName = "PageNumber", bool computePageNumber = true)
         {
             var format = computePageNumber
@@ -71,18 +145,17 @@ namespace Susanoo.Transforms
         /// Adds a total row count to the query wrapper.
         /// </summary>
         /// <typeparam name="TFilter">The type of the filter.</typeparam>
-        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="processor">The processor.</param>
         /// <param name="totalRowsColumnName">Total name of the total row count column.</param>
         /// <param name="format">The format.</param>
         /// <returns>ICommandExpression&lt;TFilter&gt;.</returns>
         /// <exception cref="System.ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically built.</exception>
         /// <exception cref="ArgumentException">Only CommandType.Text CommandBuilder Expressions can be dynamically built.</exception>
-        public static CommandTransform QueryWrapperWithTotalRowCount<TFilter, TResult>(
-            ISingleResultSetCommandProcessor<TFilter, TResult> processor, 
+        public static CommandTransform QueryWrapperWithTotalRowCount<TFilter>(
+            ICommandProcessorWithResults<TFilter> processor, 
             string totalRowsColumnName = "TotalRows", string format = "{0} = COUNT(*) OVER ()")
         {
-            var commandInfo = processor.CommandBuilderInfo;
+            var commandInfo = processor.CommandResultInfo.GetCommandInfo();
 
             if (commandInfo.DbCommandType != CommandType.Text)
                 throw new ArgumentException("Only CommandType.Text CommandBuilder Expressions can be dynamically built.");

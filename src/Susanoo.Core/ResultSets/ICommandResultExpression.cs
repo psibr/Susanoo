@@ -6,7 +6,8 @@ namespace Susanoo.ResultSets
     /// Shared components for CommandBuilder Result Expressions.
     /// </summary>
     /// <typeparam name="TFilter">The type of the filter.</typeparam>
-    public interface ICommandResultExpression<in TFilter>
+    public interface ICommandResultExpression<in TFilter> 
+        : ICommandResultExpression
     {
 
         /// <summary>
@@ -14,5 +15,9 @@ namespace Susanoo.ResultSets
         /// </summary>
         /// <value>The CommandBuilder.</value>
         ICommandBuilderInfo<TFilter> Command { get; }
+    }
+
+    public interface ICommandResultExpression
+    {
     }
 }

@@ -1,5 +1,6 @@
 ﻿#region
 
+using Susanoo.Mapping;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 using System;
@@ -32,10 +33,10 @@ namespace Susanoo.Command
         CommandType DbCommandType { get; }
 
         /// <summary>
-        /// Realizes the pipeline with no result mappings.
+        /// Compiles the pipeline with no result mappings.
         /// </summary>
         /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
-        INoResultCommandProcessor<TFilter> Realize();
+        INoResultCommandProcessor<TFilter> Compile();
 
         /// <summary>
         /// Disables Susanoo's ability to cache a result sets column indexes and names for faster retrieval.
@@ -121,14 +122,21 @@ namespace Susanoo.Command
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
-        ICommandSingleResultExpression<TFilter, TResult> DefineResults<TResult>();
+        ICommandSingleResultExpression<TFilter, TResult> WithResultsAs<TResult>();
+
+        /// <summary>
+        /// Defines the result mappings (Moves to next Step in Fluent API).
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <returns>IResultMappingExpression&lt;TResult&gt;.</returns>
+        ICommandSingleResultExpression<TFilter, TResult> WithResultsAs<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mappings);        
 
         /// <summary>
         /// Defines the result mappings.
         /// </summary>
         /// <param name="resultTypes">The result types in order.</param>
         /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandMultipleResultExpression<TFilter> DefineResults(params Type[] resultTypes);
+        ICommandMultipleResultExpression<TFilter> WithResultsAs(params Type[] resultTypes);
 
     }
 }

@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Susanoo.Mapping.Properties;
-#if !NETFX40
+#if !NETFX40 && !DOTNETCORE
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
 
@@ -35,7 +35,7 @@ namespace Susanoo
         /// <exception cref="TypeLoadException">A custom attribute type could not be loaded. </exception>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public Dictionary<PropertyInfo, PropertyMapping> FindAllowedProperties(
-            Type objectType, DescriptorActions actions = DescriptorActions.Read,
+            TypeInfo objectType, DescriptorActions actions = DescriptorActions.Read,
             string[] whitelist = null,
             string[] blacklist = null)
         {
@@ -64,7 +64,13 @@ namespace Susanoo
         /// <param name="customAttributes">The custom attributes.</param>
         /// <returns>System.String.</returns>
         /// <exception cref="System.ArgumentNullException">propertyInfo</exception>
-        public virtual string ResolveAlias(PropertyInfo propertyInfo, object[] customAttributes)
+        public virtual string ResolveAlias(PropertyInfo propertyInfo,
+#if !DOTNETCORE
+            object[] customAttributes
+#else
+            IEnumerable<Attribute> customAttributes
+#endif
+        )
         {
             if (propertyInfo == null)
                 throw new ArgumentNullException(nameof(propertyInfo));
@@ -119,7 +125,12 @@ namespace Susanoo
         /// customAttributes</exception>
         protected virtual bool IsActionableProperty(
             PropertyInfo propertyInfo,
+#if !DOTNETCORE
             object[] customAttributes,
+#else
+            IEnumerable<Attribute> customAttributes,
+#endif
+
             DescriptorActions actions = DescriptorActions.Read,
             string[] whitelist = null,
             string[] blacklist = null)
@@ -145,17 +156,21 @@ namespace Susanoo
         /// <returns><c>true</c> if [is allowed by attribute] then [the specified property information]; otherwise, <c>false</c>.</returns>
         protected virtual bool IsAllowedByAttributes(
             PropertyInfo propertyInfo,
+#if !DOTNETCORE
             object[] attributes,
+#else
+            IEnumerable<Attribute> attributes,
+#endif
             DescriptorActions actions)
         {
             var result = true;
 
-            if (attributes.Length > 0)
+            if (attributes.Count() > 0)
             {
                 var allowedActions = attributes.OfType<AllowedActionsAttribute>().FirstOrDefault();
                 result = (allowedActions == null || (allowedActions.Actions & actions) != 0);
 
-                result = result && !attributes.Any(a => CommandManager.Instance.Bootstrapper.RetrieveIgnoredPropertyAttributes()
+                result = result && !attributes.Any(a => SusanooCommander.Instance.Bootstrapper.RetrieveIgnoredPropertyAttributes()
                     .Contains(a.GetType()));
             }
 

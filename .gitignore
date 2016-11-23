@@ -182,3 +182,7 @@ UpgradeLog*.htm
 FakesAssemblies/
 src/Susanoo.sln.GhostDoc.xml
 *.DotSettings
+/tools/Cake
+
+project.lock.json
+/tools/packages.config.md5sum

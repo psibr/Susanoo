@@ -3,7 +3,7 @@ using Susanoo.Processing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Linq;
 
 namespace Susanoo.Deserialization
@@ -21,7 +21,7 @@ namespace Susanoo.Deserialization
         /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
         public bool CanDeserialize(Type type)
         {
-            return CommandManager.GetDbType(type) != null;
+            return SusanooCommander.GetDbType(type) != null;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable Deserialize(IDataReader reader, ColumnChecker checker)
+        public IEnumerable Deserialize(DbDataReader reader, ColumnChecker checker)
         {
             var fieldCount = reader.FieldCount;
             if (fieldCount > 0)
@@ -77,7 +77,7 @@ namespace Susanoo.Deserialization
         /// <param name="checker">The checker.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
         /// <exception cref="System.InvalidCastException">Value types cannot cast null.</exception>
-        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
+        public IEnumerable<TResult> Deserialize<TResult>(DbDataReader reader, ColumnChecker checker)
         {
             return Deserialize(reader, checker).Cast<object>().Select(o =>
             {

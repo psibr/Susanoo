@@ -25,9 +25,9 @@ namespace Susanoo.ResultSets
             Action<IResultMappingExpression<TFilter, TResult>> mappings);
 
         /// <summary>
-        /// Realizes the pipeline and compiles result mappings.
+        /// Compiles the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        ISingleResultSetCommandProcessor<TFilter, TResult> Realize();
+        ISingleResultSetCommandProcessor<TFilter, TResult> Compile();
     }
 }

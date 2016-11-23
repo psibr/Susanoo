@@ -1,14 +1,24 @@
-@echo off
-cls
+set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
-.paket\paket.bootstrapper.exe
-if errorlevel 1 (
-    exit /b %errorlevel%
-)
+dotnet restore
 
-.paket\paket.exe restore
-if errorlevel 1 (
-    exit /b %errorlevel%
-)
 
-packages\FAKE\tools\FAKE.exe build.fsx %*
+msbuild
+
+
+dotnet test test/Susanoo.Core.Tests
+
+dotnet test test/Susanoo.Transforms.Tests
+
+dotnet test test/Susanoo.Transforms.SqlServer.Tests
+
+
+dotnet pack src\Susanoo.Core --output artifacts
+
+dotnet pack src\Susanoo.Transforms --output artifacts
+
+dotnet pack src\Susanoo.Transforms.SqlServer --output artifacts
+
+dotnet pack src\Susanoo.DependencyInjection.AutoFac --output artifacts
+
+dotnet pack src\Susanoo.DependencyInjection.StructureMap --output artifacts

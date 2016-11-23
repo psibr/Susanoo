@@ -20,16 +20,19 @@ namespace Susanoo.Proxies.Transforms
     {
         private readonly IEnumerable<CommandTransform> _transforms;
 
+        private readonly Action<IExecutableCommandInfo> _queryInspector;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SingleResultSetTransformProxy{TFilter,TResult}"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
         public SingleResultSetTransformProxy(ISingleResultSetCommandProcessor<TFilter, TResult> source,
-            IEnumerable<CommandTransform> transforms)
+            IEnumerable<CommandTransform> transforms, Action<IExecutableCommandInfo> queryInspector = null)
             : base(source)
         {
             _transforms = transforms;
+            _queryInspector = queryInspector ?? new Action<IExecutableCommandInfo>((info) => { });
         }
 
         /// <summary>
@@ -43,6 +46,7 @@ namespace Susanoo.Proxies.Transforms
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
+            _queryInspector(transformed);
 
             return Source.Execute(databaseManager, transformed);
         }
@@ -71,6 +75,8 @@ namespace Susanoo.Proxies.Transforms
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
+
+            _queryInspector(transformed);
 
             return await Source.ExecuteAsync(databaseManager, transformed, cancellationToken)
                 .ConfigureAwait(false);

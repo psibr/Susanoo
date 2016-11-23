@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Common;
+﻿using System.Data.Common;
 
 namespace Susanoo
 {
@@ -9,19 +8,20 @@ namespace Susanoo
     public interface IDatabaseManagerFactory
     {
         /// <summary>
+        /// Creates a DatabaseManager from a connection.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <returns>DatabaseManager.</returns>
+        IDatabaseManager CreateFromConnection(DbConnection connection);
+
+#if !DOTNETCORE
+        /// <summary>
         /// Creates a DatabaseManager from a connection string name by resolving from configuration.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
         /// <returns>DatabaseManager.</returns>
         /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
         IDatabaseManager CreateFromConnectionStringName(string connectionStringName);
-
-        /// <summary>
-        /// Creates a DatabaseManager from a connection.
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <returns>DatabaseManager.</returns>
-        IDatabaseManager CreateFromConnection(DbConnection connection);
 
         /// <summary>
         /// Creates a DatabaseManager from a connection string name by resolving from configuration.
@@ -49,7 +49,7 @@ namespace Susanoo
         /// <returns>DatabaseManager.</returns>
         /// <exception cref="ArgumentException">Provider is a required component of the connection string.</exception>
         IDatabaseManager CreateFromConnectionString(string connectionString, string providerName);
-
+#endif
         /// <summary>
         /// Creates a DatabaseManager from a connection string and providerName.
         /// </summary>

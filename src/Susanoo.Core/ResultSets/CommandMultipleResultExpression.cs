@@ -56,11 +56,11 @@ namespace Susanoo.ResultSets
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        ///     Compiles the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name of the processor.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public IMultipleResultSetCommandProcessor<TFilter> Realize(string name = null)
+        public IMultipleResultSetCommandProcessor<TFilter> Compile(string name = null)
         {
             return _multipleResultSetCommandProcessorFactory
                        .BuildCommandProcessor(this, _resultTypes);

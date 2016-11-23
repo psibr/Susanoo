@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 
 namespace Susanoo.Deserialization
 {
@@ -17,14 +17,14 @@ namespace Susanoo.Deserialization
         /// <value>The type of the deserialization result element.</value>
         public Type DeserializationType { get; }
 
-        private readonly Func<IDataReader, ColumnChecker, IEnumerable> _deserializer;
+        private readonly Func<DbDataReader, ColumnChecker, IEnumerable> _deserializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Deserializer"/> class.
         /// </summary>
         /// <param name="deserializationType">Type of the deserialization.</param>
         /// <param name="deserializer">The deserializer.</param>
-        public Deserializer(Type deserializationType, Func<IDataReader, ColumnChecker, IEnumerable> deserializer)
+        public Deserializer(Type deserializationType, Func<DbDataReader, ColumnChecker, IEnumerable> deserializer)
         {
             DeserializationType = deserializationType;
             _deserializer = deserializer;
@@ -36,7 +36,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="columnReport">The column report.</param>
         /// <returns>IEnumerable.</returns>
-        public IEnumerable Deserialize(IDataReader reader, ColumnChecker columnReport)
+        public IEnumerable Deserialize(DbDataReader reader, ColumnChecker columnReport)
         {
             return _deserializer(reader, columnReport);
         }
@@ -49,13 +49,13 @@ namespace Susanoo.Deserialization
     public class Deserializer<TResult>
             : IDeserializer<TResult>
     {
-        private readonly Func<IDataReader, ColumnChecker, IEnumerable<TResult>> _deserializer;
+        private readonly Func<DbDataReader, ColumnChecker, IEnumerable<TResult>> _deserializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Deserializer{TResult}"/> class.
         /// </summary>
         /// <param name="deserializer">The deserializer.</param>
-        public Deserializer(Func<IDataReader, ColumnChecker, IEnumerable<TResult>> deserializer)
+        public Deserializer(Func<DbDataReader, ColumnChecker, IEnumerable<TResult>> deserializer)
         {
             _deserializer = deserializer;
         }
@@ -72,7 +72,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="columnReport">The column report.</param>
         /// <returns>System.Collections.Generic.IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Deserialize(IDataReader reader, ColumnChecker columnReport)
+        public IEnumerable<TResult> Deserialize(DbDataReader reader, ColumnChecker columnReport)
         {
             return _deserializer(reader, columnReport);
         }

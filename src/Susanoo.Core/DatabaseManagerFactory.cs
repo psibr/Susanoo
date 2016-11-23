@@ -10,6 +10,16 @@ namespace Susanoo
         : IDatabaseManagerFactory
     {
         /// <summary>
+        /// Creates a DatabaseManager from a connection.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <returns>DatabaseManager.</returns>
+        public IDatabaseManager CreateFromConnection(DbConnection connection)
+        {
+            return new DatabaseManager(connection);
+        }
+#if !DOTNETCORE
+        /// <summary>
         /// Creates a DatabaseManager from a connection string name by resolving from configuration.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string.</param>
@@ -18,16 +28,6 @@ namespace Susanoo
         public IDatabaseManager CreateFromConnectionStringName(string connectionStringName)
         {
             return DatabaseManager.CreateFromConnectionStringName(connectionStringName);
-        }
-
-        /// <summary>
-        /// Creates a DatabaseManager from a connection.
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <returns>DatabaseManager.</returns>
-        public IDatabaseManager CreateFromConnection(DbConnection connection)
-        {
-            return new DatabaseManager(connection);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Susanoo
         {
             return DatabaseManager.CreateFromConnectionString(connectionString, providerName);
         }
-
+#endif
         /// <summary>
         /// Creates a DatabaseManager from a connection string and providerName.
         /// </summary>

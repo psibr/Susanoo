@@ -20,7 +20,7 @@ namespace Susanoo.Pipeline
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType);
+        ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType = CommandType.Text);
 
         /// <summary>
         /// Begins the CommandBuilder definition process using a Fluent API implementation, move to next step with DefineResults on
@@ -29,6 +29,6 @@ namespace Susanoo.Pipeline
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType);
+        ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType = CommandType.Text);
     }
 }

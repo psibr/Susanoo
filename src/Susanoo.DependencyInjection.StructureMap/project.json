@@ -1,0 +1,43 @@
+{
+  "version": "3.3.2-*",
+  "authors": [ "Ovan Crone" ],
+  "description": "Ninject adapter for Susanoo",
+  "buildOptions": {
+    "debugType": "portable",
+    "allowUnsafe": true
+  },
+  "packOptions": {
+    "licenseUrl": "http://www.opensource.org/licenses/MIT",
+    "owners": [ "Ovan Crone" ],
+    "repository": {
+      "type": "git",
+      "url": "https://www.github.com/psibr/Susanoo"
+    },
+    "summary": "Ninject adapter for Susanoo",
+    "tags": [ "susanoo" ]
+  },
+  "dependencies": {
+    "Susanoo.Core": {
+      "target": "project"
+    },
+    "Structuremap": "4.2.0.402"
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "dependencies": {
+        "System.Runtime": "4.1.0",
+        "System.Runtime.Extensions": "4.1.0"
+      },
+      "imports": [
+        "DNXCORE50"
+      ]
+    },
+    "net45": {
+      "dependencies": {
+
+      },
+      "frameworkAssemblies": {
+      }
+    }
+  }
+}

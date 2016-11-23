@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 
 namespace Susanoo.Deserialization
 {
@@ -23,7 +23,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="columnReport">The column report.</param>
         /// <returns>IEnumerable.</returns>
-        IEnumerable Deserialize(IDataReader reader, ColumnChecker columnReport);
+        IEnumerable Deserialize(DbDataReader reader, ColumnChecker columnReport);
     }
 
     /// <summary>
@@ -44,6 +44,6 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="columnReport">The column report.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        IEnumerable<TResult> Deserialize(IDataReader reader, ColumnChecker columnReport);
+        IEnumerable<TResult> Deserialize(DbDataReader reader, ColumnChecker columnReport);
     }
 }

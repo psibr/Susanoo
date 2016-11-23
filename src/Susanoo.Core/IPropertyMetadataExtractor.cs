@@ -24,7 +24,7 @@ namespace Susanoo
         /// <param name="blacklist">The blacklist.</param>
         /// <returns>Dictionary&lt;PropertyInfo, PropertyMap&gt;.</returns>
         Dictionary<PropertyInfo, PropertyMapping> FindAllowedProperties(
-            Type objectType, DescriptorActions actions = DescriptorActions.Read,
+            TypeInfo objectType, DescriptorActions actions = DescriptorActions.Read,
             string[] whitelist = null,
             string[] blacklist = null);
 
@@ -50,6 +50,12 @@ namespace Susanoo
         /// <param name="propertyInfo">The property information.</param>
         /// <param name="customAttributes">The custom attributes.</param>
         /// <returns>System.String.</returns>
-        string ResolveAlias(PropertyInfo propertyInfo, object[] customAttributes);
+        string ResolveAlias(PropertyInfo propertyInfo,
+#if !DOTNETCORE
+            object[] customAttributes
+#else
+            IEnumerable<Attribute> customAttributes
+#endif
+         );
     }
 }

@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "dependencies": {
+    "Susanoo.Core": {
+      "target": "project"
+    },
+    "Susanoo.Transforms": {
+      "target": "project"
+    },
+    "Susanoo.Transforms.SqlServer": {
+      "target": "project"
+    },
+    "System.Data.SqlClient": "4.1.0",
+    "NUnit": "3.4.0",
+    "System.Diagnostics.Debug": "4.0.11",
+    "dotnet-test-nunit": "3.4.0-beta-1"
+  },
+  "testRunner": "nunit",
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      },
+      "imports": [
+        "dotnet5.4",
+        "portable-net45+win8"
+      ]
+    }
+  }
+}

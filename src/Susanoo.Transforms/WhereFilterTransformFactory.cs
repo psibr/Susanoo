@@ -6,13 +6,15 @@ using System.Linq;
 
 namespace Susanoo.Transforms
 {
-    internal sealed class WhereFilterTransformFactory<TFilter, TResult>
+    internal sealed class WhereFilterTransformFactory<TFilter>
     {
-        private readonly ISingleResultSetCommandProcessor<TFilter, TResult> _processor;
+        private readonly ICommandProcessorWithResults<TFilter> _processor;
+        private readonly Type _resultType;
 
-        public WhereFilterTransformFactory(ISingleResultSetCommandProcessor<TFilter, TResult> processor, IDictionary<string, object> whereFilterOptions)
+        public WhereFilterTransformFactory(ICommandProcessorWithResults<TFilter> processor, Type resultType, IDictionary<string, object> whereFilterOptions)
         {
             _processor = processor;
+            _resultType = resultType;
             WhereFilterOptions = whereFilterOptions;
         }
 
@@ -30,8 +32,8 @@ namespace Susanoo.Transforms
         public IExecutableCommandInfo BuildWhereFilterTransform(IExecutableCommandInfo info)
         {
             var mappings = info.Parameters
-                .Join(_processor.CommandResultInfo.RetrieveResultSetMappings(typeof(TResult)).Export(), parameter =>
-                        parameter.SourceColumn, pair => pair.Key,
+                .Join(_processor.CommandResultInfo.RetrieveResultSetMappings(_resultType).Export(), parameter =>
+                        parameter.ParameterName, pair => pair.Value.ActiveAlias,
                     (parameter, pair) =>
                         new Tuple<string, Type, string, string>(
                             pair.Key,                                 //Property Name
@@ -86,7 +88,7 @@ namespace Susanoo.Transforms
             var result = Comparison.Equal;
             if (type == typeof(string))
                 result = CompareMethod.Contains;
-            else if (type == typeof(DateTime) || CommandManager.GetDbType(type) == null)
+            else if (type == typeof(DateTime) || SusanooCommander.GetDbType(type) == null)
                 result = CompareMethod.Ignore;
 
             return result;

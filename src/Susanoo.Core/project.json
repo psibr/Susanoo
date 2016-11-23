@@ -1,0 +1,57 @@
+{
+  "version": "3.3.2-*",
+  "authors": [ "Ovan Crone" ],
+  "description": "Lightweight Semi-Automatic ORM",
+  "buildOptions": {
+    "debugType": "portable",
+    "allowUnsafe": true
+  },
+  "packOptions": {
+    "licenseUrl": "http://www.opensource.org/licenses/MIT",
+    "owners": [ "Ovan Crone" ],
+    "repository": {
+      "type": "git",
+      "url": "https://www.github.com/psibr/Susanoo"
+    },
+    "summary": "Fluent lightweight MicroORM for .NET with no IL",
+    "tags": [ "orm", "sql", "microorm", "ado.net" ]
+  },
+  "dependencies": {},
+  "frameworks": {
+    "netstandard1.5": {
+      "dependencies": {
+        "System.Data.Common": "4.1.0",
+        "System.Dynamic.Runtime": "4.0.11",
+        "System.AppDomain": "2.0.11",
+        "System.Reflection": "4.1.0",
+        "System.Diagnostics.Tools": "4.0.1",
+        "System.Runtime.Numerics": "4.0.1",
+        "System.Collections.Concurrent": "4.0.12",
+        "System.Threading": "4.0.11",
+        "System.Reflection.Extensions": "4.0.1",
+        "System.Runtime.Extensions": "4.1.0"
+      },
+      "imports": [
+        "dotnet"
+      ],
+      "buildOptions": {
+        "define": [
+          "DOTNETCORE",
+          "NETSTANDARD1_5"
+        ]
+      }
+    },
+    "NET45": {
+      "dependencies": {},
+      "frameworkAssemblies": {
+        "System.Transactions": "4.0.0",
+        "System.Collections": "4.0.0",
+        "System.Data": "4.0.0",
+        "System.ComponentModel": "4.0.0",
+        "System.Numerics": "4.0.0",
+        "System.ComponentModel.DataAnnotations": "4.0.0",
+        "System.Configuration": "4.0.0"
+      }
+    }
+  }
+}

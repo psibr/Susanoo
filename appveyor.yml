@@ -1,6 +1,9 @@
-version: 1.2.4.{build}
+version: 3.3.2.{build}
+branches:
+  only:
+  - dotnetcore
 skip_tags: true
-os: Visual Studio 2015
+image: Visual Studio 2015
 configuration: Release
 platform: Any CPU
 assembly_info:
@@ -10,18 +13,30 @@ assembly_info:
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
 install:
-- cmd: >-
-    set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
-
-    .paket\paket.bootstrapper.exe
-
-    .paket\paket.exe restore
+- cmd: set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
+before_build:
+- cmd: dotnet restore
 build:
   verbosity: minimal
 after_build:
 - cmd: >-
-    .paket\paket.exe pack output nupkgs
+    dotnet test test/Susanoo.Core.Tests
 
+    dotnet test test/Susanoo.Transforms.Tests
+
+    dotnet test test/Susanoo.Transforms.SqlServer.Tests
+
+
+    dotnet pack src\Susanoo.Core --output artifacts
+
+    dotnet pack src\Susanoo.Transforms --output artifacts
+
+    dotnet pack src\Susanoo.Transforms.SqlServer --output artifacts
+
+    dotnet pack src\Susanoo.DependencyInjection.AutoFac --output artifacts
+
+    dotnet pack src\Susanoo.DependencyInjection.StructureMap --output artifacts
+test: off
 artifacts:
-- path: nupkgs\*.nupkg
+- path: artifacts\*.nupkg
   name: nupkgs

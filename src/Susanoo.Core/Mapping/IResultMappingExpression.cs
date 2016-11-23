@@ -41,6 +41,23 @@ namespace Susanoo.Mapping
         IResultMappingExpression<TFilter, TResult> ForProperty(string propertyName,
             Action<IPropertyMappingConfiguration> options);
 
+        /// <summary>
+        /// Associates a result object property to a column alias.
+        /// </summary>
+        /// <param name="propertyExpression">Result object property selector.</param>
+        /// <param name="columnName">Column alias in the resultset.</param>
+        /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        IResultMappingExpression<TFilter, TResult> MapPropertyToColumn(
+            Expression<Func<TResult, object>> propertyExpression, string columnName);
+
+        /// <summary>
+        /// Associates a result object property to a column alias.
+        /// </summary>
+        /// <param name="propertyName">Result object property name.</param>
+        /// <param name="columnName">Column alias in the resultset.</param>
+        /// <returns>IResultMappingExpression&lt;TFilter, TResult&gt;.</returns>
+        IResultMappingExpression<TFilter, TResult> MapPropertyToColumn(
+            string propertyName, string columnName);
 
     }
 }

@@ -96,7 +96,7 @@ namespace Susanoo.Mapping.Properties
         protected virtual BinaryExpression AssembleAssignment(MemberExpression propertyExpression, ParameterExpression record,
             ParameterExpression ordinal)
         {
-            var indexProperty = typeof(IDataRecord).GetProperty("Item", new[] { typeof(int) });
+            var indexProperty = typeof(IDataRecord).GetTypeInfo().GetProperty("Item", new[] { typeof(int) });
             var indexOrdinals = new[] { ordinal };
             var indexAccess = Expression.MakeIndex(record, indexProperty, indexOrdinals);
             var conversionProcess = Expression.Invoke(_conversionProcessExpression, indexAccess);

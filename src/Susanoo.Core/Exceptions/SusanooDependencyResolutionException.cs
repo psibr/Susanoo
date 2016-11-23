@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Runtime.Serialization;
 
 #endregion
 
@@ -10,7 +9,6 @@ namespace Susanoo.Exceptions
     /// <summary>
     /// Exception that describes a failure to resolve a dependency.
     /// </summary>
-    [Serializable]
     public class SusanooDependencyResolutionException : InvalidCastException
     {
         /// <summary>
@@ -50,16 +48,6 @@ namespace Susanoo.Exceptions
         /// <param name="errorCode">The error code (HRESULT) value associated with the exception.</param>
         public SusanooDependencyResolutionException(string message, int errorCode)
             : base(message, errorCode)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SusanooDependencyResolutionException" /> class with serialized data.
-        /// </summary>
-        /// <param name="info">The object that holds the serialized object data.</param>
-        /// <param name="context">The contextual information about the source or destination.</param>
-        protected SusanooDependencyResolutionException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

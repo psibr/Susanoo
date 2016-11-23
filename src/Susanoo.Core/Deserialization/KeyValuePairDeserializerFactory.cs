@@ -1,6 +1,7 @@
 ﻿using Susanoo.Mapping;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Susanoo.Deserialization
 {
@@ -16,7 +17,7 @@ namespace Susanoo.Deserialization
         /// <returns><c>true</c> if this instance can deserialize; otherwise, <c>false</c>.</returns>
         public bool CanDeserialize(Type type)
         {
-            return type.IsGenericType &&
+            return type.GetTypeInfo().IsGenericType &&
                    type.GetGenericTypeDefinition() == typeof (KeyValuePair<,>);
         }
 

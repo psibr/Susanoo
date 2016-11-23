@@ -1,5 +1,6 @@
 ﻿#region
 
+using Susanoo.Mapping;
 using Susanoo.Processing;
 using Susanoo.ResultSets;
 using System;
@@ -201,10 +202,10 @@ namespace Susanoo.Command
         public string CommandText { get; set; }
 
         /// <summary>
-        ///     Realizes the pipeline with no result mappings.
+        ///     Compiles the pipeline with no result mappings.
         /// </summary>
         /// <returns>INoResultCommandProcessor&lt;TFilter&gt;.</returns>
-        public INoResultCommandProcessor<TFilter> Realize()
+        public INoResultCommandProcessor<TFilter> Compile()
         {
             return _noResultSetCommandProcessorFactory
                 .BuildCommandProcessor(this);
@@ -344,10 +345,21 @@ namespace Susanoo.Command
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandSingleResultExpression<TFilter, TResult> DefineResults<TResult>()
+        public ICommandSingleResultExpression<TFilter, TResult> WithResultsAs<TResult>()
         {
             return _commandSingleResultExpressionFactory
                 .BuildCommandSingleResultExpression<TFilter, TResult>(this);
+        }        
+        
+        /// <summary>
+        ///     Defines the result mappings.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
+        public ICommandSingleResultExpression<TFilter, TResult> WithResultsAs<TResult>(Action<IResultMappingExpression<TFilter, TResult>> mappings)
+        {
+            return _commandSingleResultExpressionFactory
+                .BuildCommandSingleResultExpression<TFilter, TResult>(this).ForResults(mappings);
         }
 
         /// <summary>
@@ -355,7 +367,7 @@ namespace Susanoo.Command
         /// </summary>
         /// <param name="resultTypes">The result types in order.</param>
         /// <returns>ICommandSingleResultExpression&lt;TFilter, TResult&gt;.</returns>
-        public ICommandMultipleResultExpression<TFilter> DefineResults(params Type[] resultTypes)
+        public ICommandMultipleResultExpression<TFilter> WithResultsAs(params Type[] resultTypes)
         {
             return _commandMultipleResultExpressionFactory
                 .BuildCommandMultipleResultExpression(this, resultTypes);
@@ -372,13 +384,13 @@ namespace Susanoo.Command
         {
             var parameters = new List<DbParameter>();
 
-            if (typeof(TFilter).IsValueType || filter != null)
+            if (typeof(TFilter).GetTypeInfo().IsValueType || filter != null)
             {
                 if (_explicitInclusionMode)
                 {
                     foreach (var item in _parameterInclusions)
                     {
-                        var propInfo = filter.GetType()
+                        var propInfo = filter.GetType().GetTypeInfo()
                             .GetProperty(item.Key, BindingFlags.Instance | BindingFlags.Public);
                         var param = databaseManager.CreateParameter();
 
@@ -392,7 +404,7 @@ namespace Susanoo.Command
                         param.Value = propInfo.GetValue(filter, null);
 #endif
 
-                        var type = CommandManager.GetDbType(propInfo.PropertyType);
+                        var type = SusanooCommander.GetDbType(propInfo.PropertyType);
 
                         if (type.HasValue)
                             param.DbType = type.Value;
@@ -421,7 +433,7 @@ namespace Susanoo.Command
                 {
                     var implicitProperties = _propertyMetadataExtractor
                         .FindAllowedProperties(
-                            filter.GetType(),
+                            filter.GetType().GetTypeInfo(),
                             DescriptorActions.Insert | DescriptorActions.Update | DescriptorActions.Delete,
                             _parameterInclusions.Select(p => p.Key).ToArray(),
                             _parameterExclusions.ToArray());
@@ -441,7 +453,7 @@ namespace Susanoo.Command
                             param.Value = propInfo.Key.GetValue(filter, null);
 #endif
 
-                            var type = CommandManager.GetDbType(propInfo.Key.PropertyType);
+                            var type = SusanooCommander.GetDbType(propInfo.Key.PropertyType);
 
                             if (type.HasValue)
                                 param.DbType = type.Value;

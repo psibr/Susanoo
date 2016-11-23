@@ -20,10 +20,10 @@ namespace Susanoo.ResultSets
             Action<IResultMappingExpression<TFilter, TResult>> mappings);
 
         /// <summary>
-        /// Realizes the pipeline and compiles result mappings.
+        /// Compiles the pipeline and compiles result mappings.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        IMultipleResultSetCommandProcessor<TFilter> Realize(string name = null);
+        IMultipleResultSetCommandProcessor<TFilter> Compile(string name = null);
     }
 }

@@ -1,0 +1,28 @@
+{
+  "version": "3.3.2-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "dependencies": {
+    "Susanoo.Core": {
+      "target": "project"
+    },
+    "Susanoo.Transforms": {
+      "target": "project"
+    }
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "dependencies": {
+
+      }
+    },
+    "net45": {
+      "dependencies": {
+
+      },
+      "frameworkAssemblies": {
+      }
+    }
+  }
+}

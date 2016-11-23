@@ -2,6 +2,7 @@
 using System.Linq;
 using Susanoo.Command;
 using Susanoo.Processing;
+using System;
 #if !NETFX40
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,16 +18,19 @@ namespace Susanoo.Proxies.Transforms
         : NoResultSetProxy<TFilter>
     {
         private readonly IEnumerable<CommandTransform> _transforms;
+        private readonly Action<IExecutableCommandInfo> _queryInspector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NoResultSetTransformProxy{TFilter}"/> class.
         /// </summary>
         /// <param name="source">The source.</param>
         /// <param name="transforms">The transforms.</param>
-        public NoResultSetTransformProxy(INoResultCommandProcessor<TFilter> source, IEnumerable<CommandTransform> transforms)
+        public NoResultSetTransformProxy(INoResultCommandProcessor<TFilter> source, IEnumerable<CommandTransform> transforms,
+            Action<IExecutableCommandInfo> queryInspector = null)
             : base(source)
         {
             _transforms = transforms;
+            _queryInspector = queryInspector ?? new Action<IExecutableCommandInfo>((info) => { });
         }
 
         /// <summary>
@@ -39,6 +43,8 @@ namespace Susanoo.Proxies.Transforms
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
+
+            _queryInspector(transformed);
 
             return Source.ExecuteNonQuery(databaseManager, transformed);
         }
@@ -55,6 +61,8 @@ namespace Susanoo.Proxies.Transforms
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
+
+            _queryInspector(transformed);
 
             return Source.ExecuteScalar<TReturn>(databaseManager, transformed);
         }
@@ -74,6 +82,8 @@ namespace Susanoo.Proxies.Transforms
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
 
+            _queryInspector(transformed);
+
             return await Source.ExecuteNonQueryAsync(databaseManager, transformed, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -91,6 +101,8 @@ namespace Susanoo.Proxies.Transforms
         {
             var transformed = _transforms.Aggregate(executableCommandInfo, (current, commandTransform) =>
                 commandTransform.Transform(current));
+
+            _queryInspector(transformed);
 
             return await Source.ExecuteScalarAsync<TReturn>(databaseManager, transformed, cancellationToken)
                 .ConfigureAwait(false);

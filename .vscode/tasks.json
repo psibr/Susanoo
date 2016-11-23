@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "0.1.0",
+    "command": "powershell",
+    "showOutput": "silent",
+    "args": [
+        " ./build.ps1"
+    ],
+    "taskSelector": "-target ",
+    "tasks": [
+        {
+            "taskName": "build",
+            // Show the output window only if unrecognized errors
+            "showOutput": "silent",
+            // Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "taskName": "test",
+            // Show the output window only if unrecognized errors 
+            "echoCommand": true,
+            // Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

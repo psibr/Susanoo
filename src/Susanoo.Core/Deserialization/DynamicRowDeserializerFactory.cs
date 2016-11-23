@@ -3,7 +3,7 @@ using Susanoo.Processing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Linq;
 
 namespace Susanoo.Deserialization
@@ -52,7 +52,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>
         /// <returns>dynamic.</returns>
-        public IEnumerable Deserialize(IDataReader reader, ColumnChecker checker)
+        public IEnumerable Deserialize(DbDataReader reader, ColumnChecker checker)
         {
 
             var fieldCount = reader.FieldCount;
@@ -92,7 +92,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="checker">The column checker.</param>
         /// <returns>dynamic.</returns>
-        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
+        public IEnumerable<TResult> Deserialize<TResult>(DbDataReader reader, ColumnChecker checker)
         {
             return Deserialize(reader, checker).Cast<TResult>();
         }

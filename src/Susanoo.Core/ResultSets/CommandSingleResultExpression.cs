@@ -49,10 +49,10 @@ namespace Susanoo.ResultSets
         }
 
         /// <summary>
-        ///     Realizes the pipeline and compiles result mappings.
+        ///     Compiles the pipeline and compiles result mappings.
         /// </summary>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
-        public ISingleResultSetCommandProcessor<TFilter, TResult> Realize()
+        public ISingleResultSetCommandProcessor<TFilter, TResult> Compile()
         {
             return _singleResultSetCommandProcessorFactory
                        .BuildCommandProcessor<TFilter, TResult>(this);

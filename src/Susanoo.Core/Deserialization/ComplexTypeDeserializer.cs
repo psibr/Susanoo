@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Susanoo.Mapping;
 using Susanoo.Processing;
 
@@ -18,7 +16,7 @@ namespace Susanoo.Deserialization
         : IDeserializer
     {
         private readonly IMappingExport _mappings;
-        private readonly Func<IDataReader, ColumnChecker, object> _compiledMap;
+        private readonly Func<DbDataReader, ColumnChecker, object> _compiledMap;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ComplexTypeDeserializer"/> class.
@@ -26,7 +24,7 @@ namespace Susanoo.Deserialization
         /// <param name="mappings">The mappings.</param>
         /// <param name="type">The type.</param>
         /// <param name="compiledMap">The compiled mapping operations.</param>
-        public ComplexTypeDeserializer(IMappingExport mappings, Type type, Func<IDataReader, ColumnChecker, object> compiledMap)
+        public ComplexTypeDeserializer(IMappingExport mappings, Type type, Func<DbDataReader, ColumnChecker, object> compiledMap)
         {
             _mappings = mappings;
             _compiledMap = compiledMap;
@@ -46,7 +44,7 @@ namespace Susanoo.Deserialization
         /// <param name="columnReport">The column report.</param>
         /// <returns>IEnumerable.</returns>
         [SuppressMessage("ReSharper", "EventExceptionNotDocumented")]
-        public IEnumerable Deserialize(IDataReader reader, ColumnChecker columnReport)
+        public IEnumerable Deserialize(DbDataReader reader, ColumnChecker columnReport)
         {
             while (reader.Read())
             {
@@ -67,7 +65,7 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <param name="mappings">The mappings.</param>
         /// <param name="compiledMap">The compiled mapping operations.</param>
-        public ComplexTypeDeserializer(IMappingExport mappings, Func<IDataReader, ColumnChecker, object> compiledMap)
+        public ComplexTypeDeserializer(IMappingExport mappings, Func<DbDataReader, ColumnChecker, object> compiledMap)
         {
             baseDeserializer = new ComplexTypeDeserializer(mappings, typeof(TResult), compiledMap);
         }
@@ -84,7 +82,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="columnReport">The column report.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Deserialize(IDataReader reader, ColumnChecker columnReport)
+        public IEnumerable<TResult> Deserialize(DbDataReader reader, ColumnChecker columnReport)
         {
             return baseDeserializer.Deserialize(reader, columnReport)
                 .Cast<TResult>();

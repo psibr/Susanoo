@@ -1,6 +1,6 @@
 ﻿//This is a shim for .NET 4.0 uses.
 
-#if NETFX40
+#if NETFX40 || DOTNETCORE
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;

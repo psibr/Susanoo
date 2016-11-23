@@ -1,9 +1,14 @@
 ﻿#region
 
 using System;
-using System.Configuration;
-using System.Data;
+
 using System.Data.Common;
+using System.Data;
+#if !DOTNETCORE
+
+using System.Configuration;
+using System.Transactions;
+#endif
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -11,7 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 #endif
-using System.Transactions;
+
 
 #endregion
 
@@ -26,7 +31,14 @@ namespace Susanoo
         private DbConnection _connection;
         private bool _explicitlyOpened;
         private string _connectionString;
+
+#if DOTNETCORE
+        public DbTransaction Transaction { get; set; }
+#endif
+
+#if !DOTNETCORE
         private readonly Action<DbCommand> _providerSpecificCommandSettings;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
@@ -72,30 +84,6 @@ namespace Susanoo
                     nameof(connectionStringName));
         }
 
-        private DatabaseManager()
-        {
-
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        public DatabaseManager(DbConnection connection)
-        {
-            this._connection = connection;
-
-            if (new[]
-            {
-                ConnectionState.Connecting,
-                ConnectionState.Open,
-                ConnectionState.Executing,
-                ConnectionState.Fetching
-            }.Contains(connection.State))
-            {
-                this._explicitlyOpened = true;
-            }
-        }
 
         /// <summary>
         /// Creates a DatabaseManager from a connection string name by resolving from configuration.
@@ -187,6 +175,32 @@ namespace Susanoo
             return manager;
         }
 
+#endif
+        private DatabaseManager()
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseManager" /> class.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        public DatabaseManager(DbConnection connection)
+        {
+            this._connection = connection;
+
+            if (new[]
+            {
+                ConnectionState.Connecting,
+                ConnectionState.Open,
+                ConnectionState.Executing,
+                ConnectionState.Fetching
+            }.Contains(connection.State))
+            {
+                this._explicitlyOpened = true;
+            }
+        }
+
         /// <summary>
         /// Creates a DatabaseManager from a connection string and providerName.
         /// </summary>
@@ -239,13 +253,13 @@ namespace Susanoo
         /// <returns>IDataReader.</returns>
         /// <exception cref="ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual IDataReader ExecuteDataReader(string commandText, CommandType commandType, TimeSpan commandTimeout,
+        public virtual DbDataReader ExecuteDataReader(string commandText, CommandType commandType, TimeSpan commandTimeout,
             params DbParameter[] parameters)
         {
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException(nameof(commandText));
 
-            IDataReader results = null;
+            DbDataReader results = null;
 
             try
             {
@@ -261,7 +275,7 @@ namespace Susanoo
             catch
             {
                 if (results != null && !results.IsClosed)
-                    results.Close();
+                    results.Dispose();
 
                 // ReSharper disable once ExceptionNotDocumented
                 // ReSharper disable once ThrowingSystemException
@@ -301,7 +315,12 @@ namespace Susanoo
             }
             finally
             {
+
+#if !DOTNETCORE
                 if (Transaction.Current == null && !open)
+#else
+                if (Transaction == null && !open)
+#endif
                     CloseConnection();
             }
         }
@@ -335,7 +354,11 @@ namespace Susanoo
             }
             finally
             {
+#if !DOTNETCORE
                 if (Transaction.Current == null && !open)
+#else
+                if (Transaction == null && !open)
+#endif
                     CloseConnection();
             }
         }
@@ -382,7 +405,12 @@ namespace Susanoo
         {
             return CreateParameter(parameterName, ParameterDirection.Input, parameterType, value);
         }
-
+#if DOTNETCORE
+        public virtual void BeginTransaction(System.Data.IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        {
+            Transaction = Connection.BeginTransaction(isolationLevel);
+        }
+#endif
         /// <summary>
         /// Opens the connection.
         /// </summary>
@@ -439,7 +467,7 @@ namespace Susanoo
         //}
 
         /// <summary>
-        /// Realizes an instance of the <see cref="DatabaseManager" /> class.
+        /// Compiles an instance of the <see cref="DatabaseManager" /> class.
         /// </summary>
         ~DatabaseManager()
         {
@@ -491,15 +519,20 @@ namespace Susanoo
 
             command.CommandTimeout = Convert.ToInt32(commandTimeout.TotalSeconds);
 
+#if DOTNETCORE
+            command.Transaction = Transaction;
+#endif
+
             if (parameters != null)
                 foreach (var param in parameters)
                     command.Parameters.Add(param);
-
+#if !DOTNETCORE
             CallProviderSpecificCommandSettings(command);
-
+#endif
             return command;
         }
 
+#if !DOTNETCORE
         /// <summary>
         /// Adjusts the CommandBuilder by provider.
         /// </summary>
@@ -509,7 +542,7 @@ namespace Susanoo
         {
             _providerSpecificCommandSettings?.Invoke(command);
         }
-
+#endif
         /// <summary>
         /// Opens the connection.
         /// </summary>
@@ -556,7 +589,7 @@ namespace Susanoo
         /// <returns>IDataReader.</returns>
         /// <exception cref="System.ArgumentNullException">commandText</exception>
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        public virtual async Task<IDataReader> ExecuteDataReaderAsync(string commandText,
+        public virtual async Task<DbDataReader> ExecuteDataReaderAsync(string commandText,
             CommandType commandType,
             TimeSpan commandTimeout,
             CancellationToken cancellationToken = default(CancellationToken),
@@ -565,7 +598,7 @@ namespace Susanoo
             if (string.IsNullOrWhiteSpace(commandText))
                 throw new ArgumentNullException(nameof(commandText));
 
-            IDataReader results = null;
+            DbDataReader results = null;
             var open = _explicitlyOpened;
             try
             {
@@ -584,7 +617,7 @@ namespace Susanoo
             catch
             {
                 if (results != null && !results.IsClosed)
-                    results.Close();
+                    results.Dispose();
 
                 // ReSharper disable once ExceptionNotDocumented
                 // ReSharper disable once ThrowingSystemException
@@ -627,7 +660,11 @@ namespace Susanoo
             }
             finally
             {
+#if !DOTNETCORE
                 if (Transaction.Current == null && !open)
+#else
+                if (Transaction == null && !open)
+#endif
                     CloseConnection();
             }
         }
@@ -665,7 +702,11 @@ namespace Susanoo
             }
             finally
             {
+#if !DOTNETCORE
                 if (Transaction.Current == null && !open)
+#else
+                if (Transaction == null && !open)
+#endif
                     CloseConnection();
             }
         }

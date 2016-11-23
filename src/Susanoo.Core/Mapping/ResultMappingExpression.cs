@@ -65,7 +65,7 @@ namespace Susanoo.Mapping
             string propertyName,
             Action<IPropertyMappingConfiguration> options)
         {
-            var propInfo = typeof (TResult).GetProperty(propertyName);
+            var propInfo = typeof (TResult).GetTypeInfo().GetProperty(propertyName);
 
             if (!_mappingActions.ContainsKey(propertyName))
                 TryAddMapping(new KeyValuePair<PropertyInfo, PropertyMapping>(propInfo, new PropertyMapping(propInfo, propertyName)));
@@ -75,6 +75,18 @@ namespace Susanoo.Mapping
             options.Invoke(config);
 
             return this;
+        }
+
+        public virtual IResultMappingExpression<TFilter, TResult> MapPropertyToColumn(
+            Expression<Func<TResult, object>> propertyExpression, string columnName)
+        {
+            return ForProperty(propertyExpression, configuration => configuration.UseAlias(columnName));
+        }
+
+        public virtual IResultMappingExpression<TFilter, TResult> MapPropertyToColumn(
+            string propertyName, string columnName)
+        {
+            return ForProperty(propertyName, configuration => configuration.UseAlias(columnName));
         }
 
         /// <summary>
@@ -91,7 +103,7 @@ namespace Susanoo.Mapping
         /// </summary>
         protected void MapDeclarativeProperties()
         {
-            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(typeof(TResult)))
+            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(typeof(TResult).GetTypeInfo()))
             {
                 TryAddMapping(item);
             }

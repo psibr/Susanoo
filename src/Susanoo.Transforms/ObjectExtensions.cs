@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
+using System.Reflection;
 
 namespace Susanoo
 {
@@ -14,7 +15,10 @@ namespace Susanoo
         internal static ExpandoObject ToExpando(this object anonymousObject)
         {
             IDictionary<string, object> expando = new ExpandoObject();
-            foreach (PropertyDescriptor propertyDescriptor in TypeDescriptor.GetProperties(anonymousObject))
+            
+
+            foreach (var propertyDescriptor in anonymousObject.GetType().GetTypeInfo()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var obj = propertyDescriptor.GetValue(anonymousObject);
                 expando.Add(propertyDescriptor.Name, obj);

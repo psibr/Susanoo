@@ -1,4 +1,5 @@
-﻿using Susanoo.Exceptions;
+﻿using Susanoo.Command;
+using Susanoo.Exceptions;
 using Susanoo.Processing;
 using Susanoo.Proxies.ExceptionInterception;
 using Susanoo.Proxies.Transforms;
@@ -20,13 +21,14 @@ namespace Susanoo
         /// <param name="transforms">The transforms.</param>
         /// <returns>INoResultCommandProcessor&lt;TFilter, TResult&gt;.</returns>
         /// <exception cref="ArgumentNullException">At least one transform is required.</exception>
-        public static IMultipleResultSetCommandProcessor<TFilter> ApplyTransforms<TFilter>(
-            this IMultipleResultSetCommandProcessor<TFilter> source, Func<IMultipleResultSetCommandProcessor<TFilter>, IEnumerable<CommandTransform>> transforms)
+        public static IMultipleResultSetCommandProcessor<TFilter> WithTransforms<TFilter>(
+            this IMultipleResultSetCommandProcessor<TFilter> source, Func<IMultipleResultSetCommandProcessor<TFilter>, IEnumerable<CommandTransform>> transforms,
+            Action<IExecutableCommandInfo> queryInspector = null)
         {
             if (transforms == null)
                 throw new ArgumentNullException(nameof(transforms), "At least one transform is required.");
 
-            return source.InterceptOrProxyWith(s => new MultipleResultSetTransformProxy<TFilter>(s, transforms(s)));
+            return source.InterceptOrProxyWith(s => new MultipleResultSetTransformProxy<TFilter>(s, transforms(s), queryInspector));
         }
 
         /// <summary>

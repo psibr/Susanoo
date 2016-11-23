@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Susanoo.Command;
 using Susanoo.DependencyInjection;
 using Susanoo.DependencyInjection.TinyIoC;
-#if !NETFX40
+#if !NETFX40 && !DOTNETCORE
 using System.ComponentModel.DataAnnotations.Schema;
 #endif
 using Susanoo.Deserialization;

@@ -2,7 +2,7 @@
 
 using System;
 using System.Reflection;
-using System.Runtime.Serialization;
+using System.Linq;
 
 #endregion
 
@@ -11,7 +11,6 @@ namespace Susanoo.Exceptions
     /// <summary>
     /// Exception that describes a condition which has caused mapping to fail at a column to property level.
     /// </summary>
-    [Serializable]
     public class ColumnBindingException : InvalidCastException
     {
         /// <summary>
@@ -33,8 +32,11 @@ namespace Susanoo.Exceptions
         /// <summary>
         /// The message and inner exception constructor information for this type.
         /// </summary>
-        public static readonly ConstructorInfo MessageAndInnerExceptionConstructorInfo = typeof (ColumnBindingException).GetConstructor(new[]
-        {typeof (string), typeof (Exception)});
+        public static readonly ConstructorInfo MessageAndInnerExceptionConstructorInfo = typeof (ColumnBindingException).GetTypeInfo().DeclaredConstructors.Where(c => 
+            {
+                var parameters = c.GetParameters();
+                return parameters.Length == 2 && parameters[0].ParameterType == typeof(string) && parameters[1].ParameterType == typeof(Exception);
+            }).Single();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ColumnBindingException" /> class with a specified error message and a
@@ -57,16 +59,6 @@ namespace Susanoo.Exceptions
         /// <param name="errorCode">The error code (HRESULT) value associated with the exception.</param>
         public ColumnBindingException(string message, int errorCode)
             : base(message, errorCode)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ColumnBindingException" /> class with serialized data.
-        /// </summary>
-        /// <param name="info">The object that holds the serialized object data.</param>
-        /// <param name="context">The contextual information about the source or destination.</param>
-        protected ColumnBindingException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

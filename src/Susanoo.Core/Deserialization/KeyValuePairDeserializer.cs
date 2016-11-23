@@ -4,8 +4,9 @@ using Susanoo.Processing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 
 namespace Susanoo.Deserialization
 {
@@ -35,7 +36,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The data reader.</param>
         /// <param name="checker">The column object.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Deserialize<TResult>(IDataReader reader, ColumnChecker checker)
+        public IEnumerable<TResult> Deserialize<TResult>(DbDataReader reader, ColumnChecker checker)
         {
             return Deserialize(reader, checker).Cast<TResult>();
         }
@@ -52,7 +53,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The data reader.</param>
         /// <param name="checker">The column object.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable Deserialize(IDataReader reader, ColumnChecker checker)
+        public IEnumerable Deserialize(DbDataReader reader, ColumnChecker checker)
         {
             var keyAlias = "Key";
             IPropertyMapping keyMapping;
@@ -66,7 +67,7 @@ namespace Susanoo.Deserialization
 
             var resultType = DeserializationType;
 
-            var genericTypeArguments = resultType.GetGenericArguments();
+            var genericTypeArguments = resultType.GetTypeInfo().GetGenericArguments();
 
             checker = checker ?? new ColumnChecker(reader.FieldCount);
 
@@ -109,7 +110,7 @@ namespace Susanoo.Deserialization
         /// <param name="reader">The reader.</param>
         /// <param name="columnReport">The column report.</param>
         /// <returns>IEnumerable&lt;TResult&gt;.</returns>
-        public IEnumerable<TResult> Deserialize(IDataReader reader, ColumnChecker columnReport)
+        public IEnumerable<TResult> Deserialize(DbDataReader reader, ColumnChecker columnReport)
         {
             return baseDeserializer.Deserialize(reader, columnReport)
                 .Cast<TResult>();

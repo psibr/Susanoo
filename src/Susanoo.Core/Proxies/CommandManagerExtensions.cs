@@ -11,9 +11,9 @@
 //namespace Susanoo.Transforms
 //{
 //    /// <summary>
-//    /// Class CommandManagerExtensions.
+//    /// Class SusanooExtensions.
 //    /// </summary>
-//    public static class CommandManagerExtensions
+//    public static class SusanooExtensions
 //    {
 //        /// <summary>
 //        /// Builds a computed insert statement.
@@ -24,7 +24,7 @@
 //        {
 //            var guid = Guid.NewGuid().ToString();
 
-//            var command = CommandManager.Instance.Bootstrapper
+//            var command = Susanoo.Instance.Bootstrapper
 //                .ResolveDependency<ICommandBuilder>()
 //                .DefineCommand<TFilter>(guid, CommandType.Text);
 
@@ -33,7 +33,7 @@
 
 //            var commandInfo = (ICommandBuilderInfo<TFilter>)command;
 
-//            var columnNames = CommandManager.Instance.Bootstrapper
+//            var columnNames = Susanoo.Instance.Bootstrapper
 //                .ResolveDependency<IPropertyMetadataExtractor>()
 //                .FindAllowedProperties(
 //                    typeof(TFilter),
@@ -54,7 +54,7 @@
 //                    Parameters = info.Parameters
 //                });
 
-//            return command.Realize()
+//            return command.Compile()
 //                .ApplyTransforms(source => new[] {xform});
 
 

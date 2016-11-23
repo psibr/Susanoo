@@ -30,7 +30,7 @@ namespace Susanoo
         /// <param name="commandTimeout">The command timeout.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>IDataReader.</returns>
-        IDataReader ExecuteDataReader(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters);
+        DbDataReader ExecuteDataReader(string commandText, CommandType commandType, TimeSpan commandTimeout, params DbParameter[] parameters);
 
         /// <summary>
         /// Executes the scalar.
@@ -79,6 +79,11 @@ namespace Susanoo
         /// <returns>DbParameter.</returns>
         DbParameter CreateInputParameter(string parameterName, DbType parameterType, object value);
 
+#if DOTNETCORE
+        void BeginTransaction(IsolationLevel isolationLevel);
+
+        DbTransaction Transaction { get; set; }
+#endif
         /// <summary>
         /// Opens the connection.
         /// </summary>
@@ -100,7 +105,7 @@ namespace Susanoo
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="parameters">The parameters.</param>
         /// <returns>Task&lt;IDataReader&gt;.</returns>
-        Task<IDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType, TimeSpan commandTimeout,
+        Task<DbDataReader> ExecuteDataReaderAsync(string commandText, CommandType commandType, TimeSpan commandTimeout,
             CancellationToken cancellationToken, params DbParameter[] parameters);
 
         /// <summary>

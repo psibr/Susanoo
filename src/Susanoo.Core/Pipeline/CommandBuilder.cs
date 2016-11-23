@@ -31,7 +31,7 @@ namespace Susanoo.Pipeline
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType)
+        public virtual ICommandExpression<TFilter> DefineCommand<TFilter>(string commandText, CommandType commandType = CommandType.Text)
         {
             return _commandExpressionFactory
                 .BuildCommandExpression<TFilter>(commandText, commandType);
@@ -44,7 +44,7 @@ namespace Susanoo.Pipeline
         /// <param name="commandText">The CommandBuilder text.</param>
         /// <param name="commandType">Type of the CommandBuilder.</param>
         /// <returns>ICommandExpression&lt;TFilter, TResult&gt;.</returns>
-        public virtual ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType)
+        public virtual ICommandExpression<dynamic> DefineCommand(string commandText, CommandType commandType = CommandType.Text)
         {
             return _commandExpressionFactory
                 .BuildCommandExpression<dynamic>(commandText, commandType);

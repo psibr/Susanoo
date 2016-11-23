@@ -1,0 +1,39 @@
+{
+  "version": "3.3.2-*",
+  "authors": [ "Ovan Crone" ],
+  "description": "Query transforms ",
+  "buildOptions": {
+    "debugType": "portable",
+    "allowUnsafe": true
+  },
+  "packOptions": {
+    "licenseUrl": "http://www.opensource.org/licenses/MIT",
+    "owners": [ "Ovan Crone" ],
+    "repository": {
+      "type": "git",
+      "url": "https://www.github.com/psibr/Susanoo"
+    },
+    "summary": "Autofac adapter for Susanoo",
+    "tags": [ "susanoo" ]
+  },
+  "dependencies": {
+    "Susanoo.Core": {
+      "target": "project"
+    }
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "dependencies": {
+        "System.Text.RegularExpressions": "4.1.0",
+        "System.Reflection": "4.1.0"
+      }
+    },
+    "net45": {
+      "dependencies": {
+
+      },
+      "frameworkAssemblies": {
+      }
+    }
+  }
+}

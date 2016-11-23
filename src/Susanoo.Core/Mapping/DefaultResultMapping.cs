@@ -1,7 +1,7 @@
 ﻿using Susanoo.Mapping.Properties;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Susanoo.Mapping
 {
@@ -51,7 +51,7 @@ namespace Susanoo.Mapping
         /// </summary>
         public void MapDeclarativeProperties()
         {
-            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(_resultType, _actions))
+            foreach (var item in _propertyMetadataExtractor.FindAllowedProperties(_resultType.GetTypeInfo(), _actions))
             {
                 TryAddMapping(item);
             }

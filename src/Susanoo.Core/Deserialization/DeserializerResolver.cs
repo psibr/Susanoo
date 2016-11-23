@@ -6,7 +6,7 @@ using System.Linq;
 namespace Susanoo.Deserialization
 {
     /// <summary>
-    /// An extendable or replaceable component that chooses an appropriate way to deserialize an IDataReader to objects.
+    /// An extendable or replaceable component that chooses an appropriate way to deserialize an DbDataReader to objects.
     /// </summary>
     public class DeserializerResolver 
         : IDeserializerResolver
@@ -44,7 +44,7 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <returns>Func&lt;DbDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public virtual IDeserializer<TResult>
             ResolveDeserializer<TResult>(ICommandResultInfo mappings)
         {
@@ -59,7 +59,7 @@ namespace Susanoo.Deserialization
         /// </summary>
         /// <param name="resultType">Type of the result.</param>
         /// <param name="mappings">The mappings.</param>
-        /// <returns>Func&lt;IDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
+        /// <returns>Func&lt;DbDataReader, ColumnChecker, IEnumerable&lt;TResult&gt;&gt;.</returns>
         public IDeserializer ResolveDeserializer(Type resultType, ICommandResultInfo mappings)
         {
             var factory = _deserializerFactories.First(df => df.CanDeserialize(resultType));

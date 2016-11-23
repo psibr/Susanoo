@@ -17,7 +17,7 @@ namespace Susanoo.Transforms
         /// <param name="overrideText">The override text.</param>
         public ComparisonOverride(string overrideText)
         {
-            OverrideText = "AND " + overrideText;
+            OverrideText = "\r\n    AND " + overrideText;
         }
 
         /// <summary>
